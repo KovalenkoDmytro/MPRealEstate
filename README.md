@@ -231,3 +231,4 @@ Visit your application at `http://localhost:8000`.
 
 This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
+docker exec -it docker-php-1 php artisan migrate --force
