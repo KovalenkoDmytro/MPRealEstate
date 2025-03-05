@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             DealSeeder::class,
+            RealEstateListingSeeder::class,
         ]);
     }
 }

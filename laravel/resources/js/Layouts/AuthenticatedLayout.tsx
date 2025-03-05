@@ -10,6 +10,7 @@ export default function Authenticated({
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
     const user = usePage().props.auth.user;
+    const {role} = user
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -33,6 +34,15 @@ export default function Authenticated({
                                 >
                                     Dashboard
                                 </NavLink>
+
+                                {role === "admin" && (
+                                    <NavLink
+                                        href={route('deals.index')}
+                                        active={route().current('deals.index')}
+                                    >
+                                        Deals
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 

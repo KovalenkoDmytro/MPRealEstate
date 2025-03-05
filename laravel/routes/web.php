@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\DealController;
+use App\Http\Controllers\RealEstateListingController;
 
 // Public Home Route
 Route::get('/', function () {
@@ -21,6 +22,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    // RealEstateListing pages
+    Route::get('/listings', [RealEstateListingController::class, 'index'])->name('listings.index');
+    Route::get('/listings/{listing}', [RealEstateListingController::class, 'show'])->name('listings.show');
 
     // User Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
