@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Admin Dashboard (Only for Admins)
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin', function () {
         return Inertia::render('Users/Admin/Dashboard'); // Use Inertia for Vue
@@ -41,9 +42,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 
     // List all deals
-    Route::get('/deals', [DealController::class, 'index'])->name('deals.index');
+//    Route::get('/deals', [DealController::class, 'index'])->name('deals.index');
     // Show a single deal
-    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+//    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
 
 });
 
@@ -54,7 +55,7 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
     })->name('buyer.dashboard');
 
     // Show a single deal
-    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+//    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
 });
 
 // Seller Dashboard (Only for Sellers)
@@ -64,7 +65,7 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
     })->name('seller.dashboard');
 
     // Show a single deal
-    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+//    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
 });
 
 // Lawyer Dashboard (Only for Lawyers)
@@ -74,15 +75,21 @@ Route::middleware(['auth', 'role:lawyer'])->group(function () {
     })->name('lawyer.dashboard');
 
     // Show a single deal
-    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+//    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
 });
 
 // Include Authentication Routes
 require __DIR__.'/auth.php';
 
+Route::middleware(['auth', 'role:admin|buyer|seller|lawyer'])->group(function () {
+    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+});
 
 
 
 
 // todo Move deal to next step only after confirmation from both (seller/buyer) till lawyer in play
-Route::post('/deals/{deal}/next-step', [DealController::class, 'moveToNextStep'])->name('deals.next-step');
+//Route::post('/deals/{deal}/next-step', [DealController::class, 'moveToNextStep'])->name('deals.next-step');
+//
+
+

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use App\Models\Deal;
 use Inertia\Inertia;
@@ -15,7 +15,7 @@ class DealController extends Controller
      */
     public function index(): Response
     {
-        $deals = Deal::with('users')->get();
+        $deals = Deal::with(['users', 'realEstateListing'])->get();
 
         return Inertia::render('Deals/Index', [
             'deals' => $deals,
@@ -27,14 +27,30 @@ class DealController extends Controller
      */
     public function show(Deal $deal): Response
     {
+        if (!Gate::allows('view-deal', $deal)) {
+            abort(403, "Unauthorized - You are not part of this deal.");
+        }
+
+
+
+
+//        if (!auth()->user()) {
+//            abort(403, "Unauthorized - No user found.");
+//        }
+//
+//        $userRoles = auth()->user()->getRoleNames(); // Get roles
+//        if (!$userRoles->intersect(['admin', 'buyer', 'seller', 'lawyer'])->count()) {
+//            abort(403, "Unauthorized - User has roles: " . json_encode($userRoles) . " but needs 'admin', 'buyer', 'seller', or 'lawyer'.");
+//        }
+
         return Inertia::render('Deals/Show', [
-            'deal' => $deal,
-            'current_step' => $deal->current_step,
-            'users' => $deal->users->map(fn ($user) => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'role' => $user->roles->first()->name ?? 'unknown',
-            ]),
+            'deal' => $deal->load(
+                [
+                    'realEstateListing.mainImage', // ✅ Load the main image separately
+                    'realEstateListing.images', // ✅ Also load all images
+                    'users'
+                ]
+            ),
         ]);
     }
 

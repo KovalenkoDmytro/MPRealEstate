@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register `role` middleware as a ROUTE middleware
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class, // Correct registration
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         ]);
 
         //
