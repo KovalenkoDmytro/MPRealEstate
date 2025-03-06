@@ -23,7 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role'
+        'role',
     ];
 
     /**
@@ -58,4 +58,6 @@ class User extends Authenticatable
     public function deals(): \Illuminate\Database\Eloquent\Relations\BelongsToMany {
         return $this->belongsToMany(Deal::class, 'deal_user');
     }
+
+
 }

@@ -3,26 +3,26 @@
 namespace App\Models;
 
 use App\Models\User;
+use Spatie\Permission\Traits\HasRoles;
 
 class Seller extends User
 {
-    protected $table = 'users'; // Ensures it still uses the `users` table
+    use HasRoles;
 
-    protected static function boot()
+    protected $table = 'users'; // ✅ Uses the same table as User
+
+    public static function onlySellers()
     {
-        parent::boot();
-
-        // Automatically filter only sellers
-        static::addGlobalScope('sellerOnly', function ($query) {
-            $query->whereHas('roles', function ($q) {
-                $q->where('name', 'seller');
-            });
+        return User::whereHas('roles', function ($q) {
+            $q->where('name', 'seller');
         });
     }
 
-    public function listings(): \Illuminate\Database\Eloquent\Relations\HasMany {
+    public function listings()
+    {
         return $this->hasMany(RealEstateListing::class, 'seller_id');
     }
 }
+
 
 

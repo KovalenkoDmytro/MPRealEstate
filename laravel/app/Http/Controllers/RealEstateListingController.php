@@ -14,7 +14,7 @@ class RealEstateListingController extends Controller
      */
     public function index(): Response
     {
-        $listings = RealEstateListing::with('seller')->get();
+        $listings = RealEstateListing::with('seller', 'mainImage')->get();
 
         return Inertia::render('RealEstateListings/Index', [
             'listings' => $listings,
@@ -26,8 +26,11 @@ class RealEstateListingController extends Controller
      */
     public function show(RealEstateListing $listing): Response
     {
+
+        $listing = RealEstateListing::with('seller', 'images')->findOrFail($listing['id']);
         return Inertia::render('RealEstateListings/Show', [
-            'listing' => $listing->load('seller'),
+            'listing' => $listing,
+//            'listing' => $listing->load('seller', 'listingImages', 'deals'),
         ]);
     }
 }

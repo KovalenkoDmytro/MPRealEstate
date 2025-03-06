@@ -34,6 +34,15 @@ export default function Authenticated({
                                 >
                                     Dashboard
                                 </NavLink>
+                                {role === "buyer" && (
+                                    <NavLink
+                                        href={route('listings.index')}
+                                        active={route().current('listings.index')}
+                                    >
+                                        Listings
+                                    </NavLink>
+                                )}
+
 
                                 {role === "admin" && (
                                     <NavLink

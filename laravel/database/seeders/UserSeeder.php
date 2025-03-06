@@ -31,14 +31,15 @@ class UserSeeder extends Seeder
                 [
                     'name' => $userData['name'],
                     'password' => Hash::make('password'),
-                ]
+                    'role' => $userData['role'],
+                    ]
             );
 
-            // Assign role properly using Spatie
-            $role = Role::where('name', $userData['role'])->first();
-            if ($role && !$user->hasRole($role->name)) {
-                $user->assignRole($role->name);
+            // Assign role using Spatie
+            if (!$user->hasRole($userData['role'])) {
+                $user->assignRole($userData['role']);
             }
+
 
             // Attach buyers & sellers to deals
             if (in_array($userData['role'], ['buyer', 'seller'])) {
