@@ -4,6 +4,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Deal;
 use App\Models\User;
+use App\Models\RealEstateListing;
 
 class DealSeeder extends Seeder
 {
@@ -30,14 +31,18 @@ class DealSeeder extends Seeder
             $query->where('name', 'lawyer');
         })->get();
 
+        $listings = RealEstateListing::inRandomOrder()->get(); // ✅ Get all available listings
+
         foreach (range(1, 3) as $i) {
             $deal = Deal::create([
                 'name' => "Deal $i",
                 'amount' => rand(5000, 50000),
                 'data' => json_encode(['description' => "Sample deal $i"]),
+                'current_step' => $steps[array_rand($steps)], // ✅ Assign a random step as a string
+                'real_estate_listing_id' => $listings->count() ? $listings->pop()->id : null, // ✅ Assign a listing if available
             ]);
 
-            // Attach one buyer, one seller, and one lawyer
+            // ✅ Attach one buyer, one seller, and one lawyer
             if ($buyers->isNotEmpty()) {
                 $deal->users()->attach($buyers->random()->id);
             }
@@ -50,3 +55,4 @@ class DealSeeder extends Seeder
         }
     }
 }
+

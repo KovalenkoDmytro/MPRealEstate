@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name'); // Name of the deal
             $table->decimal('amount', 10, 2); // Deal amount
             $table->json('data')->nullable(); // Additional data as JSON
+            $table->string('current_step')->nullable();
+            $table->foreignId('real_estate_listing_id')->nullable()->constrained('real_estate_listings')->cascadeOnDelete(); //Ensures foreign key integrity
             $table->timestamps();
         });
     }

@@ -25,9 +25,14 @@ class Deal extends Model
         'Closing the Deal',
     ];
 
-
+    // Relationship with users
     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany {
         return $this->belongsToMany(User::class, 'deal_user');
+    }
+
+    // Relationship with RealEstateListing
+    public function realEstateListing(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
     }
 
     public function steps(): \Illuminate\Database\Eloquent\Relations\HasMany {

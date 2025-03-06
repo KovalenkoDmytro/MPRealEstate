@@ -24,6 +24,11 @@ class RealEstateListing extends Model
         return $this->hasMany(ListingImage::class, 'real_estate_listing_id');
     }
 
+    // Relationship with deal
+    public function deal(): \Illuminate\Database\Eloquent\Relations\HasOne {
+        return $this->hasOne(Deal::class, 'real_estate_listing_id');
+    }
+
     // Get the main image
     public function mainImage()
     {
