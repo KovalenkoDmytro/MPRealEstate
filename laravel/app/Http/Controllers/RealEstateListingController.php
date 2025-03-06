@@ -33,4 +33,37 @@ class RealEstateListingController extends Controller
 //            'listing' => $listing->load('seller', 'listingImages', 'deals'),
         ]);
     }
+
+    public function create(): Response {
+        return Inertia::render('RealEstateListings/Create');
+    }
+
+    public function store(Request $request): \Illuminate\Http\RedirectResponse {
+        $user = auth()->user();
+
+        // ✅ Only sellers can create listings
+        if (!$user->hasRole('seller')) {
+            abort(403, 'Unauthorized: Only sellers can create listings.');
+        }
+
+        // ✅ Validate input
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:10000',
+            'location' => 'required|string|max:255',
+            'bedrooms' => 'required|integer|min:1',
+            'bathrooms' => 'required|integer|min:1',
+            'square_feet' => 'required|integer|min:500',
+        ]);
+
+        // ✅ Create new listing & attach to seller
+        $listing = new RealEstateListing($validated);
+        $listing->seller_id = $user->id; // Attach to the seller
+        $listing->status = 'available';
+        $listing->save();
+
+        return redirect()->route('listings.index')->with('success', 'Listing created successfully!');
+    }
+
 }
