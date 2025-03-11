@@ -22,6 +22,8 @@ class Seller extends User
     {
         return $this->hasMany(RealEstateListing::class, 'seller_id');
     }
+
+
 }
 
 

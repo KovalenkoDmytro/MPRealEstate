@@ -19,10 +19,9 @@ createInertiaApp({
         const root = createRoot(el);
 
         root.render(
-            <App {...props} />
-            // <React.StrictMode>
-            //
-            // </React.StrictMode>
+            <React.StrictMode>
+                <App {...props} />
+            </React.StrictMode>
         );
     },
     progress: {

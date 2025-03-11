@@ -82,6 +82,7 @@ Route::middleware(['auth', 'role:lawyer'])->group(function () {
 require __DIR__.'/auth.php';
 
 Route::middleware(['auth', 'role:admin|buyer|seller|lawyer'])->group(function () {
+    Route::get('/listings', [RealEstateListingController::class, 'index'])->name('listings.index');
     Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
 });
 
@@ -89,6 +90,8 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
     Route::get('/listing/create', [RealEstateListingController::class, 'create'])->name('listings.create');
     Route::post('/listings', [RealEstateListingController::class, 'store'])->name('listings.store');
 });
+
+
 
 
 

@@ -43,6 +43,14 @@ export default function Authenticated({
                                     </NavLink>
                                 )}
 
+                                {role === "seller" && (
+                                    <NavLink
+                                        href={route('listings.index')}
+                                        active={route().current('listings.index')}
+                                    >
+                                        My listings
+                                    </NavLink>
+                                )}
 
                                 {role === "admin" && (
                                     <NavLink

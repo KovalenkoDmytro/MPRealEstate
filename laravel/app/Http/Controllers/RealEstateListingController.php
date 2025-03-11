@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Seller;
 use Illuminate\Http\Request;
+use App\Models;
 use App\Models\RealEstateListing;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,20 +16,48 @@ class RealEstateListingController extends Controller
      */
     public function index(): Response
     {
-        $listings = RealEstateListing::with('seller', 'mainImage')->get();
+        $user = auth()->user();
 
-        return Inertia::render('RealEstateListings/Index', [
-            'listings' => $listings,
-        ]);
+        // ✅ If user is a seller, get only their listings
+        if ($user->hasRole('seller')) {
+            $listings = RealEstateListing::where('seller_id', $user->id)
+                ->with(['mainImage'])
+                ->get();
+
+            return Inertia::render('RealEstateListings/Seller/Index', [
+                'listings' => $listings,
+            ]);
+
+        } else {
+            // ✅ Otherwise, return all listings
+            $listings = RealEstateListing::with(['seller', 'mainImage'])->get();
+            return Inertia::render('RealEstateListings/Index', [
+                'listings' => $listings,
+            ]);
+        }
+
+
     }
+
 
     /**
      * Show details of a single listing.
      */
     public function show(RealEstateListing $listing): Response
     {
+        $user = auth()->user();
 
-        $listing = RealEstateListing::with('seller', 'images')->findOrFail($listing['id']);
+        // ✅ If user is a seller, ensure they only access their own listings
+        if ($user->hasRole('seller') && $listing->seller_id !== $user->id) {
+            abort(403, 'Unauthorized Access: This listing does not belong to you.');
+        }
+
+        $listing = RealEstateListing::with('seller', 'images', 'mainImage')->findOrFail($listing['id']);
+
+
+
+
+
         return Inertia::render('RealEstateListings/Show', [
             'listing' => $listing,
 //            'listing' => $listing->load('seller', 'listingImages', 'deals'),
