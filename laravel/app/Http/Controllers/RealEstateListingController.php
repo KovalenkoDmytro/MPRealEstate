@@ -47,21 +47,37 @@ class RealEstateListingController extends Controller
     {
         $user = auth()->user();
 
-        // ✅ If user is a seller, ensure they only access their own listings
-        if ($user->hasRole('seller') && $listing->seller_id !== $user->id) {
-            abort(403, 'Unauthorized Access: This listing does not belong to you.');
+
+        if ($user->hasRole('seller')){
+            // ✅ If user is a seller, ensure they only access their own listings
+            if ($listing->seller_id !== $user->id) {
+                abort(403, 'Unauthorized Access: This listing does not belong to you.');
+            }
+            $listing = RealEstateListing::with([
+                'offers' => function ($query) {
+                    $query->with(['buyer:id,name,email']); // Select only necessary buyer details
+                },
+                'images',
+                'mainImage'])
+                ->findOrFail($listing['id']);
+
+            return Inertia::render('RealEstateListings/Seller/Show',[
+                'listing' => $listing,
+            ]);
+
         }
 
-        $listing = RealEstateListing::with('seller', 'images', 'mainImage')->findOrFail($listing['id']);
+        if (!$user->hasRole('seller')){
+            $listing = RealEstateListing::with('seller', 'images', 'mainImage')->findOrFail($listing['id']);
+
+            return Inertia::render('RealEstateListings/Show', [
+                'listing' => $listing,
+                //            'listing' => $listing->load('seller', 'listingImages', 'deals'),
+            ]);
+        }
 
 
 
-
-
-        return Inertia::render('RealEstateListings/Show', [
-            'listing' => $listing,
-//            'listing' => $listing->load('seller', 'listingImages', 'deals'),
-        ]);
     }
 
     public function create(): Response {

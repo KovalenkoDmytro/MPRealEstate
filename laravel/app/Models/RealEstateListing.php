@@ -14,6 +14,12 @@ class RealEstateListing extends Model
         'location', 'bedrooms', 'bathrooms', 'square_feet', 'status'
     ];
 
+    // A listing can have multiple offers
+    public function offers()
+    {
+        return $this->hasMany(Offer::class, 'real_estate_listing_id');
+    }
+
     // Relationship with seller
     public function seller(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
         return $this->belongsTo(Seller::class, 'seller_id');

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\OfferController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -54,18 +55,23 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
         return Inertia::render('Users/Buyer/Dashboard');
     })->name('buyer.dashboard');
 
+    //Routing to make offer about RElisting
+    Route::post('/listings/{listing}/make-offer', [OfferController::class, 'store']);
+
     // Show a single deal
 //    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
 });
 
+
 // Seller Dashboard (Only for Sellers)
 Route::middleware(['auth', 'role:seller'])->group(function () {
-    Route::get('/seller', function () {
-        return Inertia::render('Users/Seller/Dashboard');
-    })->name('seller.dashboard');
+    Route::get('/seller-dashboard', [OfferController::class, 'index'])->name('seller.dashboard');
 
+    //Make change status of offer (update oppfer)
+    Route::patch('/offers/{offer}/update-status', [OfferController::class, 'updateStatus']);
     // Show a single deal
 //    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+
 });
 
 // Lawyer Dashboard (Only for Lawyers)
@@ -98,5 +104,14 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
 // todo Move deal to next step only after confirmation from both (seller/buyer) till lawyer in play
 //Route::post('/deals/{deal}/next-step', [DealController::class, 'moveToNextStep'])->name('deals.next-step');
 //
+
+//todo make  same url /dashboard for different roles show different pages dashboards
+
+
+
+
+
+
+
 
 

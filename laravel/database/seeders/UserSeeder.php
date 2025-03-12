@@ -21,7 +21,9 @@ class UserSeeder extends Seeder
         $users = [
             ['name' => 'Admin User', 'email' => 'admin@example.com', 'role' => 'admin'],
             ['name' => 'Buyer User', 'email' => 'buyer@example.com', 'role' => 'buyer'],
+            ['name' => 'Buyer2 User', 'email' => 'buyer2@example.com', 'role' => 'buyer'],
             ['name' => 'Seller User', 'email' => 'seller@example.com', 'role' => 'seller'],
+            ['name' => 'Seller2 User', 'email' => 'seller2@example.com', 'role' => 'seller'],
             ['name' => 'Lawyer User', 'email' => 'lawyer@example.com', 'role' => 'lawyer'],
         ];
 
