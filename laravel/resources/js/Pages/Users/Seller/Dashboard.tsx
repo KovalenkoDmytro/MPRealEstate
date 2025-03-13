@@ -1,4 +1,5 @@
-import { Link } from "@inertiajs/react";
+import {Head, Link} from "@inertiajs/react";
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 type Offer = {
     id: number;
@@ -15,6 +16,14 @@ interface DashboardProps {
 
 export default function Dashboard({ pendingOffers }: DashboardProps) {
     return (
+        <AuthenticatedLayout
+            header={
+                <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                    Dashbord
+                </h2>
+            }
+        >
+            <Head title="Dashbord" />
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold">Seller Dashboard</h1>
             <h2 className="text-xl mt-4 font-semibold">Pending Offers</h2>
@@ -34,8 +43,9 @@ export default function Dashboard({ pendingOffers }: DashboardProps) {
             )}
 
             <div className="mt-6">
-                <Link href={"/seller/listings"} className="text-blue-500">View My Listings</Link>
+                <Link href={"/listings"} className="text-blue-500">View My Listings</Link>
             </div>
         </div>
+        </AuthenticatedLayout>
     );
 }

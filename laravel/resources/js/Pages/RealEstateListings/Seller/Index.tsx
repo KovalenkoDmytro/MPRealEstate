@@ -13,6 +13,7 @@ export default function Index({ listings }: { listings: Array<{ id: number; titl
             }
         >
             <Head title=" My listings" />
+            <Link href={"/listing/create"} className="text-blue-500">Add new listing</Link>
             <div className="container mx-auto p-4">
                 <h1 className="text-2xl font-bold mb-4">Real Estate Listings</h1>
                 <ul className="list-disc pl-5">
