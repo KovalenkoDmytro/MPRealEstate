@@ -24,7 +24,7 @@ export default function Index({ listings }: { listings: Listing[] }) {
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-2xl font-bold">🏡 My Real Estate Listings</h1>
                     <Link
-                        href="/listings/create"
+                        href={"/listing/create"}
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
                     >
                         ➕ Add New Listing

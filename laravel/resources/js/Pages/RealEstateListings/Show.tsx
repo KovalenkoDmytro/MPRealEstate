@@ -13,6 +13,8 @@ type ListingProps = {
         square_feet: number;
         status: string;
         seller: { name: string };
+        main_image?: { image_path: string };
+        images?: { id: number; image_path: string }[];
     };
 };
 
@@ -40,22 +42,55 @@ export default function Show({ listing, auth }: ShowProps) {
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold">{listing.title}</h1>
-            <p className="text-lg">Price: <strong>${listing.price}</strong></p>
-            <p className="text-lg">Location: {listing.location}</p>
-            <p className="text-lg">Bedrooms: {listing.bedrooms}</p>
-            <p className="text-lg">Bathrooms: {listing.bathrooms}</p>
-            <p className="text-lg">Listed by: {listing.seller.name}</p>
-
-            <div className="mt-4">
-                <Link href="/listings" className="text-blue-500">Back to Listings</Link>
+        <div className="container mx-auto p-6">
+            {/* ✅ Image Gallery */}
+            <div className="w-full max-w-3xl mx-auto">
+                {listing.main_image ? (
+                    <img
+                        src={listing.main_image.image_path}
+                        alt="Main Image"
+                        className="w-full h-72 object-cover rounded-lg shadow-md"
+                    />
+                ) : (
+                    <div className="w-full h-72 bg-gray-200 flex items-center justify-center text-gray-500">
+                        ❌ No Image Available
+                    </div>
+                )}
             </div>
 
-            {/* Offer Form (Only for Buyers) */}
+            {/* ✅ Additional Images */}
+            {listing.images && listing.images.length > 0 && (
+                <div className="grid grid-cols-3 gap-2 mt-4">
+                    {listing.images.map((img) => (
+                        <img
+                            key={img.id}
+                            src={img.image_path}
+                            alt="Gallery"
+                            className="h-24 w-full object-cover rounded-md"
+                        />
+                    ))}
+                </div>
+            )}
+
+            {/* ✅ Listing Details */}
+            <div className="mt-6">
+                <h1 className="text-2xl font-bold">{listing.title}</h1>
+                <p className="text-lg">💰 Price: <strong>${listing.price.toLocaleString()}</strong></p>
+                <p className="text-lg">📍 Location: {listing.location}</p>
+                <p className="text-lg">🛏 Bedrooms: {listing.bedrooms}</p>
+                <p className="text-lg">🛁 Bathrooms: {listing.bathrooms}</p>
+                <p className="text-lg">📏 Size: {listing.square_feet} sqft</p>
+                <p className="text-lg">👤 Seller: {listing.seller.name}</p>
+
+                <div className="mt-4">
+                    <Link href="/listings" className="text-blue-500">🔙 Back to Listings</Link>
+                </div>
+            </div>
+
+            {/* ✅ Offer Form (Only for Buyers) */}
             {auth.user.role === "buyer" && (
                 <div className="mt-6 p-4 border border-gray-300 rounded-md">
-                    <h2 className="text-xl font-bold">Make an Offer</h2>
+                    <h2 className="text-xl font-bold">💰 Make an Offer</h2>
                     <form onSubmit={handleSubmit} className="mt-4">
                         <label className="block mb-2">
                             Offer Price ($)
@@ -91,9 +126,6 @@ export default function Show({ listing, auth }: ShowProps) {
                     </form>
                 </div>
             )}
-
-
-
         </div>
     );
 }
