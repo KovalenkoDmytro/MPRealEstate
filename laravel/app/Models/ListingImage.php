@@ -13,6 +13,6 @@ class ListingImage extends Model
 
     public function listing()
     {
-        return $this->belongsTo(RealEstateListing::class, 'listing_id');
+        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
     }
 }

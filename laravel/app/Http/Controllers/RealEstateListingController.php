@@ -101,30 +101,31 @@ class RealEstateListingController extends Controller
             'bedrooms' => 'required|integer|min:1',
             'bathrooms' => 'required|integer|min:1',
             'square_feet' => 'required|integer|min:500',
-            'main_image' => 'nullable|url',
-            'gallery_images' => 'nullable|array',
-            'gallery_images.*' => 'url',
+            'main_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'gallery_images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         // ✅ Create new listing & attach to seller
         $listing = new RealEstateListing($validated);
-        $listing->seller_id = $user->id; // Attach to the seller
+        $listing->seller_id = $user->id;
         $listing->status = 'available';
         $listing->save();
 
-        // ✅ Attach main image if provided
-        if ($request->has('main_image')) {
+        // ✅ Handle Main Image Upload
+        if ($request->hasFile('main_image')) {
+            $path = $request->file('main_image')->store('listings', 'public'); // ✅ Store in `storage/app/public/listings`
             $listing->images()->create([
-                'image_path' => $request->main_image,
+                'image_path' => "/storage/{$path}",
                 'is_main' => true,
             ]);
         }
 
-        // ✅ Attach gallery images if provided
-        if ($request->has('gallery_images')) {
-            foreach ($request->gallery_images as $imageUrl) {
+        // ✅ Handle Gallery Images Upload
+        if ($request->hasFile('gallery_images')) {
+            foreach ($request->file('gallery_images') as $file) {
+                $path = $file->store('listings', 'public');
                 $listing->images()->create([
-                    'image_path' => $imageUrl,
+                    'image_path' => "/storage/{$path}",
                     'is_main' => false,
                 ]);
             }

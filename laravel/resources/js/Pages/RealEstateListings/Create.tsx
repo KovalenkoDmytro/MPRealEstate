@@ -10,24 +10,42 @@ export default function CreateListing() {
         bedrooms: 1,
         bathrooms: 1,
         square_feet: 500,
-        main_image: '', // ✅ New field for main image
-        gallery_images: [] as string[], // ✅ New field for multiple gallery images
+        main_image: null as File | null,
+        gallery_images: [] as File[],
     });
 
-    // ✅ Track dynamic image inputs
-    const [imageInputs, setImageInputs] = useState<string[]>([]);
+    const [previewMainImage, setPreviewMainImage] = useState<string | null>(null);
+    const [previewGalleryImages, setPreviewGalleryImages] = useState<string[]>([]);
+
+    // ✅ Handle Main Image Selection
+    const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0];
+            setData('main_image', file);
+            setPreviewMainImage(URL.createObjectURL(file)); // ✅ Preview Image
+        }
+    };
+
+    // ✅ Handle Multiple Gallery Image Selection
+    const handleGalleryImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const filesArray = Array.from(e.target.files);
+            setData('gallery_images', filesArray);
+            setPreviewGalleryImages(filesArray.map(file => URL.createObjectURL(file))); // ✅ Preview Gallery
+        }
+    };
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/listings');
+        post('/listings', { forceFormData: true }); // ✅ Ensures FormData is used
     };
 
     return (
         <div className="max-w-lg mx-auto bg-white shadow-md p-6 rounded-lg">
             <h2 className="text-2xl font-bold mb-4">Create a New Listing</h2>
 
-            <form onSubmit={submit}>
-                {/* Text Inputs */}
+            <form onSubmit={submit} encType="multipart/form-data">
+                {/* Standard Fields */}
                 <input type="text" placeholder="Title" value={data.title} onChange={e => setData('title', e.target.value)} className="w-full p-2 border rounded mb-2" />
                 {errors.title && <p className="text-red-500">{errors.title}</p>}
 
@@ -40,49 +58,37 @@ export default function CreateListing() {
                 <input type="text" placeholder="Location" value={data.location} onChange={e => setData('location', e.target.value)} className="w-full p-2 border rounded mb-2" />
                 {errors.location && <p className="text-red-500">{errors.location}</p>}
 
-                <input type="number" placeholder="Bedrooms" value={data.bedrooms} onChange={e => setData('bedrooms', parseInt(e.target.value))} className="w-full p-2 border rounded mb-2" />
+                {/* Bedrooms Field */}
+                <input type="number" placeholder="Bedrooms" value={data.bedrooms} onChange={e => setData('bedrooms', parseInt(e.target.value) || 1)} className="w-full p-2 border rounded mb-2" />
                 {errors.bedrooms && <p className="text-red-500">{errors.bedrooms}</p>}
 
-                <input type="number" placeholder="Bathrooms" value={data.bathrooms} onChange={e => setData('bathrooms', parseInt(e.target.value))} className="w-full p-2 border rounded mb-2" />
+                {/* Bathrooms Field */}
+                <input type="number" placeholder="Bathrooms" value={data.bathrooms} onChange={e => setData('bathrooms', parseInt(e.target.value) || 1)} className="w-full p-2 border rounded mb-2" />
                 {errors.bathrooms && <p className="text-red-500">{errors.bathrooms}</p>}
 
-                <input type="number" placeholder="Square Feet" value={data.square_feet} onChange={e => setData('square_feet', parseInt(e.target.value))} className="w-full p-2 border rounded mb-2" />
+                {/* Square Feet Field */}
+                <input type="number" placeholder="Square Feet" value={data.square_feet} onChange={e => setData('square_feet', parseInt(e.target.value) || 500)} className="w-full p-2 border rounded mb-2" />
                 {errors.square_feet && <p className="text-red-500">{errors.square_feet}</p>}
 
-                {/* ✅ Main Image Input */}
-                <input type="text" placeholder="Main Image URL" value={data.main_image} onChange={e => setData('main_image', e.target.value)} className="w-full p-2 border rounded mb-2" />
-                {errors.main_image && <p className="text-red-500">{errors.main_image}</p>}
-
-                {/* ✅ Gallery Images (Multiple) */}
-                <div className="mb-2">
-                    <label className="block font-medium">Gallery Images (URLs)</label>
-                    {imageInputs.map((_, index) => (
-                        <div key={index} className="flex space-x-2 mt-2">
-                            <input
-                                type="text"
-                                placeholder={`Image URL #${index + 1}`}
-                                value={data.gallery_images[index] || ''}
-                                onChange={e => {
-                                    const updatedImages = [...data.gallery_images];
-                                    updatedImages[index] = e.target.value;
-                                    setData('gallery_images', updatedImages);
-                                }}
-                                className="w-full p-2 border rounded"
-                            />
-                            <button type="button" onClick={() => {
-                                setData('gallery_images', data.gallery_images.filter((_, i) => i !== index));
-                                setImageInputs(imageInputs.filter((_, i) => i !== index));
-                            }} className="text-red-500">
-                                ❌
-                            </button>
-                        </div>
-                    ))}
-                    <button type="button" onClick={() => setImageInputs([...imageInputs, ''])} className="w-full bg-gray-200 text-gray-700 p-2 rounded mt-2">
-                        ➕ Add Another Image
-                    </button>
+                {/* Image Upload Fields */}
+                <div>
+                    <label className="block font-semibold mt-4">Main Image:</label>
+                    <input type="file" accept="image/*" onChange={handleMainImageChange} className="w-full p-2 border rounded mb-2" />
+                    {previewMainImage && <img src={previewMainImage} alt="Preview" className="w-full h-32 object-cover mt-2 rounded-lg" />}
+                    {errors.main_image && <p className="text-red-500">{errors.main_image}</p>}
                 </div>
 
-                {/* Submit Button */}
+                <div>
+                    <label className="block font-semibold mt-4">Gallery Images:</label>
+                    <input type="file" accept="image/*" multiple onChange={handleGalleryImagesChange} className="w-full p-2 border rounded mb-2" />
+                    <div className="flex gap-2 mt-2">
+                        {previewGalleryImages.map((src, index) => (
+                            <img key={index} src={src} alt="Preview" className="w-16 h-16 object-cover rounded-lg" />
+                        ))}
+                    </div>
+                    {errors.gallery_images && <p className="text-red-500">{errors.gallery_images}</p>}
+                </div>
+
                 <button type="submit" disabled={processing} className="w-full bg-blue-600 text-white p-2 rounded mt-2">
                     {processing ? 'Creating...' : 'Create Listing'}
                 </button>
