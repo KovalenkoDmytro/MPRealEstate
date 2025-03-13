@@ -43,7 +43,7 @@ class RealEstateListingController extends Controller
     /**
      * Show details of a single listing.
      */
-    public function show(RealEstateListing $listing): Response
+    public function show(RealEstateListing $listing)
     {
         $user = auth()->user();
 
@@ -101,6 +101,9 @@ class RealEstateListingController extends Controller
             'bedrooms' => 'required|integer|min:1',
             'bathrooms' => 'required|integer|min:1',
             'square_feet' => 'required|integer|min:500',
+            'main_image' => 'nullable|url',
+            'gallery_images' => 'nullable|array',
+            'gallery_images.*' => 'url',
         ]);
 
         // ✅ Create new listing & attach to seller
@@ -108,6 +111,24 @@ class RealEstateListingController extends Controller
         $listing->seller_id = $user->id; // Attach to the seller
         $listing->status = 'available';
         $listing->save();
+
+        // ✅ Attach main image if provided
+        if ($request->has('main_image')) {
+            $listing->images()->create([
+                'image_path' => $request->main_image,
+                'is_main' => true,
+            ]);
+        }
+
+        // ✅ Attach gallery images if provided
+        if ($request->has('gallery_images')) {
+            foreach ($request->gallery_images as $imageUrl) {
+                $listing->images()->create([
+                    'image_path' => $imageUrl,
+                    'is_main' => false,
+                ]);
+            }
+        }
 
         return redirect()->route('listings.index')->with('success', 'Listing created successfully!');
     }
