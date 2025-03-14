@@ -11,10 +11,10 @@ type Offer = {
 };
 
 interface DashboardProps {
-    pendingOffers: Offer[];
+    offers: Offer[];
 }
 
-export default function Dashboard({ pendingOffers }: DashboardProps) {
+export default function Dashboard({ offers }: DashboardProps) {
     return (
         <AuthenticatedLayout
             header={
@@ -28,8 +28,8 @@ export default function Dashboard({ pendingOffers }: DashboardProps) {
             <h1 className="text-2xl font-bold">Seller Dashboard</h1>
             <h2 className="text-xl mt-4 font-semibold">Pending Offers</h2>
 
-            {pendingOffers.length > 0 ? (
-                pendingOffers.map((offer) => (
+            {offers.length > 0 ? (
+                offers.map((offer) => (
                     <div key={offer.id} className="border p-4 mt-2 rounded-md shadow-sm">
                         <p><strong>Listing:</strong> <Link href={`/listings/${offer.listing.id}`} className="text-blue-500">{offer.listing.title}</Link> </p>
                         <p><strong>Buyer:</strong> {offer.buyer.name} ({offer.buyer.email})</p>

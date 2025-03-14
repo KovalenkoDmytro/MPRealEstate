@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OfferController;
+use App\Http\Controllers\SellerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,9 +22,9 @@ Route::get('/', function () {
 
 // Authenticated Dashboard
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+//    Route::get('/dashboard', function () {
+//        return Inertia::render('Dashboard');
+//    })->name('dashboard');
 
     // RealEstateListing pages
     Route::get('/listings', [RealEstateListingController::class, 'index'])->name('listings.index');
@@ -49,11 +51,30 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+
+        // ✅ Redirect users based on role
+        if ($user->hasRole('admin')) {
+//            return app(AdminController::class)->index();
+        } elseif ($user->hasRole('buyer')) {
+            return app(BuyerController::class)->index();
+        } elseif ($user->hasRole('seller')) {
+            return app(SellerController::class)->index();
+        } elseif ($user->hasRole('lawyer')) {
+//            return app(LawyerController::class)->index();
+        }
+
+        abort(403, 'Unauthorized');
+    })->name('dashboard');
+});
+
+
+
 // Buyer Dashboard (Only for Buyers)
 Route::middleware(['auth', 'role:buyer'])->group(function () {
-    Route::get('/buyer', function () {
-        return Inertia::render('Users/Buyer/Dashboard');
-    })->name('buyer.dashboard');
+//    Route::get('/dashboard', [BuyerController::class, 'index'])->name('buyer.dashboard');
 
     //Routing to make offer about RElisting
     Route::post('/listings/{listing}/make-offer', [OfferController::class, 'store']);
@@ -65,7 +86,7 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
 // Seller Dashboard (Only for Sellers)
 Route::middleware(['auth', 'role:seller'])->group(function () {
-    Route::get('/seller-dashboard', [OfferController::class, 'index'])->name('seller.dashboard');
+//    Route::get('/dashboard', [SellerController::class, 'index'])->name('seller.dashboard');
 
     //Make change status of offer (update oppfer)
     Route::patch('/offers/{offer}/update-status', [OfferController::class, 'updateStatus']);

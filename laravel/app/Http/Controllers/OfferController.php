@@ -45,28 +45,39 @@ class OfferController extends Controller
         return back()->with('success', 'Offer status updated.');
     }
 
-    private function showPendingOffers (): \Illuminate\Database\Eloquent\Collection {
-        $user = auth()->user();
+    /**
+     * ✅ Fetch all offers for listings owned by the seller
+     */
+    public function showAllOffers(int $sellerId): \Illuminate\Database\Eloquent\Collection
+    {
 
-        // ✅ Fetch all pending offers for listings owned by the seller
         return Offer::with([
             'buyer:id,name,email',
             'listing:id,title'
         ])
-            ->whereHas('listing', function ($query) use ($user) {
-                $query->where('seller_id', $user->id);
+            ->whereHas('listing', function ($query) use ($sellerId) {
+                $query->where('seller_id', $sellerId);
             })
-            ->where('status', 'pending')
             ->latest()
             ->get();
     }
 
-    public function index(): \Inertia\Response {
-        return Inertia::render('Users/Seller/Dashboard', [
-            'pendingOffers' => $this->showPendingOffers()
-        ]);
+    /**
+     * ✅ Fetch all offers that the buyer has submitted
+     */
+    public function showBuyerOffers(int $buyerId): \Illuminate\Database\Eloquent\Collection
+    {
 
+        return Offer::with([
+            'listing:id,title,price,seller_id',
+            'listing.seller:id,name'
+        ])
+            ->where('buyer_id', $buyerId)
+            ->latest()
+            ->get();
     }
+
+
 
 
 }
