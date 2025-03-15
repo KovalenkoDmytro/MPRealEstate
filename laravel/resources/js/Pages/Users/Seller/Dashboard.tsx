@@ -29,13 +29,15 @@ export default function Dashboard({ offers }: DashboardProps) {
             <h2 className="text-xl mt-4 font-semibold">Pending Offers</h2>
 
             {offers.length > 0 ? (
-                offers.map((offer) => (
+                offers
+                    .filter((offer) => offer.status === 'pending')
+                    .map((offer) => (
                     <div key={offer.id} className="border p-4 mt-2 rounded-md shadow-sm">
                         <p><strong>Listing:</strong> <Link href={`/listings/${offer.listing.id}`} className="text-blue-500">{offer.listing.title}</Link> </p>
                         <p><strong>Buyer:</strong> {offer.buyer.name} ({offer.buyer.email})</p>
                         <p><strong>Offer Price:</strong> ${offer.offer_price}</p>
                         <p><strong>Message:</strong> {offer.message}</p>
-                        <p><strong>Status:</strong> <span className="text-yellow-600">Pending</span></p>
+                        <p><strong>Status:</strong> <span className="text-yellow-600">{offer.status}</span></p>
                     </div>
                 ))
             ) : (

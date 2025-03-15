@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Offer;
 use App\Models\Listing;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class OfferController extends Controller
@@ -41,6 +42,13 @@ class OfferController extends Controller
         }
 
         $offer->update(['status' => $request->status]);
+
+
+        //if accepted set status pending for listing
+        if($request['status'] == 'accepted'){
+            DB::table('real_estate_listings')->where('id',$offer->listing->id)->update(['status' => 'pending']);
+        }
+
 
         return back()->with('success', 'Offer status updated.');
     }

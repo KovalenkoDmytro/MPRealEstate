@@ -88,7 +88,9 @@ export default function Show({ listing, auth }: ShowProps) {
             </div>
 
             {/* ✅ Offer Form (Only for Buyers) */}
-            {auth.user.role === "buyer" && (
+
+
+            {listing.status !== 'pending' && auth.user.role === "buyer" && (
                 <div className="mt-6 p-4 border border-gray-300 rounded-md">
                     <h2 className="text-xl font-bold">💰 Make an Offer</h2>
                     <form onSubmit={handleSubmit} className="mt-4">

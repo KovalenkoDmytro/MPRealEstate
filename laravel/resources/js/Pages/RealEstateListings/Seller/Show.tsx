@@ -42,7 +42,10 @@ export default function Show({ listing, auth }: ShowProps) {
         try {
             const response = await fetch(`/offers/${offerId}/update-status`, {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || "",
+                },
                 body: JSON.stringify({ status }),
             });
 
