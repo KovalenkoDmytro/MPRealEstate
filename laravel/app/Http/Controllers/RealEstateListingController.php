@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ListingImage;
 use App\Models\Seller;
 use Illuminate\Http\Request;
 use App\Models;
@@ -134,4 +135,88 @@ class RealEstateListingController extends Controller
         return redirect()->route('listings.index')->with('success', 'Listing created successfully!');
     }
 
+
+    /**
+     * ✅ Show the edit form for a listing
+     */
+    public function edit(RealEstateListing $listing)
+    {
+        $user = auth()->user();
+
+        // ✅ Ensure only the owner can edit the listing
+        if ($listing->seller_id !== $user->id) {
+            abort(403, 'Unauthorized: You do not own this listing.');
+        }
+
+        return Inertia::render('RealEstateListings/Edit', [
+            'listing' => $listing->load('mainImage', 'images'),
+        ]);
+    }
+
+    /**
+     * ✅ Handle the update request
+     */
+    public function update(Request $request, RealEstateListing $listing)
+    {
+        $user = auth()->user();
+
+        // ✅ Ensure only the seller who owns the listing can update it
+        if ($listing->seller_id !== $user->id) {
+            abort(403, 'Unauthorized: You do not own this listing.');
+        }
+
+        // ✅ Validate input
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:10000',
+            'location' => 'required|string|max:255',
+            'bedrooms' => 'required|integer|min:1',
+            'bathrooms' => 'required|integer|min:1',
+            'square_feet' => 'required|integer|min:500',
+            'main_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // ✅ Validate main image
+            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // ✅ Validate gallery images
+            'remove_images' => 'array',
+            'remove_images.*' => 'integer|exists:listing_images,id',
+        ]);
+
+        // ✅ Update listing details
+        $listing->update($validated);
+
+        // ✅ Handle main image upload (if changed)
+        if ($request->hasFile('main_image')) {
+            // ✅ Delete old main image if it exists
+            if ($listing->mainImage) {
+                Storage::delete($listing->mainImage->image_path);
+                $listing->mainImage->delete();
+            }
+
+            // ✅ Save new main image
+            $path = $request->file('main_image')->store('listings');
+            ListingImage::create([
+                'real_estate_listing_id' => $listing->id,
+                'image_path' => $path,
+                'is_main' => true,
+            ]);
+        }
+
+        // ✅ Handle gallery images upload
+        if ($request->hasFile('gallery_images')) {
+            foreach ($request->file('gallery_images') as $image) {
+                $path = $image->store('listings');
+                ListingImage::create([
+                    'real_estate_listing_id' => $listing->id,
+                    'image_path' => $path,
+                    'is_main' => false,
+                ]);
+            }
+        }
+
+        // ✅ Handle image deletions
+        if ($request->has('remove_images')) {
+            ListingImage::whereIn('id', $request->remove_images)->delete();
+        }
+
+        return redirect()->route('listings.index')->with('success', 'Listing updated successfully!');
+    }
 }

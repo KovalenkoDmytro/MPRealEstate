@@ -98,6 +98,7 @@ export default function Show({ listing, auth }: ShowProps) {
 
             <div className="mt-4">
                 <Link href="/listings" className="text-blue-500">🔙 Back to Listings</Link>
+                <Link href={`/listings/${listing.id}/edit`} className="text-blue-500">Edit Listing</Link>
             </div>
 
             {/* ✅ Offers Section - Only for Sellers */}
