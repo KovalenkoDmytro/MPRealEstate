@@ -48,6 +48,20 @@ class OfferController extends Controller
         if($request['status'] == 'accepted'){
             DB::table('real_estate_listings')->where('id',$offer->listing->id)->update(['status' => 'pending']);
         }
+        //if accepted create new Deal
+        //todo add it and add opportunity to set up condition day
+        // create offer document / upload it first
+        // download document
+        // documents table relation to deal
+        // add option deposit required and set amount
+        // add option deposit made
+        // add option confirm received deposit
+        // upload new document
+        // add lawyer with specific code / lawyer get the code after registration and can see it in profile
+        // lawyer can change status
+
+
+
 
 
         return back()->with('success', 'Offer status updated.');

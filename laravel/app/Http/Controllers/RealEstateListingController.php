@@ -9,6 +9,7 @@ use App\Models;
 use App\Models\RealEstateListing;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Http\Requests\StoreRealEstateListingRequest;
 
 class RealEstateListingController extends Controller
 {
@@ -85,7 +86,7 @@ class RealEstateListingController extends Controller
         return Inertia::render('RealEstateListings/Create');
     }
 
-    public function store(Request $request): \Illuminate\Http\RedirectResponse {
+    public function store(StoreRealEstateListingRequest $request): \Illuminate\Http\RedirectResponse {
         $user = auth()->user();
 
         // ✅ Only sellers can create listings
@@ -93,21 +94,8 @@ class RealEstateListingController extends Controller
             abort(403, 'Unauthorized: Only sellers can create listings.');
         }
 
-        // ✅ Validate input
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:10000',
-            'location' => 'required|string|max:255',
-            'bedrooms' => 'required|integer|min:1',
-            'bathrooms' => 'required|integer|min:1',
-            'square_feet' => 'required|integer|min:500',
-            'main_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'gallery_images.*' => 'image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-
         // ✅ Create new listing & attach to seller
-        $listing = new RealEstateListing($validated);
+        $listing = new RealEstateListing($request->validated());
         $listing->seller_id = $user->id;
         $listing->status = 'available';
         $listing->save();
@@ -178,7 +166,24 @@ class RealEstateListingController extends Controller
             'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // ✅ Validate gallery images
             'remove_images' => 'array',
             'remove_images.*' => 'integer|exists:listing_images,id',
+
         ]);
+
+
+        //todo add this parameters
+        $property_parameters = [
+            'home_type'=>'required|array["condo", "house"]',
+            'year_build'=>'required|integer|min:1950|max:today',
+            'amenities'=>'nullable|array["pool", "gym", "furnished"]',
+            'storeys' =>'required|numeric|min:1|max:50',
+            'community_name' => 'nullable|string|max:255',
+            'annual_property_taxes' => 'required|numeric|min:1|max:5000',
+            'parking_space' => 'required|boolean',
+            'storage_space' => 'required|boolean',
+            'basement_space' => 'required|boolean',
+            'construction_material' => 'nullable|string|max:255',
+        ];
+
 
         // ✅ Update listing details
         $listing->update($validated);
