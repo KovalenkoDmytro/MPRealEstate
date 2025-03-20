@@ -38,13 +38,13 @@ class OfferController extends Controller
 
     private function acceptOffer($offer): void {
 
-//        DB::table('real_estate_listings')->where('id',$offer->listing->id)->update(['status' => 'pending']);
 
         // ✅ Create a deal using DealController function
         $this->dealController->createDeal($offer);
 
-//        // ✅ Update offer status
-//        $offer->update(['status' => 'accepted']);
+        // Change listing status to
+        DB::table('real_estate_listings')->where('id',$offer->listing->id)->update(['status' => 'pending']);
+
     }
 
     public function updateStatus(Request $request, Offer $offer)
