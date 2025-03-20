@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RealEstateListing;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use App\Models\Deal;
@@ -20,6 +21,32 @@ class DealController extends Controller
         return Inertia::render('Deals/Index', [
             'deals' => $deals,
         ]);
+    }
+
+    /**
+     * ✅ Store a new Deal
+     */
+    public function createDeal($offer) {
+
+        $listing = RealEstateListing::findOrFail($offer->real_estate_listing_id);
+
+        // ✅ Ensure buyer cannot create a deal on their own listing
+        if ($listing->seller_id === $offer->buyer_id) {
+            abort(403, 'You cannot create a deal on your own listing.');
+        }
+
+        // ✅ Create a new deal
+        $deal = Deal::create([
+            'name' => "Deal for " . $listing->title,
+            'amount' => $offer->offer_price,
+            'data' => json_encode(['description' => $offer->message]),
+            'real_estate_listing_id' => $listing->id,
+            'current_step' => 'Step1', // Set initial step
+        ]);
+
+        // ✅ Attach buyer and seller to the deal
+        $deal->users()->attach([$offer->buyer_id, $listing->seller_id]);
+
     }
 
     /**

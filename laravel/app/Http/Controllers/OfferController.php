@@ -10,6 +10,12 @@ use Inertia\Inertia;
 
 class OfferController extends Controller
 {
+    protected $dealController;
+
+    public function __construct(DealController $dealController)
+    {
+        $this->dealController = $dealController;
+    }
     public function store(Request $request, $listing_id)
     {
         $request->validate([
@@ -30,6 +36,17 @@ class OfferController extends Controller
         return back()->with('success', 'Offer submitted successfully.');
     }
 
+    private function acceptOffer($offer): void {
+
+//        DB::table('real_estate_listings')->where('id',$offer->listing->id)->update(['status' => 'pending']);
+
+        // ✅ Create a deal using DealController function
+        $this->dealController->createDeal($offer);
+
+//        // ✅ Update offer status
+//        $offer->update(['status' => 'accepted']);
+    }
+
     public function updateStatus(Request $request, Offer $offer)
     {
         $request->validate([
@@ -45,8 +62,8 @@ class OfferController extends Controller
 
 
         //if accepted set status pending for listing
-        if($request['status'] == 'accepted'){
-            DB::table('real_estate_listings')->where('id',$offer->listing->id)->update(['status' => 'pending']);
+        if($request['status'] === 'accepted'){
+            $this->acceptOffer($offer);
         }
         //if accepted create new Deal
         //todo add it and add opportunity to set up condition day

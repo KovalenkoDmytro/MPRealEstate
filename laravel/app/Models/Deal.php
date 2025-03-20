@@ -9,7 +9,13 @@ class Deal extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'amount', 'data'];
+    protected $fillable = [
+        'name',
+        'amount',
+        'data',
+        'current_step',
+        'real_estate_listing_id'
+    ];
 
     protected $casts = [
         'data' => 'array', // Cast JSON data
@@ -17,7 +23,7 @@ class Deal extends Model
 
     // Define the fixed steps
     public static $steps = [
-        'Making or Considering an Offer',
+        'Step1',
         'Financing Formalities',
         'Inspections',
         'Removing Conditions',

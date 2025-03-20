@@ -11,7 +11,7 @@ class DealSeeder extends Seeder
     public function run(): void
     {
         $steps = [
-            'Making or Considering an Offer',
+            'Step1',
             'Financing Formalities',
             'Inspections',
             'Removing Conditions',
