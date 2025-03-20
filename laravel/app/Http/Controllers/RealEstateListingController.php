@@ -70,7 +70,7 @@ class RealEstateListingController extends Controller
         }
 
         if (!$user->hasRole('seller')){
-            $listing = RealEstateListing::with('seller', 'images', 'mainImage')->findOrFail($listing['id']);
+            $listing = RealEstateListing::with('seller', 'images', 'mainImage', 'deal:id,real_estate_listing_id')->findOrFail($listing['id']);
 
             return Inertia::render('RealEstateListings/Show', [
                 'listing' => $listing,

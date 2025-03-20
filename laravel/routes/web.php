@@ -4,6 +4,7 @@ use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\SellerController;
+use App\Models\Deal;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -52,7 +53,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
+
+
+    Route::get('/dashboard', function ()  {
         $user = auth()->user();
 
         // ✅ Redirect users based on role
@@ -68,6 +71,24 @@ Route::middleware(['auth'])->group(function () {
 
         abort(403, 'Unauthorized');
     })->name('dashboard');
+//    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+
+    Route::get('/deals/{deal}', function (Deal $deal) {
+        $user = auth()->user();
+
+        // ✅ Redirect users based on role
+        if ($user->hasRole('admin')) {
+
+        } elseif ($user->hasRole('buyer')) {
+            return app(BuyerController::class)->showDealView($deal);
+        } elseif ($user->hasRole('seller')) {
+
+        } elseif ($user->hasRole('lawyer')) {
+
+        }
+
+        abort(403, 'Unauthorized');
+    })->name('deals.show');
 });
 
 
@@ -115,7 +136,7 @@ require __DIR__.'/auth.php';
 
 Route::middleware(['auth', 'role:admin|buyer|seller|lawyer'])->group(function () {
     Route::get('/listings', [RealEstateListingController::class, 'index'])->name('listings.index');
-    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+
 });
 
 

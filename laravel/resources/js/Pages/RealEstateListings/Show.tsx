@@ -11,6 +11,9 @@ type ListingProps = {
         bedrooms: number;
         bathrooms: number;
         square_feet: number;
+        deal:{
+            id: number;
+        },
         status: string;
         seller: { name: string };
         main_image?: { image_path: string };
@@ -87,9 +90,11 @@ export default function Show({ listing, auth }: ShowProps) {
                 </div>
             </div>
 
+            {listing.status === 'pending' && auth.user.role === "buyer" && (
+                <Link href={`/deals/${listing.deal.id}`} className="text-blue-500">Show a deal details</Link>
+            )}
+
             {/* ✅ Offer Form (Only for Buyers) */}
-
-
             {listing.status !== 'pending' && auth.user.role === "buyer" && (
                 <div className="mt-6 p-4 border border-gray-300 rounded-md">
                     <h2 className="text-xl font-bold">💰 Make an Offer</h2>
