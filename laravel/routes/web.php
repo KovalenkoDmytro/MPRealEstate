@@ -111,6 +111,10 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
     // Show a single deal
 //    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
+
+    Route::patch('/deals/{deal}/make-deposit', [DealController::class, 'markDepositMade'])->name('deals.markDepositMade');
+
+
 });
 
 

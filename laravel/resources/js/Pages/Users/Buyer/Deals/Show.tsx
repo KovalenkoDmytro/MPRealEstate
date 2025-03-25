@@ -9,6 +9,8 @@ type DealProps = {
         amount: number;
         current_step: string;
         data: string;
+        is_confirmed: boolean;
+        is_made: boolean;
         real_estate_listing: {
             id: number;
             title: string;
@@ -97,6 +99,23 @@ export default function DealShowPage({ deal }: DealProps) {
         setUploadedFiles(uploadedFiles.filter(file => file.id !== fileId));
     };
 
+
+
+
+    const depositForm = useForm({ confirmed: false });
+
+    const handleDepositSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!depositForm.data.confirmed) return;
+
+        depositForm.patch(route('deals.markDepositMade', deal.id), {
+            preserveScroll: true,
+            onSuccess: () => console.log("Deposit confirmed!"),
+        });
+    };
+
+
     return (
         <AuthenticatedLayout
             header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Deal Details</h2>}
@@ -166,6 +185,46 @@ export default function DealShowPage({ deal }: DealProps) {
                                 <h3 className="text-xl font-semibold">👤 Seller Information</h3>
                                 <p><strong>Name:</strong> {seller.name}</p>
                                 <p><strong>Email:</strong> {seller.email}</p>
+                            </div>
+                        )}
+
+                        {/* ✅ Deposit Confirmation */}
+                        {!deal.is_made && (
+                            <div className="mt-6 p-4 border rounded-md">
+                                <h3 className="text-xl font-semibold">💸 Security Deposit</h3>
+                                <form onSubmit={handleDepositSubmit} className="space-y-3">
+                                    <label className="inline-flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={depositForm.data.confirmed}
+                                            onChange={e => depositForm.setData('confirmed', e.target.checked)}
+                                            className="mr-2"
+                                        />
+                                        I confirm I have made the security deposit.
+                                    </label>
+                                    <button
+                                        type="submit"
+                                        disabled={!depositForm.data.confirmed}
+                                        className={`px-4 py-2 rounded text-white ${
+                                            depositForm.data.confirmed ? 'bg-green-600' : 'bg-gray-400 cursor-not-allowed'
+                                        }`}
+                                    >
+                                        Make Deposit
+                                    </button>
+                                </form>
+                            </div>
+                        )}
+
+                        {deal.is_made && (
+                            <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                                ⏳ Waiting for seller confirmation. Don’t forget to upload the confirmation file.
+                            </div>
+                        )}
+
+
+                        {deal.is_confirmed && (
+                            <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
+                                ✅ You have made the security deposit, seller has confirmed it.
                             </div>
                         )}
 

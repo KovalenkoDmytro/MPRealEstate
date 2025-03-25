@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name'); // Name of the deal
             $table->decimal('amount', 10, 2); // Deal amount
             $table->decimal('security_deposit', 10, 2)->nullable(); // Security Deposit field
+            $table->boolean('is_confirmed')->default(false); // ✅ Confirmation status
+            $table->boolean('is_made')->default(false); // ✅ Completion status
             $table->json('data')->nullable(); // Additional data as JSON
             $table->string('current_step')->nullable();
             $table->foreignId('real_estate_listing_id')->nullable()->constrained('real_estate_listings')->cascadeOnDelete(); //Ensures foreign key integrity

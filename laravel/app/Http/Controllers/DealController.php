@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 use App\Models\RealEstateListing;
 use Illuminate\Support\Facades\Gate;
@@ -11,6 +12,8 @@ use Inertia\Response;
 
 class DealController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Show all deals in Inertia React view.
      */
@@ -126,6 +129,25 @@ class DealController extends Controller
 
         return back()->with('success', 'Security deposit has been set successfully.');
     }
+
+
+    public function markDepositMade(Request $request, Deal $deal)
+    {
+        $user = auth()->user();
+
+        // Optional: prevent others from updating
+        if (!$deal->users->contains($user)) {
+            abort(403, 'Unauthorized');
+        }
+
+        if (!$deal->is_made) {
+            $deal->is_made = true;
+            $deal->save();
+        }
+
+        return back()->with('success', 'Deposit marked as made.');
+    }
+
 
 
 
