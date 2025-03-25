@@ -75,7 +75,7 @@ class DealController extends Controller
                 [
                     'realEstateListing.mainImage', // ✅ Load the main image separately
                     'realEstateListing.images', // ✅ Also load all images
-                    'users'
+                    'users',
                 ]
             ),
         ]);
@@ -89,5 +89,23 @@ class DealController extends Controller
 
         return redirect()->route('deals.show', $deal->id);
     }
+
+    public function getAllDeals()
+    {
+        $user = auth()->user();
+
+        if (!$user->hasRole('seller')) {
+            abort(403, 'Unauthorized');
+        }
+
+        return $user->deals()
+            ->with(['users', 'realEstateListing.mainImage', 'realEstateListing.images']) // eager load related data
+            ->get();
+
+
+
+    }
+
+
 
 }

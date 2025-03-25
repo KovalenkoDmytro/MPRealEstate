@@ -120,6 +120,8 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
 
     //Make change status of offer (update oppfer)
     Route::patch('/offers/{offer}/update-status', [OfferController::class, 'updateStatus']);
+
+    Route::get('/deals',[SellerController::class, 'showAllDeals'])->name('deals.all');
     // Show a single deal
 //    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
 

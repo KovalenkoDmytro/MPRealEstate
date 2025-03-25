@@ -8,9 +8,11 @@ use Inertia\Response;
 class SellerController extends Controller {
 
     protected OfferController $offerController;
+    protected DealController $dealController;
 
-    public function __construct(OfferController $offerController) {
+    public function __construct(OfferController $offerController, DealController $dealController) {
         $this->offerController = $offerController;
+        $this->dealController = $dealController;
     }
 
     /**
@@ -22,6 +24,15 @@ class SellerController extends Controller {
         return Inertia::render('Users/Seller/Dashboard', [
             'offers' => $this->offerController->showAllOffers($user->id),
         ]);
+    }
+
+
+    public function showAllDeals(): Response {
+
+        return Inertia::render('Users/Seller/Deals/Index', [
+            'deals' => $this->dealController->getAllDeals(),
+        ]);
+
     }
 
 }
