@@ -83,7 +83,7 @@ Route::middleware(['auth'])->group(function () {
         } elseif ($user->hasRole('buyer')) {
             return app(BuyerController::class)->showDealView($deal);
         } elseif ($user->hasRole('seller')) {
-
+            return app(SellerController::class)->showDealView($deal);
         } elseif ($user->hasRole('lawyer')) {
 
         }
@@ -120,6 +120,7 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
 
     //Make change status of offer (update oppfer)
     Route::patch('/offers/{offer}/update-status', [OfferController::class, 'updateStatus']);
+
 
     Route::get('/deals',[SellerController::class, 'showAllDeals'])->name('deals.all');
     // Show a single deal
