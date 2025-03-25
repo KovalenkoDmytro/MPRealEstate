@@ -181,18 +181,25 @@ export default function DealShowPage({ deal }: DealProps) {
                         {uploadedFiles.length > 0 && (
                             <div className="mt-6 p-4 border rounded-md">
                                 <h3 className="text-xl font-semibold">📄 Deal Files</h3>
-                                <ul className="list-disc pl-5">
+                                <ul className="list-disc pl-5 space-y-2">
                                     {uploadedFiles.map((file) => (
-                                        <li key={file.id} className="flex justify-between items-center">
-                                            <button
-                                                onClick={() => downloadFile(file.id)}
-                                                className="text-blue-500 underline"
-                                            >
-                                                {file.file_name} ⬇️
-                                            </button>
+                                        <li key={file.id} className="flex justify-between items-start flex-col sm:flex-row sm:items-center sm:space-x-4">
+                                            <div>
+                                                <button
+                                                    onClick={() => downloadFile(file.id)}
+                                                    className="text-blue-500 underline"
+                                                >
+                                                    {file.file_name} ⬇️
+                                                </button>
+                                                {file.created_at && (
+                                                    <p className="text-sm text-gray-500 mt-1">
+                                                        Uploaded on: {new Date(file.created_at).toLocaleString()}
+                                                    </p>
+                                                )}
+                                            </div>
                                             <button
                                                 onClick={() => handleDelete(file.id)}
-                                                className="text-red-500 ml-4"
+                                                className="text-red-500 mt-2 sm:mt-0"
                                             >
                                                 ❌ Delete
                                             </button>
