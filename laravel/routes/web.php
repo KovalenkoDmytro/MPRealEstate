@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BuyerController;
+use App\Http\Controllers\DealFileController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\SellerController;
@@ -89,8 +90,16 @@ Route::middleware(['auth'])->group(function () {
 
         abort(403, 'Unauthorized');
     })->name('deals.show');
+
+
+
 });
 
+Route::middleware(['auth', 'role:buyer|seller'])->group(function () {
+    Route::post('/deals/{deal}/files', [DealFileController::class, 'store'])->name('deals.files.store');
+    Route::get('/files/{file}/download', [DealFileController::class, 'download'])->name('deals.files.download');
+    Route::delete('/files/{file}', [DealFileController::class, 'destroy'])->name('deals.files.destroy');
+});
 
 
 // Buyer Dashboard (Only for Buyers)

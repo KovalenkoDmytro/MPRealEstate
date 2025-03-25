@@ -53,4 +53,9 @@ class Deal extends Model
         }
     }
 
+    public function files()
+    {
+        return $this->hasMany(DealFile::class);
+    }
+
 }

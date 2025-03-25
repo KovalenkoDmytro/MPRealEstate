@@ -40,7 +40,8 @@ class BuyerController extends Controller
                 [
                     'realEstateListing.mainImage', // ✅ Load the main image separately
                     'realEstateListing.images', // ✅ Also load all images
-                    'users'
+                    'users',
+                    'files', // all uploaded files
                 ]
             ),
         ]);
