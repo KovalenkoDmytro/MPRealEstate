@@ -106,6 +106,17 @@ class DealController extends Controller
 
     }
 
+    public function setDeposit(Request $request, Deal $deal)
+    {
+        $validated = $request->validate([
+            'security_deposit' => 'required|numeric|min:0',
+        ]);
+
+        $deal->security_deposit = $validated['security_deposit'];
+        $deal->save();
+
+        return response()->json(['success' => true, 'security_deposit' => $deal->security_deposit]);
+    }
 
 
 }

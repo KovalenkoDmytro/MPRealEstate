@@ -33,6 +33,7 @@ type DealProps = {
             email: string;
             role: string;
         }>;
+        security_deposit?: number | null;
     };
 };
 
@@ -51,6 +52,10 @@ export default function DealShowPage({ deal }: DealProps) {
     const { data, setData, post, progress } = useForm({ file: null as File | null });
     const [uploadedFiles, setUploadedFiles] = useState(deal.files || []); // ✅ Default to empty array if null
     const [isFileSelected, setIsFileSelected] = useState(false); // ✅ Track if file is chosen
+
+    const [deposit, setDeposit] = useState<number | ''>(deal.security_deposit ?? '');
+    const [savingDeposit, setSavingDeposit] = useState(false);
+
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -102,6 +107,32 @@ export default function DealShowPage({ deal }: DealProps) {
 
         // Remove file from state
         setUploadedFiles(uploadedFiles.filter(file => file.id !== fileId));
+    };
+
+    const handleDepositSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSavingDeposit(true);
+
+        try {
+            const response = await fetch(`/deals/${deal.id}/set-deposit`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+                body: JSON.stringify({ security_deposit: deposit }),
+            });
+
+            if (!response.ok) throw new Error('Failed to set deposit');
+
+            const result = await response.json();
+            alert('Deposit saved successfully!');
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred while saving the deposit.');
+        } finally {
+            setSavingDeposit(false);
+        }
     };
 
     return (
@@ -193,7 +224,37 @@ export default function DealShowPage({ deal }: DealProps) {
                         </div>
 
 
+                        {/* ✅ Security Deposit Section */}
+                        <div className="mt-6 p-4 border rounded-md">
+                            <h3 className="text-xl font-semibold">💼 Security Deposit</h3>
 
+                            <form onSubmit={handleDepositSubmit} className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2">
+                                <input
+                                    type="number"
+                                    className="border p-2 rounded w-full sm:w-auto"
+                                    placeholder="Enter deposit amount"
+                                    value={deposit}
+                                    onChange={(e) => setDeposit(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                                    min={0}
+                                    step={0.01}
+                                />
+                                <button
+                                    type="submit"
+                                    disabled={savingDeposit || deposit === ''}
+                                    className={`px-4 py-2 text-white rounded ${
+                                        deposit !== '' ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'
+                                    }`}
+                                >
+                                    {savingDeposit ? 'Saving...' : 'Set Up'}
+                                </button>
+                            </form>
+
+                            {deal.security_deposit && (
+                                <p className="mt-2 text-sm text-gray-600">
+                                    Current Deposit: <strong>${deal.security_deposit.toLocaleString()}</strong>
+                                </p>
+                            )}
+                        </div>
 
                         {/* ✅ File Upload Section */}
                         <div className="mt-6 p-4 border rounded-md">

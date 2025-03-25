@@ -131,6 +131,11 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
     Route::get('/listings/{listing}/edit', [RealEstateListingController::class, 'edit'])->name('listings.edit');
     Route::post('/listings/{listing}/update', [RealEstateListingController::class, 'update'])->name('listings.update');
 
+
+
+    Route::patch('/deals/{deal}/set-deposit', [DealController::class, 'setDeposit'])->name('deals.setDeposit');
+
+
 });
 
 // Lawyer Dashboard (Only for Lawyers)
