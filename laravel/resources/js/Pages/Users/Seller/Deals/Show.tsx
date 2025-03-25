@@ -158,6 +158,57 @@ export default function DealShowPage({ deal }: DealProps) {
                             </p>
                         </div>
 
+                        {deal.is_made && !deal.is_confirmed && (
+                            <div className="mb-6 p-4 border-l-4 border-yellow-400 bg-yellow-100 text-yellow-800 rounded">
+                                ⚠️ The buyer has made the security deposit. Please review the uploaded confirmation file and confirm receiving it.
+                            </div>
+                        )}
+
+                        {deal.is_made && deal.is_confirmed && (
+                            <div className="mb-6 p-4 border-l-4 border-green-400 bg-green-100 text-green-800 rounded">
+                                ✅ You security deposit has been recived.
+                            </div>
+                        )}
+
+                        {/* ✅ Seller Confirmation Section */}
+                        {!deal.is_confirmed && deal.is_made && (
+                            <div className="mt-6 p-4 border rounded-md bg-yellow-50">
+                                <h3 className="text-xl font-semibold text-yellow-700">🔒 Confirm Security Deposit</h3>
+                                <p className="mt-2 text-sm text-gray-700">
+                                    The buyer has marked the security deposit as made. Please review the uploaded confirmation file and confirm.
+                                </p>
+                                <form
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        fetch(`/deals/${deal.id}/confirm-deposit`, {
+                                            method: 'POST',
+                                            headers: {
+                                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || "",
+                                                "Content-Type": "application/json",
+                                            },
+                                        })
+                                            .then((response) => response.json())
+                                            .then((data) => {alert(response.message)});
+                                    }}
+                                >
+                                    <button
+                                        type="submit"
+                                        className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                                    >
+                                        ✅ Confirm Deposit
+                                    </button>
+                                </form>
+                            </div>
+                        )}
+
+                        {/* ✅ Already Confirmed */}
+                        {deal.is_confirmed && (
+                            <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
+                                ✅ Security deposit has been confirmed.
+                            </div>
+                        )}
+
+
                         {/* ✅ Real Estate Listing Info */}
                         <div className="mt-6 p-4 border rounded-md">
                             <h3 className="text-xl font-semibold">🏡 Property Details</h3>

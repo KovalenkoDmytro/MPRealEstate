@@ -149,6 +149,15 @@ class DealController extends Controller
     }
 
 
+    public function confirmDeposit(Deal $deal)
+    {
 
+        if ($deal->is_made) {
+            $deal->is_confirmed = true;
+            $deal->save();
 
+            return ['status' => 'success', 'message' => 'Security deposit confirmed.'];
+        }
+
+    }
 }

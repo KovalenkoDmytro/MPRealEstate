@@ -215,18 +215,18 @@ export default function DealShowPage({ deal }: DealProps) {
                             </div>
                         )}
 
-                        {deal.is_made && (
+                        {deal.is_made && !deal.is_confirmed && (
                             <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
                                 ⏳ Waiting for seller confirmation. Don’t forget to upload the confirmation file.
                             </div>
                         )}
-
 
                         {deal.is_confirmed && (
                             <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
                                 ✅ You have made the security deposit, seller has confirmed it.
                             </div>
                         )}
+
 
                         {/* ✅ File Upload Section */}
                         <div className="mt-6 p-4 border rounded-md">

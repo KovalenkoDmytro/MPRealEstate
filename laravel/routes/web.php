@@ -139,6 +139,7 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
 
     Route::patch('/deals/{deal}/set-deposit', [DealController::class, 'setDeposit'])->name('deals.setDeposit');
 
+    Route::post('/deals/{deal}/confirm-deposit', [DealController::class, 'confirmDeposit'])->name('deals.confirmDeposit');
 
 });
 
