@@ -108,15 +108,25 @@ class DealController extends Controller
 
     public function setDeposit(Request $request, Deal $deal)
     {
+        $this->authorize('update', $deal); // Optional: Add authorization if needed
+
+        // ✅ Check if already set
+        if (!is_null($deal->security_deposit)) {
+            return back()->with('error', 'Security deposit has already been set and cannot be changed.');
+        }
+
+        // ✅ Validate input
         $validated = $request->validate([
-            'security_deposit' => 'required|numeric|min:0',
+            'security_deposit' => 'required|numeric|min:100', // adjust min as needed
         ]);
 
+        // ✅ Set once
         $deal->security_deposit = $validated['security_deposit'];
         $deal->save();
 
-        return response()->json(['success' => true, 'security_deposit' => $deal->security_deposit]);
+        return back()->with('success', 'Security deposit has been set successfully.');
     }
+
 
 
 }

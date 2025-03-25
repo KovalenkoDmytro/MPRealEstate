@@ -118,6 +118,11 @@ export default function DealShowPage({ deal }: DealProps) {
                             <p className="text-lg">
                                 📝 <strong>Description:</strong> {JSON.parse(deal.data).description}
                             </p>
+                            {deal.security_deposit && (
+                                <p className="text-lg text-blue-700">
+                                    🔐 <strong>Required Security Deposit:</strong> ${Number(deal.security_deposit).toLocaleString()}
+                                </p>
+                            )}
                         </div>
 
                         {/* ✅ Real Estate Listing Info */}
@@ -138,6 +143,7 @@ export default function DealShowPage({ deal }: DealProps) {
                             <p><strong>Bathrooms:</strong> {deal.real_estate_listing.bathrooms}</p>
                             <p><strong>Size:</strong> {deal.real_estate_listing.square_feet} sqft</p>
                             <p><strong>Status:</strong> {deal.real_estate_listing.status}</p>
+
 
                             {/* ✅ Additional Images */}
                             {deal.real_estate_listing.images && deal.real_estate_listing.images.length > 0 && (

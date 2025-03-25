@@ -225,36 +225,22 @@ export default function DealShowPage({ deal }: DealProps) {
 
 
                         {/* ✅ Security Deposit Section */}
-                        <div className="mt-6 p-4 border rounded-md">
-                            <h3 className="text-xl font-semibold">💼 Security Deposit</h3>
-
-                            <form onSubmit={handleDepositSubmit} className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mt-2">
+                        {deal.security_deposit ? (
+                            <p className="text-green-600 font-medium">Security deposit already set: ${deal.security_deposit}</p>
+                        ) : (
+                            <form onSubmit={handleSetDeposit}>
                                 <input
                                     type="number"
-                                    className="border p-2 rounded w-full sm:w-auto"
-                                    placeholder="Enter deposit amount"
-                                    value={deposit}
-                                    onChange={(e) => setDeposit(e.target.value === '' ? '' : parseFloat(e.target.value))}
-                                    min={0}
-                                    step={0.01}
+                                    name="security_deposit"
+                                    onChange={(e) => setDeposit(e.target.value)}
+                                    className="border p-2 rounded w-full"
+                                    required
                                 />
-                                <button
-                                    type="submit"
-                                    disabled={savingDeposit || deposit === ''}
-                                    className={`px-4 py-2 text-white rounded ${
-                                        deposit !== '' ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'
-                                    }`}
-                                >
-                                    {savingDeposit ? 'Saving...' : 'Set Up'}
+                                <button type="submit" className="mt-2 px-4 py-2 bg-blue-600 text-white rounded">
+                                    Set Security Deposit
                                 </button>
                             </form>
-
-                            {deal.security_deposit && (
-                                <p className="mt-2 text-sm text-gray-600">
-                                    Current Deposit: <strong>${deal.security_deposit.toLocaleString()}</strong>
-                                </p>
-                            )}
-                        </div>
+                        )}
 
                         {/* ✅ File Upload Section */}
                         <div className="mt-6 p-4 border rounded-md">
