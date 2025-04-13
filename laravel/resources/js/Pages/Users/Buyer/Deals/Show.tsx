@@ -35,6 +35,9 @@ type DealProps = {
             email: string;
             role: string;
         }>;
+        condition_day: string | null;
+        security_deposit: string | null;
+        is_condition_day_confirmed: boolean;
     };
 };
 
@@ -47,6 +50,11 @@ export default function DealShowPage({ deal }: DealProps) {
     const [uploadedFiles, setUploadedFiles] = useState(deal.files || []); // ✅ Default to empty array if null
     const [isFileSelected, setIsFileSelected] = useState(false); // ✅ Track if file is chosen
 
+    const [condition_day, setConditionDay] = useState(
+        deal.condition_day ? deal.condition_day.slice(0, 10) : ''
+    );
+    // state for condition day
+    console.log(!condition_day)
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setData("file", e.target.files[0]);
@@ -226,6 +234,75 @@ export default function DealShowPage({ deal }: DealProps) {
                                 ✅ You have made the security deposit, seller has confirmed it.
                             </div>
                         )}
+
+                        //todo to check if is_confirmed is required here or should be something different option
+
+                        {deal.is_confirmed && (
+                            <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
+                                <h3 className="text-lg font-semibold mb-2">✅ Seller has confirmed the security deposit.</h3>
+
+                                {/* Optional: Skip showing the form if condition_day is already set */}
+                                {/* {!deal.condition_day && ( */}
+                                <form
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        fetch(`/deals/${deal.id}/set-condition_day`, {
+                                            method: 'PATCH',
+                                            headers: {
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                                                'Content-Type': 'application/json',
+                                            },
+                                            body: JSON.stringify({ condition_day }),
+                                        }).then((res) => {
+                                            if (res.ok) {
+                                                alert('✅ Condition day set successfully!');
+                                                window.location.reload(); // Optional: refresh to show updated value
+                                            } else {
+                                                alert('❌ Failed to set condition day.');
+                                            }
+                                        });
+                                    }}
+                                >
+                                    <label className="block text-sm font-medium text-green-800 mb-1">
+                                        📅 Select Condition Day:
+                                    </label>
+                                    <input
+                                        type="date"
+                                        value={condition_day}
+                                        onChange={(e) => setConditionDay(e.target.value)}
+                                        className={`border border-green-300 rounded p-2 text-black bg-white ${condition_day !== null ? 'cursor-not-allowed' : ''}`}
+                                        required
+                                        disabled={condition_day !== null}
+                                    />
+                                    <button
+                                        type="submit"
+                                        className={`ml-3 mt-2 px-4 py-2 rounded text-white ${condition_day !== null ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
+                                        disabled={condition_day !== null}
+                                    >
+                                        Select Condition Day
+                                    </button>
+                                </form>
+                                {/* )} */}
+                            </div>
+                        )}
+
+                        {deal.condition_day ? (
+                            !!deal.is_condition_day_confirmed ? (
+                                <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
+                                    ✅ Your selected condition day (<strong>{new Date(deal.condition_day).toLocaleDateString()}</strong>) has been approved by the seller.
+                                </div>
+                            ) : (
+                                <div className="mt-6 p-4 border rounded-md bg-yellow-50 text-yellow-800">
+                                    ⏳ The seller is still considering your selected condition day.
+                                </div>
+                            )
+                        ) : null}
+
+
+
+
+
+
 
 
                         {/* ✅ File Upload Section */}

@@ -114,7 +114,7 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
     Route::patch('/deals/{deal}/make-deposit', [DealController::class, 'markDepositMade'])->name('deals.markDepositMade');
 
-
+    Route::patch('/deals/{deal}/set-condition_day', [DealController::class, 'setConditionDay'])->name('deals.setConditionDay');
 });
 
 
@@ -140,6 +140,9 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
     Route::patch('/deals/{deal}/set-deposit', [DealController::class, 'setDeposit'])->name('deals.setDeposit');
 
     Route::post('/deals/{deal}/confirm-deposit', [DealController::class, 'confirmDeposit'])->name('deals.confirmDeposit');
+
+    Route::patch('/deals/{deal}/confirm-condition-day', [DealController::class, 'confirmConditionDay'])->name('deals.confirmConditionDay');;
+
 
 });
 

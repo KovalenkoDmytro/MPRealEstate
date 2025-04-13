@@ -160,4 +160,35 @@ class DealController extends Controller
         }
 
     }
+
+    public function setConditionDay(Request $request, Deal $deal) {
+//        $this->authorize('update', $deal); // Optional: Add authorization if needed
+
+        // ✅ Check if already set
+        if (!is_null($deal->condition_day)) {
+            return back()->with('error', 'Condition day has already been set and cannot be changed.');
+        }
+
+        // ✅ Validate input
+        $validated = $request->validate([
+            'condition_day' => 'required|date|after_or_equal:today', // adjust min as needed
+        ]);
+
+        // ✅ Set once
+        $deal->condition_day = $validated['condition_day'];
+        $deal->save();
+
+        return back()->with('success', 'Condition day has been set successfully.');
+    }
+
+    public function confirmConditionDay(Deal $deal) {
+
+        $deal->is_condition_day_confirmed = true;
+        $deal->save();
+
+        return ['status' => 'success', 'message' => 'Condition day has confirmed.'];
+
+    }
+
+
 }

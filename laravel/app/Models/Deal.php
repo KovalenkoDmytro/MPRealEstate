@@ -14,7 +14,10 @@ class Deal extends Model
         'amount',
         'data',
         'current_step',
-        'real_estate_listing_id'
+        'real_estate_listing_id',
+        'security_deposit',
+        'possession_day',
+        'condition_day',
     ];
 
     protected $casts = [

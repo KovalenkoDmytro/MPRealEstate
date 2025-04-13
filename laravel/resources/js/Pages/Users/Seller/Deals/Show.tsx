@@ -33,7 +33,13 @@ type DealProps = {
             email: string;
             role: string;
         }>;
-        security_deposit?: number | null;
+        is_confirmed: boolean;   //todo what is is_confirmed ??  change the name
+        is_made: boolean;
+        condition_day: string | null;
+        security_deposit: string | null;
+        is_condition_day_confirmed: boolean ;
+
+        //todo remove all null and leave only bool. set false in table as default
     };
 };
 
@@ -279,7 +285,7 @@ export default function DealShowPage({ deal }: DealProps) {
                         {deal.security_deposit ? (
                             <p className="text-green-600 font-medium">Security deposit already set: ${deal.security_deposit}</p>
                         ) : (
-                            <form onSubmit={handleSetDeposit}>
+                            <form onSubmit={handleSetDeposit}>  //todo function handleSetDeposit has gone
                                 <input
                                     type="number"
                                     name="security_deposit"
@@ -292,6 +298,43 @@ export default function DealShowPage({ deal }: DealProps) {
                                 </button>
                             </form>
                         )}
+
+                        {/* ✅ condition day Section */}
+                        {deal.condition_day && !deal.is_condition_day_confirmed && (
+                            <div className="mt-6 p-4 border rounded-md bg-yellow-50 text-yellow-800">
+                                <h3 className="text-lg font-semibold">📅 Confirm Condition Day</h3>
+                                <p>
+                                    Buyer selected <strong>{new Date(deal.condition_day).toLocaleDateString()}</strong> as the condition day.
+                                </p>
+                                <button
+                                    onClick={() => {
+                                        fetch(`/deals/${deal.id}/confirm-condition-day`, {
+                                            method: 'PATCH',
+                                            headers: {
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                                                'Content-Type': 'application/json',
+                                            },
+                                        })
+                                            .then(res => res.json())
+                                            .then(() => {
+                                                alert('You have confirmed the condition day.');
+                                                location.reload(); // or update state manually
+                                            });
+                                    }}
+                                    className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                                >
+                                    ✅ Confirm Condition Day
+                                </button>
+                            </div>
+                        )}
+
+                        {deal.condition_day && deal.is_condition_day_confirmed && (
+                            <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
+                                ✅ You have confirmed the condition day:
+                                <strong> {new Date(deal.condition_day).toLocaleDateString()}</strong>
+                            </div>
+                        )}
+
 
                         {/* ✅ File Upload Section */}
                         <div className="mt-6 p-4 border rounded-md">
