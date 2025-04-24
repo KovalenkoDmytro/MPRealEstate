@@ -48,6 +48,11 @@ class RegisteredUserController extends Controller
        //todo $user->sendEmailVerificationNotification();
         $user->assignRole($role);
 
+        //add lawyer_number for a lawyer
+        if ($user->hasRole('lawyer') && !$user->lawyer_number) {
+            $user->lawyer_number = generateUniqueLawyerNumber();
+            $user->save();
+        }
 
 
         event(new Registered($user));

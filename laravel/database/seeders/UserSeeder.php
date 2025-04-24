@@ -37,6 +37,11 @@ class UserSeeder extends Seeder
                     ]
             );
 
+            if ($user->hasRole('lawyer') && !$user->lawyer_number) {
+                $user->lawyer_number = generateUniqueLawyerNumber();
+                $user->save();
+            }
+
             // Assign role using Spatie
             if (!$user->hasRole($userData['role'])) {
                 $user->assignRole($userData['role']);

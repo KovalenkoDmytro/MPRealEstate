@@ -1,7 +1,10 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
-export default function Dashboard() {
+export default function Dashboard({auth}) {
+    const {user} = auth
+
+
     return (
         <AuthenticatedLayout
             header={
@@ -16,7 +19,8 @@ export default function Dashboard() {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
-                            You're logged in LAWYER!
+                            You're logged in LAWYER! <br/>
+                            Your unique lawyer number is - <b>{user.lawyer_number}</b>
                         </div>
                     </div>
                 </div>
