@@ -34,7 +34,7 @@ class RegisteredUserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|string|in:buyer,seller',
+            'role' => 'required|string|in:buyer,seller,lawyer',
             ]);
 
         $role = $request->input('role');
@@ -52,8 +52,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+
+        return redirect()->back();
     }
 }

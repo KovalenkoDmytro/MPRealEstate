@@ -12,6 +12,7 @@ export default function Register() {
         email: '',
         password: '',
         password_confirmation: '',
+        role: 'buyer',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -101,6 +102,25 @@ export default function Register() {
                         message={errors.password_confirmation}
                         className="mt-2"
                     />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="role" value="Role" />
+
+                    <select
+                        id="role"
+                        name="role"
+                        value={data.role}
+                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        onChange={(e) => setData('role', e.target.value)}
+                        required
+                    >
+                        <option value="buyer">Buyer</option>
+                        <option value="seller">Seller</option>
+                        <option value="lawyer">Lawyer</option>
+                    </select>
+
+                    <InputError message={errors.role} className="mt-2" />
                 </div>
 
                 <div className="mt-4 flex items-center justify-end">

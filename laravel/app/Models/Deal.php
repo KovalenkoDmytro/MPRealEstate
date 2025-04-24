@@ -39,6 +39,7 @@ class Deal extends Model
         return $this->belongsToMany(User::class, 'deal_user');
     }
 
+
     // Relationship with RealEstateListing
     public function realEstateListing(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
         return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\DealFileController;
+use App\Http\Controllers\LawyerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\SellerController;
@@ -61,13 +62,14 @@ Route::middleware(['auth'])->group(function () {
 
         // ✅ Redirect users based on role
         if ($user->hasRole('admin')) {
+            dd('admin');
 //            return app(AdminController::class)->index();
         } elseif ($user->hasRole('buyer')) {
             return app(BuyerController::class)->index();
         } elseif ($user->hasRole('seller')) {
             return app(SellerController::class)->index();
         } elseif ($user->hasRole('lawyer')) {
-//            return app(LawyerController::class)->index();
+            return app(LawyerController::class)->index();
         }
 
         abort(403, 'Unauthorized');
