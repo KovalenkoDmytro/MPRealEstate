@@ -161,12 +161,12 @@ class DealController extends Controller
 
     }
 
-    public function setConditionDay(Request $request, Deal $deal) {
+    public function setConditionDay(Request $request, Deal $deal): array {
 //        $this->authorize('update', $deal); // Optional: Add authorization if needed
 
         // ✅ Check if already set
         if (!is_null($deal->condition_day)) {
-            return back()->with('error', 'Condition day has already been set and cannot be changed.');
+            return ['status' => 'success', 'message' => 'Condition day has already been set and cannot be changed.'];
         }
 
         // ✅ Validate input
@@ -178,15 +178,45 @@ class DealController extends Controller
         $deal->condition_day = $validated['condition_day'];
         $deal->save();
 
-        return back()->with('success', 'Condition day has been set successfully.');
+
+        return ['status' => 'success', 'message' => 'Condition day has been set successfully.'];
     }
 
-    public function confirmConditionDay(Deal $deal) {
+    public function confirmConditionDay(Deal $deal): array {
 
         $deal->is_condition_day_confirmed = true;
         $deal->save();
 
         return ['status' => 'success', 'message' => 'Condition day has confirmed.'];
+
+    }
+
+    public function setPossessionDay(Request $request, Deal $deal): array {
+
+        // ✅ Check if already set
+        if (!is_null($deal->possession_day)) {
+            return ['status' => 'success', 'message' => 'Possession day has already been set and cannot be changed.'];
+        }
+
+        // ✅ Validate input
+        $validated = $request->validate([
+            'possession_day' => 'required|date|after_or_equal:today', // adjust min as needed
+        ]);
+
+        // ✅ Set once
+        $deal->possession_day = $validated['possession_day'];
+        $deal->save();
+
+
+        return ['status' => 'success', 'message' => 'Possession day has been set successfully.'];
+    }
+
+    public function confirmPossessionDay(Deal $deal): array {
+
+        $deal->is_possession_day_confirmed = true;
+        $deal->save();
+
+        return ['status' => 'success', 'message' => 'Possession day has confirmed.'];
 
     }
 

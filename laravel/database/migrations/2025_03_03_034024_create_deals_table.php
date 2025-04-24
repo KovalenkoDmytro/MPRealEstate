@@ -17,8 +17,9 @@ return new class extends Migration
             $table->decimal('amount', 10, 2); // Deal amount
             $table->decimal('security_deposit', 10, 2)->nullable(); // Security Deposit field
             $table->timestamp('possession_day')->nullable(); //Possession day
+            $table->timestamp('is_possession_day_confirmed')->default(false);;  //Confirmation Condition day
             $table->timestamp('condition_day')->nullable(); //Condition day
-            $table->timestamp('is_condition_day_confirmed')->nullable();  //Confirmation Condition day
+            $table->timestamp('is_condition_day_confirmed')->default(false);;  //Confirmation Condition day
             $table->boolean('is_confirmed')->default(false); // ✅ Confirmation status
             $table->boolean('is_made')->default(false); // ✅ Completion status
             $table->json('data')->nullable(); // Additional data as JSON

@@ -36,8 +36,10 @@ type DealProps = {
         is_confirmed: boolean;   //todo what is is_confirmed ??  change the name
         is_made: boolean;
         condition_day: string | null;
+        possession_day: string | null;
         security_deposit: string | null;
         is_condition_day_confirmed: boolean ;
+        is_possession_day_confirmed: boolean ;
 
         //todo remove all null and leave only bool. set false in table as default
     };
@@ -332,6 +334,43 @@ export default function DealShowPage({ deal }: DealProps) {
                             <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
                                 ✅ You have confirmed the condition day:
                                 <strong> {new Date(deal.condition_day).toLocaleDateString()}</strong>
+                            </div>
+                        )}
+
+
+                        {/* ✅ possession day Section */}
+                        {deal.possession_day && !deal.is_possession_day_confirmed && (
+                            <div className="mt-6 p-4 border rounded-md bg-yellow-50 text-yellow-800">
+                                <h3 className="text-lg font-semibold">📅 Confirm possession Day</h3>
+                                <p>
+                                    Buyer selected <strong>{new Date(deal.possession_day).toLocaleDateString()}</strong> as the possession day.
+                                </p>
+                                <button
+                                    onClick={() => {
+                                        fetch(`/deals/${deal.id}/confirm-possession-day`, {
+                                            method: 'PATCH',
+                                            headers: {
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                                                'Content-Type': 'application/json',
+                                            },
+                                        })
+                                            .then(res => res.json())
+                                            .then(() => {
+                                                alert('You have confirmed the possession day.');
+                                                location.reload(); // or update state manually
+                                            });
+                                    }}
+                                    className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                                >
+                                    ✅ Confirm possession Day
+                                </button>
+                            </div>
+                        )}
+
+                        {deal.possession_day && deal.is_possession_day_confirmed && (
+                            <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
+                                ✅ You have confirmed the possession day:
+                                <strong> {new Date(deal.possession_day).toLocaleDateString()}</strong>
                             </div>
                         )}
 

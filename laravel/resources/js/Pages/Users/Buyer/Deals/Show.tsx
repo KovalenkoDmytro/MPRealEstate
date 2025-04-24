@@ -36,8 +36,10 @@ type DealProps = {
             role: string;
         }>;
         condition_day: string | null;
+        possession_day: string | null;
         security_deposit: string | null;
         is_condition_day_confirmed: boolean;
+        is_possession_day_confirmed: boolean ;
     };
 };
 
@@ -51,10 +53,15 @@ export default function DealShowPage({ deal }: DealProps) {
     const [isFileSelected, setIsFileSelected] = useState(false); // ✅ Track if file is chosen
 
     const [condition_day, setConditionDay] = useState(
-        deal.condition_day ? deal.condition_day.slice(0, 10) : ''
+        deal.condition_day ? deal.condition_day.slice(0, 10) : null
+    );
+
+    const [possession_day, setPossessionDay] = useState(
+        deal.possession_day ? deal.possession_day.slice(0, 10) : null
     );
     // state for condition day
-    console.log(!condition_day)
+    console.log(deal.possession_day !== null, 'possession_day')
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             setData("file", e.target.files[0]);
@@ -240,51 +247,93 @@ export default function DealShowPage({ deal }: DealProps) {
                         {deal.is_confirmed && (
                             <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
                                 <h3 className="text-lg font-semibold mb-2">✅ Seller has confirmed the security deposit.</h3>
-
-                                {/* Optional: Skip showing the form if condition_day is already set */}
-                                {/* {!deal.condition_day && ( */}
-                                <form
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        fetch(`/deals/${deal.id}/set-condition_day`, {
-                                            method: 'PATCH',
-                                            headers: {
-                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                                                'Content-Type': 'application/json',
-                                            },
-                                            body: JSON.stringify({ condition_day }),
-                                        }).then((res) => {
-                                            if (res.ok) {
-                                                alert('✅ Condition day set successfully!');
-                                                window.location.reload(); // Optional: refresh to show updated value
-                                            } else {
-                                                alert('❌ Failed to set condition day.');
-                                            }
-                                        });
-                                    }}
-                                >
-                                    <label className="block text-sm font-medium text-green-800 mb-1">
-                                        📅 Select Condition Day:
-                                    </label>
-                                    <input
-                                        type="date"
-                                        value={condition_day}
-                                        onChange={(e) => setConditionDay(e.target.value)}
-                                        className={`border border-green-300 rounded p-2 text-black bg-white ${condition_day !== null ? 'cursor-not-allowed' : ''}`}
-                                        required
-                                        disabled={condition_day !== null}
-                                    />
-                                    <button
-                                        type="submit"
-                                        className={`ml-3 mt-2 px-4 py-2 rounded text-white ${condition_day !== null ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
-                                        disabled={condition_day !== null}
-                                    >
-                                        Select Condition Day
-                                    </button>
-                                </form>
-                                {/* )} */}
                             </div>
                         )}
+
+
+                        {/* ✅ condition_day */}
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                fetch(`/deals/${deal.id}/set-condition-day`, {
+                                    method: 'PATCH',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ condition_day }),
+                                }).then((res) => {
+                                    if (res.ok) {
+                                        alert('✅ Condition day set successfully!');
+                                        window.location.reload(); // Optional: refresh to show updated value
+                                    } else {
+                                        alert('❌ Failed to set condition day.');
+                                    }
+                                });
+                            }}
+                        >
+                            <label className="block text-sm font-medium text-green-800 mb-1">
+                                📅 Select Condition Day:
+                            </label>
+                            <input
+                                type="date"
+                                value={condition_day !==  null ? condition_day : ''}
+                                onChange={(e) => setConditionDay(e.target.value)}
+                                className={`border border-green-300 rounded p-2 text-black bg-white ${condition_day !== null ? 'cursor-not-allowed' : ''}`}
+                                required
+                                disabled={condition_day !== null}
+                            />
+                            <button
+                                type="submit"
+                                className={`ml-3 mt-2 px-4 py-2 rounded text-white ${deal.condition_day !== null ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
+                                disabled={deal.condition_day !== null}
+                            >
+                                Select Condition Day
+                            </button>
+                        </form>
+
+
+                        {/* ✅ possession_day */}
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                fetch(`/deals/${deal.id}/set-possession-day`, {
+                                    method: 'PATCH',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ possession_day }),
+                                }).then((res) => {
+                                    if (res.ok) {
+                                        alert('✅ possession day set successfully!');
+                                        window.location.reload();
+                                    } else {
+                                        alert('❌ Failed to set possession  day.');
+                                    }
+                                });
+                            }}
+                        >
+                            <label className="block text-sm font-medium text-green-800 mb-1">
+                                📅 Select Possession Day:
+                            </label>
+                            <input
+                                type="date"
+                                value={possession_day !== null? possession_day :''}
+                                onChange={(e) => setPossessionDay(e.target.value)}
+                                className={`border border-green-300 rounded p-2 text-black bg-white ${possession_day !== null ? 'cursor-not-allowed' : ''}`}
+                                required
+                                disabled={possession_day !== null}
+                            />
+                            <button
+                                type="submit"
+                                className={`ml-3 mt-2 px-4 py-2 rounded text-white ${deal.possession_day !== null ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
+                                disabled={deal.possession_day !== null}
+                            >
+                                Select Possession  Day
+                            </button>
+                        </form>
+                        {/* )} */}
 
                         {deal.condition_day ? (
                             !!deal.is_condition_day_confirmed ? (

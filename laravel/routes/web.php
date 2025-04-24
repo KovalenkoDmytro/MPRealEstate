@@ -114,7 +114,9 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
     Route::patch('/deals/{deal}/make-deposit', [DealController::class, 'markDepositMade'])->name('deals.markDepositMade');
 
-    Route::patch('/deals/{deal}/set-condition_day', [DealController::class, 'setConditionDay'])->name('deals.setConditionDay');
+    Route::patch('/deals/{deal}/set-condition-day', [DealController::class, 'setConditionDay'])->name('deals.setConditionDay');
+    Route::patch('/deals/{deal}/set-possession-day', [DealController::class, 'setPossessionDay'])->name('deals.setPossessionDay');
+    //todo i think better change underscore to minus
 });
 
 
@@ -142,6 +144,7 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
     Route::post('/deals/{deal}/confirm-deposit', [DealController::class, 'confirmDeposit'])->name('deals.confirmDeposit');
 
     Route::patch('/deals/{deal}/confirm-condition-day', [DealController::class, 'confirmConditionDay'])->name('deals.confirmConditionDay');;
+    Route::patch('/deals/{deal}/confirm-possession-day', [DealController::class, 'confirmPossessionDay'])->name('deals.confirmPossessionDay');;
 
 
 });
