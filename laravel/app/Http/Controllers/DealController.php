@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 use App\Models\RealEstateListing;
@@ -219,6 +220,48 @@ class DealController extends Controller
         return ['status' => 'success', 'message' => 'Possession day has confirmed.'];
 
     }
+
+
+    public function inviteLawyer(Request $request, Deal $deal)
+    {
+        $request->validate([
+            'lawyer_code' => 'required|string|size:9',
+        ]);
+
+        $lawyer = User::where('lawyer_number', $request->lawyer_code)
+            ->whereHas('roles', fn ($q) => $q->where('name', 'lawyer'))
+            ->first();
+
+        if (!$lawyer) {
+            return response()->json(['message' => 'No lawyer found with this code.'], 404);
+        }
+
+        if ($deal->users->contains($lawyer->id)) {
+            return response()->json(['message' => 'This lawyer is already part of this deal.'], 422);
+        }
+
+        // Mark the lawyer role origin
+        if ($request->user()->role === 'buyer') {
+            $lawyer->is_buyer_lawyer = true;
+        }
+
+        if ($request->user()->role === 'seller') {
+            $lawyer->is_seller_lawyer = true;
+        }
+
+        $deal->users()->attach($lawyer->id);
+
+        return response()->json([
+            'message' => 'Lawyer invited successfully.',
+            'lawyer' => [
+                'id' => $lawyer->id,
+                'name' => $lawyer->name,
+                'email' => $lawyer->email,
+            ]
+        ]);
+    }
+
+
 
 
 }

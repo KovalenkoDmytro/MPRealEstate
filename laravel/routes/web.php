@@ -119,6 +119,8 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
     Route::patch('/deals/{deal}/set-condition-day', [DealController::class, 'setConditionDay'])->name('deals.setConditionDay');
     Route::patch('/deals/{deal}/set-possession-day', [DealController::class, 'setPossessionDay'])->name('deals.setPossessionDay');
     //todo i think better change underscore to minus
+
+
 });
 
 
@@ -150,6 +152,12 @@ Route::middleware(['auth', 'role:seller'])->group(function () {
 
 
 });
+
+Route::post('/deals/{deal}/invite-lawyer', [DealController::class, 'inviteLawyer'])
+    ->middleware(['auth', 'role:buyer|seller'])
+    ->name('deals.inviteLawyer');
+
+
 
 // Lawyer Dashboard (Only for Lawyers)
 Route::middleware(['auth', 'role:lawyer'])->group(function () {

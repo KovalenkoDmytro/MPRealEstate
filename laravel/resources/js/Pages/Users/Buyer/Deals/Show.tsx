@@ -1,6 +1,8 @@
-import { Head, useForm, Link } from "@inertiajs/react";
+import {Head, useForm, Link} from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { useState } from "react";
+import {useState} from "react";
+import {useForm as useFormInvite} from '@inertiajs/react';
+
 
 type DealProps = {
     deal: {
@@ -33,22 +35,24 @@ type DealProps = {
             id: number;
             name: string;
             email: string;
-            role: string;
+            role: 'lawyer' | 'seller' | 'buyer';
+            is_buyer_lawyer: boolean;
+            is_seller_lawyer: boolean;
         }>;
         condition_day: string | null;
         possession_day: string | null;
         security_deposit: string | null;
         is_condition_day_confirmed: boolean;
-        is_possession_day_confirmed: boolean ;
+        is_possession_day_confirmed: boolean;
     };
 };
 
-export default function DealShowPage({ deal }: DealProps) {
+export default function DealShowPage({deal}: DealProps) {
     // ✅ Find the seller in the users array
     const seller = deal.users.find(user => user.role === "seller");
 
     // ✅ File Upload Handling
-    const { data, setData, post, progress } = useForm({ file: null as File | null });
+    const {data, setData, post, progress} = useForm({file: null as File | null});
     const [uploadedFiles, setUploadedFiles] = useState(deal.files || []); // ✅ Default to empty array if null
     const [isFileSelected, setIsFileSelected] = useState(false); // ✅ Track if file is chosen
 
@@ -85,7 +89,7 @@ export default function DealShowPage({ deal }: DealProps) {
 
     const downloadFile = async (fileId: number) => {
         try {
-            const response = await fetch(`/files/${fileId}/download`, { method: "GET" });
+            const response = await fetch(`/files/${fileId}/download`, {method: "GET"});
 
             if (!response.ok) {
                 throw new Error("Failed to download file.");
@@ -105,19 +109,19 @@ export default function DealShowPage({ deal }: DealProps) {
     };
 
     const handleDelete = async (fileId: number) => {
-        await fetch(`/files/${fileId}`, { method: "DELETE",  headers: {
+        await fetch(`/files/${fileId}`, {
+            method: "DELETE", headers: {
                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || "",
                 "Content-Type": "application/json",
-            }, });
+            },
+        });
 
         // Remove file from state
         setUploadedFiles(uploadedFiles.filter(file => file.id !== fileId));
     };
 
 
-
-
-    const depositForm = useForm({ confirmed: false });
+    const depositForm = useForm({confirmed: false});
 
     const handleDepositSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -131,11 +135,39 @@ export default function DealShowPage({ deal }: DealProps) {
     };
 
 
+    const inviteForm = useFormInvite({lawyer_code: ''});
+    const handleLawyerInvite = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        fetch(`/deals/${deal.id}/invite-lawyer`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(inviteForm.data),
+        })
+            .then(async (res) => {
+                const data = await res.json();
+
+                if (!res.ok) {
+                    alert("❌ " + data.message);
+                    return;
+                }
+
+                alert("✅ " + data.message);
+            })
+            .catch(() => alert("An error occurred."));
+    };
+
+    const lawyer = deal.users.find(user=>user.role ==="lawyer")
+
+
     return (
         <AuthenticatedLayout
             header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Deal Details</h2>}
         >
-            <Head title="Deal Details" />
+            <Head title="Deal Details"/>
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -154,7 +186,8 @@ export default function DealShowPage({ deal }: DealProps) {
                             </p>
                             {deal.security_deposit && (
                                 <p className="text-lg text-blue-700">
-                                    🔐 <strong>Required Security Deposit:</strong> ${Number(deal.security_deposit).toLocaleString()}
+                                    🔐 <strong>Required Security
+                                    Deposit:</strong> ${Number(deal.security_deposit).toLocaleString()}
                                 </p>
                             )}
                         </div>
@@ -246,38 +279,37 @@ export default function DealShowPage({ deal }: DealProps) {
 
                         {deal.is_confirmed && (
                             <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
-                                <h3 className="text-lg font-semibold mb-2">✅ Seller has confirmed the security deposit.</h3>
+                                <h3 className="text-lg font-semibold mb-2">✅ Seller has confirmed the security
+                                    deposit.</h3>
                             </div>
                         )}
 
 
                         {/* ✅ condition_day */}
-                        <form
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                fetch(`/deals/${deal.id}/set-condition-day`, {
-                                    method: 'PATCH',
-                                    headers: {
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({ condition_day }),
-                                }).then((res) => {
-                                    if (res.ok) {
-                                        alert('✅ Condition day set successfully!');
-                                        window.location.reload(); // Optional: refresh to show updated value
-                                    } else {
-                                        alert('❌ Failed to set condition day.');
-                                    }
-                                });
-                            }}
-                        >
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            fetch(`/deals/${deal.id}/set-condition-day`, {
+                                method: 'PATCH',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({condition_day}),
+                            }).then((res) => {
+                                if (res.ok) {
+                                    alert('✅ Condition day set successfully!');
+                                    window.location.reload(); // Optional: refresh to show updated value
+                                } else {
+                                    alert('❌ Failed to set condition day.');
+                                }
+                            });
+                        }}>
                             <label className="block text-sm font-medium text-green-800 mb-1">
                                 📅 Select Condition Day:
                             </label>
                             <input
                                 type="date"
-                                value={condition_day !==  null ? condition_day : ''}
+                                value={condition_day !== null ? condition_day : ''}
                                 onChange={(e) => setConditionDay(e.target.value)}
                                 className={`border border-green-300 rounded p-2 text-black bg-white ${condition_day !== null ? 'cursor-not-allowed' : ''}`}
                                 required
@@ -294,32 +326,30 @@ export default function DealShowPage({ deal }: DealProps) {
 
 
                         {/* ✅ possession_day */}
-                        <form
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                fetch(`/deals/${deal.id}/set-possession-day`, {
-                                    method: 'PATCH',
-                                    headers: {
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({ possession_day }),
-                                }).then((res) => {
-                                    if (res.ok) {
-                                        alert('✅ possession day set successfully!');
-                                        window.location.reload();
-                                    } else {
-                                        alert('❌ Failed to set possession  day.');
-                                    }
-                                });
-                            }}
-                        >
+                        <form onSubmit={(e) => {
+                            e.preventDefault();
+                            fetch(`/deals/${deal.id}/set-possession-day`, {
+                                method: 'PATCH',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({possession_day}),
+                            }).then((res) => {
+                                if (res.ok) {
+                                    alert('✅ possession day set successfully!');
+                                    window.location.reload();
+                                } else {
+                                    alert('❌ Failed to set possession  day.');
+                                }
+                            });
+                        }}>
                             <label className="block text-sm font-medium text-green-800 mb-1">
                                 📅 Select Possession Day:
                             </label>
                             <input
                                 type="date"
-                                value={possession_day !== null? possession_day :''}
+                                value={possession_day !== null ? possession_day : ''}
                                 onChange={(e) => setPossessionDay(e.target.value)}
                                 className={`border border-green-300 rounded p-2 text-black bg-white ${possession_day !== null ? 'cursor-not-allowed' : ''}`}
                                 required
@@ -330,7 +360,7 @@ export default function DealShowPage({ deal }: DealProps) {
                                 className={`ml-3 mt-2 px-4 py-2 rounded text-white ${deal.possession_day !== null ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
                                 disabled={deal.possession_day !== null}
                             >
-                                Select Possession  Day
+                                Select Possession Day
                             </button>
                         </form>
                         {/* )} */}
@@ -338,7 +368,9 @@ export default function DealShowPage({ deal }: DealProps) {
                         {deal.condition_day ? (
                             !!deal.is_condition_day_confirmed ? (
                                 <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
-                                    ✅ Your selected condition day (<strong>{new Date(deal.condition_day).toLocaleDateString()}</strong>) has been approved by the seller.
+                                    ✅ Your selected condition day
+                                    (<strong>{new Date(deal.condition_day).toLocaleDateString()}</strong>) has been
+                                    approved by the seller.
                                 </div>
                             ) : (
                                 <div className="mt-6 p-4 border rounded-md bg-yellow-50 text-yellow-800">
@@ -350,6 +382,37 @@ export default function DealShowPage({ deal }: DealProps) {
 
 
 
+                        {/* ✅ Inviting lawyer */}
+                        {lawyer && lawyer.is_buyer_lawyer ? (
+                            <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
+                                <h3 className="text-xl font-semibold">📩 Your Lawyer</h3>
+                                <p><strong>Name:</strong> {lawyer.name}</p>
+                                <p><strong>Email:</strong> {lawyer.email}</p>
+                                <p><strong>Lawyer Code:</strong> {lawyer.lawyer_number || 'N/A'}</p>
+                            </div>
+                        ) : (
+                            <div className="mt-6 p-4 border rounded-md">
+                                <h3 className="text-xl font-semibold">📩 Invite a Lawyer</h3>
+                                <form onSubmit={handleLawyerInvite} className="flex flex-col sm:flex-row gap-2 mt-2">
+                                    <input
+                                        type="text"
+                                        value={inviteForm.data.lawyer_code}
+                                        onChange={(e) => inviteForm.setData('lawyer_code', e.target.value)}
+                                        placeholder="Enter 9-character lawyer code"
+                                        className="border p-2 rounded w-full sm:w-72"
+                                        maxLength={9}
+                                        pattern="[A-Za-z0-9]{9}"
+                                        required
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 bg-blue-600 text-white rounded"
+                                    >
+                                        Invite
+                                    </button>
+                                </form>
+                            </div>
+                        )}
 
 
 
@@ -358,7 +421,7 @@ export default function DealShowPage({ deal }: DealProps) {
                         <div className="mt-6 p-4 border rounded-md">
                             <h3 className="text-xl font-semibold">📂 Upload Deal Files</h3>
                             <form onSubmit={handleUpload} className="mt-2">
-                                <input type="file" onChange={handleFileChange} className="border p-2 rounded w-full" />
+                                <input type="file" onChange={handleFileChange} className="border p-2 rounded w-full"/>
                                 {progress && <p>Uploading: {progress.percentage}%</p>}
                                 <button type="submit"
                                         className={`mt-2 px-4 py-2 text-white rounded ${isFileSelected ? "bg-blue-600" : "bg-gray-400 cursor-not-allowed"}`}
@@ -374,7 +437,8 @@ export default function DealShowPage({ deal }: DealProps) {
                                 <h3 className="text-xl font-semibold">📄 Deal Files</h3>
                                 <ul className="list-disc pl-5 space-y-2">
                                     {uploadedFiles.map((file) => (
-                                        <li key={file.id} className="flex justify-between items-start flex-col sm:flex-row sm:items-center sm:space-x-4">
+                                        <li key={file.id}
+                                            className="flex justify-between items-start flex-col sm:flex-row sm:items-center sm:space-x-4">
                                             <div>
                                                 <button
                                                     onClick={() => downloadFile(file.id)}

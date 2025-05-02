@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('role')->nullable();
             $table->string('lawyer_number', 9)->unique()->nullable();
+            $this->boolean('is_buyer_lawyer')->default(false);
+            $this->boolean('is_seller_lawyer')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
