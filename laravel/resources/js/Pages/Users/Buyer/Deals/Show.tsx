@@ -38,6 +38,7 @@ type DealProps = {
             role: 'lawyer' | 'seller' | 'buyer';
             is_buyer_lawyer: boolean;
             is_seller_lawyer: boolean;
+            lawyer_number: string,
         }>;
         condition_day: string | null;
         possession_day: string | null;

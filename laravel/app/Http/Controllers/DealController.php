@@ -236,28 +236,28 @@ class DealController extends Controller
             return response()->json(['message' => 'No lawyer found with this code.'], 404);
         }
 
+
         if ($deal->users->contains($lawyer->id)) {
             return response()->json(['message' => 'This lawyer is already part of this deal.'], 422);
         }
 
         // Mark the lawyer role origin
         if ($request->user()->role === 'buyer') {
-            $lawyer->is_buyer_lawyer = true;
+            $lawyer->is_buyer_lawyer = TRUE;
         }
 
         if ($request->user()->role === 'seller') {
-            $lawyer->is_seller_lawyer = true;
+            $lawyer->is_seller_lawyer = TRUE;
         }
 
+        $lawyer->save();
+
+        //make db/models  relations
         $deal->users()->attach($lawyer->id);
 
         return response()->json([
             'message' => 'Lawyer invited successfully.',
-            'lawyer' => [
-                'id' => $lawyer->id,
-                'name' => $lawyer->name,
-                'email' => $lawyer->email,
-            ]
+            'lawyer' => $lawyer
         ]);
     }
 

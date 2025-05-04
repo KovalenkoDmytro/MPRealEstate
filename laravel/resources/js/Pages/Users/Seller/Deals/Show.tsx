@@ -1,4 +1,4 @@
-import { Head, useForm, Link } from "@inertiajs/react";
+import {Head, useForm, Link, useForm as useFormInvite} from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useState } from "react";
 
@@ -31,7 +31,10 @@ type DealProps = {
             id: number;
             name: string;
             email: string;
-            role: string;
+            role: 'lawyer' | 'seller' | 'buyer';
+            is_buyer_lawyer: boolean;
+            is_seller_lawyer: boolean;
+            lawyer_number: string,
         }>;
         is_confirmed: boolean;   //todo what is is_confirmed ??  change the name
         is_made: boolean;
@@ -142,6 +145,35 @@ export default function DealShowPage({ deal }: DealProps) {
             setSavingDeposit(false);
         }
     };
+
+
+    const inviteForm = useForm({lawyer_code: ''});
+    const handleLawyerInvite = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        fetch(`/deals/${deal.id}/invite-lawyer`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(inviteForm.data),
+        })
+            .then(async (res) => {
+                const data = await res.json();
+
+                if (!res.ok) {
+                    alert("❌ " + data.message);
+                    return;
+                }
+
+                alert("✅ " + data.message);
+            })
+            .catch(() => alert("An error occurred."));
+    };
+
+
+
 
     return (
         <AuthenticatedLayout
@@ -269,25 +301,57 @@ export default function DealShowPage({ deal }: DealProps) {
                             </div>
                         )}
 
-                        {/* ✅ Lawyer Details */}
-                        <div className="mt-6 p-4 border rounded-md">
-                            <h3 className="text-xl font-semibold">👤 Lawyer Information</h3>
-                            {lawyer ? (
-                                <>
-                                    <p><strong>Name:</strong> {lawyer.name}</p>
-                                    <p><strong>Email:</strong> {lawyer.email}</p>
-                                </>
-                            ) : (
-                                <p>Didn’t participate yet</p>
-                            )}
-                        </div>
+                        {/*/!* ✅ Lawyer Details *!/*/}
+                        {/*<div className="mt-6 p-4 border rounded-md">*/}
+                        {/*    <h3 className="text-xl font-semibold">👤 Lawyer Information</h3>*/}
+                        {/*    {lawyer ? (*/}
+                        {/*        <>*/}
+                        {/*            <p><strong>Name:</strong> {lawyer.name}</p>*/}
+                        {/*            <p><strong>Email:</strong> {lawyer.email}</p>*/}
+                        {/*        </>*/}
+                        {/*    ) : (*/}
+                        {/*        <p>Didn’t participate yet</p>*/}
+                        {/*    )}*/}
+                        {/*</div>*/}
+
+                         ✅ Inviting lawyer
+                        {lawyer && lawyer.is_seller_lawyer ? (
+                            <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
+                                <h3 className="text-xl font-semibold">📩 Your Lawyer</h3>
+                                <p><strong>Name:</strong> {lawyer.name}</p>
+                                <p><strong>Email:</strong> {lawyer.email}</p>
+                                <p><strong>Lawyer Code:</strong> {lawyer.lawyer_number || 'N/A'}</p>
+                            </div>
+                        ) : (
+                            <div className="mt-6 p-4 border rounded-md">
+                                <h3 className="text-xl font-semibold">📩 Invite a Lawyer</h3>
+                                <form onSubmit={handleLawyerInvite} className="flex flex-col sm:flex-row gap-2 mt-2">
+                                    <input
+                                        type="text"
+                                        value={inviteForm.data.lawyer_code}
+                                        onChange={(e) => inviteForm.setData('lawyer_code', e.target.value)}
+                                        placeholder="Enter 9-character lawyer code"
+                                        className="border p-2 rounded w-full sm:w-72"
+                                        maxLength={9}
+                                        pattern="[A-Za-z0-9]{9}"
+                                        required
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 bg-blue-600 text-white rounded"
+                                    >
+                                        Invite
+                                    </button>
+                                </form>
+                            </div>
+                        )}
 
 
                         {/* ✅ Security Deposit Section */}
                         {deal.security_deposit ? (
                             <p className="text-green-600 font-medium">Security deposit already set: ${deal.security_deposit}</p>
                         ) : (
-                            <form onSubmit={handleSetDeposit}>  //todo function handleSetDeposit has gone
+                            <form onSubmit={handleDepositSubmit}>  //todo function handleSetDeposit has gone
                                 <input
                                     type="number"
                                     name="security_deposit"
