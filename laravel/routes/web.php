@@ -87,7 +87,7 @@ Route::middleware(['auth'])->group(function () {
         } elseif ($user->hasRole('seller')) {
             return app(SellerController::class)->showDealView($deal);
         } elseif ($user->hasRole('lawyer')) {
-
+            return app(LawyerController::class)->showDealView($deal);
         }
 
         abort(403, 'Unauthorized');

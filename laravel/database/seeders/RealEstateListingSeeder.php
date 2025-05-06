@@ -15,9 +15,9 @@ class RealEstateListingSeeder extends Seeder
     {
         // Define the static images
         $imageLinks = [
-            'https://www.next-estate.de/wp-content/uploads/photos/branch_b/19467_d33eb8a2-0c6b-49c3-95de-c7c5bef305ee.jpg',
-            'https://www.next-estate.de/wp-content/uploads/photos/branch_b/19467_ae9d0442-a4fc-4361-bbb0-3cd4511d4654.jpg',
-            'https://www.next-estate.de/wp-content/uploads/photos/branch_b/19467_304ad366-68a4-4f49-80be-b50aa79061c8.jpg',
+            'https://www.next-estate.de/wp-content/uploads/photos/branch_b/19621__235773.jpg',
+            'https://www.next-estate.de/wp-content/uploads/photos/branch_b/19621__235753.jpg',
+            'https://www.next-estate.de/wp-content/uploads/photos/branch_b/19621__235757.jpg',
         ];
 
         $faker = Faker::create();

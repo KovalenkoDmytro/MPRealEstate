@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Deal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -25,6 +27,24 @@ class LawyerController extends Controller
             'deals' => $this->dealController->getAllDeals(),
         ]
         );
+    }
+
+    public function showDealView(Deal $deal): Response {
+
+        if (!Gate::allows('view-deal', $deal)) {
+            abort(403, "Unauthorized - You are not part of this deal.");
+        }
+
+        return Inertia::render('Deals/Show', [
+            'deal' => $deal->load(
+                [
+                    'realEstateListing.mainImage', // ✅ Load the main image separately
+                    'realEstateListing.images', // ✅ Also load all images
+                    'users',
+                    'files', // all uploaded files
+                ]
+            ),
+        ]);
     }
 
 
