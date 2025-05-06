@@ -98,7 +98,7 @@ class DealController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user->hasRole('seller')) {
+        if (!$user->hasRole(['seller', 'lawyer'])) {
             abort(403, 'Unauthorized');
         }
 
