@@ -281,6 +281,12 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                                     </p>
                                                 )}
                                             </div>
+                                            <button
+                                                onClick={() => handleDelete(file.id)}
+                                                className="text-red-500 mt-2 sm:mt-0"
+                                            >
+                                                ❌ Delete
+                                            </button>
                                         </li>
                                     ))}
                                 </ul>
