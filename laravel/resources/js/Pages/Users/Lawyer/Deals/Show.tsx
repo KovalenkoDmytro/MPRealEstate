@@ -299,5 +299,3 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
     );
 }
 
-
-//todo i want to add checkbox and calendar with date and time picker to set up - when buyer make deposit

@@ -1,41 +1,10 @@
 import React from "react";
-import { PageProps } from "@/types";
 import { Head, usePage } from "@inertiajs/react";
 
-interface Deal {
-    id: number;
-    name: string;
-    amount: number;
-    data: { description: string };
-    current_step: string;
-    real_estate_listing?: {
-        id: number;
-        title: string;
-        price: number;
-        location: string;
-        bedrooms: number;
-        bathrooms: number;
-        main_image: string;
-        images:[{
-            id: number;
-            image_path:string;
-            is_main: number;
-        }]
-    };
-    users: {
-        id: number;
-        name: string;
-        email: string;
-        role: string;
-    }[];
-}
+import type { Deal } from "@/types"; // or wherever DealProps is defined
 
-interface Props extends PageProps {
-    deal: Deal;
-}
+export default  function Show (deal : Deal) {
 
-const Show: React.FC = () => {
-    const { deal } = usePage<Props>().props;
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
@@ -85,5 +54,3 @@ const Show: React.FC = () => {
         </div>
     );
 };
-
-export default Show;

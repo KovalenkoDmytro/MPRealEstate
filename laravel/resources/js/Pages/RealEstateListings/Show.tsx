@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { Link, useForm } from "@inertiajs/react";
-
+import {useState} from "react";
+import {Link, useForm} from "@inertiajs/react";
+import type {User} from "@/types"; // adjust if your User type is elsewhere
 type ListingProps = {
     listing: {
         id: number;
@@ -11,7 +11,7 @@ type ListingProps = {
         bedrooms: number;
         bathrooms: number;
         square_feet: number;
-        deal:{
+        deal: {
             id: number;
         },
         status: string;
@@ -21,20 +21,18 @@ type ListingProps = {
     };
 };
 
-type AuthProps = {
-    user: { role: string };
-};
 
 interface ShowProps {
     listing: ListingProps["listing"];
-    auth: AuthProps;
+    auth: {user: User};
 }
 
-export default function Show({ listing, auth }: ShowProps) {
-    const { data, setData, post, processing, errors } = useForm({
+export default function Show({listing, auth}: ShowProps) {
+    const {data, setData, post, processing, errors} = useForm({
         offer_price: "",
         message: "",
     });
+
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -90,9 +88,10 @@ export default function Show({ listing, auth }: ShowProps) {
                 </div>
             </div>
 
-            {listing.status === 'pending' && auth.user.role === "buyer" && (
-                <Link href={`/deals/${listing.deal.id}`} className="text-blue-500">Show a deal details</Link>
-            )}
+            {listing.status === 'pending' ? <b>pending</b> : ''}
+            {/*{listing.status === 'pending' && auth.user.role === "buyer" && (*/}
+            {/*    <Link href={`/deals/${listing.deal.id}`} className="text-blue-500">Show a deal details</Link>*/}
+            {/*)}*/}
 
             {/* ✅ Offer Form (Only for Buyers) */}
             {listing.status !== 'pending' && auth.user.role === "buyer" && (
