@@ -9,7 +9,7 @@ class DealFile extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['deal_id', 'file_name', 'file_path', 'file_type'];
+    protected $fillable = ['deal_id', 'file_name', 'file_path', 'file_type', 'author_name', 'author_email'];
 
     public function deal(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
         return $this->belongsTo(Deal::class);

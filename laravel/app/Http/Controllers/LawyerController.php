@@ -35,7 +35,7 @@ class LawyerController extends Controller
             abort(403, "Unauthorized - You are not part of this deal.");
         }
 
-        return Inertia::render('Deals/Show', [
+        return Inertia::render('Users/Lawyer/Deals/Show', [
             'deal' => $deal->load(
                 [
                     'realEstateListing.mainImage', // ✅ Load the main image separately

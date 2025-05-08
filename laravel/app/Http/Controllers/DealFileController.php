@@ -24,12 +24,16 @@ class DealFileController extends Controller
         $file = $request->file('file');
         $filePath = $file->store('deal_files', 'public'); // Save in storage/app/public/deal_files
         $fileType = $file->getClientOriginalExtension();
+        $authorName = auth()->user()->name;
+        $authorEmail = auth()->user()->email;
 
-        $dealFile = DealFile::create([
+        DealFile::create([
             'deal_id' => $deal->id,
             'file_name' => $file->getClientOriginalName(),
             'file_path' => $filePath,
             'file_type' => $fileType,
+            'author_name' => $authorName,
+            'author_email' => $authorEmail,
         ]);
 
         return back()->with('success', 'File uploaded successfully.');

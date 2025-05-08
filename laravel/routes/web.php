@@ -97,7 +97,7 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-Route::middleware(['auth', 'role:buyer|seller'])->group(function () {
+Route::middleware(['auth', 'role:buyer|seller|lawyer'])->group(function () {
     Route::post('/deals/{deal}/files', [DealFileController::class, 'store'])->name('deals.files.store');
     Route::get('/files/{file}/download', [DealFileController::class, 'download'])->name('deals.files.download');
     Route::delete('/files/{file}', [DealFileController::class, 'destroy'])->name('deals.files.destroy');

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('deal_id')->constrained()->onDelete('cascade'); // Link file to deal
             $table->string('file_name'); // Original filename
             $table->string('file_path'); // Path in storage
+            $table->string('author_email');
+            $table->string('author_name');
             $table->string('file_type')->nullable(); // e.g., PDF, DOCX, Image
             $table->timestamps();
         });

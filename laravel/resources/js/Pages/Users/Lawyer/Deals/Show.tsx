@@ -6,9 +6,14 @@ import type { Deal } from "@/types"; // or wherever DealProps is defined
 import type { User } from "@/types"; // adjust if your User type is elsewhere
 import {filterFilesForUser} from "@/Helpers/fileHelpers";
 
-export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: User}}) {
+
+
+export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: User}})
+{
     // ✅ Find the seller in the users array
     const seller = deal.users.find(user => user.role === "seller");
+    const buyer = deal.users.find(user => user.role === "buyer");
+    const {user} = auth
 
     // ✅ File Upload Handling
     const {data, setData, post, progress} = useForm({file: null as File | null});
@@ -24,6 +29,9 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
     );
     // state for condition day
     console.log(deal.possession_day !== null, 'possession_day')
+
+
+
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -119,7 +127,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
             .catch(() => alert("An error occurred."));
     };
 
-    const lawyer = deal.users.find(user=>user.role ==="lawyer")
+    const lawyer = deal.users.find(user => user.role === "lawyer")
 
 
     return (
@@ -195,46 +203,27 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                             </div>
                         )}
 
-                        {/* ✅ Deposit Confirmation */}
-                        {!deal.is_made && (
+                        {/* ✅ Buyer Details */}
+                        {buyer && (
                             <div className="mt-6 p-4 border rounded-md">
-                                <h3 className="text-xl font-semibold">💸 Security Deposit</h3>
-                                <form onSubmit={handleDepositSubmit} className="space-y-3">
-                                    <label className="inline-flex items-center">
-                                        <input
-                                            type="checkbox"
-                                            checked={depositForm.data.confirmed}
-                                            onChange={e => depositForm.setData('confirmed', e.target.checked)}
-                                            className="mr-2"
-                                        />
-                                        I confirm I have made the security deposit.
-                                    </label>
-                                    <button
-                                        type="submit"
-                                        disabled={!depositForm.data.confirmed}
-                                        className={`px-4 py-2 rounded text-white ${
-                                            depositForm.data.confirmed ? 'bg-green-600' : 'bg-gray-400 cursor-not-allowed'
-                                        }`}
-                                    >
-                                        Make Deposit
-                                    </button>
-                                </form>
+                                <h3 className="text-xl font-semibold">👤 Buyer Information</h3>
+                                <p><strong>Name:</strong> {buyer.name}</p>
+                                <p><strong>Email:</strong> {buyer.email}</p>
+                            </div>
+                        )}
+
+                        {/* ✅ Deposit Confirmation */}
+                        {deal.is_made && (
+                            <div className="mt-6 p-4 border rounded-md">
+                                <h3 className="text-xl font-semibold">💸 Security Deposit has been sent by buyer</h3>
                             </div>
                         )}
 
                         {deal.is_made && !deal.is_confirmed && (
                             <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
-                                ⏳ Waiting for seller confirmation. Don’t forget to upload the confirmation file.
+                                ⏳ Waiting for seller confirm reciving security deposit.
                             </div>
                         )}
-
-                        {deal.is_confirmed && (
-                            <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
-                                ✅ You have made the security deposit, seller has confirmed it.
-                            </div>
-                        )}
-
-                        //todo to check if is_confirmed is required here or should be something different option
 
                         {deal.is_confirmed && (
                             <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
@@ -245,134 +234,15 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
 
 
                         {/* ✅ condition_day */}
-                        <form onSubmit={(e) => {
-                            e.preventDefault();
-                            fetch(`/deals/${deal.id}/set-condition-day`, {
-                                method: 'PATCH',
-                                headers: {
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({condition_day}),
-                            }).then((res) => {
-                                if (res.ok) {
-                                    alert('✅ Condition day set successfully!');
-                                    window.location.reload(); // Optional: refresh to show updated value
-                                } else {
-                                    alert('❌ Failed to set condition day.');
-                                }
-                            });
-                        }}>
-                            <label className="block text-sm font-medium text-green-800 mb-1">
-                                📅 Select Condition Day:
-                            </label>
-                            <input
-                                type="date"
-                                value={condition_day !== null ? condition_day : ''}
-                                onChange={(e) => setConditionDay(e.target.value)}
-                                className={`border border-green-300 rounded p-2 text-black bg-white ${condition_day !== null ? 'cursor-not-allowed' : ''}`}
-                                required
-                                disabled={condition_day !== null}
-                            />
-                            <button
-                                type="submit"
-                                className={`ml-3 mt-2 px-4 py-2 rounded text-white ${deal.condition_day !== null ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
-                                disabled={deal.condition_day !== null}
-                            >
-                                Select Condition Day
-                            </button>
-                        </form>
-
+                        <label className="block text-sm font-medium text-green-800 mb-1">
+                            📅 Selected Condition Day: {condition_day !== null ? condition_day : ''}
+                        </label>
 
                         {/* ✅ possession_day */}
-                        <form onSubmit={(e) => {
-                            e.preventDefault();
-                            fetch(`/deals/${deal.id}/set-possession-day`, {
-                                method: 'PATCH',
-                                headers: {
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({possession_day}),
-                            }).then((res) => {
-                                if (res.ok) {
-                                    alert('✅ possession day set successfully!');
-                                    window.location.reload();
-                                } else {
-                                    alert('❌ Failed to set possession  day.');
-                                }
-                            });
-                        }}>
-                            <label className="block text-sm font-medium text-green-800 mb-1">
-                                📅 Select Possession Day:
-                            </label>
-                            <input
-                                type="date"
-                                value={possession_day !== null ? possession_day : ''}
-                                onChange={(e) => setPossessionDay(e.target.value)}
-                                className={`border border-green-300 rounded p-2 text-black bg-white ${possession_day !== null ? 'cursor-not-allowed' : ''}`}
-                                required
-                                disabled={possession_day !== null}
-                            />
-                            <button
-                                type="submit"
-                                className={`ml-3 mt-2 px-4 py-2 rounded text-white ${deal.possession_day !== null ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
-                                disabled={deal.possession_day !== null}
-                            >
-                                Select Possession Day
-                            </button>
-                        </form>
+                        <label className="block text-sm font-medium text-green-800 mb-1">
+                            📅 Selected Possession Day: {possession_day !== null ? possession_day : ''}
+                        </label>
                         {/* )} */}
-
-                        {deal.condition_day ? (
-                            !!deal.is_condition_day_confirmed ? (
-                                <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
-                                    ✅ Your selected condition day
-                                    (<strong>{new Date(deal.condition_day).toLocaleDateString()}</strong>) has been
-                                    approved by the seller.
-                                </div>
-                            ) : (
-                                <div className="mt-6 p-4 border rounded-md bg-yellow-50 text-yellow-800">
-                                    ⏳ The seller is still considering your selected condition day.
-                                </div>
-                            )
-                        ) : null}
-
-
-
-
-                        {/* ✅ Inviting lawyer */}
-                        {lawyer && lawyer.is_buyer_lawyer ? (
-                            <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
-                                <h3 className="text-xl font-semibold">📩 Your Lawyer</h3>
-                                <p><strong>Name:</strong> {lawyer.name}</p>
-                                <p><strong>Email:</strong> {lawyer.email}</p>
-                                <p><strong>Lawyer Code:</strong> {lawyer.lawyer_number || 'N/A'}</p>
-                            </div>
-                        ) : (
-                            <div className="mt-6 p-4 border rounded-md">
-                                <h3 className="text-xl font-semibold">📩 Invite a Lawyer</h3>
-                                <form onSubmit={handleLawyerInvite} className="flex flex-col sm:flex-row gap-2 mt-2">
-                                    <input
-                                        type="text"
-                                        value={inviteForm.data.lawyer_code}
-                                        onChange={(e) => inviteForm.setData('lawyer_code', e.target.value)}
-                                        placeholder="Enter 9-character lawyer code"
-                                        className="border p-2 rounded w-full sm:w-72"
-                                        maxLength={9}
-                                        pattern="[A-Za-z0-9]{9}"
-                                        required
-                                    />
-                                    <button
-                                        type="submit"
-                                        className="px-4 py-2 bg-blue-600 text-white rounded"
-                                    >
-                                        Invite
-                                    </button>
-                                </form>
-                            </div>
-                        )}
-
 
 
 
@@ -411,12 +281,6 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                                     </p>
                                                 )}
                                             </div>
-                                            <button
-                                                onClick={() => handleDelete(file.id)}
-                                                className="text-red-500 mt-2 sm:mt-0"
-                                            >
-                                                ❌ Delete
-                                            </button>
                                         </li>
                                     ))}
                                 </ul>

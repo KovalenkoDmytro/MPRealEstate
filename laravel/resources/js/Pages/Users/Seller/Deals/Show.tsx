@@ -1,54 +1,11 @@
 import {Head, useForm, Link, useForm as useFormInvite} from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { useState } from "react";
+import type { Deal } from "@/types"; // or wherever DealProps is defined
+import type { User } from "@/types"; // adjust if your User type is elsewhere
+import {filterFilesForUser} from "@/Helpers/fileHelpers";
 
-type DealProps = {
-    deal: {
-        id: number;
-        name: string;
-        amount: number;
-        current_step: string;
-        data: string;
-        real_estate_listing: {
-            id: number;
-            title: string;
-            description: string;
-            location: string;
-            price: number;
-            bedrooms: number;
-            bathrooms: number;
-            square_feet: number;
-            status: string;
-            main_image?: { image_path: string };
-            images?: { id: number; image_path: string }[];
-        };
-        files?: {
-            id: number;
-            file_name: string;
-            file_path: string;
-        }[] | null;
-        users: Array<{
-            id: number;
-            name: string;
-            email: string;
-            role: 'lawyer' | 'seller' | 'buyer';
-            is_buyer_lawyer: boolean;
-            is_seller_lawyer: boolean;
-            lawyer_number: string,
-        }>;
-        is_confirmed: boolean;   //todo what is is_confirmed ??  change the name
-        is_made: boolean;
-        condition_day: string | null;
-        possession_day: string | null;
-        security_deposit: string | null;
-        is_condition_day_confirmed: boolean ;
-        is_possession_day_confirmed: boolean ;
-
-        //todo remove all null and leave only bool. set false in table as default
-    };
-};
-
-export default function DealShowPage({ deal }: DealProps) {
+export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: User}}) {
     // ✅ Find the seller in the users array
     const roles = Object.fromEntries(
         deal.users.map(user => [user.role, user])
@@ -61,7 +18,7 @@ export default function DealShowPage({ deal }: DealProps) {
 
     // ✅ File Upload Handling
     const { data, setData, post, progress } = useForm({ file: null as File | null });
-    const [uploadedFiles, setUploadedFiles] = useState(deal.files || []); // ✅ Default to empty array if null
+    const [uploadedFiles, setUploadedFiles] = useState(filterFilesForUser(deal.files || [], auth.user, deal.users)); // ✅ Default to empty array if null
     const [isFileSelected, setIsFileSelected] = useState(false); // ✅ Track if file is chosen
 
     const [deposit, setDeposit] = useState<number | ''>(deal.security_deposit ?? '');
@@ -469,7 +426,7 @@ export default function DealShowPage({ deal }: DealProps) {
                                                 </button>
                                                 {file.created_at && (
                                                     <p className="text-sm text-gray-500 mt-1">
-                                                        Uploaded on: {new Date(file.created_at).toLocaleString()}
+                                                        Uploaded on: {new Date(file.created_at).toLocaleString()} by {file.author_name} ({file.author_email})
                                                     </p>
                                                 )}
                                             </div>
