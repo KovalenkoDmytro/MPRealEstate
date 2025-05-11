@@ -20,6 +20,7 @@ class RealEstateListingController extends Controller
     {
         $user = auth()->user();
 
+
         // ✅ If user is a seller, get only their listings
         if ($user->hasRole('seller')) {
             $listings = RealEstateListing::where('seller_id', $user->id)
@@ -33,8 +34,10 @@ class RealEstateListingController extends Controller
         } else {
             // ✅ Otherwise, return all listings
             $listings = RealEstateListing::with(['seller', 'mainImage'])->get();
+            $favoriteListings = $user->favoriteListings()->pluck('real_estate_listing_id');
             return Inertia::render('RealEstateListings/Index', [
                 'listings' => $listings,
+                'favoriteListings' => $favoriteListings,
             ]);
         }
 

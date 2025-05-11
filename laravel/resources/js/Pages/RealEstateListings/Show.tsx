@@ -1,29 +1,9 @@
-import {useState} from "react";
 import {Link, useForm} from "@inertiajs/react";
-import type {User} from "@/types"; // adjust if your User type is elsewhere
-type ListingProps = {
-    listing: {
-        id: number;
-        title: string;
-        description: string;
-        price: number;
-        location: string;
-        bedrooms: number;
-        bathrooms: number;
-        square_feet: number;
-        deal: {
-            id: number;
-        },
-        status: string;
-        seller: { name: string };
-        main_image?: { image_path: string };
-        images?: { id: number; image_path: string }[];
-    };
-};
+import type {User, Listing} from "@/types"; // adjust if your User type is elsewhere
 
 
 interface ShowProps {
-    listing: ListingProps["listing"];
+    listing: Listing;
     auth: {user: User};
 }
 

@@ -56,8 +56,15 @@ class User extends Authenticatable
         return $this->getRoleNames()->first() ?? 'no role'; // Get the assigned role
     }
 
+    // Relationship with Deals
     public function deals(): \Illuminate\Database\Eloquent\Relations\BelongsToMany {
         return $this->belongsToMany(Deal::class, 'deal_user');
+    }
+
+    // Relationship with RealEstateListing
+    public function favoriteListings()
+    {
+        return $this->belongsToMany(RealEstateListing::class, 'favorite_listings')->withTimestamps();
     }
 
 

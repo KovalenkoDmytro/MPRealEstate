@@ -46,6 +46,24 @@ export type Deal = {
 
 };
 
+export type Listing = {
+    id: number;
+    title: string;
+    description: string;
+    price: number;
+    location: string;
+    bedrooms: number;
+    bathrooms: number;
+    square_feet: number;
+    deal: {
+        id: number;
+    },
+    status: string;
+    seller: { name: string };
+    main_image?: { image_path: string };
+    images?: { id: number; image_path: string }[];
+};
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\RealEstateListingController;
+use App\Http\Controllers\FavoriteListingController;
 
 // Public Home Route
 Route::get('/', function () {
@@ -32,6 +33,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // RealEstateListing pages
     Route::get('/listings', [RealEstateListingController::class, 'index'])->name('listings.index');
     Route::get('/listings/{listing}', [RealEstateListingController::class, 'show'])->name('listings.show');
+
+
+    //Add listing to favorite
+    Route::post('/favorites', [FavoriteListingController::class, 'store'])->name('favorites.store');
+    Route::delete('/favorites/{listing}', [FavoriteListingController::class, 'destroy'])->name('favorites.destroy');
+
 
     // User Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

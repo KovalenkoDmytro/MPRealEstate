@@ -40,4 +40,11 @@ class RealEstateListing extends Model
     {
         return $this->hasOne(ListingImage::class)->where('is_main', true);
     }
+
+    // Relationship with user
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favorite_listings')->withTimestamps();
+    }
+
 }
