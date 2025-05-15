@@ -1,0 +1,8 @@
+{
+    "require": {
+        "spatie/laravel-permission": "^6.16"
+    },
+    "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.15"
+    }
+}
