@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use App\Models\Deal;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Notifications\DepositMarkedAsMade;
+
 
 class DealController extends Controller
 {
@@ -141,8 +143,7 @@ class DealController extends Controller
     }
 
 
-    public function markDepositMade(Request $request, Deal $deal)
-    {
+    public function markDepositMade(Request $request, Deal $deal): \Illuminate\Http\RedirectResponse {
         $user = auth()->user();
 
         // Optional: prevent others from updating
@@ -153,6 +154,13 @@ class DealController extends Controller
         if (!$deal->is_made) {
             $deal->is_made = true;
             $deal->save();
+
+            // ✅ Notify the seller
+            $seller = $deal->users()->where('role', 'seller')->first();
+            if ($seller) {
+                $deal->load('listing'); // Ensure deal.listing is available
+                $seller->notify(new DepositMarkedAsMade($deal));
+            }
         }
 
         return back()->with('success', 'Deposit marked as made.');
