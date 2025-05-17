@@ -1,16 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\User;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
+use App\Notifications\SecurityDepositSet;
+use App\Notifications\DepositMarkedAsMade;
+use App\Notifications\DepositConfirmed;
+
+use App\Models\User;
+use App\Models\Deal;
 use App\Models\RealEstateListing;
+
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
-use App\Models\Deal;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Notifications\DepositMarkedAsMade;
 
 
 class DealController extends Controller
@@ -173,6 +178,13 @@ class DealController extends Controller
         if ($deal->is_made) {
             $deal->is_confirmed = true;
             $deal->save();
+
+            // ✅ Notify the buyer
+            $buyer = $deal->users()->where('role', 'buyer')->first();
+            if ($buyer) {
+                $deal->load('listing'); // Ensure 'listing' relation is loaded
+                $buyer->notify(new DepositConfirmed($deal));
+            }
 
             return ['status' => 'success', 'message' => 'Security deposit confirmed.'];
         }
