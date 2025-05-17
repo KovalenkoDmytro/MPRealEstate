@@ -51,6 +51,9 @@ class OfferController extends Controller
         // ✅ Create a deal using DealController function
         $this->dealController->createDeal($offer);
 
+        // ✅ Notify the buyer
+        $offer->buyer->notify(new OfferAccepted($offer->listing));
+
         // Change listing status to
         DB::table('real_estate_listings')->where('id',$offer->listing->id)->update(['status' => 'pending']);
 
@@ -74,14 +77,6 @@ class OfferController extends Controller
         if($request['status'] === 'accepted'){
             $this->acceptOffer($offer);
         }
-        //if accepted create new Deal
-        //todo add it and add opportunity to set up condition day
-        // add lawyer with specific code / lawyer get the code after registration and can see it in profile
-        // lawyer can change status
-
-
-
-
 
         return back()->with('success', 'Offer status updated.');
     }
