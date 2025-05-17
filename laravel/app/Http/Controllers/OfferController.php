@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\RealEstateListing;
-use App\Notifications\OfferAccepted;
 use App\Notifications\OfferConfirmation;
 use App\Notifications\OfferStatusUpdated;
 use App\Notifications\OfferSubmitted;
 use Illuminate\Http\Request;
 use App\Models\Offer;
-use App\Models\Listing;
+
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -83,6 +82,7 @@ class OfferController extends Controller
         }
 
         // ✅ Notify the buyer
+
         $buyer = $offer->buyer;
         $buyer->notify(new OfferStatusUpdated($offer->listing, $request->status));
 
