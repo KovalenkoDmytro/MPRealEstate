@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Notifications\PossessionDaySet;
 use App\Notifications\SecurityDepositSet;
 use App\Notifications\DepositMarkedAsMade;
 use App\Notifications\DepositConfirmed;
@@ -253,6 +254,13 @@ class DealController extends Controller
         // ✅ Set once
         $deal->possession_day = $validated['possession_day'];
         $deal->save();
+
+        // ✅ Notify seller
+        $seller = $deal->users()->where('role', 'seller')->first();
+        if ($seller) {
+            $deal->load('listing');
+            $seller->notify(new PossessionDaySet($deal));
+        }
 
 
         return ['status' => 'success', 'message' => 'Possession day has been set successfully.'];
