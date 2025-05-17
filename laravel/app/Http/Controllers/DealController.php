@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Notifications\SecurityDepositSet;
 use App\Notifications\DepositMarkedAsMade;
 use App\Notifications\DepositConfirmed;
+use App\Notifications\ConditionDaySet;
 
 use App\Models\User;
 use App\Models\Deal;
@@ -207,6 +208,13 @@ class DealController extends Controller
         // ✅ Set once
         $deal->condition_day = $validated['condition_day'];
         $deal->save();
+
+        // Notify the seller
+        $seller = $deal->users()->where('role', 'seller')->first();
+        if ($seller) {
+            $deal->load('listing');
+            $seller->notify(new ConditionDaySet($deal));
+        }
 
 
         return ['status' => 'success', 'message' => 'Condition day has been set successfully.'];
