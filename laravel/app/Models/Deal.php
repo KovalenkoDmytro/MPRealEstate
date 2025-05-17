@@ -22,7 +22,11 @@ class Deal extends Model
     ];
 
     protected $casts = [
-        'data' => 'array', // Cast JSON data
+        'data' => 'array',
+        'condition_day' => 'datetime',
+        'possession_day' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // Define the fixed steps

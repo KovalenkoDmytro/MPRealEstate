@@ -35,29 +35,25 @@ export default function Authenticated({
                                     Dashboard
                                 </NavLink>
                                 {role === "buyer" && (
-                                    <NavLink
-                                        href={route('listings.index')}
-                                        active={route().current('listings.index')}
-                                    >
-                                        Listings
-                                    </NavLink>
+                                    <>
+                                        <NavLink href={route('listings.index')} active={route().current('listings.index')}>
+                                            Listings
+                                        </NavLink>
+                                        <NavLink href={route('buyerDeals.all')} active={route().current('buyerDeals.all')}>
+                                            My deals
+                                        </NavLink>
+                                    </>
                                 )}
 
                                 {role === "seller" && (
-                                    <NavLink
-                                        href={route('listings.index')}
-                                        active={route().current('listings.index')}
-                                    >
-                                        My listings
-                                    </NavLink>
-                                )}
-                                {role === "seller" && (
-                                    <NavLink
-                                        href={route('deals.all')}
-                                        active={route().current('deals.all')}
-                                    >
-                                        My deals
-                                    </NavLink>
+                                    <>
+                                        <NavLink href={route('listings.index')} active={route().current('listings.index')}>
+                                            My listings
+                                        </NavLink>
+                                        <NavLink href={route('sellerDeals.all')} active={route().current('sellerDeals.all')}>
+                                            My deals
+                                        </NavLink>
+                                    </>
                                 )}
 
                                 {role === "admin" && (

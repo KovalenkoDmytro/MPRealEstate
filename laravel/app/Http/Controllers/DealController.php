@@ -109,9 +109,9 @@ class DealController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user->hasRole(['seller', 'lawyer'])) {
-            abort(403, 'Unauthorized');
-        }
+//        if (!$user->hasRole(['seller', 'lawyer', 'buyer'])) {
+//            abort(403, 'Unauthorized');
+//        }
 
         return $user->deals()
             ->with(['users', 'realEstateListing.mainImage', 'realEstateListing.images']) // eager load related data

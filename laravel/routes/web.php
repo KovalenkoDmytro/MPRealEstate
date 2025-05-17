@@ -91,6 +91,7 @@ Route::middleware(['auth', 'role:buyer|seller|lawyer'])->group(function () {
 // Buyer Dashboard (Only for Buyers)
 Route::middleware(['auth', 'role:buyer'])->group(function () {
     Route::post('/listings/{listing}/make-offer', [OfferController::class, 'store']);
+    Route::get('/deals-all',[BuyerController::class, 'showAllDeals'])->name('buyerDeals.all');
     Route::patch('/deals/{deal}/make-deposit', [DealController::class, 'markDepositMade'])->name('deals.markDepositMade');
     Route::patch('/deals/{deal}/set-condition-day', [DealController::class, 'setConditionDay'])->name('deals.setConditionDay');
     Route::patch('/deals/{deal}/set-possession-day', [DealController::class, 'setPossessionDay'])->name('deals.setPossessionDay');
@@ -99,7 +100,7 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 // Seller Dashboard (Only for Sellers)
 Route::middleware(['auth', 'role:seller'])->group(function () {
     Route::patch('/offers/{offer}/update-status', [OfferController::class, 'updateStatus']);
-    Route::get('/deals',[SellerController::class, 'showAllDeals'])->name('deals.all');
+    Route::get('/deals',[SellerController::class, 'showAllDeals'])->name('sellerDeals.all');
     Route::get('/listing/create', [RealEstateListingController::class, 'create'])->name('listings.create');
     Route::post('/listings', [RealEstateListingController::class, 'store'])->name('listings.store');
     Route::get('/listings/{listing}/edit', [RealEstateListingController::class, 'edit'])->name('listings.edit');

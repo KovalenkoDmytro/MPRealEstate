@@ -11,9 +11,12 @@ class BuyerController extends Controller
 {
     protected OfferController $offerController;
 
-    public function __construct(OfferController $offerController)
+    protected DealController $dealController;
+
+    public function __construct(OfferController $offerController,  DealController $dealController)
     {
         $this->offerController = $offerController;
+        $this->dealController = $dealController;
     }
 
     /**
@@ -27,6 +30,14 @@ class BuyerController extends Controller
             'offers' => $this->offerController->showBuyerOffers($user->id),
         ]);
     }
+    public function showAllDeals(): Response {
+
+        return Inertia::render('Users/Buyer/Deals/Index', [
+            'deals' => $this->dealController->getAllDeals(),
+        ]);
+
+    }
+
 
     public function showDealView(Deal $deal): Response {
 

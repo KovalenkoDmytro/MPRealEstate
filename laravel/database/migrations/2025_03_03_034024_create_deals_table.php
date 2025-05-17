@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('current_step')->nullable();
             $table->foreignId('real_estate_listing_id')->nullable()->constrained('real_estate_listings')->cascadeOnDelete(); //Ensures foreign key integrity
             $table->timestamps();
-        }, 'deals');
+        });
     }
 
     /**
