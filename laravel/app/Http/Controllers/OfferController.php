@@ -23,7 +23,7 @@ class OfferController extends Controller
             'message' => 'required|string|max:500',
         ]);
 
-//        $listing = RealEs::findOrFail($listing_id);
+        $listing = RealEstateListing::with('seller')->findOrFail($listing_id);
 
         Offer::create([
             'real_estate_listing_id' => $listing_id,
@@ -32,6 +32,15 @@ class OfferController extends Controller
             'message' => $request->message,
             'status' => 'pending',
         ]);
+
+        $buyer = $request->user();
+        $seller = $listing->seller;
+
+        // Notify the seller
+        $seller->notify(new OfferSubmitted($listing, $request->user(), $offer));
+
+        // Notify buyer (confirmation)
+        $buyer->notify(new OfferConfirmation($listing, $offer));
 
         return back()->with('success', 'Offer submitted successfully.');
     }
