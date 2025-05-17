@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RealEstateListing;
+use App\Notifications\OfferAccepted;
+use App\Notifications\OfferConfirmation;
+use App\Notifications\OfferSubmitted;
 use Illuminate\Http\Request;
 use App\Models\Offer;
 use App\Models\Listing;
@@ -25,7 +29,7 @@ class OfferController extends Controller
 
         $listing = RealEstateListing::with('seller')->findOrFail($listing_id);
 
-        Offer::create([
+        $offer = Offer::create([
             'real_estate_listing_id' => $listing_id,
             'buyer_id' => auth()->id(),
             'offer_price' => $request->offer_price,
