@@ -308,15 +308,18 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                         {deal.security_deposit ? (
                             <p className="text-green-600 font-medium">Security deposit already set: ${deal.security_deposit}</p>
                         ) : (
-                            <form onSubmit={handleDepositSubmit}>  //todo function handleSetDeposit has gone
+                            <form onSubmit={handleDepositSubmit}>
                                 <input
                                     type="number"
                                     name="security_deposit"
-                                    onChange={(e) => setDeposit(e.target.value)}
+                                    onChange={(e) => setDeposit(Number(e.target.value))}
                                     className="border p-2 rounded w-full"
                                     required
                                 />
-                                <button type="submit" className="mt-2 px-4 py-2 bg-blue-600 text-white rounded">
+                                <button
+                                    type="submit"
+                                    className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
+                                >
                                     Set Security Deposit
                                 </button>
                             </form>

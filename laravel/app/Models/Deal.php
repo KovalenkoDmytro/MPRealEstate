@@ -58,6 +58,10 @@ class Deal extends Model
         }
     }
 
+    public function listing(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+        return $this->belongsTo(\App\Models\RealEstateListing::class, 'real_estate_listing_id');
+    }
+
     public function files()
     {
         return $this->hasMany(DealFile::class);

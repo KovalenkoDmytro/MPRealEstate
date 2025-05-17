@@ -124,17 +124,18 @@ class DealController extends Controller
     /**
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function setDeposit(Request $request, Deal $deal): \Illuminate\Http\RedirectResponse {
-        $this->authorize('update', $deal); // Optional: Add authorization if needed
-
+    public function setDeposit(Request $request, Deal $deal): \Illuminate\Http\JsonResponse {
         // ✅ Check if already set
         if (!is_null($deal->security_deposit)) {
-            return back()->with('error', 'Security deposit has already been set and cannot be changed.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Security deposit has already been set and cannot be changed.',
+            ], 400);
         }
 
         // ✅ Validate input
         $validated = $request->validate([
-            'security_deposit' => 'required|numeric|min:100', // adjust min as needed
+            'security_deposit' => 'required|numeric|min:100',
         ]);
 
         // ✅ Set once
@@ -144,11 +145,16 @@ class DealController extends Controller
         // ✅ Notify the buyer
         $buyer = $deal->users()->where('role', 'buyer')->first();
         if ($buyer) {
-            $deal->load('listing'); // ensure listing relationship is available
-            $buyer->notify(new SecurityDepositSet($deal));
+            $deal->load('listing');
+            $buyer->notify(new \App\Notifications\SecurityDepositSet($deal));
         }
 
-        return back()->with('success', 'Security deposit has been set successfully.');
+        // ✅ Return JSON response
+        return response()->json([
+            'success' => true,
+            'message' => 'Security deposit has been set successfully.',
+            'deposit' => $deal->security_deposit,
+        ]);
     }
 
 
