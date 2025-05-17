@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\RealEstateListing;
 use App\Notifications\OfferAccepted;
 use App\Notifications\OfferConfirmation;
+use App\Notifications\OfferStatusUpdated;
 use App\Notifications\OfferSubmitted;
 use Illuminate\Http\Request;
 use App\Models\Offer;
@@ -55,9 +56,6 @@ class OfferController extends Controller
         // ✅ Create a deal using DealController function
         $this->dealController->createDeal($offer);
 
-        // ✅ Notify the buyer
-        $offer->buyer->notify(new OfferAccepted($offer->listing));
-
         // Change listing status to
         DB::table('real_estate_listings')->where('id',$offer->listing->id)->update(['status' => 'pending']);
 
@@ -71,18 +69,28 @@ class OfferController extends Controller
 
         // Ensure only the listing owner can accept/reject offers
         if ($offer->listing->seller_id !== auth()->id()) {
-            return back()->with('error', 'Unauthorized');
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized',
+            ], 403);
         }
 
         $offer->update(['status' => $request->status]);
 
-
-        //if accepted set status pending for listing
-        if($request['status'] === 'accepted'){
+        // If accepted, create deal and set listing status
+        if ($request->status === 'accepted') {
             $this->acceptOffer($offer);
         }
 
-        return back()->with('success', 'Offer status updated.');
+        // ✅ Notify the buyer
+        $buyer = $offer->buyer;
+        $buyer->notify(new OfferStatusUpdated($offer->listing, $request->status));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Offer status updated.',
+            'status' => $offer->status,
+        ], 200);
     }
 
     /**

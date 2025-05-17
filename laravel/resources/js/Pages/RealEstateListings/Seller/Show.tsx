@@ -39,6 +39,8 @@ export default function Show({ listing, auth }: ShowProps) {
     const [offers, setOffers] = useState<Offer[]>(listing.offers || []);
 
     const updateOfferStatus = async (offerId: number, status: "accepted" | "rejected") => {
+
+        console.log(offerId, status);
         try {
             const response = await fetch(`/offers/${offerId}/update-status`, {
                 method: "PATCH",
