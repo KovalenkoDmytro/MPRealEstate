@@ -6,6 +6,7 @@ use App\Notifications\SecurityDepositSet;
 use App\Notifications\DepositMarkedAsMade;
 use App\Notifications\DepositConfirmed;
 use App\Notifications\ConditionDaySet;
+use App\Notifications\ConditionDayConfirmed;
 
 use App\Models\User;
 use App\Models\Deal;
@@ -224,6 +225,14 @@ class DealController extends Controller
 
         $deal->is_condition_day_confirmed = true;
         $deal->save();
+
+        // Notify the buyer
+        $buyer = $deal->users()->where('role', 'buyer')->first();
+        if ($buyer) {
+            $deal->load('listing');
+            $buyer->notify(new ConditionDayConfirmed($deal));
+        }
+
 
         return ['status' => 'success', 'message' => 'Condition day has confirmed.'];
 
