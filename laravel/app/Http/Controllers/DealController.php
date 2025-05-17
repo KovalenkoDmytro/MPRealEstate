@@ -110,8 +110,10 @@ class DealController extends Controller
 
     }
 
-    public function setDeposit(Request $request, Deal $deal)
-    {
+    /**
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function setDeposit(Request $request, Deal $deal): \Illuminate\Http\RedirectResponse {
         $this->authorize('update', $deal); // Optional: Add authorization if needed
 
         // ✅ Check if already set
@@ -127,6 +129,13 @@ class DealController extends Controller
         // ✅ Set once
         $deal->security_deposit = $validated['security_deposit'];
         $deal->save();
+
+        // ✅ Notify the buyer
+        $buyer = $deal->users()->where('role', 'buyer')->first();
+        if ($buyer) {
+            $deal->load('listing'); // ensure listing relationship is available
+            $buyer->notify(new SecurityDepositSet($deal));
+        }
 
         return back()->with('success', 'Security deposit has been set successfully.');
     }

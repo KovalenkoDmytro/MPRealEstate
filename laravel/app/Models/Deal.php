@@ -18,6 +18,7 @@ class Deal extends Model
         'security_deposit',
         'possession_day',
         'condition_day',
+        'security_deposit',
     ];
 
     protected $casts = [
