@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Notifications\PossessionDayConfirmed;
 use App\Notifications\PossessionDaySet;
 use App\Notifications\SecurityDepositSet;
+use App\Notifications\LawyerInvitedToDeal;
 use App\Notifications\DepositMarkedAsMade;
 use App\Notifications\DepositConfirmed;
 use App\Notifications\ConditionDaySet;
@@ -322,6 +323,9 @@ class DealController extends Controller
 
         //make db/models  relations
         $deal->users()->attach($lawyer->id);
+
+        // ✅ Notify the lawyer
+        $lawyer->notify(new LawyerInvitedToDeal($deal));
 
         return response()->json([
             'message' => 'Lawyer invited successfully.',
