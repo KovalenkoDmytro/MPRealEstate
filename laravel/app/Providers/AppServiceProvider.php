@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -28,5 +30,14 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-deal', function (User $user, Deal $deal) {
             return $deal->users()->where('user_id', $user->id)->exists();
         });
+
+        Route::middleware('web')
+            ->group(function () {
+                require base_path('routes/web.php');
+                require base_path('routes/admin.php');
+                require base_path('routes/buyer.php');
+                require base_path('routes/seller.php');
+                require base_path('routes/lawyer.php');
+            });
     }
 }
