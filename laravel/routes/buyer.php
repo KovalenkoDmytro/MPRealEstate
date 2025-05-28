@@ -4,7 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{BuyerController, OfferController, DealController};
 
 Route::middleware(['auth', 'role:buyer'])->prefix('buyer')->name('buyer.')->group(function () {
-    Route::post('/listings/{listing}/make-offer', [OfferController::class, 'store'])->name('makeOffer');
+    Route::prefix('listings')->name('listings.')->group(function () {
+        Route::get('/', [BuyerController::class, 'showAllListings'])->name('index');
+        Route::post('/{listing}/make-offer', [OfferController::class, 'store'])->name('makeOffer');
+    });
+
     Route::get('/deals', [BuyerController::class, 'showAllDeals'])->name('deals.all');
 
     Route::patch('/deals/{deal}/make-deposit', [DealController::class, 'markDepositMade'])->name('deals.markDepositMade');

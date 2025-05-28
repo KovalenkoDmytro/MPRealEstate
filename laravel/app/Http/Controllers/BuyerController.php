@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\RealEstateListing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -36,6 +37,19 @@ class BuyerController extends Controller
             'deals' => $this->dealController->getAllDeals(),
         ]);
 
+    }
+
+    public function showAllListings() {
+        $user = auth()->user();
+        $listings = RealEstateListing::with(['seller', 'mainImage'])
+            ->latest()
+            ->paginate(12);
+        $favoriteListings = $user->favoriteListings()->pluck('real_estate_listing_id');
+
+        return Inertia::render('Users/Buyer/Listings/Index', [
+            'listings' => $listings,
+            'favoriteListings' => $favoriteListings,
+        ]);
     }
 
 
