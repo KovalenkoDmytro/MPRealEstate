@@ -1,5 +1,6 @@
-import { Link, router } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import { Head } from "@inertiajs/react";
+import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import type { Listing } from "@/types";
 
@@ -9,6 +10,15 @@ type Props = {
         links: any[];
     };
     favoriteListings: number[];
+    filters: {
+        location?: string;
+        min_price?: string;
+        max_price?: string;
+        bedrooms?: string;
+        bathrooms?: string;
+        status?: string;
+        favorites_only?: boolean | string;
+    };
 };
 
 function getOptions(method: 'POST' | 'DELETE', body = {}) {
@@ -24,8 +34,27 @@ function getOptions(method: 'POST' | 'DELETE', body = {}) {
     };
 }
 
-export default function Index({ listings, favoriteListings }: Props) {
+export default function Index({ listings, favoriteListings, filters }: Props) {
+    const [form, setForm] = useState({
+        location: filters.location || '',
+        min_price: filters.min_price || '',
+        max_price: filters.max_price || '',
+        bedrooms: filters.bedrooms || '',
+        bathrooms: filters.bathrooms || '',
+        status: filters.status || '',
+        favorites_only: filters.favorites_only === 'true' || filters.favorites_only === true,
+    });
+
+    const updateFilter = (key: string, value: string | boolean) => {
+        setForm((prev) => ({ ...prev, [key]: value }));
+    };
+
     const isFavorited = (id: number) => favoriteListings.includes(id);
+
+    const applyFilters = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.get(route("buyer.listings.index"), form, { preserveScroll: true });
+    };
 
     const toggleFavorite = async (
         e: React.FormEvent,
@@ -69,6 +98,74 @@ export default function Index({ listings, favoriteListings }: Props) {
                     <h1 className="text-2xl font-bold">🏡 My Real Estate Listings</h1>
                 </div>
 
+                {/* 🔍 Filter Form */}
+                <form
+                    onSubmit={applyFilters}
+                    className="mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"
+                >
+                    <input
+                        type="text"
+                        placeholder="Location"
+                        value={form.location}
+                        onChange={(e) => updateFilter("location", e.target.value)}
+                        className="input input-bordered w-full"
+                    />
+                    <input
+                        type="number"
+                        placeholder="Min Price"
+                        value={form.min_price}
+                        onChange={(e) => updateFilter("min_price", e.target.value)}
+                        className="input input-bordered w-full"
+                    />
+                    <input
+                        type="number"
+                        placeholder="Max Price"
+                        value={form.max_price}
+                        onChange={(e) => updateFilter("max_price", e.target.value)}
+                        className="input input-bordered w-full"
+                    />
+                    <input
+                        type="number"
+                        placeholder="Min Bedrooms"
+                        value={form.bedrooms}
+                        onChange={(e) => updateFilter("bedrooms", e.target.value)}
+                        className="input input-bordered w-full"
+                    />
+                    <input
+                        type="number"
+                        placeholder="Min Bathrooms"
+                        value={form.bathrooms}
+                        onChange={(e) => updateFilter("bathrooms", e.target.value)}
+                        className="input input-bordered w-full"
+                    />
+                    <select
+                        value={form.status}
+                        onChange={(e) => updateFilter("status", e.target.value)}
+                        className="input input-bordered w-full"
+                    >
+                        <option value="">All Statuses</option>
+                        <option value="available">Available</option>
+                        <option value="pending">Pending</option>
+                        <option value="sold">Sold</option>
+                    </select>
+                    <label className="inline-flex items-center space-x-2">
+                        <input
+                            type="checkbox"
+                            checked={form.favorites_only}
+                            onChange={(e) => updateFilter("favorites_only", e.target.checked)}
+                        />
+                        <span>Favorites Only</span>
+                    </label>
+
+                    <button
+                        type="submit"
+                        className="btn btn-primary col-span-full sm:col-span-1"
+                    >
+                        Apply Filters
+                    </button>
+                </form>
+
+                {/* 🏠 Listings Grid */}
                 {listings.data.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                         {listings.data.map((listing) => (

@@ -39,16 +39,49 @@ class BuyerController extends Controller
 
     }
 
-    public function showAllListings() {
+    public function showAllListings(Request $request)
+    {
         $user = auth()->user();
-        $listings = RealEstateListing::with(['seller', 'mainImage'])
-            ->latest()
-            ->paginate(12);
+
+        $query = RealEstateListing::with(['seller', 'mainImage']);
+
+        if ($request->filled('location')) {
+            $query->where('location', 'like', '%' . $request->location . '%');
+        }
+
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        if ($request->filled('bedrooms')) {
+            $query->where('bedrooms', '>=', $request->bedrooms);
+        }
+
+        if ($request->filled('bathrooms')) {
+            $query->where('bathrooms', '>=', $request->bathrooms);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->boolean('favorites_only')) {
+            $query->whereIn('id', $user->favoriteListings()->pluck('real_estate_listing_id'));
+        }
+
+        $listings = $query->latest()->paginate(12)->withQueryString();
         $favoriteListings = $user->favoriteListings()->pluck('real_estate_listing_id');
 
         return Inertia::render('Users/Buyer/Listings/Index', [
             'listings' => $listings,
             'favoriteListings' => $favoriteListings,
+            'filters' => $request->only([
+                'location', 'min_price', 'max_price', 'bedrooms', 'bathrooms', 'status', 'favorites_only'
+            ]),
         ]);
     }
 
