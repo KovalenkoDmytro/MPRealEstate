@@ -27,7 +27,7 @@ class RealEstateListingController extends Controller
                 ->with(['mainImage'])
                 ->get();
 
-            return Inertia::render('RealEstateListings/Seller/Index', [
+            return Inertia::render('Users/Seller/Listings/Index', [
                 'listings' => $listings,
             ]);
 
@@ -86,7 +86,7 @@ class RealEstateListingController extends Controller
     }
 
     public function create(): Response {
-        return Inertia::render('RealEstateListings/Create');
+        return Inertia::render('Users/Seller/Listings/Create');
     }
 
     public function store(StoreRealEstateListingRequest $request): \Illuminate\Http\RedirectResponse {
