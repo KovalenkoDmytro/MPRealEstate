@@ -8,20 +8,18 @@ use App\Models\Deal;
 
 class SecurityDepositSet extends Notification
 {
-    public $deal;
+    public Deal $deal;
 
     public function __construct(Deal $deal)
     {
         $this->deal = $deal;
     }
 
-    public function via($notifiable)
-    {
+    public function via($notifiable): array {
         return ['mail'];
     }
 
-    public function toMail($notifiable)
-    {
+    public function toMail($notifiable): MailMessage {
         return (new MailMessage)
             ->greeting("Hello {$notifiable->name},")
             ->line("The seller has set a security deposit for your deal related to \"{$this->deal->listing->title}\".")

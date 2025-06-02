@@ -15,8 +15,7 @@ class RealEstateListing extends Model
     ];
 
     // A listing can have multiple offers
-    public function offers()
-    {
+    public function offers(): \Illuminate\Database\Eloquent\Relations\HasMany|RealEstateListing {
         return $this->hasMany(Offer::class, 'real_estate_listing_id');
     }
 
@@ -39,12 +38,6 @@ class RealEstateListing extends Model
     public function mainImage()
     {
         return $this->hasOne(ListingImage::class)->where('is_main', true);
-    }
-
-    // Relationship with user
-    public function favoritedBy()
-    {
-        return $this->belongsToMany(User::class, 'favorite_listings')->withTimestamps();
     }
 
 }

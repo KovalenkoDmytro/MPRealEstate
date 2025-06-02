@@ -14,7 +14,7 @@ interface Deal {
     amount: string;
     data: string; // JSON string
     created_at: string;
-    current_step: string;
+    //current_step: string;
     users: User[];
 }
 
@@ -40,7 +40,7 @@ export default function DealsPage({ deals }: { deals: Deal[] }) {
                         <td className="border border-gray-300 px-4 py-2">{deal.id}</td>
                         <td className="border border-gray-300 px-4 py-2"><Link className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200" href={`/deals/${deal.id}`}> {deal.name}</Link></td>
                         <td className="border border-gray-300 px-4 py-2">${parseFloat(deal.amount).toLocaleString()}</td>
-                        <td className="border border-gray-300 px-4 py-2">{deal.current_step}</td>
+                        {/*<td className="border border-gray-300 px-4 py-2">{deal.current_step}</td>*/}
                         <td className="border border-gray-300 px-4 py-2">
                             <ul className="text-left">
                                 {deal.users.map((user) => (

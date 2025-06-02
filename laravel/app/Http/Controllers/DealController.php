@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Notifications\PossessionDayConfirmed;
 use App\Notifications\PossessionDaySet;
-use App\Notifications\SecurityDepositSet;
 use App\Notifications\LawyerInvitedToDeal;
 use App\Notifications\DepositMarkedAsMade;
 use App\Notifications\DepositConfirmed;
@@ -57,7 +56,6 @@ class DealController extends Controller
             'amount' => $offer->offer_price,
             'data' => json_encode(['description' => $offer->message]),
             'real_estate_listing_id' => $listing->id,
-            'current_step' => 'Step1', // Set initial step
         ]);
 
         // ✅ Attach buyer and seller to the deal
@@ -74,18 +72,6 @@ class DealController extends Controller
             abort(403, "Unauthorized - You are not part of this deal.");
         }
 
-
-
-
-//        if (!auth()->user()) {
-//            abort(403, "Unauthorized - No user found.");
-//        }
-//
-//        $userRoles = auth()->user()->getRoleNames(); // Get roles
-//        if (!$userRoles->intersect(['admin', 'buyer', 'seller', 'lawyer'])->count()) {
-//            abort(403, "Unauthorized - User has roles: " . json_encode($userRoles) . " but needs 'admin', 'buyer', 'seller', or 'lawyer'.");
-//        }
-
         return Inertia::render('Deals/Show', [
             'deal' => $deal->load(
                 [
@@ -97,29 +83,13 @@ class DealController extends Controller
         ]);
     }
 
-    /**
-     * Move deal to the next step.
-     */
-    public function moveToNextStep(Deal $deal): \Illuminate\Http\RedirectResponse {
-        $deal->moveToNextStep();
-
-        return redirect()->route('deals.show', $deal->id);
-    }
-
     public function getAllDeals()
     {
         $user = auth()->user();
 
-//        if (!$user->hasRole(['seller', 'lawyer', 'buyer'])) {
-//            abort(403, 'Unauthorized');
-//        }
-
         return $user->deals()
             ->with(['users', 'realEstateListing.mainImage', 'realEstateListing.images']) // eager load related data
             ->get();
-
-
-
     }
 
     /**
@@ -203,7 +173,6 @@ class DealController extends Controller
     }
 
     public function setConditionDay(Request $request, Deal $deal): array {
-//        $this->authorize('update', $deal); // Optional: Add authorization if needed
 
         // ✅ Check if already set
         if (!is_null($deal->condition_day)) {

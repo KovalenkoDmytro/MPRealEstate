@@ -8,9 +8,8 @@ use App\Notifications\OfferStatusUpdated;
 use App\Notifications\OfferSubmitted;
 use Illuminate\Http\Request;
 use App\Models\Offer;
-
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
+
 
 class OfferController extends Controller
 {

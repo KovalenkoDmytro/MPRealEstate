@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ListingImage;
-use App\Models\Seller;
 use Illuminate\Http\Request;
-use App\Models;
 use App\Models\RealEstateListing;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -77,12 +75,8 @@ class RealEstateListingController extends Controller
 
             return Inertia::render('RealEstateListings/Show', [
                 'listing' => $listing,
-                //            'listing' => $listing->load('seller', 'listingImages', 'deals'),
             ]);
         }
-
-
-
     }
 
     public function create(): Response {
@@ -169,23 +163,7 @@ class RealEstateListingController extends Controller
             'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // ✅ Validate gallery images
             'remove_images' => 'array',
             'remove_images.*' => 'integer|exists:listing_images,id',
-
         ]);
-
-
-        //todo add this parameters
-        $property_parameters = [
-            'home_type'=>'required|array["condo", "house"]',
-            'year_build'=>'required|integer|min:1950|max:today',
-            'amenities'=>'nullable|array["pool", "gym", "furnished"]',
-            'storeys' =>'required|numeric|min:1|max:50',
-            'community_name' => 'nullable|string|max:255',
-            'annual_property_taxes' => 'required|numeric|min:1|max:5000',
-            'parking_space' => 'required|boolean',
-            'storage_space' => 'required|boolean',
-            'basement_space' => 'required|boolean',
-            'construction_material' => 'nullable|string|max:255',
-        ];
 
 
         // ✅ Update listing details

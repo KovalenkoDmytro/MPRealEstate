@@ -12,7 +12,7 @@ export default  function Show (deal : Deal) {
 
             <h1 className="text-2xl font-bold mb-4">{deal.name}</h1>
             <p className="text-gray-600">💰 Amount: ${deal.amount.toLocaleString()}</p>
-            <p className="text-gray-700">📌 Step: <span className="font-semibold">{deal.current_step}</span></p>
+            {/*<p className="text-gray-700">📌 Step: <span className="font-semibold">{deal.current_step}</span></p>*/}
             <p className="text-gray-500 italic mt-2">📝 {deal.data?.description}</p>
 
             {/* Real Estate Listing (if available) */}

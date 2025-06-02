@@ -18,14 +18,12 @@ class Offer extends Model
     ];
 
     // Each offer belongs to one listing
-    public function listing()
-    {
+    public function listing(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
         return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
     }
 
     // Each offer belongs to one buyer (user)
-    public function buyer()
-    {
+    public function buyer(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
         return $this->belongsTo(User::class, 'buyer_id');
     }
 }

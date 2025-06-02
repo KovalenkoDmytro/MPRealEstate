@@ -12,7 +12,7 @@ export type Deal = {
     id: number;
     name: string;
     amount: number;
-    current_step: string;
+    //current_step: string;
     data: string;
     is_confirmed: boolean;
     is_made: boolean;

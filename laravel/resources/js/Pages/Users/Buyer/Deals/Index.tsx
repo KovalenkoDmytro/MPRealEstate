@@ -28,9 +28,9 @@ export default function BuyerDealsIndex({ deals }: { deals: Deal[] }) {
                                 <p className="text-gray-600">
                                     🏡 <strong>Listing:</strong> {deal.real_estate_listing?.title}
                                 </p>
-                                <p className="text-gray-600">
-                                    🔄 <strong>Status:</strong> {deal.current_step}
-                                </p>
+                                {/*<p className="text-gray-600">*/}
+                                {/*    🔄 <strong>Status:</strong> {deal.current_step}*/}
+                                {/*</p>*/}
 
                                 <Link
                                     href={route('deals.show', deal.id)}

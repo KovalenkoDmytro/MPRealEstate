@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -51,11 +51,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function getRoleAttribute()
-    {
-        return $this->getRoleNames()->first() ?? 'no role'; // Get the assigned role
-    }
-
     // Relationship with Deals
     public function deals(): \Illuminate\Database\Eloquent\Relations\BelongsToMany {
         return $this->belongsToMany(Deal::class, 'deal_user');
@@ -66,6 +61,5 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(RealEstateListing::class, 'favorite_listings')->withTimestamps();
     }
-
 
 }

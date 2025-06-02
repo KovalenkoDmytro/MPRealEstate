@@ -11,8 +11,7 @@ class ListingImage extends Model
 
     protected $fillable = ['real_estate_listing_id', 'image_path', 'is_main'];
 
-    public function listing()
-    {
+    public function listing(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
         return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
     }
 }

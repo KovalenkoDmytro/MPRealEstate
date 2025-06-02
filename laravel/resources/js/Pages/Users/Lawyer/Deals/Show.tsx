@@ -145,9 +145,9 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                             <p className="text-lg">
                                 💰 <strong>Amount:</strong> ${deal.amount.toLocaleString()}
                             </p>
-                            <p className="text-lg">
-                                🔄 <strong>Current Step:</strong> {deal.current_step}
-                            </p>
+                            {/*<p className="text-lg">*/}
+                            {/*    🔄 <strong>Current Step:</strong> {deal.current_step}*/}
+                            {/*</p>*/}
                             <p className="text-lg">
                                 📝 <strong>Description:</strong> {JSON.parse(deal.data).description}
                             </p>

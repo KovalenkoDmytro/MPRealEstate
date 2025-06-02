@@ -21,13 +21,11 @@ class OfferSubmitted extends Notification
         $this->offer = $offer;
     }
 
-    public function via($notifiable)
-    {
+    public function via($notifiable): array {
         return ['mail'];
     }
 
-    public function toMail($notifiable)
-    {
+    public function toMail($notifiable): MailMessage {
         return (new MailMessage)
             ->greeting("Hello {$notifiable->name},")
             ->line("You received a new offer on your listing \"{$this->listing->title}\".")

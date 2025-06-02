@@ -9,8 +9,8 @@ use App\Models\RealEstateListing;
 
 class OfferConfirmation extends Notification
 {
-    public $listing;
-    public $offer;
+    public RealEstateListing $listing;
+    public Offer $offer;
 
     public function __construct(RealEstateListing $listing, Offer $offer)
     {
@@ -18,13 +18,11 @@ class OfferConfirmation extends Notification
         $this->offer = $offer;
     }
 
-    public function via($notifiable)
-    {
+    public function via($notifiable): array {
         return ['mail'];
     }
 
-    public function toMail($notifiable)
-    {
+    public function toMail($notifiable): MailMessage {
         return (new MailMessage)
             ->greeting("Hi {$notifiable->name},")
             ->line("Thank you for submitting an offer on \"{$this->listing->title}\".")

@@ -11,18 +11,15 @@ class Seller extends User
 
     protected $table = 'users'; // ✅ Uses the same table as User
 
-    public static function onlySellers()
-    {
+    public static function onlySellers(): \App\Models\User {
         return User::whereHas('roles', function ($q) {
             $q->where('name', 'seller');
         });
     }
 
-    public function listings()
-    {
+    public function listings(): Seller|\Illuminate\Database\Eloquent\Relations\HasMany {
         return $this->hasMany(RealEstateListing::class, 'seller_id');
     }
-
 
 }
 
