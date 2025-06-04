@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\RealEstateListing;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Http\Requests\StoreRealEstateListingRequest;
+use App\Http\Requests\RealEstateListingRequest;
 
 class RealEstateListingController extends Controller
 {
@@ -83,7 +83,7 @@ class RealEstateListingController extends Controller
         return Inertia::render('Users/Seller/Listings/Create');
     }
 
-    public function store(StoreRealEstateListingRequest $request): \Illuminate\Http\RedirectResponse {
+    public function store(RealEstateListingRequest $request): \Illuminate\Http\RedirectResponse {
         $user = auth()->user();
 
         // ✅ Only sellers can create listings
@@ -141,7 +141,7 @@ class RealEstateListingController extends Controller
     /**
      * ✅ Handle the update request
      */
-    public function update(Request $request, RealEstateListing $listing)
+    public function update(RealEstateListingRequest $request, RealEstateListing $listing)
     {
         $user = auth()->user();
 
@@ -150,24 +150,8 @@ class RealEstateListingController extends Controller
             abort(403, 'Unauthorized: You do not own this listing.');
         }
 
-        // ✅ Validate input
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:10000',
-            'location' => 'required|string|max:255',
-            'bedrooms' => 'required|integer|min:1',
-            'bathrooms' => 'required|integer|min:1',
-            'square_feet' => 'required|integer|min:500',
-            'main_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // ✅ Validate main image
-            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // ✅ Validate gallery images
-            'remove_images' => 'array',
-            'remove_images.*' => 'integer|exists:listing_images,id',
-        ]);
-
-
         // ✅ Update listing details
-        $listing->update($validated);
+        $listing->update($request->validated());
 
         // ✅ Handle main image upload (if changed)
         if ($request->hasFile('main_image')) {
