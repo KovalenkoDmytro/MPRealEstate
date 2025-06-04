@@ -16,7 +16,7 @@ export default function Show({listing, auth}: ShowProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(`/listings/${listing.id}/make-offer`, {
+        post(route('buyer.listings.makeOffer', listing.id), {
             preserveScroll: true,
             onSuccess: () => alert("Offer sent successfully!"),
         });

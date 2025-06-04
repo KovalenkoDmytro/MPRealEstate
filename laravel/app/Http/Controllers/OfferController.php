@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class OfferController extends Controller
 {
-    protected $dealController;
+    protected DealController $dealController;
 
     public function __construct(DealController $dealController)
     {
@@ -49,7 +49,6 @@ class OfferController extends Controller
     }
 
     private function acceptOffer($offer): void {
-
 
         // ✅ Create a deal using DealController function
         $this->dealController->createDeal($offer);
@@ -123,8 +122,4 @@ class OfferController extends Controller
             ->latest()
             ->get();
     }
-
-
-
-
 }

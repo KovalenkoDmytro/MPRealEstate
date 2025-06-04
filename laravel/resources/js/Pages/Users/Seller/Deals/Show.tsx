@@ -82,7 +82,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
         setSavingDeposit(true);
 
         try {
-            const response = await fetch(`/deals/${deal.id}/set-deposit`, {
+            const response = await fetch(`/seller/deals/${deal.id}/set-deposit`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

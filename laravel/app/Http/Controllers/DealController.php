@@ -121,11 +121,12 @@ class DealController extends Controller
         }
 
         // ✅ Return JSON response
-        return response()->json([
-            'success' => true,
-            'message' => 'Security deposit has been set successfully.',
-            'deposit' => $deal->security_deposit,
-        ]);
+        return back()->with('success', 'Security deposit has been set successfully.');
+//        return response()->json([
+//            'success' => true,
+//            'message' => 'Security deposit has been set successfully.',
+//            'deposit' => $deal->security_deposit,
+//        ]);
     }
 
 

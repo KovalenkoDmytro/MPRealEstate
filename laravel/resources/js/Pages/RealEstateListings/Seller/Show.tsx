@@ -39,10 +39,8 @@ export default function Show({ listing, auth }: ShowProps) {
     const [offers, setOffers] = useState<Offer[]>(listing.offers || []);
 
     const updateOfferStatus = async (offerId: number, status: "accepted" | "rejected") => {
-
-        console.log(offerId, status);
         try {
-            const response = await fetch(`/offers/${offerId}/update-status`, {
+            const response = await fetch(`/seller/offers/${offerId}/update-status`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -122,12 +120,14 @@ export default function Show({ listing, auth }: ShowProps) {
                                 {offer.status === "pending" && (
                                     <div className="mt-2">
                                         <button
+                                            type="button"
                                             onClick={() => updateOfferStatus(offer.id, "accepted")}
                                             className="px-3 py-1 bg-green-500 text-white rounded-md mr-2"
                                         >
                                             ✅ Accept
                                         </button>
                                         <button
+                                            type="button"
                                             onClick={() => updateOfferStatus(offer.id, "rejected")}
                                             className="px-3 py-1 bg-red-500 text-white rounded-md"
                                         >
