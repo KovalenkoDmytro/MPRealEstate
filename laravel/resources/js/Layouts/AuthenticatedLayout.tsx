@@ -60,8 +60,8 @@ export default function Authenticated({
                                             My Listings
                                         </NavLink>
                                         <NavLink
-                                            href={route('seller.deals.all')}
-                                            active={route().current('seller.deals.all')}
+                                            href={route('seller.deals.index')}
+                                            active={route().current('seller.deals.index')}
                                         >
                                             My Deals
                                         </NavLink>
@@ -178,8 +178,8 @@ export default function Authenticated({
                                     My Listings
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink
-                                    href={route('seller.deals.all')}
-                                    active={route().current('seller.deals.all')}
+                                    href={route('seller.deals.index')}
+                                    active={route().current('seller.deals.index')}
                                 >
                                     My Deals
                                 </ResponsiveNavLink>

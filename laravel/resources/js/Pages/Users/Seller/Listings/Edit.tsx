@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
+import {Head, Link} from "@inertiajs/react";
 import { useState, useTransition } from "react";
 import {Listing} from "@/types";
 
@@ -151,6 +151,10 @@ export default function EditListing( { listing }: { listing: Listing }) {
             <Head title="Edit Listing" />
 
             <div className="container mx-auto p-4">
+                <div className="mt-4">
+                    <Link href={route('seller.listings.index')} className="text-blue-500">🔙 Back to Listings</Link>
+                </div>
+
                 <form onSubmit={submit} encType="multipart/form-data" className="space-y-8">
 
                     {/* 🏠 Property Info */}

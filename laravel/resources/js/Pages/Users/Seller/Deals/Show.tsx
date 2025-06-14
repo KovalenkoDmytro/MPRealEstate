@@ -21,7 +21,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
     const [uploadedFiles, setUploadedFiles] = useState(filterFilesForUser(deal.files || [], auth.user, deal.users)); // ✅ Default to empty array if null
     const [isFileSelected, setIsFileSelected] = useState(false); // ✅ Track if file is chosen
 
-    const [deposit, setDeposit] = useState<number | ''>(deal.security_deposit ?? '');
+    const [deposit, setDeposit] = useState<string | ''>(deal.security_deposit ?? '');
     const [savingDeposit, setSavingDeposit] = useState(false);
 
 
@@ -82,7 +82,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
         setSavingDeposit(true);
 
         try {
-            const response = await fetch(`/seller/deals/${deal.id}/set-deposit`, {
+            const response = await fetch(route('seller.deals.setDeposit', deal.id), {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -140,6 +140,11 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+                    <div className="mt-4">
+                        <Link href={route('seller.deals.index')} className="text-blue-500">🔙 Back to Deals</Link>
+                    </div>
+
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg p-6">
                         <h3 className="text-2xl font-bold">{deal.name}</h3>
 
@@ -177,7 +182,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                 <form
                                     onSubmit={(e) => {
                                         e.preventDefault();
-                                        fetch(`/deals/${deal.id}/confirm-deposit`, {
+                                        fetch(route('seller.deals.confirmDeposit', deal.id), {
                                             method: 'POST',
                                             headers: {
                                                 "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || "",
@@ -310,7 +315,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                         ) : (
                             <form onSubmit={handleDepositSubmit}>
                                 <input
-                                    type="number"
+                                    type="string"
                                     name="security_deposit"
                                     onChange={(e) => setDeposit(Number(e.target.value))}
                                     className="border p-2 rounded w-full"
@@ -333,8 +338,9 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                     Buyer selected <strong>{new Date(deal.condition_day).toLocaleDateString()}</strong> as the condition day.
                                 </p>
                                 <button
+
                                     onClick={() => {
-                                        fetch(`/deals/${deal.id}/confirm-condition-day`, {
+                                        fetch(route('seller.deals.confirmConditionDay', deal.id), {
                                             method: 'PATCH',
                                             headers: {
                                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
@@ -371,7 +377,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                 </p>
                                 <button
                                     onClick={() => {
-                                        fetch(`/deals/${deal.id}/confirm-possession-day`, {
+                                        fetch(route('seller.deals.confirmPossessionDay', deal.id), {
                                             method: 'PATCH',
                                             headers: {
                                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',

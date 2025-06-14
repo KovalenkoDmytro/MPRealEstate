@@ -12,7 +12,6 @@ export type Deal = {
     id: number;
     name: string;
     amount: number;
-    //current_step: string;
     data: string;
     is_confirmed: boolean;
     is_made: boolean;
@@ -68,7 +67,7 @@ export type Listing = {
     status: string;
     seller: { name: string };
     main_image: { image_path: string }| null;
-    images: { id: number; image_path: string }[] | [];
+    images: { id: number; image_path: string, is_main: number }[] | [];
     offers: Offer[];
     lot_size?: number;
     property_type?: string;
