@@ -31,13 +31,15 @@ export default function EditListing( { listing }: { listing: Listing }) {
 
     const [previewMainImage, setPreviewMainImage] = useState<string | null>(listing.main_image?.image_path || null);
     const [previewGalleryImages, setPreviewGalleryImages] = useState<{ id?: number; file?: File; url: string }[]>(
-        listing.images?.map(img => ({ id: img.id, url: img.image_path })) || []
+        listing.images
+            ?.filter(img => !img.is_main) // exclude main image from gallery
+            .map(img => ({ id: img.id, url: img.image_path })) || []
     );
     const [removeMainImageFlag, setRemoveMainImageFlag] = useState(false);
 
     const [isPending, startTransition] = useTransition();
     const [errors, setErrors] = useState<Record<string, string[]>>({});
-
+    const totalGalleryImages = previewGalleryImages.length;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, type, checked, value } = e.target;
@@ -62,10 +64,10 @@ export default function EditListing( { listing }: { listing: Listing }) {
         if (!e.target.files) return;
 
         const newFiles = Array.from(e.target.files);
-        const totalFiles = data.gallery_images.length + newFiles.length;
+        const currentCount = previewGalleryImages.length;
 
-        if (totalFiles > 7) {
-            alert("You can upload a maximum of 7 images.");
+        if (currentCount + newFiles.length > 7) {
+            alert("You can only upload up to 7 images total.");
             return;
         }
 
@@ -230,9 +232,9 @@ export default function EditListing( { listing }: { listing: Listing }) {
                         <div>
                             <label className="block mb-1 font-medium">Gallery Images</label>
                             <p className="text-sm text-gray-500">
-                                {data.gallery_images.length} of 7 images selected
+                                {totalGalleryImages} of 7 images selected
                             </p>
-                            <input type="file" accept="image/*" multiple onChange={handleGalleryImagesChange} className="file-input w-full" />
+                            <input type="file" accept="image/*" disabled={previewGalleryImages.length >= 7} multiple onChange={handleGalleryImagesChange} className="file-input w-full" />
                             <div className="flex gap-2 mt-2 flex-wrap">
                                 {previewGalleryImages.map((image, index) => (
                                     <div key={index} className="relative inline-block">
