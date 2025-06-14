@@ -54,8 +54,8 @@ export default function Authenticated({
                                 {role === 'seller' && (
                                     <>
                                         <NavLink
-                                            href={route('listings.index')}
-                                            active={route().current('listings.index')}
+                                            href={route('seller.listings.index')}
+                                            active={route().current('seller.listings.index')}
                                         >
                                             My Listings
                                         </NavLink>
@@ -172,8 +172,8 @@ export default function Authenticated({
                         {role === 'seller' && (
                             <>
                                 <ResponsiveNavLink
-                                    href={route('listings.index')}
-                                    active={route().current('listings.index')}
+                                    href={route('seller.listings.index')}
+                                    active={route().current('seller.listings.index')}
                                 >
                                     My Listings
                                 </ResponsiveNavLink>

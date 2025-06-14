@@ -91,24 +91,27 @@ export default function CreateListing() {
         });
 
         try {
-            const response = await fetch("/listings", {
+            const response = await fetch(route('seller.listings.store'), {
                 method: "POST",
+                credentials: "same-origin",
+
                 headers: {
                     "X-CSRF-TOKEN": (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || "",
+                    "Accept": "application/json"
                 },
                 body: formData,
             });
 
-            if (!response.ok) {
-                if (response.status === 422) {
-                    const { errors } = await response.json();
-                    setErrors(errors);
-                } else {
-                    throw new Error("Something went wrong");
-                }
-            } else {
-                window.location.href = "/listings";
-            }
+            // if (!response.ok) {
+            //     if (response.status === 422) {
+            //         const { errors } = await response.json();
+            //         setErrors(errors);
+            //     } else {
+            //         throw new Error("Something went wrong");
+            //     }
+            // } else {
+            //     window.location.href = "/listings";
+            // }
         } catch (error) {
             console.error("Form submission error:", error);
         } finally {

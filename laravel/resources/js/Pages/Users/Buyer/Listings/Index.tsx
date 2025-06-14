@@ -204,7 +204,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                                         </button>
                                     </form>
 
-                                    <Link href={`/listings/${listing.id}`} className="block text-blue-500 mt-2">
+                                    <Link href={`/buyer/listings/${listing.id}`} className="block text-blue-500 mt-2">
                                         🔍 View Details
                                     </Link>
                                 </div>

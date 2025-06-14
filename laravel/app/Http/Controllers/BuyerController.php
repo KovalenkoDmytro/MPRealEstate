@@ -80,8 +80,16 @@ class BuyerController extends Controller
             'listings' => $listings,
             'favoriteListings' => $favoriteListings,
             'filters' => $request->only([
-                'location', 'min_price', 'max_price', 'bedrooms', 'bathrooms', 'status', 'favorites_only'
+                'location', 'min_price', 'max_price', 'bedrooms', 'bathrooms', 'status', 'favorites_only',
             ]),
+        ]);
+    }
+
+    public function showListing (RealEstateListing $listing) {
+        $listing = RealEstateListing::with('seller', 'images', 'mainImage', 'deal:id,real_estate_listing_id')->findOrFail($listing['id']);
+
+        return Inertia::render('Users/Buyer/Listings/Show', [
+            'listing' => $listing,
         ]);
     }
 

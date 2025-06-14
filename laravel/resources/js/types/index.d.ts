@@ -46,6 +46,15 @@ export type Deal = {
 
 };
 
+export type Offer = {
+    id: number;
+    offer_price: number;
+    message: string;
+    status: string;
+    listing: Listing;
+    buyer:User;
+}
+
 export type Listing = {
     id: number;
     title: string;
@@ -55,14 +64,27 @@ export type Listing = {
     bedrooms: number;
     bathrooms: number;
     square_feet: number;
-    deal: {
-        id: number;
-    },
+    deal: Deal;
     status: string;
     seller: { name: string };
-    main_image?: { image_path: string };
-    images?: { id: number; image_path: string }[];
+    main_image: { image_path: string }| null;
+    images: { id: number; image_path: string }[] | [];
+    offers: Offer[];
+    lot_size?: number;
+    property_type?: string;
+    year_built?: number;
+    has_garage?: boolean;
+    garage_spaces?: number;
+    has_basement?: boolean;
+    hoa_fees?: number;
+    property_taxes?: number;
+    price_reduced?: boolean;
+    listed_at?: string;
+    keywords?: string;
 };
+
+
+
 
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,

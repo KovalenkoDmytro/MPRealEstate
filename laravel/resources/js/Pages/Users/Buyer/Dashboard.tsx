@@ -1,23 +1,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import {Offer} from "@/types";
 
-type Offer = {
-    id: number;
-    offer_price: number;
-    message: string;
-    status: string;
-    listing: { id: number; title: string; price: number; seller: { name: string } };
-};
 
 type PageProps = {
     auth: { user: { role: string } };
-    offers?: Offer[]; // Only available for buyers
+    offers?: Offer[];
 };
 
-export default function Dashboard() {
-    const { auth, offers } = usePage<PageProps>().props;
-
-    const isBuyer = auth.user.role === "buyer";
+export default function Dashboard({ auth, offers } : PageProps) {
 
     return (
         <AuthenticatedLayout
@@ -35,9 +26,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* ✅ Buyer Offers Section (Only for Buyers) */}
-            {isBuyer && (
-                <div className="py-6">
+            <div className="py-6">
                     <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                         <div className="bg-white p-6 shadow-md rounded-lg">
                             <h2 className="text-2xl font-semibold">📜 My Offers</h2>
@@ -47,7 +36,7 @@ export default function Dashboard() {
                                     {offers.map((offer) => (
                                         <div key={offer.id} className="border p-4 rounded-lg shadow-md">
                                             <h3 className="text-lg font-semibold">
-                                                <Link href={`/listings/${offer.listing.id}`} className="text-blue-500">
+                                                <Link href={`buyer/listings/${offer.listing.id}`} className="text-blue-500">
                                                     {offer.listing.title}
                                                 </Link>
                                             </h3>
@@ -73,7 +62,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </div>
-            )}
+
         </AuthenticatedLayout>
     );
 }

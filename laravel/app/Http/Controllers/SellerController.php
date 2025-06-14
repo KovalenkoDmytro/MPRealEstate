@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Deal;
+use App\Models\RealEstateListing;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -54,6 +55,37 @@ class SellerController extends Controller {
                 ]
             ),
         ]);
+    }
+
+    public function showAllListings() {
+        $listings = RealEstateListing::where('seller_id', auth()->user()->id)
+            ->with(['mainImage'])
+            ->get();
+
+        return Inertia::render('Users/Seller/Listings/Index', [
+            'listings' => $listings,
+        ]);
+    }
+
+    public function showListing(RealEstateListing $listing) {
+
+        // ✅ If user is a seller, ensure they only access their own listings
+        if ($listing->seller_id !== auth()->user()->id) {
+            abort(403, 'Unauthorized Access: This listing does not belong to you.');
+        }
+        $listing = RealEstateListing::with([
+            'offers' => function ($query) {
+                $query->with(['buyer:id,name,email']); // Select only necessary buyer details
+            },
+            'images',
+            'mainImage'])
+            ->findOrFail($listing['id']);
+
+        return Inertia::render('Users/Seller/Listings/Show',[
+            'listing' => $listing,
+        ]);
+
+
     }
 
 }

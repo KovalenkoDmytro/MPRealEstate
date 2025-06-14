@@ -26,7 +26,7 @@ Inertia::render('Welcome', [
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('listings')->name('listings.')->group(function () {
         Route::get('/', [RealEstateListingController::class, 'index'])->name('index');
-        Route::get('/{listing}', [RealEstateListingController::class, 'show'])->name('show');
+//        Route::get('/{listing}', [RealEstateListingController::class, 'show'])->name('show');
     });
 
     Route::prefix('favorites')->name('favorites.')->group(function () {
