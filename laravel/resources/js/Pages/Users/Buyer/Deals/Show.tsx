@@ -1,4 +1,4 @@
-import {Head, useForm, Link} from "@inertiajs/react";
+import {Head, useForm} from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {useState} from "react";
 import {useForm as useFormInvite} from '@inertiajs/react';
@@ -247,7 +247,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                         {/* ✅ condition_day */}
                         <form onSubmit={(e) => {
                             e.preventDefault();
-                            fetch(`/deals/${deal.id}/set-condition-day`, {
+                            fetch(route('deals.set-condition-day', deal.id), {
                                 method: 'PATCH',
                                 headers: {
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
@@ -287,7 +287,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                         {/* ✅ possession_day */}
                         <form onSubmit={(e) => {
                             e.preventDefault();
-                            fetch(`/deals/${deal.id}/set-possession-day`, {
+                            fetch(route('deals.set-possession-day', deal.id), {
                                 method: 'PATCH',
                                 headers: {
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',

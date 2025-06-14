@@ -21,7 +21,7 @@ export default function Authenticated({
                     <div className="flex h-16 justify-between">
                         <div className="flex">
                             <div className="flex shrink-0 items-center">
-                                <Link href="/">
+                                <Link href={route('home')}>
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
@@ -43,8 +43,8 @@ export default function Authenticated({
                                             Listings
                                         </NavLink>
                                         <NavLink
-                                            href={route('buyer.deals.all')}
-                                            active={route().current('buyer.deals.all')}
+                                            href={route('buyer.deals.index')}
+                                            active={route().current('buyer.deals.index')}
                                         >
                                             My Deals
                                         </NavLink>
@@ -161,8 +161,8 @@ export default function Authenticated({
                                     Listings
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink
-                                    href={route('buyer.deals.all')}
-                                    active={route().current('buyer.deals.all')}
+                                    href={route('buyer.deals.index')}
+                                    active={route().current('buyer.deals.index')}
                                 >
                                     My Deals
                                 </ResponsiveNavLink>

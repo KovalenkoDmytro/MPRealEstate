@@ -2,7 +2,7 @@ export type User = {
     id: number;
     name: string;
     email: string;
-    role: 'lawyer' | 'seller' | 'buyer';
+    role: 'lawyer' | 'seller' | 'buyer' | 'admin';
     is_buyer_lawyer: boolean;
     is_seller_lawyer: boolean;
     lawyer_number: string;
