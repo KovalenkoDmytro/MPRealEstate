@@ -31,6 +31,7 @@ export default function Show({listing, userOffer,}: { listing: Listing; userOffe
             if (response.ok) {
                 if (json.status === "success") {
                     alert(json.message); // ✅ use message from JSON
+                    window.location.reload();
                 } else {
                     alert(json.message || "Something went wrong.");
                 }

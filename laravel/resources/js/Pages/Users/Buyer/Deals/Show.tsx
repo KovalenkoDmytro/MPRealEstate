@@ -14,7 +14,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
     const {data, setData, post, progress} = useForm({file: null as File | null});
     const [uploadedFiles, setUploadedFiles] = useState(filterFilesForUser(deal.files || [], auth.user, deal.users)); // ✅ Default to empty array if null
     const [isFileSelected, setIsFileSelected] = useState(false); // ✅ Track if file is chosen
-
+    const [confirmed, setConfirmed] = useState(false);
     const [condition_day, setConditionDay] = useState(
         deal.condition_day ? deal.condition_day.slice(0, 10) : null
     );
@@ -23,7 +23,6 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
         deal.possession_day ? deal.possession_day.slice(0, 10) : null
     );
     // state for condition day
-    console.log(deal.possession_day !== null, 'possession_day')
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -82,15 +81,32 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
 
     const depositForm = useForm({confirmed: false});
 
-    const handleDepositSubmit = (e: React.FormEvent) => {
+    const handleDepositSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!depositForm.data.confirmed) return;
+        try {
+            const response = await fetch(route('buyer.deals.markDepositMade', deal.id), {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || "",
+                    "Accept": "application/json",
+                },
+                body: JSON.stringify({ confirmed: true }),
+            });
 
-        depositForm.patch(route('deals.markDepositMade', deal.id), {
-            preserveScroll: true,
-            onSuccess: () => console.log("Deposit confirmed!"),
-        });
+            const json = await response.json();
+
+            if (response.ok && json.status === 'success') {
+                alert("✅ " + json.message);
+                window.location.reload(); // Optional refresh
+            } else {
+                alert("❌ " + (json.message || "Failed to confirm deposit."));
+            }
+        } catch (error) {
+            console.error("Deposit error:", error);
+            alert("An error occurred. Please try again.");
+        }
     };
 
 
@@ -137,18 +153,11 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                             <p className="text-lg">
                                 💰 <strong>Amount:</strong> ${deal.amount.toLocaleString()}
                             </p>
-                            {/*<p className="text-lg">*/}
-                            {/*    🔄 <strong>Current Step:</strong> {deal.current_step}*/}
-                            {/*</p>*/}
+
                             <p className="text-lg">
                                 📝 <strong>Description:</strong> {JSON.parse(deal.data).description}
                             </p>
-                            {deal.security_deposit && (
-                                <p className="text-lg text-blue-700">
-                                    🔐 <strong>Required Security
-                                    Deposit:</strong> ${Number(deal.security_deposit).toLocaleString()}
-                                </p>
-                            )}
+
                         </div>
 
                         {/* ✅ Real Estate Listing Info */}
@@ -196,7 +205,14 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                         )}
 
                         {/* ✅ Deposit Confirmation */}
-                        {!deal.is_made && (
+                        {deal.security_deposit && (
+                            <p className="text-lg text-blue-700">
+                                🔐 <strong>Required Security
+                                Deposit:</strong> ${Number(deal.security_deposit).toLocaleString()}
+                            </p>
+                        )}
+
+                        {deal.security_deposit && !deal.is_made && (
                             <div className="mt-6 p-4 border rounded-md">
                                 <h3 className="text-xl font-semibold">💸 Security Deposit</h3>
                                 <form onSubmit={handleDepositSubmit} className="space-y-3">
@@ -234,7 +250,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                             </div>
                         )}
 
-                        //todo to check if is_confirmed is required here or should be something different option
+
 
                         {deal.is_confirmed && (
                             <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
@@ -247,7 +263,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                         {/* ✅ condition_day */}
                         <form onSubmit={(e) => {
                             e.preventDefault();
-                            fetch(route('deals.set-condition-day', deal.id), {
+                            fetch(route('buyer.deals.setConditionDay', deal.id), {
                                 method: 'PATCH',
                                 headers: {
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
@@ -287,7 +303,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                         {/* ✅ possession_day */}
                         <form onSubmit={(e) => {
                             e.preventDefault();
-                            fetch(route('deals.set-possession-day', deal.id), {
+                            fetch(route('buyer.deals.setPossessionDay', deal.id), {
                                 method: 'PATCH',
                                 headers: {
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',

@@ -23,7 +23,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
 
     const [deposit, setDeposit] = useState<string | ''>(deal.security_deposit ?? '');
     const [savingDeposit, setSavingDeposit] = useState(false);
-
+    const [depositDateTime, setDepositDateTime] = useState<string>("");
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -77,6 +77,33 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
         setUploadedFiles(uploadedFiles.filter(file => file.id !== fileId));
     };
 
+    const handleConfirmDepositSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(route('seller.deals.confirmDeposit', deal.id), {
+                method: 'POST',
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || "",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message || "✅ Deposit confirmed successfully.");
+                window.location.reload();
+            } else {
+                alert(data.message || "❌ Failed to confirm deposit.");
+            }
+        } catch (error) {
+            console.error("Error confirming deposit:", error);
+            alert("❌ An error occurred while confirming the deposit.");
+        }
+    };
+
     const handleDepositSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setSavingDeposit(true);
@@ -95,6 +122,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
 
             const result = await response.json();
             alert('Deposit saved successfully!');
+            window.location.reload();
         } catch (error) {
             console.error(error);
             alert('An error occurred while saving the deposit.');
@@ -179,20 +207,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                 <p className="mt-2 text-sm text-gray-700">
                                     The buyer has marked the security deposit as made. Please review the uploaded confirmation file and confirm.
                                 </p>
-                                <form
-                                    onSubmit={(e) => {
-                                        e.preventDefault();
-                                        fetch(route('seller.deals.confirmDeposit', deal.id), {
-                                            method: 'POST',
-                                            headers: {
-                                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || "",
-                                                "Content-Type": "application/json",
-                                            },
-                                        })
-                                            .then((response) => response.json())
-                                            .then((data) => {alert(response.message)});
-                                    }}
-                                >
+                                <form onSubmit={handleConfirmDepositSubmit}>
                                     <button
                                         type="submit"
                                         className="mt-3 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
