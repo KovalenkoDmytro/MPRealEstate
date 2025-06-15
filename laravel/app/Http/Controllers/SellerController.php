@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 
-
 use App\Models\Deal;
 use App\Models\RealEstateListing;
 use Illuminate\Support\Facades\Gate;
@@ -35,7 +34,6 @@ class SellerController extends Controller {
         return Inertia::render('Users/Seller/Deals/Index', [
             'deals' => $this->dealController->getAllDeals(),
         ]);
-
     }
 
 
@@ -84,8 +82,5 @@ class SellerController extends Controller {
         return Inertia::render('Users/Seller/Listings/Show',[
             'listing' => $listing,
         ]);
-
-
     }
-
 }

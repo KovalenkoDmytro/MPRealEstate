@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseHelper;
 use App\Models\RealEstateListing;
 use App\Notifications\OfferConfirmation;
 use App\Notifications\OfferStatusUpdated;
@@ -58,7 +59,7 @@ class OfferController extends Controller
 
     }
 
-    public function updateStatus(Request $request, Offer $offer)
+    public function updateStatus(Request $request, Offer $offer): ResponseHelper
     {
         $request->validate([
             'status' => 'required|in:accepted,rejected',
@@ -84,11 +85,7 @@ class OfferController extends Controller
         $buyer = $offer->buyer;
         $buyer->notify(new OfferStatusUpdated($offer->listing, $request->status));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Offer status updated.',
-            'status' => $offer->status,
-        ], 200);
+        ResponseHelper::success('Offer status updated.', $offer->status);
     }
 
     /**

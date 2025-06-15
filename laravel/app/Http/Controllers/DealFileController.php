@@ -34,6 +34,7 @@ class DealFileController extends Controller
             'author_email' => $authorEmail,
         ]);
 
+
         return back()->with('success', 'File uploaded successfully.');
     }
 

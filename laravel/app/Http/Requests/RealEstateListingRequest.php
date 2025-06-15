@@ -11,11 +11,10 @@ class RealEstateListingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()?->hasRole('seller') ?? false; // Avoid null access issues
+        return auth()->user()?->hasRole('seller') ?? false;
     }
 
-    protected function prepareForValidation()
-    {
+    protected function prepareForValidation(): void {
         $this->merge([
             'has_garage' => $this->boolean('has_garage'),
             'has_basement' => $this->boolean('has_basement'),

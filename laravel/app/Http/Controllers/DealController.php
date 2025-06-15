@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseHelper;
 use App\Notifications\PossessionDayConfirmed;
 use App\Notifications\PossessionDaySet;
 use App\Notifications\LawyerInvitedToDeal;
@@ -17,10 +18,10 @@ use App\Models\RealEstateListing;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 
 use Inertia\Inertia;
 use Inertia\Response;
-
 
 class DealController extends Controller
 {
@@ -95,7 +96,7 @@ class DealController extends Controller
     /**
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function setDeposit(Request $request, Deal $deal): \Illuminate\Http\JsonResponse {
+    public function setDeposit(Request $request, Deal $deal): ResponseHelper {
         // ✅ Check if already set
         if (!is_null($deal->security_deposit)) {
             return response()->json([
@@ -120,17 +121,11 @@ class DealController extends Controller
             $buyer->notify(new \App\Notifications\SecurityDepositSet($deal));
         }
 
-        // ✅ Return JSON response
-        return back()->with('success', 'Security deposit has been set successfully.');
-//        return response()->json([
-//            'success' => true,
-//            'message' => 'Security deposit has been set successfully.',
-//            'deposit' => $deal->security_deposit,
-//        ]);
+        return ResponseHelper::success('Security deposit has been set successfully.');
     }
 
 
-    public function markDepositMade(Request $request, Deal $deal): \Illuminate\Http\RedirectResponse {
+    public function markDepositMade(Request $request, Deal $deal): ResponseHelper {
         $user = auth()->user();
 
         // Optional: prevent others from updating
@@ -150,13 +145,12 @@ class DealController extends Controller
             }
         }
 
-        return back()->with('success', 'Deposit marked as made.');
+        return ResponseHelper::success('Deposit marked as made.');
     }
 
 
-    public function confirmDeposit(Deal $deal)
+    public function confirmDeposit(Deal $deal) : ResponseHelper
     {
-
         if ($deal->is_made) {
             $deal->is_confirmed = true;
             $deal->save();
@@ -168,12 +162,13 @@ class DealController extends Controller
                 $buyer->notify(new DepositConfirmed($deal));
             }
 
-            return ['status' => 'success', 'message' => 'Security deposit confirmed.'];
+            return ResponseHelper::success('Security deposit confirmed.');
         }
 
+        return ResponseHelper::error('Security deposit has not been marked as made.');
     }
 
-    public function setConditionDay(Request $request, Deal $deal): array {
+    public function setConditionDay(Request $request, Deal $deal): ResponseHelper {
 
         // ✅ Check if already set
         if (!is_null($deal->condition_day)) {
@@ -196,11 +191,11 @@ class DealController extends Controller
             $seller->notify(new ConditionDaySet($deal));
         }
 
+        return ResponseHelper::success('Condition day has been set successfully.');
 
-        return ['status' => 'success', 'message' => 'Condition day has been set successfully.'];
     }
 
-    public function confirmConditionDay(Deal $deal): array {
+    public function confirmConditionDay(Deal $deal): ResponseHelper {
 
         $deal->is_condition_day_confirmed = true;
         $deal->save();
@@ -212,12 +207,10 @@ class DealController extends Controller
             $buyer->notify(new ConditionDayConfirmed($deal));
         }
 
-
-        return ['status' => 'success', 'message' => 'Condition day has confirmed.'];
-
+        return ResponseHelper::success('Condition day has confirmed.');
     }
 
-    public function setPossessionDay(Request $request, Deal $deal): array {
+    public function setPossessionDay(Request $request, Deal $deal): ResponseHelper {
 
         // ✅ Check if already set
         if (!is_null($deal->possession_day)) {
@@ -240,11 +233,11 @@ class DealController extends Controller
             $seller->notify(new PossessionDaySet($deal));
         }
 
+        return ResponseHelper::success('Possession day has been set successfully.');
 
-        return ['status' => 'success', 'message' => 'Possession day has been set successfully.'];
     }
 
-    public function confirmPossessionDay(Deal $deal): array {
+    public function confirmPossessionDay(Deal $deal): ResponseHelper {
 
         $deal->is_possession_day_confirmed = true;
         $deal->save();
@@ -256,10 +249,8 @@ class DealController extends Controller
             $buyer->notify(new PossessionDayConfirmed($deal));
         }
 
-        return ['status' => 'success', 'message' => 'Possession day has confirmed.'];
-
+        return ResponseHelper::success('Possession day has confirmed.');
     }
-
 
     public function inviteLawyer(Request $request, Deal $deal)
     {
@@ -297,13 +288,7 @@ class DealController extends Controller
         // ✅ Notify the lawyer
         $lawyer->notify(new LawyerInvitedToDeal($deal));
 
-        return response()->json([
-            'message' => 'Lawyer invited successfully.',
-            'lawyer' => $lawyer
-        ]);
+        ResponseHelper::success('Lawyer invited successfully.', $lawyer);
+
     }
-
-
-
-
 }

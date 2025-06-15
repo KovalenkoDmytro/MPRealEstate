@@ -9,6 +9,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Requests\RealEstateListingRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Helpers\ResponseHelper;
 
 class RealEstateListingController extends Controller {
 
@@ -27,47 +28,13 @@ class RealEstateListingController extends Controller {
         ]);
     }
 
-    /**
-     * Show details of a single listing.
-     */
-    public function show(RealEstateListing $listing) {
-        //        $user = auth()->user();
-
-        //        if ($user->hasRole('seller')){
-        //            // ✅ If user is a seller, ensure they only access their own listings
-        //            if ($listing->seller_id !== $user->id) {
-        //                abort(403, 'Unauthorized Access: This listing does not belong to you.');
-        //            }
-        //            $listing = RealEstateListing::with([
-        //                'offers' => function ($query) {
-        //                    $query->with(['buyer:id,name,email']); // Select only necessary buyer details
-        //                },
-        //                'images',
-        //                'mainImage'])
-        //                ->findOrFail($listing['id']);
-        //
-        //            return Inertia::render('RealEstateListings/Seller/Show',[
-        //                'listing' => $listing,
-        //            ]);
-        //
-        //        }
-
-        //        if (!$user->hasRole('seller')){
-        //            $listing = RealEstateListing::with('seller', 'images', 'mainImage', 'deal:id,real_estate_listing_id')->findOrFail($listing['id']);
-        //
-        //            return Inertia::render('RealEstateListings/Show', [
-        //                'listing' => $listing,
-        //            ]);
-        //        }
-    }
 
     public function create(): Response {
         return Inertia::render('Users/Seller/Listings/Create');
     }
 
 
-    public function store(RealEstateListingRequest $request
-    ) {
+    public function store(RealEstateListingRequest $request): ResponseHelper {
 
         // ✅ Only sellers can create listings
         if (!auth()->user()->hasRole('seller')) {
@@ -83,9 +50,7 @@ class RealEstateListingController extends Controller {
 
         $this->handleListingImages($listing, $request);
 
-        return response()->json([
-            'message' => 'Listing created successfully!',
-        ]);
+        return ResponseHelper::success('Listing created successfully!');
     }
 
     /**
@@ -107,10 +72,7 @@ class RealEstateListingController extends Controller {
     /**
      * ✅ Handle the update request
      */
-    public function update(
-        RealEstateListingRequest $request,
-        RealEstateListing $listing
-    ) {
+    public function update(RealEstateListingRequest $request, RealEstateListing $listing):ResponseHelper {
         if ($listing->seller_id !== auth()->user()->id) {
             abort(403, 'Unauthorized: You do not own this listing.');
         }
@@ -119,7 +81,7 @@ class RealEstateListingController extends Controller {
 
         $this->handleListingImages($listing, $request);
 
-        return redirect()->route('listings.index')->with('success', 'Listing updated successfully!');
+        return ResponseHelper::success('Listing updated successfully!');
     }
 
 
