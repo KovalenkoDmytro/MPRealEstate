@@ -13,25 +13,29 @@ export default function Show({ listing }: {listing : Listing}) {
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || "",
+                    Accept: "application/json",
                 },
                 body: JSON.stringify({ status }),
             });
 
             const result = await response.json();
 
-            if (result.success) {
-                setOffers((prevOffers) =>
-                    prevOffers.map((offer) =>
-                        offer.id === offerId ? { ...offer, status } : offer
+            if (response.ok && result.status === "success") {
+                const updatedStatus = result.data?.offerStatus || status;
+
+                setOffers(prev =>
+                    prev.map(offer =>
+                        offer.id === offerId ? { ...offer, status: updatedStatus } : offer
                     )
                 );
-                alert(`Offer ${status} successfully!`);
+
+                alert(result.message || `Offer ${updatedStatus} successfully!`);
             } else {
-                alert("Error updating offer status.");
+                alert(result.message || "Failed to update offer status.");
             }
         } catch (error) {
-            console.error("Error:", error);
-            alert("Something went wrong.");
+            console.error("Fetch error:", error);
+            alert("Network error. Please try again.");
         }
     };
 

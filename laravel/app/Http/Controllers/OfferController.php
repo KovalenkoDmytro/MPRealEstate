@@ -60,7 +60,7 @@ class OfferController extends Controller
 
     }
 
-    public function updateStatus(Request $request, Offer $offer): ResponseHelper
+    public function updateStatus(Request $request, Offer $offer): JsonResponse
     {
         $request->validate([
             'status' => 'required|in:accepted,rejected',
@@ -86,7 +86,7 @@ class OfferController extends Controller
         $buyer = $offer->buyer;
         $buyer->notify(new OfferStatusUpdated($offer->listing, $request->status));
 
-        ResponseHelper::success('Offer status updated.', $offer->status);
+        return ResponseHelper::success('Offer status updated.', ['offerStatus' => $offer->status]);
     }
 
     /**
