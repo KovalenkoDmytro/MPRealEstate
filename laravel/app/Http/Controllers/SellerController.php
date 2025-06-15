@@ -57,6 +57,7 @@ class SellerController extends Controller {
 
     public function showAllListings() {
         $listings = RealEstateListing::where('seller_id', auth()->user()->id)
+            ->where('status', '!=', 'inactive')
             ->with(['mainImage'])
             ->get();
 

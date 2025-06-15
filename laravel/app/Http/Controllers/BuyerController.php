@@ -43,7 +43,9 @@ class BuyerController extends Controller
     {
         $user = auth()->user();
 
-        $query = RealEstateListing::with(['seller', 'mainImage']);
+        $query = RealEstateListing::query()
+            ->where('status', '!=', 'inactive')
+            ->with(['seller', 'mainImage']); // ✅ Just build the query — don't call `get()`
 
         if ($request->filled('location')) {
             $query->where('location', 'like', '%' . $request->location . '%');
@@ -73,7 +75,9 @@ class BuyerController extends Controller
             $query->whereIn('id', $user->favoriteListings()->pluck('real_estate_listing_id'));
         }
 
-        $listings = $query->latest()->paginate(12)->withQueryString();
+        // ✅ NOW execute the query and paginate
+        $listings = $query->latest()->paginate(9)->withQueryString();
+
         $favoriteListings = $user->favoriteListings()->pluck('real_estate_listing_id');
 
         return Inertia::render('Users/Buyer/Listings/Index', [
@@ -85,11 +89,23 @@ class BuyerController extends Controller
         ]);
     }
 
-    public function showListing (RealEstateListing $listing) {
-        $listing = RealEstateListing::with('seller', 'images', 'mainImage', 'deal:id,real_estate_listing_id')->findOrFail($listing['id']);
+    public function showListing(RealEstateListing $listing)
+    {
+        $user = auth()->user();
+
+        // Reload the listing with necessary relations
+        $listing = RealEstateListing::with('seller', 'images', 'mainImage', 'deal:id,real_estate_listing_id')
+            ->findOrFail($listing->id);
+
+        // Get the current user's offer if it exists
+        $userOffer = $listing->offers()
+            ->where('buyer_id', $user->id)
+            ->latest()
+            ->first();
 
         return Inertia::render('Users/Buyer/Listings/Show', [
             'listing' => $listing,
+            'userOffer' => $userOffer,
         ]);
     }
 

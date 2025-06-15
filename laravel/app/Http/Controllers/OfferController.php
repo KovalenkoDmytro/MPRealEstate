@@ -7,6 +7,7 @@ use App\Models\RealEstateListing;
 use App\Notifications\OfferConfirmation;
 use App\Notifications\OfferStatusUpdated;
 use App\Notifications\OfferSubmitted;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Offer;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class OfferController extends Controller
     {
         $this->dealController = $dealController;
     }
-    public function store(Request $request, $listing_id)
+    public function store(Request $request, $listing_id): JsonResponse
     {
         $request->validate([
             'offer_price' => 'required|numeric|min:1',
@@ -46,7 +47,7 @@ class OfferController extends Controller
         // Notify buyer (confirmation)
         $buyer->notify(new OfferConfirmation($listing, $offer));
 
-        return back()->with('success', 'Offer submitted successfully.');
+        return ResponseHelper::success('Offer submitted successfully.');
     }
 
     private function acceptOffer($offer): void {

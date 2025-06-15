@@ -10,6 +10,7 @@ use Inertia\Response;
 use App\Http\Requests\RealEstateListingRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\ResponseHelper;
+use Illuminate\Http\JsonResponse;
 
 class RealEstateListingController extends Controller {
 
@@ -28,13 +29,11 @@ class RealEstateListingController extends Controller {
         ]);
     }
 
-
     public function create(): Response {
         return Inertia::render('Users/Seller/Listings/Create');
     }
 
-
-    public function store(RealEstateListingRequest $request): ResponseHelper {
+    public function store(RealEstateListingRequest $request): JsonResponse {
 
         // ✅ Only sellers can create listings
         if (!auth()->user()->hasRole('seller')) {
@@ -52,7 +51,6 @@ class RealEstateListingController extends Controller {
 
         return ResponseHelper::success('Listing created successfully!');
     }
-
     /**
      * ✅ Show the edit form for a listing
      */
@@ -68,11 +66,10 @@ class RealEstateListingController extends Controller {
             'listing' => $listing->load('mainImage', 'images'),
         ]);
     }
-
     /**
      * ✅ Handle the update request
      */
-    public function update(RealEstateListingRequest $request, RealEstateListing $listing):ResponseHelper {
+    public function update(RealEstateListingRequest $request, RealEstateListing $listing):JsonResponse {
         if ($listing->seller_id !== auth()->user()->id) {
             abort(403, 'Unauthorized: You do not own this listing.');
         }
@@ -84,9 +81,39 @@ class RealEstateListingController extends Controller {
         return ResponseHelper::success('Listing updated successfully!');
     }
 
+    public function softDelete(RealEstateListing $listing)
+    {
+        $user = auth()->user();
 
+        // 1. 🔒 Check ownership
+        if ($listing->seller_id !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // 2. ❌ Check if any deal exists and is not completed
+        $hasActiveDeal = $listing->deal()->where('is_completed', false)->exists();
+        if ($hasActiveDeal) {
+            return redirect()->back()->withErrors([
+                'error' => 'Cannot delete listing with an active/incomplete deal.',
+            ]);
+        }
+
+        // 3. 🔄 Soft-delete logic: set status to inactive
+        $listing->update(['status' => 'inactive']);
+
+        // 4. 📦 Clean up: delete all gallery images (keep only main)
+        $galleryImages = $listing->images()->where('is_main', false)->get();
+        foreach ($galleryImages as $image) {
+            Storage::delete(str_replace('/storage/', '', $image->image_path)); // clean path
+            $image->delete();
+        }
+
+        return redirect()->route('seller.listings.index')->with(
+            'success',
+            'Listing deactivated and gallery images removed.'
+        );
+    }
     //Shared logic for storing/updating images
-
     private function handleListingImages(RealEstateListing $listing, Request $request): void
     {
         // ✅ Handle Main Image

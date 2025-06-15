@@ -13,6 +13,7 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
         Route::get('/{listing}/edit', [RealEstateListingController::class, 'edit'])->name('edit');
         Route::put('/{listing}', [RealEstateListingController::class, 'update'])->name('update');
         Route::get('/{listing}', [SellerController::class, 'showListing'])->name('show');
+        Route::patch('/{listing}/deactivate', [RealEstateListingController::class, 'softDelete'])->name('deactivate');
     });
 
     Route::prefix('deals')->name('deals.')->group(function () {

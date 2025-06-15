@@ -33,7 +33,7 @@ export default function Dashboard({ offers }: DashboardProps) {
                     .filter((offer) => offer.status === 'pending')
                     .map((offer) => (
                     <div key={offer.id} className="border p-4 mt-2 rounded-md shadow-sm">
-                        <p><strong>Listing:</strong> <Link href={`/listings/${offer.listing.id}`} className="text-blue-500">{offer.listing.title}</Link> </p>
+                        <p><strong>Listing:</strong> <Link href={route('seller.listings.show', offer.listing.id)} className="text-blue-500">{offer.listing.title}</Link> </p>
                         <p><strong>Buyer:</strong> {offer.buyer.name} ({offer.buyer.email})</p>
                         <p><strong>Offer Price:</strong> ${offer.offer_price}</p>
                         <p><strong>Message:</strong> {offer.message}</p>
@@ -45,7 +45,7 @@ export default function Dashboard({ offers }: DashboardProps) {
             )}
 
             <div className="mt-6">
-                <Link href={"/listings"} className="text-blue-500">View My Listings</Link>
+                <Link href={route('seller.listings.index')} className="text-blue-500">View My Listings</Link>
             </div>
         </div>
         </AuthenticatedLayout>

@@ -96,7 +96,7 @@ class DealController extends Controller
     /**
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
-    public function setDeposit(Request $request, Deal $deal): ResponseHelper {
+    public function setDeposit(Request $request, Deal $deal): JsonResponse {
         // ✅ Check if already set
         if (!is_null($deal->security_deposit)) {
             return response()->json([
@@ -125,7 +125,7 @@ class DealController extends Controller
     }
 
 
-    public function markDepositMade(Request $request, Deal $deal): ResponseHelper {
+    public function markDepositMade(Request $request, Deal $deal): JsonResponse {
         $user = auth()->user();
 
         // Optional: prevent others from updating
@@ -149,7 +149,7 @@ class DealController extends Controller
     }
 
 
-    public function confirmDeposit(Deal $deal) : ResponseHelper
+    public function confirmDeposit(Deal $deal) : JsonResponse
     {
         if ($deal->is_made) {
             $deal->is_confirmed = true;
@@ -168,7 +168,7 @@ class DealController extends Controller
         return ResponseHelper::error('Security deposit has not been marked as made.');
     }
 
-    public function setConditionDay(Request $request, Deal $deal): ResponseHelper {
+    public function setConditionDay(Request $request, Deal $deal): JsonResponse {
 
         // ✅ Check if already set
         if (!is_null($deal->condition_day)) {
@@ -195,7 +195,7 @@ class DealController extends Controller
 
     }
 
-    public function confirmConditionDay(Deal $deal): ResponseHelper {
+    public function confirmConditionDay(Deal $deal): JsonResponse {
 
         $deal->is_condition_day_confirmed = true;
         $deal->save();
@@ -210,7 +210,7 @@ class DealController extends Controller
         return ResponseHelper::success('Condition day has confirmed.');
     }
 
-    public function setPossessionDay(Request $request, Deal $deal): ResponseHelper {
+    public function setPossessionDay(Request $request, Deal $deal): JsonResponse {
 
         // ✅ Check if already set
         if (!is_null($deal->possession_day)) {
@@ -237,7 +237,7 @@ class DealController extends Controller
 
     }
 
-    public function confirmPossessionDay(Deal $deal): ResponseHelper {
+    public function confirmPossessionDay(Deal $deal): JsonResponse {
 
         $deal->is_possession_day_confirmed = true;
         $deal->save();
@@ -252,7 +252,7 @@ class DealController extends Controller
         return ResponseHelper::success('Possession day has confirmed.');
     }
 
-    public function inviteLawyer(Request $request, Deal $deal)
+    public function inviteLawyer(Request $request, Deal $deal) : JsonResponse
     {
         $request->validate([
             'lawyer_code' => 'required|string|size:9',
@@ -288,7 +288,7 @@ class DealController extends Controller
         // ✅ Notify the lawyer
         $lawyer->notify(new LawyerInvitedToDeal($deal));
 
-        ResponseHelper::success('Lawyer invited successfully.', $lawyer);
+        return ResponseHelper::success('Lawyer invited successfully.', $lawyer);
 
     }
 }

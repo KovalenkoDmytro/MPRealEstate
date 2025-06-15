@@ -146,6 +146,35 @@ export default function EditListing( { listing }: { listing: Listing }) {
         });
     };
 
+    const deactivateListing = async () => {
+        if (!confirm("Are you sure you want to deactivate this listing?")) return;
+
+        const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content;
+
+        try {
+            const response = await fetch(route('seller.listings.deactivate', { listing: listing.id }), {
+                method: 'POST', // Send as POST with method override
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken || '',
+                    'X-HTTP-Method-Override': 'PATCH',
+                    'Accept': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                // Redirect or refresh page
+                console.log(response);
+                // window.location.href = "/seller/listings";
+            } else {
+                const errorData = await response.json();
+                alert(errorData.message || "Something went wrong.");
+            }
+        } catch (error) {
+            console.error("Deactivation failed:", error);
+            alert("An error occurred.");
+        }
+    };
+
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold text-gray-800">Edit Listing</h2>}>
             <Head title="Edit Listing" />
@@ -257,6 +286,13 @@ export default function EditListing( { listing }: { listing: Listing }) {
                         </button>
                     </div>
                 </form>
+                <button
+                    onClick={deactivateListing}
+                    className="btn btn-warning"
+                >
+                    Deactivate Listing
+                </button>
+
             </div>
         </AuthenticatedLayout>
     );

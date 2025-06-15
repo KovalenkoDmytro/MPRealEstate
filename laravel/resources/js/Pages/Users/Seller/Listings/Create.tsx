@@ -102,16 +102,17 @@ export default function CreateListing() {
                 body: formData,
             });
 
-            // if (!response.ok) {
-            //     if (response.status === 422) {
-            //         const { errors } = await response.json();
-            //         setErrors(errors);
-            //     } else {
-            //         throw new Error("Something went wrong");
-            //     }
-            // } else {
-            //     window.location.href = "/listings";
-            // }
+            if (response.ok) {
+                window.location.href = "/seller/listings";
+                // if (response.status === 422) {
+                //     const { errors } = await response.json();
+                //     setErrors(errors);
+                // } else {
+                //     throw new Error("Something went wrong");
+                // }
+            } else {
+                // window.location.href = "/listings";
+            }
         } catch (error) {
             console.error("Form submission error:", error);
         } finally {

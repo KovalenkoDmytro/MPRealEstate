@@ -78,7 +78,15 @@ export default function Show({ listing }: {listing : Listing}) {
 
             <div className="mt-4">
                 <Link href={route('seller.listings.index')} className="text-blue-500">🔙 Back to Listings</Link>
-                <Link href={route('seller.listings.edit', listing.id)} className="text-blue-500">Edit Listing</Link>
+                {listing.offers && listing.offers.length === 0 && (
+                    <Link
+                        href={route('seller.listings.edit', listing.id)}
+                        className="text-blue-500 ml-4 inline-block"
+                    >
+                        ✏️ Edit Listing
+                    </Link>
+                )}
+
             </div>
 
 
