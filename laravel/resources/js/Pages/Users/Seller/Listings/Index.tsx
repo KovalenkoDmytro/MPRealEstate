@@ -1,13 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-
-type Listing = {
-    id: number;
-    title: string;
-    price: number;
-    location: string;
-    main_image: { image_path: string } | null;
-};
+import type { Listing } from "@/types";
 
 export default function Index({ listings }: { listings: Listing[] }) {
     return (

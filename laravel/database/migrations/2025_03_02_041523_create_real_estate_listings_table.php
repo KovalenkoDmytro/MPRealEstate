@@ -26,7 +26,7 @@ return new class extends Migration
             $table->enum('property_type', ['house', 'condo', 'townhouse', 'land', 'multi-family', 'farm'])->nullable();
             $table->integer('bedrooms');
             $table->integer('bathrooms');
-            $table->integer('square_feet')->nullable();
+            $table->integer('square_feet');
             $table->unsignedInteger('lot_size')->nullable(); // in sqft or meters
 
             // Additional Details
@@ -42,7 +42,6 @@ return new class extends Migration
             // Status
             $table->string('status')->default('available'); // available, sold, pending
             $table->boolean('price_reduced')->default(false);
-            $table->timestamp('listed_at')->nullable();
 
             // Search
             $table->text('keywords')->nullable();

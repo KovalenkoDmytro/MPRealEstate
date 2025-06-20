@@ -1,20 +1,9 @@
 import {Head, Link} from "@inertiajs/react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import {Offer} from "@/types";
 
-type Offer = {
-    id: number;
-    offer_price: number;
-    message: string;
-    status: string;
-    buyer: { name: string; email: string };
-    listing: { title: string, id: number };
-};
 
-interface DashboardProps {
-    offers: Offer[];
-}
-
-export default function Dashboard({ offers }: DashboardProps) {
+export default function Dashboard({ offers }: {offers: Offer[]}) {
     return (
         <AuthenticatedLayout
             header={

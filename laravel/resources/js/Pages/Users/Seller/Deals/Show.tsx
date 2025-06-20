@@ -184,7 +184,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                             {/*    🔄 <strong>Current Step:</strong> {deal.current_step}*/}
                             {/*</p>*/}
                             <p className="text-lg">
-                                📝 <strong>Description:</strong> {JSON.parse(deal.data).description}
+                                📝 <strong>Description:</strong> {deal.seller_message}
                             </p>
                         </div>
 
@@ -332,7 +332,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                 <input
                                     type="string"
                                     name="security_deposit"
-                                    onChange={(e) => setDeposit(Number(e.target.value))}
+                                    onChange={(e) => setDeposit(e.target.value)}
                                     className="border p-2 rounded w-full"
                                     required
                                 />

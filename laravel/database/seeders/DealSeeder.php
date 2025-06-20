@@ -10,14 +10,6 @@ class DealSeeder extends Seeder
 {
     public function run(): void
     {
-//        $steps = [
-//            'Step1',
-//            'Financing Formalities',
-//            'Inspections',
-//            'Removing Conditions',
-//            'Lawyer Paperwork',
-//            'Closing the Deal',
-//        ];
 
         $buyers = User::whereHas('roles', function ($query) {
             $query->where('name', 'buyer');
@@ -37,8 +29,7 @@ class DealSeeder extends Seeder
             $deal = Deal::create([
                 'name' => "Deal $i",
                 'amount' => rand(5000, 50000),
-                'data' => json_encode(['description' => "Sample deal $i"]),
-//                'current_step' => $steps[array_rand($steps)], // ✅ Assign a random step as a string
+                'seller_message' => "Sample deal $i",
                 'real_estate_listing_id' => $listings->count() ? $listings->pop()->id : null, // ✅ Assign a listing if available
             ]);
 

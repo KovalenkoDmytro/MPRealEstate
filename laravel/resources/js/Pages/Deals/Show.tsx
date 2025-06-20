@@ -1,5 +1,5 @@
 import React from "react";
-import { Head, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 
 import type { Deal } from "@/types"; // or wherever DealProps is defined
 

@@ -23,9 +23,9 @@ export default function DealIndexPage({ deals }: { deals: Deal[] }) {
                                         <h3 className="text-lg font-semibold text-blue-700">
                                             <Link href={`/deals/${deal.id}`}>{deal.name}</Link>
                                         </h3>
-                                        <p><strong>💰 Amount:</strong> ${parseFloat(deal.amount).toLocaleString()}</p>
+                                        <p><strong>💰 Amount:</strong> ${deal.amount.toLocaleString()}</p>
                                         {/*<p><strong>🔄 Step:</strong> {deal.current_step}</p>*/}
-                                        <p><strong>📝 Description:</strong> {JSON.parse(deal.data).description}</p>
+                                        <p><strong>📝 Description:</strong> {deal.seller_message}</p>
                                         <p className="text-sm text-gray-500">📅 Created: {new Date(deal.created_at).toLocaleString()}</p>
                                     </div>
                                 ))}

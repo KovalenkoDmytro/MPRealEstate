@@ -14,7 +14,6 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
     const {data, setData, post, progress} = useForm({file: null as File | null});
     const [uploadedFiles, setUploadedFiles] = useState(filterFilesForUser(deal.files || [], auth.user, deal.users)); // ✅ Default to empty array if null
     const [isFileSelected, setIsFileSelected] = useState(false); // ✅ Track if file is chosen
-    const [confirmed, setConfirmed] = useState(false);
     const [condition_day, setConditionDay] = useState(
         deal.condition_day ? deal.condition_day.slice(0, 10) : null
     );
@@ -155,7 +154,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                             </p>
 
                             <p className="text-lg">
-                                📝 <strong>Description:</strong> {JSON.parse(deal.data).description}
+                                📝 <strong>Description:</strong> {deal.seller_message}
                             </p>
 
                         </div>

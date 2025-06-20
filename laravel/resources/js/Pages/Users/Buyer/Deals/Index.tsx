@@ -17,10 +17,7 @@ export default function BuyerDealsIndex({ deals }: { deals: Deal[] }) {
                 ) : (
                     <div className="grid grid-cols-1 gap-4">
                         {deals.map((deal) => (
-                            <div
-                                key={deal.id}
-                                className="border rounded-md p-4 shadow hover:shadow-md transition"
-                            >
+                            <div key={deal.id} className="border rounded-md p-4 shadow hover:shadow-md transition">
                                 <h2 className="text-lg font-semibold">{deal.name}</h2>
                                 <p className="text-gray-700">
                                     💰 <strong>Amount:</strong> ${deal.amount.toLocaleString()}
@@ -28,9 +25,6 @@ export default function BuyerDealsIndex({ deals }: { deals: Deal[] }) {
                                 <p className="text-gray-600">
                                     🏡 <strong>Listing:</strong> {deal.real_estate_listing?.title}
                                 </p>
-                                {/*<p className="text-gray-600">*/}
-                                {/*    🔄 <strong>Status:</strong> {deal.current_step}*/}
-                                {/*</p>*/}
 
                                 <Link
                                     href={route('deals.show', deal.id)}

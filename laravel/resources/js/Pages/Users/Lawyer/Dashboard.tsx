@@ -1,33 +1,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
+import {Deal, User} from '@/types';
 
-type Deal = {
-    id: number;
-    name: string;
-    real_estate_listing: {
-        title: string;
-        location: string;
-    };
-};
-
-type Props = {
-    auth: {
-        user: {
-            name: string;
-            lawyer_number: string;
-        };
-    };
-    deals: Deal[];
-};
-
-export default function Dashboard({ auth, deals }: Props) {
-    const { user } = auth;
+export default function Dashboard({ auth, deals }: { auth : {user : User} , deals : Deal[] }) {
 
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard
+                    Dashboard LAWYER
                 </h2>
             }
         >
@@ -38,7 +19,7 @@ export default function Dashboard({ auth, deals }: Props) {
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
                             You're logged in as <strong>LAWYER</strong>!<br />
-                            Your unique lawyer number is: <b>{user.lawyer_number}</b>
+                            Your unique lawyer number is: <b>{auth.user.lawyer_number}</b>
                         </div>
                     </div>
 
