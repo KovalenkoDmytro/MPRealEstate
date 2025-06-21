@@ -2,9 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Notifications\MailBuilders\ConditionDaySetMailBuilder;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
+
 
 class ConditionDaySet extends Notification
 {
@@ -20,11 +22,6 @@ class ConditionDaySet extends Notification
     }
 
     public function toMail($notifiable): MailMessage {
-        return (new MailMessage)
-            ->greeting("Hello {$notifiable->name},")
-            ->line("The buyer has set the condition day for your deal on \"{$this->deal->listing->title}\".")
-            ->line("📅 Condition Day: {$this->deal->condition_day->format('F j, Y')}")
-            ->action('View Deal', url("/deals/{$this->deal->id}"))
-            ->line("Please review the schedule and plan accordingly.");
+        return ConditionDaySetMailBuilder::build($this->deal)->build($notifiable);
     }
 }

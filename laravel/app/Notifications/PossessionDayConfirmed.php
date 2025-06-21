@@ -4,27 +4,30 @@ namespace App\Notifications;
 
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use App\Notifications\MailBuilders\PossessionDayConfirmedMailBuilder;
 use App\Models\Deal;
 
 class PossessionDayConfirmed extends Notification
 {
-    public Deal $deal;
+    protected PossessionDayConfirmedMailBuilder $builder;
 
     public function __construct(Deal $deal)
     {
-        $this->deal = $deal;
+        $this->builder = new PossessionDayConfirmedMailBuilder($deal);
     }
 
-    public function via($notifiable): array {
+    public function via($notifiable): array
+    {
         return ['mail'];
     }
 
-    public function toMail($notifiable): MailMessage {
-        return (new MailMessage)
-            ->greeting("Hello {$notifiable->name},")
-            ->line("Your possession day for the listing \"{$this->deal->listing->title}\" has been confirmed by the seller.")
-            ->line("📅 Confirmed Possession Day: {$this->deal->possession_day->format('F j, Y')}")
-            ->action('View Deal Details', url("/deals/{$this->deal->id}"))
-            ->line("Please prepare for the next steps in your property transaction.");
+    public function toMail($notifiable): MailMessage
+    {
+        return $this->buildMailMessage($notifiable);
+    }
+
+    public function buildMailMessage($notifiable): MailMessage
+    {
+        return $this->builder->build($notifiable);
     }
 }

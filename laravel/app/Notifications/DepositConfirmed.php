@@ -5,6 +5,7 @@ namespace App\Notifications;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
+use App\Notifications\MailBuilders\DepositConfirmedMailBuilder;
 
 class DepositConfirmed extends Notification
 {
@@ -15,15 +16,13 @@ class DepositConfirmed extends Notification
         $this->deal = $deal;
     }
 
-    public function via($notifiable): array {
+    public function via($notifiable): array
+    {
         return ['mail'];
     }
 
-    public function toMail($notifiable): MailMessage {
-        return (new MailMessage)
-            ->greeting("Hello {$notifiable->name},")
-            ->line("Your deposit for the deal on \"{$this->deal->listing->title}\" has been confirmed by the seller.")
-            ->action('View Deal Details', url("/deals/{$this->deal->id}"))
-            ->line("Next steps will follow shortly.");
+    public function toMail($notifiable): MailMessage
+    {
+        return (new DepositConfirmedMailBuilder($this->deal))->build($notifiable);
     }
 }

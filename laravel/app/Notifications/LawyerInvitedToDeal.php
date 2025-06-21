@@ -5,6 +5,7 @@ namespace App\Notifications;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
+use App\Notifications\MailBuilders\LawyerInvitedToDealMailBuilder;
 
 class LawyerInvitedToDeal extends Notification
 {
@@ -22,11 +23,6 @@ class LawyerInvitedToDeal extends Notification
 
     public function toMail($notifiable): MailMessage
     {
-        return (new MailMessage)
-            ->greeting("Hello {$notifiable->name},")
-            ->line("You have been invited to participate in a real estate deal.")
-            ->line("🏡 Property: {$this->deal->listing->title}")
-            ->action('View Deal', url("/deals/{$this->deal->id}"))
-            ->line('Please review the deal and take action where needed.');
+        return (new LawyerInvitedToDealMailBuilder($this->deal))->build($notifiable);
     }
 }

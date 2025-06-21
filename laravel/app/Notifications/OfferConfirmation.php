@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Notifications\MailBuilders\OfferConfirmationMailBuilder;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Offer;
@@ -23,12 +24,6 @@ class OfferConfirmation extends Notification
     }
 
     public function toMail($notifiable): MailMessage {
-        return (new MailMessage)
-            ->greeting("Hi {$notifiable->name},")
-            ->line("Thank you for submitting an offer on \"{$this->listing->title}\".")
-            ->line("💰 Offered Price: \${$this->offer->offer_price}")
-            ->line("📍 Listing Location: {$this->listing->location}")
-            ->action('View Your Offer', url("/listings/{$this->listing->id}"))
-            ->line("We’ve notified the seller and they’ll respond soon.");
+        return (new OfferConfirmationMailBuilder($this->listing, $this->offer))->build($notifiable);
     }
 }

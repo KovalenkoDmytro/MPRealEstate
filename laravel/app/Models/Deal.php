@@ -13,7 +13,7 @@ class Deal extends Model
         'name',
         'amount',
         'data',
-//        'current_step',
+    //        'current_step',
         'real_estate_listing_id',
         'security_deposit',
         'possession_day',
