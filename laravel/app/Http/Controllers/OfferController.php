@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ResponseHelper;
+use App\Helpers\Responses\ErrorResponse;
+use App\Helpers\Responses\JsonResponder;
+use App\Helpers\Responses\SuccessResponse;
 use App\Models\RealEstateListing;
 use App\Notifications\OfferConfirmation;
 use App\Notifications\OfferStatusUpdated;
@@ -21,33 +23,51 @@ class OfferController extends Controller
     {
         $this->dealController = $dealController;
     }
-    public function store(Request $request, $listing_id): JsonResponse
-    {
-        $request->validate([
-            'offer_price' => 'required|numeric|min:1',
-            'message' => 'required|string|max:500',
-        ]);
+    public function store(Request $request, $listing_id): JsonResponse {
 
-        $listing = RealEstateListing::with('seller')->findOrFail($listing_id);
+        try {
+            $request->validate([
+                'offer_price' => 'required|numeric|min:1',
+                'message' => 'required|string|max:500',
+            ]);
 
-        $offer = Offer::create([
-            'real_estate_listing_id' => $listing_id,
-            'buyer_id' => auth()->id(),
-            'offer_price' => $request->offer_price,
-            'message' => $request->message,
-            'status' => 'pending',
-        ]);
+            $listing = RealEstateListing::with('seller')->findOrFail($listing_id);
 
-        $buyer = $request->user();
-        $seller = $listing->seller;
+            $offer = Offer::create([
+                'real_estate_listing_id' => $listing_id,
+                'buyer_id' => auth()->id(),
+                'offer_price' => $request->offer_price,
+                'message' => $request->message,
+                'status' => 'pending',
+            ]);
 
-        // Notify the seller
-        $seller->notify(new OfferSubmitted($listing, $request->user(), $offer));
+            $buyer = $request->user();
+            $seller = $listing->seller;
 
-        // Notify buyer (confirmation)
-        $buyer->notify(new OfferConfirmation($listing, $offer));
+            // Notify the seller
+            $seller->notify(new OfferSubmitted($listing, $request->user(), $offer));
 
-        return ResponseHelper::success('Offer submitted successfully.');
+            // Notify buyer (confirmation)
+            $buyer->notify(new OfferConfirmation($listing, $offer));
+
+            return JsonResponder::send(
+                new SuccessResponse('Offer submitted successfully.', [
+                    'offer_id' => $offer->id,
+                    'listing_id' => $listing->id,
+                    'status' => $offer->status,
+                ])
+            );
+
+        }
+        catch (\Exception $e) {
+            return JsonResponder::send(
+                new ErrorResponse('Failed to submit offer.', [
+                    'error' => $e->getMessage(),
+                ])
+            );
+        }
+
+
     }
 
     private function acceptOffer($offer): void {
@@ -60,33 +80,44 @@ class OfferController extends Controller
 
     }
 
-    public function updateStatus(Request $request, Offer $offer): JsonResponse
+    public function updateStatus(Request $request, Offer $offer): JsonResponder
     {
-        $request->validate([
-            'status' => 'required|in:accepted,rejected',
-        ]);
+        try {
+            $request->validate([
+                'status' => 'required|in:accepted,rejected',
+            ]);
 
-        // Ensure only the listing owner can accept/reject offers
-        if ($offer->listing->seller_id !== auth()->id()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-            ], 403);
+            // Ensure only the listing owner can accept/reject offers
+            if ($offer->listing->seller_id !== auth()->id()) {
+                return JsonResponder::send(
+                    new ErrorResponse('Unauthorized', [], 403)
+                );
+            }
+
+            $offer->update(['status' => $request->status]);
+
+            // If accepted, create deal and set listing status
+            if ($request->status === 'accepted') {
+                $this->acceptOffer($offer);
+            }
+
+            // ✅ Notify the buyer
+            $buyer = $offer->buyer;
+            $buyer->notify(new OfferStatusUpdated($offer->listing, $request->status));
+
+            return JsonResponder::send(
+                new SuccessResponse('Offer status updated.', [
+                    'offerStatus' => $offer->status,
+                ])
+            );
         }
-
-        $offer->update(['status' => $request->status]);
-
-        // If accepted, create deal and set listing status
-        if ($request->status === 'accepted') {
-            $this->acceptOffer($offer);
+        catch (\Exception $e) {
+            return JsonResponder::send(
+                new ErrorResponse('Failed to update offer status.', [
+                    'error' => $e->getMessage(),
+                ])
+            );
         }
-
-        // ✅ Notify the buyer
-
-        $buyer = $offer->buyer;
-        $buyer->notify(new OfferStatusUpdated($offer->listing, $request->status));
-
-        return ResponseHelper::success('Offer status updated.', ['offerStatus' => $offer->status]);
     }
 
     /**

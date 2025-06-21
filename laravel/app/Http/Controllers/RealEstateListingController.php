@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Responses\ErrorResponse;
+use App\Helpers\Responses\JsonResponder;
+use App\Helpers\Responses\SuccessResponse;
 use App\Models\ListingImage;
 use Illuminate\Http\Request;
 use App\Models\RealEstateListing;
@@ -9,7 +12,6 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Requests\RealEstateListingRequest;
 use Illuminate\Support\Facades\Storage;
-use App\Helpers\ResponseHelper;
 use Illuminate\Http\JsonResponse;
 
 class RealEstateListingController extends Controller {
@@ -35,21 +37,33 @@ class RealEstateListingController extends Controller {
 
     public function store(RealEstateListingRequest $request): JsonResponse {
 
-        // ✅ Only sellers can create listings
-        if (!auth()->user()->hasRole('seller')) {
-            abort(403, 'Unauthorized: Only sellers can create listings.');
+        try{
+            // ✅ Only sellers can create listings
+            if (!auth()->user()->hasRole('seller')) {
+                abort(403, 'Unauthorized: Only sellers can create listings.');
+            }
+
+            // ✅ Create new listing & attach to seller
+            $listing = new RealEstateListing($request->validated());
+            $listing->seller_id = auth()->user()->id;
+            $listing->status = 'available';
+            $listing->save();
+
+            $this->handleListingImages($listing, $request);
+
+            return JsonResponder::send(
+                new SuccessResponse('Listing created successfully!', [])
+            );
+        }
+        catch(\Exception $e){
+            return JsonResponder::send(
+                new ErrorResponse($e->getMessage())
+            );
         }
 
-        // ✅ Create new listing & attach to seller
-        $listing = new RealEstateListing($request->validated());
-        $listing->seller_id = auth()->user()->id;
-        $listing->status = 'available';
-        $listing->save();
 
 
-        $this->handleListingImages($listing, $request);
 
-        return ResponseHelper::success('Listing created successfully!');
     }
     /**
      * ✅ Show the edit form for a listing
@@ -70,15 +84,23 @@ class RealEstateListingController extends Controller {
      * ✅ Handle the update request
      */
     public function update(RealEstateListingRequest $request, RealEstateListing $listing):JsonResponse {
-        if ($listing->seller_id !== auth()->user()->id) {
-            abort(403, 'Unauthorized: You do not own this listing.');
+        try {
+            if ($listing->seller_id !== auth()->user()->id) {
+                abort(403, 'Unauthorized: You do not own this listing.');
+            }
+
+            $listing->update($request->validated());
+
+            $this->handleListingImages($listing, $request);
+            return JsonResponder::send(
+                new SuccessResponse('Listing updated successfully!', [])
+            );
         }
-
-        $listing->update($request->validated());
-
-        $this->handleListingImages($listing, $request);
-
-        return ResponseHelper::success('Listing updated successfully!');
+        catch (\Exception $e) {
+            return JsonResponder::send(
+                new ErrorResponse($e->getMessage())
+            );
+        }
     }
 
     public function softDelete(RealEstateListing $listing)
