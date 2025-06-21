@@ -13,7 +13,6 @@ class Deal extends Model
         'name',
         'amount',
         'data',
-    //        'current_step',
         'real_estate_listing_id',
         'security_deposit',
         'possession_day',
@@ -49,18 +48,6 @@ class Deal extends Model
     public function realEstateListing(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
         return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
     }
-
-//    public function steps(): \Illuminate\Database\Eloquent\Relations\HasMany {
-//        return $this->hasMany(DealStep::class);
-//    }
-
-//    public function moveToNextStep(): void {
-//        $currentIndex = array_search($this->current_step, self::$steps);
-//
-//        if ($currentIndex !== false && isset(self::$steps[$currentIndex + 1])) {
-//            $this->update(['current_step' => self::$steps[$currentIndex + 1]]);
-//        }
-//    }
 
     public function listing(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
         return $this->belongsTo(\App\Models\RealEstateListing::class, 'real_estate_listing_id');
