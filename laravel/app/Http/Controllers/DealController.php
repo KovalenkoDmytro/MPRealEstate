@@ -10,6 +10,7 @@ use App\Notifications\DepositMarkedAsMade;
 use App\Notifications\DepositConfirmed;
 use App\Notifications\ConditionDaySet;
 use App\Notifications\ConditionDayConfirmed;
+use App\Notifications\SecurityDepositSet;
 
 use App\Models\User;
 use App\Models\Deal;
@@ -120,7 +121,7 @@ class DealController extends Controller
             $buyer = $deal->users()->where('role', 'buyer')->first();
             if ($buyer) {
                 $deal->load('listing');
-                $buyer->notify(new \App\Notifications\SecurityDepositSet($deal));
+                $buyer->notify(new SecurityDepositSet($deal));
             }
 
             return JsonResponder::send(
