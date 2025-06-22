@@ -78,6 +78,8 @@ This project is a Laravel application with React and TypeScript integrated for f
    ```
    ```bash
    docker-compose exec php php /var/www/laravel/artisan migrate --seed
+   
+   docker compose exec php php artisan migrate:fresh --seed
    ```
 ---
 
