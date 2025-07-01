@@ -169,15 +169,23 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                     className="w-full h-64 object-cover rounded-lg shadow-md"
                                 />
                             )}
+
                             <p><strong>Title:</strong> {deal.real_estate_listing.title}</p>
                             <p><strong>Description:</strong> {deal.real_estate_listing.description}</p>
                             <p><strong>Location:</strong> {deal.real_estate_listing.location}</p>
+                            <p><strong>Property Type:</strong> {deal.real_estate_listing.property_type || "N/A"}</p>
                             <p><strong>Price:</strong> ${deal.real_estate_listing.price.toLocaleString()}</p>
                             <p><strong>Bedrooms:</strong> {deal.real_estate_listing.bedrooms}</p>
                             <p><strong>Bathrooms:</strong> {deal.real_estate_listing.bathrooms}</p>
-                            <p><strong>Size:</strong> {deal.real_estate_listing.square_feet} sqft</p>
+                            <p><strong>Square Feet:</strong> {deal.real_estate_listing.square_feet}</p>
+                            <p><strong>Lot Size:</strong> {deal.real_estate_listing.lot_size ?? "N/A"}</p>
+                            <p><strong>Year Built:</strong> {deal.real_estate_listing.year_built ?? "N/A"}</p>
+                            <p><strong>Garage:</strong> {deal.real_estate_listing.has_garage ? `Yes (${deal.real_estate_listing.garage_spaces ?? 0} spaces)` : "No"}</p>
+                            <p><strong>Basement:</strong> {deal.real_estate_listing.has_basement ? "Yes" : "No"}</p>
+                            <p><strong>HOA Fees:</strong> {deal.real_estate_listing.hoa_fees ? `$${deal.real_estate_listing.hoa_fees}` : "N/A"}</p>
+                            <p><strong>Property Taxes:</strong> {deal.real_estate_listing.property_taxes ? `$${deal.real_estate_listing.property_taxes}` : "N/A"}</p>
                             <p><strong>Status:</strong> {deal.real_estate_listing.status}</p>
-
+                            <p><strong>Price Reduced:</strong> {deal.real_estate_listing.price_reduced ? "Yes" : "No"}</p>
 
                             {/* ✅ Additional Images */}
                             {deal.real_estate_listing.images && deal.real_estate_listing.images.length > 0 && (

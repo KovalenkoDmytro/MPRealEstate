@@ -91,10 +91,19 @@ export default function Show({listing, userOffer,}: { listing: Listing; userOffe
                     <h1 className="text-2xl font-bold">{listing.title}</h1>
                     <p className="text-lg">💰 Price: <strong>${listing.price.toLocaleString()}</strong></p>
                     <p className="text-lg">📍 Location: {listing.location}</p>
+                    <p className="text-lg">🏠 Type: {listing.property_type || "N/A"}</p>
                     <p className="text-lg">🛏 Bedrooms: {listing.bedrooms}</p>
                     <p className="text-lg">🛁 Bathrooms: {listing.bathrooms}</p>
-                    <p className="text-lg">📏 Size: {listing.square_feet} sqft</p>
-                    <p className="text-lg">👤 Seller: {listing.seller.name}</p>
+                    <p className="text-lg">📏 Square Feet: {listing.square_feet}</p>
+                    <p className="text-lg">📐 Lot Size: {listing.lot_size ?? "N/A"}</p>
+                    <p className="text-lg">🏗 Year Built: {listing.year_built ?? "N/A"}</p>
+                    <p className="text-lg">🚗 Garage: {listing.has_garage ? `Yes (${listing.garage_spaces ?? 0} spaces)` : "No"}</p>
+                    <p className="text-lg">🏚 Basement: {listing.has_basement ? "Yes" : "No"}</p>
+                    <p className="text-lg">🏘 HOA Fees: {listing.hoa_fees ? `$${listing.hoa_fees}` : "N/A"}</p>
+                    <p className="text-lg">💸 Property Taxes: {listing.property_taxes ? `$${listing.property_taxes}` : "N/A"}</p>
+                    <p className="text-lg">📊 Status: {listing.status}</p>
+                    <p className="text-lg">⬇ Price Reduced: {listing.price_reduced ? "Yes" : "No"}</p>
+                    <p className="text-lg">👤 Seller: {listing.seller?.name || "N/A"}</p>
 
                     <div className="mt-4">
                         <Link href={route('buyer.listings.index')} className="text-blue-500">🔙 Back to Listings</Link>
@@ -128,7 +137,7 @@ export default function Show({listing, userOffer,}: { listing: Listing; userOffe
                         {userOffer ? (
                             <>
                                 <h2 className="text-xl font-bold text-green-700">✅ Your Offer</h2>
-                                <p className="mt-2 text-lg">💵 <strong>${parseFloat(userOffer.offer_price).toLocaleString()}</strong></p>
+                                <p className="mt-2 text-lg">💵 <strong>${parseFloat(String(userOffer.offer_price)).toLocaleString()}</strong></p>
                                 <p className="mt-1 text-gray-700 whitespace-pre-line">📝 {userOffer.message}</p>
                             </>
                         ) : (
