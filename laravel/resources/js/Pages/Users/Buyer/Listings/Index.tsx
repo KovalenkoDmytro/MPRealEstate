@@ -198,8 +198,28 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                                     <p className="text-lg font-semibold">💰 ${listing.price.toLocaleString()}</p>
                                     <p className="text-sm text-gray-500">👤 Seller: {listing.seller?.name || "N/A"}</p>
 
+                                    <div className="mt-2 text-sm text-gray-600 space-y-1">
+                                        <p>🛏️ Bedrooms: {listing.bedrooms}</p>
+                                        <p>🛁 Bathrooms: {listing.bathrooms}</p>
+                                        <p>📐 Size: {listing.square_feet.toLocaleString()} sqft</p>
+                                        {listing.lot_size && <p>🏡 Lot Size: {listing.lot_size.toLocaleString()} sqft</p>}
+                                        {listing.year_built && <p>🏗️ Year Built: {listing.year_built}</p>}
+                                        {listing.property_type && <p>🏠 Type: {listing.property_type}</p>}
+                                        <p>🏷️ Status: {listing.status}</p>
+
+                                        {listing.hoa_fees && <p>💸 HOA Fees: ${listing.hoa_fees.toLocaleString()}</p>}
+                                        {listing.property_taxes && <p>📊 Property Taxes: ${listing.property_taxes.toLocaleString()}</p>}
+
+                                        <p>🚗 Garage: {listing.has_garage ? "Yes" : "No"} ({listing.garage_spaces !== null ? listing.garage_spaces : "0"} space{listing.garage_spaces !== 1 ? "s" : ""})</p>
+                                        <p>🏠 Basement: {listing.has_basement ? "Yes" : "No"}</p>
+                                        <p>⬇️ Price Reduced: {listing.price_reduced ? "Yes" : "No"}</p>
+                                    </div>
+
                                     <form onSubmit={(e) => toggleFavorite(e, listing.id, isFavorited(listing.id))}>
-                                        <button type="submit" className={`mt-2 text-2xl ${isFavorited(listing.id) ? "text-red-500" : "text-gray-400"}`}>
+                                        <button
+                                            type="submit"
+                                            className={`mt-2 text-2xl ${isFavorited(listing.id) ? "text-red-500" : "text-gray-400"}`}
+                                        >
                                             {isFavorited(listing.id) ? "💔" : "❤️"}
                                         </button>
                                     </form>
