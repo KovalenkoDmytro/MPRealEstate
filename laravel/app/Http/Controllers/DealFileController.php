@@ -55,8 +55,7 @@ class DealFileController extends Controller
     /**
      * ✅ Delete a file
      */
-    public function destroy(DealFile $file)
-    {
+    public function destroy(DealFile $file): \Illuminate\Http\RedirectResponse {
         Storage::disk('public')->delete($file->file_path);
         $file->delete();
 

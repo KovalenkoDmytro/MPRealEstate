@@ -36,16 +36,17 @@ class RealEstateListingController extends Controller {
     }
 
     public function store(RealEstateListingRequest $request): JsonResponse {
-
+        /** @var \App\Models\User $user */
         try{
+            $user = auth()->user();
             // ✅ Only sellers can create listings
-            if (!auth()->user()->hasRole('seller')) {
+            if (!$user->hasRole('seller')) {
                 abort(403, 'Unauthorized: Only sellers can create listings.');
             }
 
             // ✅ Create new listing & attach to seller
             $listing = new RealEstateListing($request->validated());
-            $listing->seller_id = auth()->user()->id;
+            $listing->seller_id = $user->id;
             $listing->status = 'available';
             $listing->save();
 
@@ -68,7 +69,8 @@ class RealEstateListingController extends Controller {
     /**
      * ✅ Show the edit form for a listing
      */
-    public function edit(RealEstateListing $listing) {
+    public function edit(RealEstateListing $listing): Response {
+        /** @var \App\Models\User $user */
         $user = auth()->user();
 
         // ✅ Ensure only the owner can edit the listing
@@ -84,8 +86,10 @@ class RealEstateListingController extends Controller {
      * ✅ Handle the update request
      */
     public function update(RealEstateListingRequest $request, RealEstateListing $listing):JsonResponse {
+        /** @var \App\Models\User $user */
         try {
-            if ($listing->seller_id !== auth()->user()->id) {
+            $user = auth()->user();
+            if ($listing->seller_id !== $user->id) {
                 abort(403, 'Unauthorized: You do not own this listing.');
             }
 
@@ -103,8 +107,8 @@ class RealEstateListingController extends Controller {
         }
     }
 
-    public function softDelete(RealEstateListing $listing)
-    {
+    public function softDelete(RealEstateListing $listing): \Illuminate\Http\RedirectResponse {
+        /** @var \App\Models\User $user */
         $user = auth()->user();
 
         // 1. 🔒 Check ownership

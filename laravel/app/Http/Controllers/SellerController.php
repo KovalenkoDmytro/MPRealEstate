@@ -21,6 +21,7 @@ class SellerController extends Controller {
      * ✅ Display Seller Dashboard with their Offers
      */
      public function index(): Response {
+         /** @var \App\Models\User $user */
         $user = auth()->user();
 
         return Inertia::render('Users/Seller/Dashboard', [
@@ -55,8 +56,11 @@ class SellerController extends Controller {
         ]);
     }
 
-    public function showAllListings() {
-        $listings = RealEstateListing::where('seller_id', auth()->user()->id)
+    public function showAllListings(): Response {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        $listings = RealEstateListing::where('seller_id', $user->id)
             ->where('status', '!=', 'inactive')
             ->with(['mainImage'])
             ->get();
@@ -67,9 +71,11 @@ class SellerController extends Controller {
     }
 
     public function showListing(RealEstateListing $listing) {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
 
         // ✅ If user is a seller, ensure they only access their own listings
-        if ($listing->seller_id !== auth()->user()->id) {
+        if ($listing->seller_id !== $user->id) {
             abort(403, 'Unauthorized Access: This listing does not belong to you.');
         }
         $listing = RealEstateListing::with([

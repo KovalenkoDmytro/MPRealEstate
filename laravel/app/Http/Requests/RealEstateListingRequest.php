@@ -11,7 +11,10 @@ class RealEstateListingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()?->hasRole('seller') ?? false;
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        return $user?->hasRole('seller') ?? false;
     }
 
     protected function prepareForValidation(): void {

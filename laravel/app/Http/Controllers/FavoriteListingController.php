@@ -7,8 +7,7 @@ use App\Models\RealEstateListing;
 
 class FavoriteListingController extends Controller
 {
-    public function store(Request $request)
-    {
+    public function store(Request $request): \Illuminate\Http\RedirectResponse {
 
         $user = $request->user();
         $listingId = $request->input('listing_id');
@@ -18,8 +17,7 @@ class FavoriteListingController extends Controller
         return back();
     }
 
-    public function destroy(Request $request, RealEstateListing $listing)
-    {
+    public function destroy(Request $request, RealEstateListing $listing): \Illuminate\Http\RedirectResponse {
         $request->user()->favoriteListings()->detach($listing->id);
 
         return back();

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Deal;
+use App\Http\Requests\ListingFilterRequest;
+
 class BuyerController extends Controller
 {
     protected OfferController $offerController;
@@ -24,7 +26,7 @@ class BuyerController extends Controller
      * ✅ Display Buyer Dashboard with their Offers
      */
     public function index(): Response
-    {
+        {/** @var \App\Models\User $user */
         $user = auth()->user();
 
         return Inertia::render('Users/Buyer/Dashboard', [
@@ -39,13 +41,16 @@ class BuyerController extends Controller
 
     }
 
-    public function showAllListings(Request $request)
-    {
+    public function showAllListings(ListingFilterRequest $request): Response {
+        /** @var \App\Models\User $user */
+
         $user = auth()->user();
 
         $query = RealEstateListing::query()
             ->where('status', '!=', 'inactive')
             ->with(['seller', 'mainImage']); // ✅ Just build the query — don't call `get()`
+
+        $filters = $request->validatedFilters();
 
         if ($request->filled('location')) {
             $query->where('location', 'like', '%' . $request->location . '%');
@@ -83,14 +88,13 @@ class BuyerController extends Controller
         return Inertia::render('Users/Buyer/Listings/Index', [
             'listings' => $listings,
             'favoriteListings' => $favoriteListings,
-            'filters' => $request->only([
-                'location', 'min_price', 'max_price', 'bedrooms', 'bathrooms', 'status', 'favorites_only',
-            ]),
+            'filters' => $filters,
         ]);
     }
 
-    public function showListing(RealEstateListing $listing)
-    {
+    public function showListing(RealEstateListing $listing): Response {
+        /** @var \App\Models\User $user */
+
         $user = auth()->user();
 
         // Reload the listing with necessary relations

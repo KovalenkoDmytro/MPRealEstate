@@ -47,7 +47,7 @@ class DealController extends Controller
     /**
      * ✅ Store a new Deal
      */
-    public function createDeal($offer) {
+    public function createDeal($offer): void {
 
         $listing = RealEstateListing::findOrFail($offer->real_estate_listing_id);
 
@@ -141,6 +141,7 @@ class DealController extends Controller
 
     public function markDepositMade(Request $request, Deal $deal): JsonResponse {
         try {
+
             $user = auth()->user();
 
             // Optional: prevent others from updating
