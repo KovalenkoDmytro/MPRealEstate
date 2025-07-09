@@ -7,7 +7,6 @@ use App\Services\DealFileService;
 use App\Models\Deal;
 use App\Models\DealFile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DealFileController extends Controller
