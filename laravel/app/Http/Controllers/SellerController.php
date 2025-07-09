@@ -1,6 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+
+use App\Services\OfferService;
+use App\Services\DealService;
 use App\Models\Deal;
 use App\Models\RealEstateListing;
 use Illuminate\Support\Facades\Gate;
@@ -9,13 +12,14 @@ use Inertia\Response;
 
 class SellerController extends Controller {
 
-    protected OfferController $offerController;
-    protected DealController $dealController;
+    protected OfferService $offerService;
+    protected DealService $dealService;
 
-    public function __construct(OfferController $offerController, DealController $dealController) {
-        $this->offerController = $offerController;
-        $this->dealController = $dealController;
+    public function __construct(OfferService $offerService, DealService $dealService) {
+        $this->offerService = $offerService;
+        $this->dealService = $dealService;
     }
+
 
     /**
      * ✅ Display Seller Dashboard with their Offers
@@ -25,15 +29,17 @@ class SellerController extends Controller {
         $user = auth()->user();
 
         return Inertia::render('Users/Seller/Dashboard', [
-            'offers' => $this->offerController->showAllOffers($user->id),
+            'offers' => $this->offerService->getAllOffersForSeller($user->id)
         ]);
     }
 
 
     public function showAllDeals(): Response {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
 
         return Inertia::render('Users/Seller/Deals/Index', [
-            'deals' => $this->dealController->getAllDeals(),
+            'deals' => $this->dealService->getAllDealsForUser($user)
         ]);
     }
 

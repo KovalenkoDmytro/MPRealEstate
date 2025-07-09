@@ -10,6 +10,7 @@ use App\Models\Offer;
 use App\Models\RealEstateListing;
 use App\Notifications\ConditionDayConfirmed;
 use App\Notifications\ConditionDaySet;
+use App\Notifications\DepositMarkedAsMade;
 use App\Notifications\LawyerInvitedToDeal;
 use App\Notifications\PossessionDayConfirmed;
 use App\Notifications\PossessionDaySet;
@@ -63,7 +64,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Security deposit has been set successfully.', $deal)
+            new SuccessResponse('Security deposit has been set successfully.', $deal->toArray())
         );
     }
 
@@ -87,7 +88,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Deposit marked as made.', $deal)
+            new SuccessResponse('Deposit marked as made.', $deal->toArray())
         );
     }
 
@@ -109,7 +110,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Deposit confirmed.', $deal),
+            new SuccessResponse('Deposit confirmed.', $deal->toArray()),
         );
     }
 
@@ -135,7 +136,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Condition day has been set successfully.', $deal),
+            new SuccessResponse('Condition day has been set successfully.', $deal->toArray()),
         );
     }
 
@@ -151,7 +152,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Condition day has confirmed.', $deal),
+            new SuccessResponse('Condition day has confirmed.', $deal->toArray()),
         );
     }
 
@@ -177,7 +178,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Possession day has been set successfully.', $deal),
+            new SuccessResponse('Possession day has been set successfully.', $deal->toArray()),
         );
     }
 
@@ -193,7 +194,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Possession day has confirmed.', $deal),
+            new SuccessResponse('Possession day has confirmed.', $deal->toArray()),
         );
     }
 
@@ -209,13 +210,13 @@ class DealService
 
         if (!$lawyer) {
             return JsonResponder::send(
-                new ErrorResponse('No lawyer found with this code.', 404)
+                new ErrorResponse('No lawyer found with this code.', [],404)
             );
         }
 
         if ($deal->users->contains($lawyer->id)) {
             return JsonResponder::send(
-                new ErrorResponse('This lawyer is already part of this deal.', 422)
+                new ErrorResponse('This lawyer is already part of this deal.', [],422)
             );
         }
 
@@ -230,7 +231,7 @@ class DealService
         $lawyer->notify(new LawyerInvitedToDeal($deal));
 
         return JsonResponder::send(
-            new SuccessResponse('Lawyer invited successfully.', $lawyer)
+            new SuccessResponse('Lawyer invited successfully.', $lawyer->toArray())
         );
     }
 
@@ -251,4 +252,12 @@ class DealService
             ->where('id', $listing->id)
             ->update(['status' => 'pending']);
     }
+
+    public function getAllDealsForUser(User $user)
+    {
+        return $user->deals()
+            ->with(['users', 'realEstateListing.mainImage', 'realEstateListing.images'])
+            ->get();
+    }
+
 }
