@@ -26,19 +26,29 @@ class DealSeeder extends Seeder
         $listings = RealEstateListing::inRandomOrder()->get(); // ✅ Get all available listings
 
         foreach (range(1, 3) as $i) {
+            if ($sellers->isEmpty()) {
+                continue;
+            }
+
+            $seller = $sellers->random();
+            $sellerListing = RealEstateListing::where('seller_id', $seller->id)->inRandomOrder()->first();
+
+            if (!$sellerListing) {
+                continue; // Skip if seller has no listing
+            }
+
             $deal = Deal::create([
                 'name' => "Deal $i",
                 'amount' => rand(5000, 50000),
                 'seller_message' => "Sample deal $i",
-                'real_estate_listing_id' => $listings->count() ? $listings->pop()->id : null, // ✅ Assign a listing if available
+                'real_estate_listing_id' => $sellerListing->id,
             ]);
 
-            // ✅ Attach one buyer, one seller, and one lawyer
+            // Attach users
+            $deal->users()->attach($seller->id); // ✅ seller is owner of listing
+
             if ($buyers->isNotEmpty()) {
                 $deal->users()->attach($buyers->random()->id);
-            }
-            if ($sellers->isNotEmpty()) {
-                $deal->users()->attach($sellers->random()->id);
             }
             if ($lawyers->isNotEmpty()) {
                 $deal->users()->attach($lawyers->random()->id);

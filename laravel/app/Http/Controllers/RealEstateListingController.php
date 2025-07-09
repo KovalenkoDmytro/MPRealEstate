@@ -106,7 +106,7 @@ class RealEstateListingController extends Controller {
         }
     }
 
-    public function softDelete(RealEstateListing $listing): RedirectResponse {
+    public function softDelete(RealEstateListing $listing): JsonResponse {
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
@@ -117,20 +117,21 @@ class RealEstateListingController extends Controller {
 
         // 2. ❌ Check if any deal exists and is not completed
         $hasActiveDeal = $listing->deal()->where('is_completed', false)->exists();
+
         if ($hasActiveDeal) {
-            return redirect()->back()->withErrors([
-                'error' => 'Cannot delete listing with an active/incomplete deal.',
-            ]);
+            return JsonResponder::send(
+                new ErrorResponse('Cannot delete listing with an active/incomplete deal.')
+            );
         }
 
         // 3. 🔄 Soft-delete logic: set status to inactive and 📦 Clean up: delete all gallery images (keep only main)
 
         $this->listingService->deactivateListing($listing);
 
-        return redirect()->route('seller.listings.index')->with(
-            'success',
-            'Listing deactivated and gallery images removed.'
+        return JsonResponder::send(
+            new SuccessResponse('Listing deactivated and gallery images removed')
         );
+
     }
 
 

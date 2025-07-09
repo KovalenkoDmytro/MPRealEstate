@@ -152,21 +152,20 @@ export default function EditListing( { listing }: { listing: Listing }) {
 
         try {
             const response = await fetch(route('seller.listings.deactivate', { listing: listing.id }), {
-                method: 'POST', // Send as POST with method override
+                method: 'PATCH',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken || '',
-                    'X-HTTP-Method-Override': 'PATCH',
-                    'Accept': 'application/json',
+                    'Accept': 'text/html', // Expecting a redirect/HTML
                 },
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                // Redirect or refresh page
-                console.log(response);
-                // window.location.href = "/seller/listings";
+                alert(data.message);
+                window.location.href = route('seller.listings.index');
             } else {
-                const errorData = await response.json();
-                alert(errorData.message || "Something went wrong.");
+                alert(data.message || "Something went wrong.");
             }
         } catch (error) {
             console.error("Deactivation failed:", error);
