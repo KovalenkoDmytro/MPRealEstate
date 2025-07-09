@@ -27,7 +27,7 @@ class UserFactory extends Factory
             'email' => 'default@example.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
-            'role' => null,
+            'role' => 'buyer',
             'remember_token' => Str::random(10),
         ];
     }
@@ -35,15 +35,29 @@ class UserFactory extends Factory
     /**
      * Assign a role to a user.
      */
-    public function withRole(string $role, string $name, string $email): static
-    {
-        return $this->state([
-            'name' => $name,
-            'email' => $email,
-            'role' => $role,
-        ])->afterCreating(function (User $user) use ($role) {
-            $roleInstance = Role::firstOrCreate(['name' => $role]);
-            $user->assignRole($roleInstance);
+
+    public function seller(): Factory|UserFactory {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('seller');
         });
     }
+
+    public function buyer(): Factory|UserFactory {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('buyer');
+        });
+    }
+
+    public function admin(): Factory|UserFactory {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('admin');
+        });
+    }
+
+    public function lawyer(): Factory|UserFactory {
+        return $this->afterCreating(function (User $user) {
+            $user->assignRole('lawyer');
+        });
+    }
+
 }

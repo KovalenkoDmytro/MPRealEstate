@@ -3,6 +3,12 @@
         "spatie/laravel-permission": "^6.16"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.15"
+        "barryvdh/laravel-debugbar": "^3.15",
+        "pestphp/pest-plugin-laravel": "^3.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
