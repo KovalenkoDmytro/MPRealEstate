@@ -3,29 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Deal;
+use App\Services\LawyerService;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class LawyerController extends Controller
 {
-    protected DealController $dealController;
+    private LawyerService $lawyerService;
 
-    public function __construct(DealController $dealController) {
-        $this->dealController = $dealController;
+    public function __construct(LawyerService $lawyerService)
+    {
+        $this->lawyerService = $lawyerService;
     }
 
-    /**
-     * ✅ Display Lawyer Dashboard
-     */
     public function index(): Response
     {
+        $user = auth()->user();
+        $deals = $this->lawyerService->getAllDealsForLawyer($user);
 
-        return Inertia::render('Users/Lawyer/Dashboard',
-            [
-            'deals' => $this->dealController->getAllDeals(),
-        ]
-        );
+        return Inertia::render('Users/Lawyer/Dashboard', [
+            'deals' => $deals,
+        ]);
     }
 
     public function showDealView(Deal $deal): Response {
