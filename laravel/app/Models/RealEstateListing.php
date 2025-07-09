@@ -9,10 +9,7 @@ class RealEstateListing extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'seller_id', 'title', 'description', 'price',
-        'location', 'bedrooms', 'bathrooms', 'square_feet', 'status'
-    ];
+    protected $guarded = [];
 
     // A listing can have multiple offers
     public function offers(): \Illuminate\Database\Eloquent\Relations\HasMany|RealEstateListing {

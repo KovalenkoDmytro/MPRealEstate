@@ -216,15 +216,6 @@ export default function EditListing( { listing }: { listing: Listing }) {
                             <input name="price" value={data.price} type="number" onChange={handleChange} className="input input-bordered" placeholder="Price" />
                             <input name="hoa_fees" value={data.hoa_fees} type="number" onChange={handleChange} className="input input-bordered" placeholder="HOA Fees" />
                             <input name="property_taxes" value={data.property_taxes} type="number" onChange={handleChange} className="input input-bordered" placeholder="Property Taxes" />
-                            <select name="status" value={data.status} onChange={handleChange} className="select select-bordered">
-                                <option value="available">Available</option>
-                                <option value="pending">Pending</option>
-                                <option value="sold">Sold</option>
-                            </select>
-                            <label className="flex items-center gap-2">
-                                <input type="checkbox" name="price_reduced" checked={data.price_reduced} onChange={handleChange} className="checkbox" />
-                                Price Reduced
-                            </label>
                             <input name="keywords" value={data.keywords} onChange={handleChange} className="input input-bordered md:col-span-2" placeholder="Keywords" />
                         </div>
                     </div>

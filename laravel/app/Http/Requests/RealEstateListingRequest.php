@@ -63,8 +63,7 @@ class RealEstateListingRequest extends FormRequest
             'gallery_images' => ['array', 'max:7'],
             'gallery_images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120'],
 
-            // Optional
-            'status' => ['nullable', 'in:available,pending,sold'],
+
             'keywords' => ['nullable', 'string'],
         ];
     }

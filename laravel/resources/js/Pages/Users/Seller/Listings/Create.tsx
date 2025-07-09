@@ -206,18 +206,7 @@ export default function CreateListing() {
 
                             <div>
                                 <label className="block mb-1 font-medium">Status</label>
-                                <select name="status" value={form.status} onChange={handleChange} className="w-full select select-bordered">
-                                    <option value="available">Available</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="sold">Sold</option>
-                                </select>
                             </div>
-
-                            <div className="flex items-center gap-2">
-                                <input type="checkbox" name="price_reduced" checked={form.price_reduced} onChange={handleChange} className="checkbox" />
-                                <label className="font-medium">Price Reduced</label>
-                            </div>
-
 
                             <div className="md:col-span-2">
                                 <label className="block mb-1 font-medium">Keywords</label>

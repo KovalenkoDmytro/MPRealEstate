@@ -24,6 +24,7 @@ class RealEstateListingService
 
     public function updateListing(RealEstateListingRequest $request, RealEstateListing $listing ): void
     {
+
         $listing->update($request->validated());
         $this->handleListingImages($listing, $request);
     }
