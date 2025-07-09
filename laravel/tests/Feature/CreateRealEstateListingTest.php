@@ -46,7 +46,7 @@ test('seller user can add a listing', function () {
 test('buyer user can not add a listing', function () {
     $buyer = User::factory()->buyer()->create();
 
-    $response = $this->actingAs($buyer)->post(route('seller.listings.store'), []);
+    $response = $this->actingAs($buyer)->post(route('seller.listings.store'));
 
     $response->assertForbidden(); // or assertStatus(403)
 });

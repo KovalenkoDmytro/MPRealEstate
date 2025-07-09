@@ -22,7 +22,6 @@ export default function EditListing( { listing }: { listing: Listing }) {
         property_taxes: listing.property_taxes || "",
         status: listing.status || "available",
         price_reduced: listing.price_reduced || false,
-        listed_at: listing.listed_at || "",
         keywords: listing.keywords || "",
         main_image: null as File | null,
         gallery_images: [] as File[],
@@ -226,7 +225,6 @@ export default function EditListing( { listing }: { listing: Listing }) {
                                 <input type="checkbox" name="price_reduced" checked={data.price_reduced} onChange={handleChange} className="checkbox" />
                                 Price Reduced
                             </label>
-                            <input name="listed_at" value={data.listed_at} type="date" onChange={handleChange} className="input input-bordered" />
                             <input name="keywords" value={data.keywords} onChange={handleChange} className="input input-bordered md:col-span-2" placeholder="Keywords" />
                         </div>
                     </div>

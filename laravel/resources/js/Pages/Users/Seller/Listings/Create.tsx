@@ -21,7 +21,6 @@ export default function CreateListing() {
         property_taxes: "",
         status: "available",
         price_reduced: false,
-        listed_at: "",
         keywords: "",
     });
 
@@ -219,10 +218,6 @@ export default function CreateListing() {
                                 <label className="font-medium">Price Reduced</label>
                             </div>
 
-                            <div>
-                                <label className="block mb-1 font-medium">Listed At</label>
-                                <input name="listed_at" type="date" value={form.listed_at} onChange={handleChange} className="w-full input input-bordered" />
-                            </div>
 
                             <div className="md:col-span-2">
                                 <label className="block mb-1 font-medium">Keywords</label>

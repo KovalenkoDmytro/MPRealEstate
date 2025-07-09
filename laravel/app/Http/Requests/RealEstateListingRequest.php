@@ -65,7 +65,6 @@ class RealEstateListingRequest extends FormRequest
 
             // Optional
             'status' => ['nullable', 'in:available,pending,sold'],
-            'listed_at' => ['nullable', 'date'],
             'keywords' => ['nullable', 'string'],
         ];
     }
