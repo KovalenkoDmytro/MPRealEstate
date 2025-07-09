@@ -6,6 +6,7 @@ use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Models\Deal;
+use App\Models\Offer;
 use App\Models\RealEstateListing;
 use App\Notifications\ConditionDayConfirmed;
 use App\Notifications\ConditionDaySet;
@@ -17,6 +18,7 @@ use App\Notifications\DepositConfirmed;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DealService
 {
@@ -137,7 +139,6 @@ class DealService
         );
     }
 
-
     public function confirmConditionDay(Deal $deal): JsonResponse
     {
         $deal->is_condition_day_confirmed = true;
@@ -153,7 +154,6 @@ class DealService
             new SuccessResponse('Condition day has confirmed.', $deal),
         );
     }
-
 
     public function setPossessionDay(Request $request, Deal $deal): JsonResponse
     {
@@ -197,7 +197,6 @@ class DealService
         );
     }
 
-
     public function inviteLawyer(Request $request, Deal $deal): JsonResponse
     {
         $validated = $request->validate([
@@ -235,5 +234,21 @@ class DealService
         );
     }
 
+    public function createDealFromOffer(Offer $offer): void
+    {
+        $listing = $offer->listing;
 
+        $deal = Deal::create([
+            'name' => "Deal for " . $listing->title,
+            'amount' => $offer->offer_price,
+            'data' => json_encode(['description' => $offer->message]),
+            'real_estate_listing_id' => $listing->id,
+        ]);
+
+        $deal->users()->attach([$offer->buyer_id, $listing->seller_id]);
+
+        DB::table('real_estate_listings')
+            ->where('id', $listing->id)
+            ->update(['status' => 'pending']);
+    }
 }
