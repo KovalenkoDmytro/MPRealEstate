@@ -6,6 +6,7 @@ use App\Services\DealFileService;
 
 use App\Models\Deal;
 use App\Models\DealFile;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -19,8 +20,7 @@ class DealFileController extends Controller
         $this->dealFileService = $dealFileService;
     }
 
-    public function store(Request $request, Deal $deal)
-    {
+    public function store(Request $request, Deal $deal): RedirectResponse {
         $this->dealFileService->storeFile($request, $deal);
         return back()->with('success', 'File uploaded successfully.');
     }
@@ -30,7 +30,7 @@ class DealFileController extends Controller
         return $this->dealFileService->downloadFile($file);
     }
 
-    public function destroy(DealFile $file): \Illuminate\Http\RedirectResponse
+    public function destroy(DealFile $file): RedirectResponse
     {
         $this->dealFileService->deleteFile($file);
         return back()->with('success', 'File deleted successfully.');

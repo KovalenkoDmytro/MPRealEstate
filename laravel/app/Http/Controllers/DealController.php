@@ -34,13 +34,6 @@ class DealController extends Controller
     }
 
     /**
-     * ✅ Store a new Deal
-     */
-    public function createDeal($offer): void {
-        $this->dealerService->createDeal($offer);
-    }
-
-    /**
      * Show a single deal with users and step details.
      */
     public function show(Deal $deal): Response

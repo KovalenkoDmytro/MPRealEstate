@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
-use App\Models\ListingImage;
 use App\Services\RealEstateListingService;
-use Illuminate\Http\Request;
 use App\Models\RealEstateListing;
+use Exception;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Requests\RealEstateListingRequest;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\JsonResponse;
 
 class RealEstateListingController extends Controller {
@@ -51,13 +50,13 @@ class RealEstateListingController extends Controller {
                 abort(403, 'Unauthorized: Only sellers can create listings.');
             }
 
-           $listing = $this->listingService->createListing($request, $user);
+           $this->listingService->createListing($request, $user);
 
             return JsonResponder::send(
                 new SuccessResponse('Listing created successfully!', [])
             );
         }
-        catch(\Exception $e){
+        catch(Exception $e){
             return JsonResponder::send(
                 new ErrorResponse($e->getMessage())
             );
@@ -100,14 +99,14 @@ class RealEstateListingController extends Controller {
                 new SuccessResponse('Listing updated successfully!', [])
             );
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return JsonResponder::send(
                 new ErrorResponse($e->getMessage())
             );
         }
     }
 
-    public function softDelete(RealEstateListing $listing): \Illuminate\Http\RedirectResponse {
+    public function softDelete(RealEstateListing $listing): RedirectResponse {
         /** @var \App\Models\User $user */
         $user = auth()->user();
 

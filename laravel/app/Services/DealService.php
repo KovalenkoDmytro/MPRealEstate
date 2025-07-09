@@ -23,24 +23,6 @@ use Illuminate\Support\Facades\DB;
 
 class DealService
 {
-    public function createDeal($offer): void
-    {
-        $listing = RealEstateListing::findOrFail($offer->real_estate_listing_id);
-
-        if ($listing->seller_id === $offer->buyer_id) {
-            abort(403, 'You cannot create a deal on your own listing.');
-        }
-
-        $deal = Deal::create([
-            'name' => "Deal for " . $listing->title,
-            'amount' => $offer->offer_price,
-            'data' => json_encode(['description' => $offer->message]),
-            'real_estate_listing_id' => $listing->id,
-        ]);
-
-        $deal->users()->attach([$offer->buyer_id, $listing->seller_id]);
-    }
-
     public function setDeposit(Request $request, Deal $deal): JsonResponse
     {
         if (!is_null($deal->security_deposit)) {

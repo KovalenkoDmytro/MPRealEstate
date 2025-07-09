@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Services\FavoriteListingService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\RealEstateListing;
 
@@ -14,7 +15,7 @@ class FavoriteListingController extends Controller
         $this->favoriteListingService = $favoriteListingService;
     }
 
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $user = $request->user();
         $listingId = $request->input('listing_id');
@@ -24,7 +25,7 @@ class FavoriteListingController extends Controller
         return back();
     }
 
-    public function destroy(Request $request, RealEstateListing $listing): \Illuminate\Http\RedirectResponse
+    public function destroy(Request $request, RealEstateListing $listing): RedirectResponse
     {
         $this->favoriteListingService->removeFromFavorites($request->user(), $listing);
 

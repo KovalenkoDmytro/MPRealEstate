@@ -76,7 +76,7 @@ class SellerController extends Controller {
         ]);
     }
 
-    public function showListing(RealEstateListing $listing) {
+    public function showListing(RealEstateListing $listing): Response {
         /** @var \App\Models\User $user */
         $user = auth()->user();
 

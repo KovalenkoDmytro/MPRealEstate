@@ -2,17 +2,18 @@
 
 namespace App\Services;
 
-use App\Models\Deal;
 use App\Models\Offer;
 use App\Models\RealEstateListing;
 use App\Notifications\OfferConfirmation;
 use App\Notifications\OfferStatusUpdated;
 use App\Notifications\OfferSubmitted;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Helpers\Responses\ErrorResponse;
+use LaravelIdea\Helper\App\Models\_IH_Offer_C;
 
 class OfferService
 {
@@ -23,7 +24,7 @@ class OfferService
     {
         $this->dealService = $dealService;
     }
-    public function submitOffer(Request $request, $listing_id): \Illuminate\Http\JsonResponse {
+    public function submitOffer(Request $request, $listing_id): JsonResponse {
         $request->validate([
             'offer_price' => 'required|numeric|min:1',
             'message' => 'required|string|max:500',
@@ -51,7 +52,7 @@ class OfferService
         );
     }
 
-    public function updateStatus(Request $request, Offer $offer): \Illuminate\Http\JsonResponse {
+    public function updateStatus(Request $request, Offer $offer): JsonResponse {
         $request->validate([
             'status' => 'required|in:accepted,rejected',
         ]);
@@ -77,14 +78,14 @@ class OfferService
         );
     }
 
-    public function getAllOffersForSeller(int $sellerId): \Illuminate\Database\Eloquent\Collection|array|\LaravelIdea\Helper\App\Models\_IH_Offer_C {
+    public function getAllOffersForSeller(int $sellerId): Collection|array|_IH_Offer_C {
         return Offer::with(['buyer:id,name,email', 'listing:id,title'])
             ->whereHas('listing', fn($q) => $q->where('seller_id', $sellerId))
             ->latest()
             ->get();
     }
 
-    public function getBuyerOffers(int $buyerId): \Illuminate\Database\Eloquent\Collection|array|\LaravelIdea\Helper\App\Models\_IH_Offer_C {
+    public function getBuyerOffers(int $buyerId): Collection|array|_IH_Offer_C {
         return Offer::with(['listing:id,title,price,seller_id', 'listing.seller:id,name'])
             ->where('buyer_id', $buyerId)
             ->latest()

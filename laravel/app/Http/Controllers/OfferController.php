@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\Responses\JsonResponder;
 use App\Models\Offer;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use App\Services\OfferService;
 use Illuminate\Http\JsonResponse;
+use LaravelIdea\Helper\App\Models\_IH_Offer_C;
 
 class OfferController extends Controller
 {
@@ -27,11 +28,11 @@ class OfferController extends Controller
         return $this->offerService->updateStatus($request, $offer);
     }
 
-    public function showAllOffers(int $sellerId): \Illuminate\Database\Eloquent\Collection|array|\LaravelIdea\Helper\App\Models\_IH_Offer_C {
+    public function showAllOffers(int $sellerId): Collection|array|_IH_Offer_C {
         return $this->offerService->getAllOffersForSeller($sellerId);
     }
 
-    public function showBuyerOffers(int $buyerId): \Illuminate\Database\Eloquent\Collection|array|\LaravelIdea\Helper\App\Models\_IH_Offer_C {
+    public function showBuyerOffers(int $buyerId): Collection|array|_IH_Offer_C {
         return $this->offerService->getBuyerOffers($buyerId);
     }
 }

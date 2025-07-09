@@ -45,8 +45,7 @@ class BuyerService
         return $query->latest()->paginate(9)->withQueryString();
     }
 
-    public function getListingWithUserOffer(int $listingId, User $user)
-    {
+    public function getListingWithUserOffer(int $listingId, User $user): array {
         $listing = RealEstateListing::with('seller', 'images', 'mainImage', 'deal:id,real_estate_listing_id')
             ->findOrFail($listingId);
 

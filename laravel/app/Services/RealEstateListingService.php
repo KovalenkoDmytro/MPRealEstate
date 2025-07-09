@@ -50,7 +50,7 @@ class RealEstateListingService
 
             $mainPath = $request->file('main_image')->store('listings', 'public');
             $listing->images()->create([
-                'image_path' => "/storage/{$mainPath}",
+                'image_path' => "/storage/$mainPath",
                 'is_main' => true,
             ]);
         }
@@ -59,7 +59,7 @@ class RealEstateListingService
             foreach ($request->file('gallery_images') as $file) {
                 $path = $file->store('listings', 'public');
                 $listing->images()->create([
-                    'image_path' => "/storage/{$path}",
+                    'image_path' => "/storage/$path",
                     'is_main' => false,
                 ]);
             }
