@@ -20,8 +20,9 @@ return new class extends Migration
             $table->boolean('is_possession_day_confirmed')->default(false);;  //Confirmation Condition day
             $table->timestamp('condition_day')->nullable(); //Condition day
             $table->boolean('is_condition_day_confirmed')->default(false);;  //Confirmation Condition day
-            $table->boolean('is_confirmed')->default(false); // ✅ Confirmation status
-            $table->boolean('is_made')->default(false); // ✅ Completion status
+            $table->boolean('is_confirmed')->default(false); // Confirmation status
+            $table->boolean('is_made')->default(false); //  Completion status
+            $table->boolean('is_broken')->default(false);
             $table->mediumText('seller_message')->nullable(); // seller_message
             $table->boolean('is_completed')->default(false);
             $table->foreignId('real_estate_listing_id')->nullable()->constrained('real_estate_listings')->cascadeOnDelete(); //Ensures foreign key integrity

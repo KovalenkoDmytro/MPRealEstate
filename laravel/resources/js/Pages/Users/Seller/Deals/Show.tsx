@@ -34,6 +34,47 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
         }
     };
 
+    const handleBreakRequest = async (event) => {
+        const action = event.target.dataset.action;
+        const value = event.target.dataset.value;
+
+        if (!confirm(`Are you sure you want to ${action === 'request' ? 'request to break' : value} this deal?`)) return;
+
+        const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content;
+        const message = (document.querySelector("textarea[name='break_deal_message']") as HTMLMetaElement )?.value;
+
+
+        const body = { action: action };
+        if (action === 'request') {
+            body.message = message;
+        } else {
+            body.response = value === 'accept' ? 'approved' : 'rejected';
+        }
+
+        try {
+            const response = await fetch(route('deals.break.request', { deal: deal.id }), {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken || '',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message || 'Action completed successfully.');
+            } else {
+                alert(data.message || 'Action failed.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert("An error occurred while processing your request.");
+        }
+    };
+
     const handleUpload = (e: React.FormEvent) => {
         e.preventDefault();
         post(`/deals/${deal.id}/files`, {
@@ -465,8 +506,66 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                 </ul>
                             </div>
                         )}
+
+                        {!deal.break_request || (deal.break_request.status !== 'pending' && deal.break_request.status !== 'accepted' && deal.break_request.status !== 'rejected') ? (
+                            <div>
+                                <textarea name="break_deal_message" placeholder="Enter reason" className="border p-2 rounded w-full sm:w-72" required/>
+
+                                <button onClick={handleBreakRequest} data-action='request' className="mt-2 px-4 py-2 bg-red-600 text-white rounded">
+                                    Request to Break Deal
+                                </button>
+                            </div>
+                        ) : null}
+
+
+                        {auth.user.id !== deal.break_request?.initiator_id &&  deal.break_request && deal.break_request.status === 'pending'  && (
+                            <div>
+                                <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                                    ⏳ Buyer requested to break the deal. Please make a decision.
+                                </div>
+                                <div>
+                                    <button onClick={handleBreakRequest} data-action='respond'  data-value='accept' className="mt-2 px-4 py-2 bg-red-600 text-white rounded">
+                                        Accept
+                                    </button>
+                                    <button onClick={handleBreakRequest} data-action='respond' data-value='reject' className="mt-2 px-4 py-2 bg-red-600 text-white rounded">
+                                        Reject
+                                    </button>
+                                </div>
+                            </div>
+
+                        )}
+
+                        {auth.user.id === deal.break_request?.initiator_id &&  deal.break_request && deal.break_request.status === 'pending' && (
+                            <div>
+                                <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                                    ⏳ You requested to break the deal. Please wait for the buyer's decision.
+                                </div>
+                            </div>
+
+                        )}
+
+                        {deal.break_request && deal.break_request.status === 'rejected' &&  auth.user.id === deal.break_request.initiator_id && (
+                            <div>
+                                <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                                    ⏳ Your request to break a deal has been rejected.
+                                </div>
+                            </div>
+
+                        )}
+
+                        {deal.break_request && deal.break_request.status === 'rejected' &&  auth.user.id !== deal.break_request.initiator_id && (
+                            <div>
+                                <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                                    ⏳ You have refused to break a deal.
+                                </div>
+                            </div>
+
+                        )}
+
                     </div>
                 </div>
+
+
             </div>
         </AuthenticatedLayout>
     );

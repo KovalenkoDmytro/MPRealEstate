@@ -4,21 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Deal extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'amount',
-        'data',
-        'real_estate_listing_id',
-        'security_deposit',
-        'possession_day',
-        'condition_day',
-        'security_deposit',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'data' => 'array',
@@ -29,32 +24,36 @@ class Deal extends Model
     ];
 
     // Define the fixed steps
-    public static $steps = [
-        'Step1',
-        'Financing Formalities',
-        'Inspections',
-        'Removing Conditions',
-        'Lawyer Paperwork',
-        'Closing the Deal',
-    ];
+//    public static $steps = [
+//        'Step1',
+//        'Financing Formalities',
+//        'Inspections',
+//        'Removing Conditions',
+//        'Lawyer Paperwork',
+//        'Closing the Deal',
+//    ];
 
     // Relationship with users
-    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany {
+    public function users(): BelongsToMany {
         return $this->belongsToMany(User::class, 'deal_user');
     }
 
 
     // Relationship with RealEstateListing
-    public function realEstateListing(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+    public function realEstateListing(): BelongsTo {
         return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
     }
 
-    public function listing(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+    public function listing(): BelongsTo {
         return $this->belongsTo(\App\Models\RealEstateListing::class, 'real_estate_listing_id');
     }
 
-    public function files(): Deal|\Illuminate\Database\Eloquent\Relations\HasMany {
+    public function files(): Deal|HasMany {
         return $this->hasMany(DealFile::class);
+    }
+
+    public function breakRequest(): HasOne {
+        return $this->hasOne(DealBreakRequest::class);
     }
 
 }

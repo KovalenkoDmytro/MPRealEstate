@@ -78,5 +78,13 @@ Route::post('/deals/{deal}/invite-lawyer', [DealController::class, 'inviteLawyer
     ->middleware(['auth', 'role:buyer|seller'])
     ->name('deals.inviteLawyer');
 
+
+
+// Initiating break request (either buyer or seller)
+Route::middleware(['auth', 'role:buyer|seller'])->group(function () {
+    Route::post('/deals/{deal}/break/request', [DealController::class, 'breakDeal'])
+        ->name('deals.break.request');
+});
+
 // Auth scaffolding
 require __DIR__.'/auth.php';

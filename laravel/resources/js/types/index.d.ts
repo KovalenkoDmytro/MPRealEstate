@@ -49,8 +49,14 @@ export type Deal = {
     is_possession_day_confirmed: boolean;
     created_at: string;
     is_completed: boolean;
+    is_broken: boolean;
     updated_at: string;
     real_estate_listing_id: number | null;
+    break_request  : null | {
+        initiator_id:  number;
+        message: string;
+        status: 'pending' | 'accepted' | 'rejected';
+    },
 };
 
 

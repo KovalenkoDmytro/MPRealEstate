@@ -44,6 +44,47 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
         });
     };
 
+
+    const handleBreakRequest = async (event) => {
+        const action = event.target.dataset.action;
+        const value = event.target.dataset.value;
+
+        if (!confirm(`Are you sure you want to ${action === 'request' ? 'request to break' : value} this deal?`)) return;
+
+        const csrfToken = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content;
+        const message = (document.querySelector("textarea[name='break_deal_message']") as HTMLMetaElement )?.value;
+
+
+        const body = { action: action };
+        if (action === 'request') {
+            body.message = message;
+        } else {
+            body.response = value === 'accept' ? 'approved' : 'rejected';
+        }
+
+        try {
+            const response = await fetch(route('deals.break.request', { deal: deal.id }), {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken || '',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message || 'Action completed successfully.');
+            } else {
+                alert(data.message || 'Action failed.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert("An error occurred while processing your request.");
+        }
+    };
     const downloadFile = async (fileId: number) => {
         try {
             const response = await fetch(`/files/${fileId}/download`, {method: "GET"});
@@ -180,12 +221,19 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                             <p><strong>Square Feet:</strong> {deal.real_estate_listing.square_feet}</p>
                             <p><strong>Lot Size:</strong> {deal.real_estate_listing.lot_size ?? "N/A"}</p>
                             <p><strong>Year Built:</strong> {deal.real_estate_listing.year_built ?? "N/A"}</p>
-                            <p><strong>Garage:</strong> {deal.real_estate_listing.has_garage ? `Yes (${deal.real_estate_listing.garage_spaces ?? 0} spaces)` : "No"}</p>
+                            <p>
+                                <strong>Garage:</strong> {deal.real_estate_listing.has_garage ? `Yes (${deal.real_estate_listing.garage_spaces ?? 0} spaces)` : "No"}
+                            </p>
                             <p><strong>Basement:</strong> {deal.real_estate_listing.has_basement ? "Yes" : "No"}</p>
-                            <p><strong>HOA Fees:</strong> {deal.real_estate_listing.hoa_fees ? `$${deal.real_estate_listing.hoa_fees}` : "N/A"}</p>
-                            <p><strong>Property Taxes:</strong> {deal.real_estate_listing.property_taxes ? `$${deal.real_estate_listing.property_taxes}` : "N/A"}</p>
+                            <p><strong>HOA
+                                Fees:</strong> {deal.real_estate_listing.hoa_fees ? `$${deal.real_estate_listing.hoa_fees}` : "N/A"}
+                            </p>
+                            <p><strong>Property
+                                Taxes:</strong> {deal.real_estate_listing.property_taxes ? `$${deal.real_estate_listing.property_taxes}` : "N/A"}
+                            </p>
                             <p><strong>Status:</strong> {deal.real_estate_listing.status}</p>
-                            <p><strong>Price Reduced:</strong> {deal.real_estate_listing.price_reduced ? "Yes" : "No"}</p>
+                            <p><strong>Price Reduced:</strong> {deal.real_estate_listing.price_reduced ? "Yes" : "No"}
+                            </p>
 
                             {/* ✅ Additional Images */}
                             {deal.real_estate_listing.images && deal.real_estate_listing.images.length > 0 && (
@@ -256,7 +304,6 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                 ✅ You have made the security deposit, seller has confirmed it.
                             </div>
                         )}
-
 
 
                         {deal.is_confirmed && (
@@ -362,8 +409,6 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                         ) : null}
 
 
-
-
                         {/* ✅ Inviting lawyer */}
                         {lawyer && lawyer.is_buyer_lawyer ? (
                             <div className="mt-6 p-4 border rounded-md bg-green-50 text-green-700">
@@ -397,8 +442,6 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                         )}
 
 
-
-
                         {/* ✅ File Upload Section */}
                         <div className="mt-6 p-4 border rounded-md">
                             <h3 className="text-xl font-semibold">📂 Upload Deal Files</h3>
@@ -430,7 +473,8 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                                 </button>
                                                 {file.created_at && (
                                                     <p className="text-sm text-gray-500 mt-1">
-                                                        Uploaded on: {new Date(file.created_at).toLocaleString()} by {file.author_name} ({file.author_email})
+                                                        Uploaded
+                                                        on: {new Date(file.created_at).toLocaleString()} by {file.author_name} ({file.author_email})
                                                     </p>
                                                 )}
                                             </div>
@@ -445,6 +489,55 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                                 </ul>
                             </div>
                         )}
+
+
+                        {!deal.break_request? (
+                        <div>
+                            <textarea name="break_deal_message" placeholder="Enter reason" className="border p-2 rounded w-full sm:w-72" required/>
+
+                                <button onClick={handleBreakRequest}  data-action="request" className="mt-2 px-4 py-2 bg-red-600 text-white rounded">
+                                    Request to Break Deal
+                                </button>
+                        </div>
+                        ) : null}
+
+
+                        {auth.user.id === deal.break_request?.initiator_id && deal.break_request && deal.break_request.status === 'pending' && (
+                            <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                                ⏳ Waiting for seller confirmation to break the deal.
+                            </div>
+                        )}
+
+                        {auth.user.id === deal.break_request?.initiator_id && deal.break_request && deal.break_request.status === 'rejected' && (
+                            <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                               Seller rejected your request to brake the deal
+                            </div>
+                        )}
+
+                        {deal.break_request && deal.break_request.status === 'rejected' &&  auth.user.id !== deal.break_request.initiator_id && (
+                            <div>
+                                <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                                    ⏳ You have refused to break a deal.
+                                </div>
+                            </div>
+
+                        )}
+
+                        {auth.user.id !== deal.break_request?.initiator_id && deal.break_request && deal.break_request.status === 'pending' && (
+                            <div>
+                                <div className="mb-6 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                                    ⏳ Seller wants to brake a deal .Pleas make a decision
+                                </div>
+
+                                <button onClick={handleBreakRequest} data-action='respond'  data-value='accept' className="mt-2 px-4 py-2 bg-red-600 text-white rounded">
+                                    Accept
+                                </button>
+                                <button onClick={handleBreakRequest} data-action='respond' data-value='reject' className="mt-2 px-4 py-2 bg-red-600 text-white rounded">
+                                    Reject
+                                </button>
+                            </div>
+                        )}
+
                     </div>
                 </div>
             </div>

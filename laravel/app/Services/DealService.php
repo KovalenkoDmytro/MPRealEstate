@@ -6,10 +6,12 @@ use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Models\Deal;
+use App\Models\DealBreakRequest;
 use App\Models\Offer;
 use App\Models\RealEstateListing;
 use App\Notifications\ConditionDayConfirmed;
 use App\Notifications\ConditionDaySet;
+use App\Notifications\DealBreakRequested;
 use App\Notifications\DepositMarkedAsMade;
 use App\Notifications\LawyerInvitedToDeal;
 use App\Notifications\PossessionDayConfirmed;
@@ -20,6 +22,8 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
+use function Illuminate\Events\queueable;
 
 class DealService
 {
@@ -242,4 +246,82 @@ class DealService
             ->get();
     }
 
+    public function breakDeal(array $data, Deal $deal): JsonResponse
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        if ($deal->is_completed) {
+            return JsonResponder::send(
+                new ErrorResponse('Cannot break a completed deal.', [], 400)
+            );
+        }
+
+        // Prevent duplicate break requests
+        if ($deal->breakRequest) {
+            return JsonResponder::send(
+                new ErrorResponse('Break request already exists.', [], 400)
+            );
+        }
+
+        DealBreakRequest::create([
+            'deal_id' => $deal->id,
+            'initiator_id' => $user->id,
+            'status' => 'pending',
+            'message' => $data['message'],
+        ]);
+
+
+        // Notify counterparty
+        $main_sides = $deal->users()->whereIn('role', ['buyer', 'seller'])->get();
+        foreach ($main_sides as $user) {
+            $user->notify(new DealBreakRequested($deal));
+        }
+
+
+        return JsonResponder::send(
+            new SuccessResponse('Break request sent successfully.')
+        );
+    }
+
+    public function respondBreak(Deal $deal, User $responder, string $accepted): JsonResponse
+    {
+        $breakRequest = $deal->breakRequest;
+
+        if (!$breakRequest) {
+            return JsonResponder::send(
+                new ErrorResponse('No break request exists for this deal.', [], 404)
+            );
+        }
+
+        if ($breakRequest->initiator_id === $responder->id) {
+            return JsonResponder::send(
+                new ErrorResponse('You cannot respond to your own break request.', [], 403)
+            );
+        }
+
+
+
+        if ($accepted === 'approved') {
+            $deal->is_broken = true;
+            $deal->save();
+
+            $breakRequest->status = 'accepted';
+            $breakRequest->save();
+
+
+            return JsonResponder::send(
+                new SuccessResponse('Deal break confirmed. The deal has been broken.', [])
+            );
+        }
+
+        if($accepted === 'reject') {
+            $breakRequest->status = 'rejected';
+            $breakRequest->save();
+
+            return JsonResponder::send(
+                new SuccessResponse('Deal break request rejected.')
+            );
+        }
+    }
 }

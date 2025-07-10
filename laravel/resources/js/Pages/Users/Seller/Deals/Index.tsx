@@ -20,6 +20,8 @@ export default function DealIndexPage({ deals }: { deals: Deal[] }) {
                                         key={deal.id}
                                         className="border p-4 rounded-md shadow-sm hover:shadow-md transition"
                                     >
+                                        {deal.is_broken ?  <h2 className="text-red-700">Deal has been broken</h2> : null}
+
                                         <h3 className="text-lg font-semibold text-blue-700">
                                             <Link href={`/deals/${deal.id}`}>{deal.name}</Link>
                                         </h3>

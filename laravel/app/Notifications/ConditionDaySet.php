@@ -22,6 +22,6 @@ class ConditionDaySet extends Notification
     }
 
     public function toMail($notifiable): MailMessage {
-        return ConditionDaySetMailBuilder::build($this->deal)->build($notifiable);
+        return app(ConditionDaySetMailBuilder::class, ['deal' => $this->deal])->build($notifiable);
     }
 }
