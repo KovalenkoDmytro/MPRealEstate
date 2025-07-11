@@ -12,6 +12,8 @@ use App\Models\RealEstateListing;
 use App\Notifications\ConditionDayConfirmed;
 use App\Notifications\ConditionDaySet;
 use App\Notifications\DealBreakRequested;
+use App\Notifications\DealBreakRequestedApproved;
+use App\Notifications\DealBreakRequestedRejected;
 use App\Notifications\DepositMarkedAsMade;
 use App\Notifications\LawyerInvitedToDeal;
 use App\Notifications\PossessionDayConfirmed;
@@ -287,6 +289,11 @@ class DealService
     public function respondBreak(Deal $deal, User $responder, string $accepted): JsonResponse
     {
         $breakRequest = $deal->breakRequest;
+        $receiver = $deal->users()
+            ->where('user_id', '!=', $responder->id)
+            ->whereIn('role', ['buyer', 'seller'])
+            ->first();
+
 
         if (!$breakRequest) {
             return JsonResponder::send(
@@ -301,7 +308,6 @@ class DealService
         }
 
 
-
         if ($accepted === 'approved') {
             $deal->is_broken = true;
             $deal->save();
@@ -309,19 +315,26 @@ class DealService
             $breakRequest->status = 'accepted';
             $breakRequest->save();
 
+            $receiver->notify(new DealBreakRequestedApproved($deal));
 
             return JsonResponder::send(
-                new SuccessResponse('Deal break confirmed. The deal has been broken.', [])
+                new SuccessResponse('Deal break confirmed. The deal has been broken.')
             );
         }
 
-        if($accepted === 'reject') {
+        if($accepted === 'rejected') {
             $breakRequest->status = 'rejected';
             $breakRequest->save();
+
+            $receiver->notify(new DealBreakRequestedRejected($deal));
 
             return JsonResponder::send(
                 new SuccessResponse('Deal break request rejected.')
             );
         }
+
+        return JsonResponder::send(
+            new ErrorResponse('Invalid response type.', [], 400)
+        );
     }
 }
