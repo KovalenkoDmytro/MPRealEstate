@@ -37,15 +37,27 @@ class UserSeeder extends Seeder
                     ]
             );
 
-            if ($user->hasRole('lawyer') && !$user->lawyer_number) {
-                $user->lawyer_number = generateUniqueLawyerNumber();
-                $user->save();
-            }
-
-            // Assign role using Spatie
+            // Assign a role using Spatie
             if (!$user->hasRole($userData['role'])) {
                 $user->assignRole($userData['role']);
             }
+
+            // If the user has the 'lawyer' role, assign lawyer-specific fields
+            if ($user->hasRole('lawyer')) {
+
+                // Generate a unique lawyer number if it's not already set
+                if (!$user->lawyer_number) {
+                    $user->lawyer_number = generateUniqueLawyerNumber();
+                }
+
+                // Randomly assign the lawyer as either a seller's or buyer's lawyer (but not both)
+                $isSellerLawyer = rand(0, 1) === 1;
+                $user->is_seller_lawyer = $isSellerLawyer;
+                $user->is_buyer_lawyer  = !$isSellerLawyer;
+
+                $user->save();
+            }
+
 
 
             // Attach buyers & sellers to deals
@@ -63,5 +75,7 @@ class UserSeeder extends Seeder
             $user->deals()->attach($deals->pluck('id'));
         }
     }
+
+
 }
 

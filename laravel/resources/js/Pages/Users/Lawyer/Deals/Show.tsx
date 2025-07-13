@@ -17,7 +17,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
 
     // ✅ File Upload Handling
     const {data, setData, post, progress} = useForm({file: null as File | null});
-    const [uploadedFiles, setUploadedFiles] = useState(filterFilesForUser(deal.files || [], auth.user, deal.users)); // ✅ Default to empty array if null
+    const [uploadedFiles, setUploadedFiles] = useState(filterFilesForUser(deal.files || [], user, deal.users)); // ✅ Default to empty array if null
     const [isFileSelected, setIsFileSelected] = useState(false); // ✅ Track if file is chosen
 
     const [condition_day, setConditionDay] = useState(
@@ -27,8 +27,7 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
     const [possession_day, setPossessionDay] = useState(
         deal.possession_day ? deal.possession_day.slice(0, 10) : null
     );
-    // state for condition day
-    console.log(deal.possession_day !== null, 'possession_day')
+
 
 
 
@@ -144,12 +143,6 @@ export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: Use
                         <div className="mt-4">
                             <p className="text-lg">
                                 💰 <strong>Amount:</strong> ${deal.amount.toLocaleString()}
-                            </p>
-                            {/*<p className="text-lg">*/}
-                            {/*    🔄 <strong>Current Step:</strong> {deal.current_step}*/}
-                            {/*</p>*/}
-                            <p className="text-lg">
-                                📝 <strong>Description:</strong> {JSON.parse(deal.data).description}
                             </p>
                             {deal.security_deposit && (
                                 <p className="text-lg text-blue-700">
