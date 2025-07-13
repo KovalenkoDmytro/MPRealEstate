@@ -6,13 +6,13 @@ use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Http\Requests\DealBreakRequest;
 use App\Models\Deal;
-use App\Models\User;
 use App\Services\DealService;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DealController extends Controller
 {
@@ -39,22 +39,17 @@ class DealController extends Controller
     /**
      * Show a single deal with users and step details.
      */
-//    public function show(Deal $deal): Response
-//    {
-//        if (!Gate::allows('view-deal', $deal)) {
-//            abort(403, "Unauthorized - You are not part of this deal.");
-//        }
-//
-//        return Inertia::render('Deals/Show', [
-//            'deal' => $deal->load(
-//                [
-//                    'realEstateListing.mainImage', // ✅ Load the main image separately
-//                    'realEstateListing.images', // ✅ Also load all images
-//                    'users',
-//                ]
-//            ),
-//        ]);
-//    }
+    public function show(Deal $deal): Response
+    {
+        $user = auth()->user();
+
+        return match (true) {
+            $user->hasRole('buyer')  => app(BuyerController::class)->showDealView($deal),
+            $user->hasRole('seller') => app(SellerController::class)->showDealView($deal),
+            $user->hasRole('lawyer') => app(LawyerController::class)->showDealView($deal),
+            default => throw new HttpException(403, 'Unauthorized'),
+        };
+    }
 
     public function getAllDeals()
     {

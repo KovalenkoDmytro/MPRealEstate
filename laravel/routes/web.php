@@ -3,15 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use Inertia\Inertia;
-use App\Models\Deal;
-use App\Http\Controllers\{BuyerController,
-    LawyerController,
+use App\Http\Controllers\{
     ProfileController,
+    DashboardController,
     RealEstateListingController,
     FavoriteListingController,
     DealFileController,
-    DealController,
-    SellerController};
+    DealController};
 
 // Public Home Route
 Route::get('/', fn () =>
@@ -48,29 +46,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     // Role-Based Dashboard Redirect
-    Route::get('/dashboard', function () {
-        $user = auth()->user();
-
-        return match (true) {
-            $user->hasRole('buyer')  => app(BuyerController::class)->index(),
-            $user->hasRole('seller') => app(SellerController::class)->index(),
-            $user->hasRole('lawyer') => app(LawyerController::class)->index(),
-
-        };
-    })->name('dashboard');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
 
     // Deal Viewer by Role
-    Route::get('/deals/{deal}', function (Deal $deal) {
-        $user = auth()->user();
-
-        return match (true) {
-            $user->hasRole('buyer')  => app(BuyerController::class)->showDealView($deal),
-            $user->hasRole('seller') => app(SellerController::class)->showDealView($deal),
-            $user->hasRole('lawyer') => app(LawyerController::class)->showDealView($deal),
-
-        };
-    })->name('deals.show');
+    Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
 
 
     // Buyer/Seller Shared Routes
@@ -87,11 +67,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
 });
-
-
-
-
-
 
 
 // Laravel Breeze Auth Routes
