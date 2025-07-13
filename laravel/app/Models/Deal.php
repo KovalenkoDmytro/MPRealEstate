@@ -23,21 +23,10 @@ class Deal extends Model
         'updated_at' => 'datetime',
     ];
 
-    // Define the fixed steps
-//    public static $steps = [
-//        'Step1',
-//        'Financing Formalities',
-//        'Inspections',
-//        'Removing Conditions',
-//        'Lawyer Paperwork',
-//        'Closing the Deal',
-//    ];
-
     // Relationship with users
     public function users(): BelongsToMany {
         return $this->belongsToMany(User::class, 'deal_user');
     }
-
 
     // Relationship with RealEstateListing
     public function realEstateListing(): BelongsTo {

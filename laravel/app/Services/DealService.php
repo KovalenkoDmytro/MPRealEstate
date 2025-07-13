@@ -25,6 +25,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Storage;
+
 use function Illuminate\Events\queueable;
 
 class DealService
@@ -307,9 +309,15 @@ class DealService
             );
         }
 
-
         if ($accepted === 'approved') {
             $deal->is_broken = true;
+
+            // Delete all associated files
+            $deal->files->each(function ($file) {
+                // Delete the physical file from storage
+                Storage::delete($file->file_path); // Make sure 'file_path' is correct
+                $file->delete(); // Remove the database record
+            });
             $deal->save();
 
             $breakRequest->status = 'accepted';
@@ -322,7 +330,7 @@ class DealService
             );
         }
 
-        if($accepted === 'rejected') {
+        if ($accepted === 'rejected') {
             $breakRequest->status = 'rejected';
             $breakRequest->save();
 
