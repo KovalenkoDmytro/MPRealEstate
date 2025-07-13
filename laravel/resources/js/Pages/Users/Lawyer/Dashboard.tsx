@@ -32,6 +32,7 @@ export default function Dashboard({ auth, deals }: { auth : {user : User} , deal
                             <ul className="space-y-4">
                                 {deals.map(deal => (
                                     <li key={deal.id} className="p-4 border rounded shadow-sm hover:shadow-md transition">
+                                        {deal.is_broken ?  <h2 className="text-red-700">Deal has been broken</h2> : null}
                                         <h4 className="text-md font-semibold">{deal.name}</h4>
                                         <p className="text-sm text-gray-600">
                                             🏠 {deal.real_estate_listing.title} — {deal.real_estate_listing.location}
