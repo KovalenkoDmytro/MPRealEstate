@@ -4,6 +4,7 @@ import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import type { Listing } from "@/types";
 
+
 type Props = {
     listings: {
         data: Listing[];
@@ -27,7 +28,6 @@ function getOptions(method: 'POST' | 'DELETE', body = {}) {
 }
 
 export default function Index({ listings, favoriteListings, filters }: Props) {
-    const [listingsData, setListingsData] = useState(listings);
 
     const [form, setForm] = useState({
         location: filters.location || '',
@@ -64,41 +64,19 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
 
     const isFavorited = (id: number) => favoriteListings.includes(id);
 
-    const applyFilters = async (e: React.FormEvent) => {
+    const applyFilters = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const params = new URLSearchParams();
+        // Only keep non-empty values
+        const query = Object.fromEntries(
+            Object.entries(form).filter(([_, value]) => value !== '' && value !== false)
+        );
 
-        // Convert `form` state to query params
-        Object.entries(form).forEach(([key, value]) => {
-            if (value !== '' && value !== false) {
-                params.append(key, String(value));
-            }
+        router.get(route("buyer.listings.index"), query, {
+            preserveScroll: true,
+            preserveState: true,
         });
-
-        const url = `${route("buyer.listings.index")}?${params.toString()}`;
-
-        try {
-            // Update browser URL
-            window.history.pushState({}, "", url);
-
-            const response = await fetch(url, {
-                headers: {
-                    "Accept": "application/json",
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to apply filters.");
-            }
-
-            const data = await response.json();
-            setListingsData(data.listings);
-        } catch (error) {
-            console.error("Error applying filters:", error);
-        }
     };
-
 
 
     const toggleFavorite = async (

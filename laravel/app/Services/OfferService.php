@@ -13,7 +13,6 @@ use Illuminate\Http\Request;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Helpers\Responses\ErrorResponse;
-use LaravelIdea\Helper\App\Models\_IH_Offer_C;
 
 class OfferService
 {
@@ -78,14 +77,14 @@ class OfferService
         );
     }
 
-    public function getAllOffersForSeller(int $sellerId): Collection|array|_IH_Offer_C {
+    public function getAllOffersForSeller(int $sellerId): Collection|array {
         return Offer::with(['buyer:id,name,email', 'listing:id,title'])
             ->whereHas('listing', fn($q) => $q->where('seller_id', $sellerId))
             ->latest()
             ->get();
     }
 
-    public function getBuyerOffers(int $buyerId): Collection|array|_IH_Offer_C {
+    public function getBuyerOffers(int $buyerId): Collection|array {
         return Offer::with(['listing:id,title,price,seller_id', 'listing.seller:id,name'])
             ->where('buyer_id', $buyerId)
             ->latest()

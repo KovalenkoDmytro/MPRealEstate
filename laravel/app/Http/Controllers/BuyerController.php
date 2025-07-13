@@ -53,6 +53,7 @@ class BuyerController extends Controller
         $listings = $this->buyerService->getFilteredListings($user, $request);
         $favoriteListings = $user->favoriteListings()->pluck('real_estate_listing_id');
 
+
         return Inertia::render('Users/Buyer/Listings/Index', [
             'listings' => $listings,
             'favoriteListings' => $favoriteListings,

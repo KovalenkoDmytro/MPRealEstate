@@ -14,7 +14,6 @@ class BuyerService
         $query = RealEstateListing::query()
             ->where('status', '!=', 'inactive')
             ->with(['seller', 'mainImage']);
-
         $query = ListingFilter::apply($query, $request->validated(), $user);
 
         return $query->latest()->paginate(9)->withQueryString();
