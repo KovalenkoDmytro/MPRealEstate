@@ -227,12 +227,13 @@ class DealService
 
     public function createDealFromOffer(Offer $offer): void
     {
+
         $listing = $offer->listing;
 
         $deal = Deal::create([
             'name' => "Deal for " . $listing->title,
             'amount' => $offer->offer_price,
-            'data' => json_encode(['description' => $offer->message]),
+            'seller_message' => $offer->message,
             'real_estate_listing_id' => $listing->id,
         ]);
 

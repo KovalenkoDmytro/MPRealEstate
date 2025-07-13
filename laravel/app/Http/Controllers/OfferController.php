@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use App\Services\OfferService;
 use Illuminate\Http\JsonResponse;
-use LaravelIdea\Helper\App\Models\_IH_Offer_C;
 
 class OfferController extends Controller
 {
@@ -28,11 +27,11 @@ class OfferController extends Controller
         return $this->offerService->updateStatus($request, $offer);
     }
 
-    public function showAllOffers(int $sellerId): Collection|array|_IH_Offer_C {
+    public function showAllOffers(int $sellerId): Collection|array {
         return $this->offerService->getAllOffersForSeller($sellerId);
     }
 
-    public function showBuyerOffers(int $buyerId): Collection|array|_IH_Offer_C {
+    public function showBuyerOffers(int $buyerId): Collection|array {
         return $this->offerService->getBuyerOffers($buyerId);
     }
 }
