@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\RealEstateListing;
 use App\Models\User;
 use App\Http\Requests\ListingFilterRequest;
+use App\Filters\ListingFilter;
 
 class BuyerService
 {
@@ -14,33 +15,7 @@ class BuyerService
             ->where('status', '!=', 'inactive')
             ->with(['seller', 'mainImage']);
 
-        if ($request->filled('location')) {
-            $query->where('location', 'like', '%' . $request->location . '%');
-        }
-
-        if ($request->filled('min_price')) {
-            $query->where('price', '>=', $request->min_price);
-        }
-
-        if ($request->filled('max_price')) {
-            $query->where('price', '<=', $request->max_price);
-        }
-
-        if ($request->filled('bedrooms')) {
-            $query->where('bedrooms', '>=', $request->bedrooms);
-        }
-
-        if ($request->filled('bathrooms')) {
-            $query->where('bathrooms', '>=', $request->bathrooms);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->boolean('favorites_only')) {
-            $query->whereIn('id', $user->favoriteListings()->pluck('real_estate_listing_id'));
-        }
+        $query = ListingFilter::apply($query, $request->validated(), $user);
 
         return $query->latest()->paginate(9)->withQueryString();
     }

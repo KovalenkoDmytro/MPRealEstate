@@ -27,6 +27,8 @@ function getOptions(method: 'POST' | 'DELETE', body = {}) {
 }
 
 export default function Index({ listings, favoriteListings, filters }: Props) {
+    const [listingsData, setListingsData] = useState(listings);
+
     const [form, setForm] = useState({
         location: filters.location || '',
         min_price: filters.min_price || '',
@@ -62,10 +64,42 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
 
     const isFavorited = (id: number) => favoriteListings.includes(id);
 
-    const applyFilters = (e: React.FormEvent) => {
+    const applyFilters = async (e: React.FormEvent) => {
         e.preventDefault();
-        router.get(route("buyer.listings.index"), form, { preserveScroll: true });
+
+        const params = new URLSearchParams();
+
+        // Convert `form` state to query params
+        Object.entries(form).forEach(([key, value]) => {
+            if (value !== '' && value !== false) {
+                params.append(key, String(value));
+            }
+        });
+
+        const url = `${route("buyer.listings.index")}?${params.toString()}`;
+
+        try {
+            // Update browser URL
+            window.history.pushState({}, "", url);
+
+            const response = await fetch(url, {
+                headers: {
+                    "Accept": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to apply filters.");
+            }
+
+            const data = await response.json();
+            setListingsData(data.listings);
+        } catch (error) {
+            console.error("Error applying filters:", error);
+        }
     };
+
+
 
     const toggleFavorite = async (
         e: React.FormEvent,

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RealEstateListing;
 use App\Services\BuyerService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -48,10 +49,8 @@ class BuyerController extends Controller
         /** @var \App\Models\User $user */
 
         $user = auth()->user();
-
         $filters = $request->validatedFilters();
         $listings = $this->buyerService->getFilteredListings($user, $request);
-
         $favoriteListings = $user->favoriteListings()->pluck('real_estate_listing_id');
 
         return Inertia::render('Users/Buyer/Listings/Index', [
