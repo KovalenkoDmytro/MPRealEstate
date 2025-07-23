@@ -6,8 +6,6 @@ use Inertia\Inertia;
 use App\Http\Controllers\{
     ProfileController,
     DashboardController,
-    RealEstateListingController,
-    FavoriteListingController,
     DealFileController,
     DealController};
 
@@ -30,28 +28,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/', 'destroy')->name('destroy');
     });
 
-    // Uncomment below when listings and favorites are used
-    /*
-    Route::prefix('listings')->name('listings.')->group(function () {
-        Route::get('/', [RealEstateListingController::class, 'index'])->name('index');
-        Route::get('/{listing}', [RealEstateListingController::class, 'show'])->name('show');
-    });
-
-    Route::prefix('favorites')->name('favorites.')->group(function () {
-        Route::post('/', [FavoriteListingController::class, 'store'])->name('store');
-        Route::delete('/{listing}', [FavoriteListingController::class, 'destroy'])->name('destroy');
-    });
-    */
-
-
-
     // Role-Based Dashboard Redirect
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
-
     // Deal Viewer by Role
     Route::get('/deals/{deal}', [DealController::class, 'show'])->name('deals.show');
-
 
     // Buyer/Seller Shared Routes
     Route::middleware(['role:buyer|seller'])->group(function () {
@@ -71,3 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Laravel Breeze Auth Routes
 require __DIR__.'/auth.php';
+require __DIR__.'/seller.php';
+require __DIR__.'/buyer.php';
+require __DIR__.'/admin.php';
+require __DIR__.'/lawyer.php';
