@@ -22,7 +22,7 @@ class SellerController extends Controller {
 
 
     /**
-     * ✅ Display Seller Dashboard with their Offers
+     * Display Seller Dashboard with their Offers
      */
      public function index(): Response {
          /** @var \App\Models\User $user */
@@ -40,26 +40,6 @@ class SellerController extends Controller {
 
         return Inertia::render('Users/Seller/Deals/Index', [
             'deals' => $this->dealService->getAllDealsForUser($user)
-        ]);
-    }
-
-
-    public function showDealView(Deal $deal): Response {
-
-        if (!Gate::allows('view-deal', $deal)) {
-            abort(403, "Unauthorized - You are not part of this deal.");
-        }
-
-        return Inertia::render('Users/Seller/Deals/Show', [
-            'deal' => $deal->load(
-                [
-                    'realEstateListing.mainImage', // ✅ Load the main image separately
-                    'realEstateListing.images', // ✅ Also load all images
-                    'users', // all user for deal
-                    'files', // all uploaded files
-                    'breakRequest', // request to brake a deal
-                ]
-            ),
         ]);
     }
 
@@ -81,7 +61,7 @@ class SellerController extends Controller {
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
-        // ✅ If user is a seller, ensure they only access their own listings
+        // If user is a seller, ensure they only access their own listings
         if ($listing->seller_id !== $user->id) {
             abort(403, 'Unauthorized Access: This listing does not belong to you.');
         }

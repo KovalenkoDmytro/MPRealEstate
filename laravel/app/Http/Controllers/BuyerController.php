@@ -72,25 +72,4 @@ class BuyerController extends Controller
             'userOffer' => $userOffer,
         ]);
     }
-
-
-    public function showDealView(Deal $deal): Response {
-
-
-        if (!Gate::allows('view-deal', $deal)) {
-            abort(403, "Unauthorized - You are not part of this deal.");
-        }
-
-        return Inertia::render('Users/Buyer/Deals/Show', [
-            'deal' => $deal->load(
-                [
-                    'realEstateListing.mainImage', // ✅ Load the main image separately
-                    'realEstateListing.images', // ✅ Also load all images
-                    'users', // all user for deal
-                    'files', // all uploaded files
-                    'breakRequest', // request to brake a deal
-                ]
-            ),
-        ]);
-    }
 }

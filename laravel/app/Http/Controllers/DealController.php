@@ -10,6 +10,7 @@ use App\Services\DealService;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -41,14 +42,31 @@ class DealController extends Controller
      */
     public function show(Deal $deal): Response
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+            $user = auth()->user();
 
-        return match (true) {
-            $user->hasRole('buyer')  => app(BuyerController::class)->showDealView($deal),
-            $user->hasRole('seller') => app(SellerController::class)->showDealView($deal),
-            $user->hasRole('lawyer') => app(LawyerController::class)->showDealView($deal),
-            default => throw new HttpException(403, 'Unauthorized'),
+        if (!Gate::allows('view-deal', $deal)) {
+            abort(403, "Unauthorized - You are not part of this deal.");
+        }
+
+        $role = $user->getRoleNames()->first(); // Spatie: gets the user's primary role
+
+        $viewPath = match ($role) {
+            'lawyer' => 'Users/Lawyer/Deals/Show',
+            'seller' => 'Users/Seller/Deals/Show',
+            'buyer'  => 'Users/Buyer/Deals/Show',
         };
+
+        return Inertia::render($viewPath, [
+            'deal' => $deal->load([
+                'realEstateListing.mainImage',
+                'realEstateListing.images',
+                'users',
+                'files',
+                'breakRequest'
+            ]),
+        ]);
+
     }
 
     public function getAllDeals()
