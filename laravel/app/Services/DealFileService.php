@@ -2,20 +2,16 @@
 
 namespace App\Services;
 
+use App\Http\Requests\StoreDealFileRequest;
 use App\Models\Deal;
 use App\Models\DealFile;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DealFileService
 {
-    public function storeFile(Request $request, Deal $deal): void
+    public function storeFile(StoreDealFileRequest $request, Deal $deal): void
     {
-        $request->validate([
-            'file' => 'required|file|max:10240',
-        ]);
-
         $file = $request->file('file');
         $filePath = $file->store('deal_files', 'public');
         $fileType = $file->getClientOriginalExtension();

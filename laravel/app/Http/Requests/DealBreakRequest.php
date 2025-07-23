@@ -8,7 +8,11 @@ class DealBreakRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check(); // or apply any specific logic
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // If user not logged in, or not buyer/seller, deny
+        return $user?->hasAnyRole(['buyer', 'seller']) ?? false;
     }
 
     public function rules(): array
@@ -23,9 +27,11 @@ class DealBreakRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'message.required' => 'Please provide a reason for breaking the deal.',
-            'message.string' => 'The message must be a valid string.',
-            'message.max' => 'The message must not exceed 1000 characters.',
+            'message.required_if' => 'Please provide a reason for breaking the deal.',
+            'message.string'      => 'The message must be a valid string.',
+            'message.max'         => 'The message must not exceed 1000 characters.',
+            'response.required_if' => 'A response is required when responding to a break request.',
+            'response.in'          => 'The response must be either approved or rejected.',
         ];
     }
 }

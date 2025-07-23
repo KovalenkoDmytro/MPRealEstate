@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Http\Requests\SubmitOfferRequest;
+use App\Http\Requests\UpdateOfferStatusRequest;
 use App\Models\Offer;
 use App\Models\RealEstateListing;
 use App\Notifications\OfferConfirmation;
@@ -23,11 +25,7 @@ class OfferService
     {
         $this->dealService = $dealService;
     }
-    public function submitOffer(Request $request, $listing_id): JsonResponse {
-        $request->validate([
-            'offer_price' => 'required|numeric|min:1',
-            'message' => 'required|string|max:500',
-        ]);
+    public function submitOffer(SubmitOfferRequest $request, $listing_id): JsonResponse {
 
         $listing = RealEstateListing::with('seller')->findOrFail($listing_id);
 
@@ -51,10 +49,7 @@ class OfferService
         );
     }
 
-    public function updateStatus(Request $request, Offer $offer): JsonResponse {
-        $request->validate([
-            'status' => 'required|in:accepted,rejected',
-        ]);
+    public function updateStatus(UpdateOfferStatusRequest $request, Offer $offer): JsonResponse {
 
         if ($offer->listing->seller_id !== auth()->id()) {
             return JsonResponder::send(

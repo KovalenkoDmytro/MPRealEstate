@@ -5,10 +5,13 @@ namespace App\Services;
 use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
+use App\Http\Requests\InviteLawyerRequest;
+use App\Http\Requests\SetConditionDayRequest;
+use App\Http\Requests\SetDepositRequest;
+use App\Http\Requests\SetPossessionDayRequest;
 use App\Models\Deal;
 use App\Models\DealBreakRequest;
 use App\Models\Offer;
-use App\Models\RealEstateListing;
 use App\Notifications\ConditionDayConfirmed;
 use App\Notifications\ConditionDaySet;
 use App\Notifications\DealBreakRequested;
@@ -24,15 +27,12 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Support\Facades\Storage;
 
-use function Illuminate\Events\queueable;
-use function PHPUnit\Framework\isEmpty;
 
 class DealService
 {
-    public function setDeposit(Request $request, Deal $deal): JsonResponse
+    public function setDeposit(SetDepositRequest $request, Deal $deal): JsonResponse
     {
         if (!is_null($deal->security_deposit)) {
             return JsonResponder::send(
@@ -41,11 +41,7 @@ class DealService
 
         }
 
-        $validated = $request->validate([
-            'security_deposit' => 'required|numeric|min:100',
-        ]);
-
-        $deal->security_deposit = $validated['security_deposit'];
+        $deal->security_deposit = $request->security_deposit;
         $deal->save();
 
         $buyer = $deal->users()->where('role', 'buyer')->first();
@@ -105,7 +101,7 @@ class DealService
         );
     }
 
-    public function setConditionDay(Request $request, Deal $deal): JsonResponse
+    public function setConditionDay(SetConditionDayRequest $request, Deal $deal): JsonResponse
     {
         if (!is_null($deal->condition_day)) {
             return JsonResponder::send(
@@ -113,11 +109,7 @@ class DealService
             );
         }
 
-        $validated = $request->validate([
-            'condition_day' => 'required|date|after_or_equal:today',
-        ]);
-
-        $deal->condition_day = $validated['condition_day'];
+        $deal->condition_day = $request->condition_day;
         $deal->save();
 
         $seller = $deal->users()->where('role', 'seller')->first();
@@ -147,7 +139,7 @@ class DealService
         );
     }
 
-    public function setPossessionDay(Request $request, Deal $deal): JsonResponse
+    public function setPossessionDay(SetPossessionDayRequest $request, Deal $deal): JsonResponse
     {
         if (!is_null($deal->possession_day)) {
             return JsonResponder::send(
@@ -155,11 +147,7 @@ class DealService
             );
         }
 
-        $validated = $request->validate([
-            'possession_day' => 'required|date|after_or_equal:today',
-        ]);
-
-        $deal->possession_day = $validated['possession_day'];
+        $deal->possession_day = $request->possession_day;
         $deal->save();
 
         $seller = $deal->users()->where('role', 'seller')->first();
@@ -189,13 +177,10 @@ class DealService
         );
     }
 
-    public function inviteLawyer(Request $request, Deal $deal): JsonResponse
+    public function inviteLawyer(InviteLawyerRequest $request, Deal $deal): JsonResponse
     {
-        $validated = $request->validate([
-            'lawyer_code' => 'required|string|size:9',
-        ]);
 
-        $lawyer = User::where('lawyer_number', $validated['lawyer_code'])
+        $lawyer = User::where('lawyer_number', $request->lawyer_code)
             ->whereHas('roles', fn ($q) => $q->where('name', 'lawyer'))
             ->first();
 
