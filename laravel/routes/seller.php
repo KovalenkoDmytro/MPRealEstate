@@ -17,10 +17,10 @@ Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->g
     });
 
     Route::prefix('deals')->name('deals.')->group(function () {
-        Route::get('/deals', [SellerController::class, 'showAllDeals'])->name('index');
-        Route::patch('/deals/{deal}/set-deposit', [DealController::class, 'setDeposit'])->name('setDeposit');
-        Route::post('/deals/{deal}/confirm-deposit', [DealController::class, 'confirmDeposit'])->name('confirmDeposit');
-        Route::patch('/deals/{deal}/confirm-condition-day', [DealController::class, 'confirmConditionDay'])->name('confirmConditionDay');
-        Route::patch('/deals/{deal}/confirm-possession-day', [DealController::class, 'confirmPossessionDay'])->name('confirmPossessionDay');
+        Route::get('/', [SellerController::class, 'showAllDeals'])->name('index');
+        Route::patch('/{deal}/set-deposit', [DealController::class, 'setDeposit'])->name('setDeposit');
+        Route::post('/{deal}/confirm-deposit', [DealController::class, 'confirmDeposit'])->name('confirmDeposit');
+        Route::patch('/{deal}/confirm-condition-day', [DealController::class, 'confirmConditionDay'])->name('confirmConditionDay');
+        Route::patch('/{deal}/confirm-possession-day', [DealController::class, 'confirmPossessionDay'])->name('confirmPossessionDay');
     });
 });

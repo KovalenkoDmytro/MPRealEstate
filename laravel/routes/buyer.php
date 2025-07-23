@@ -12,9 +12,9 @@ Route::middleware(['auth', 'role:buyer'])->prefix('buyer')->name('buyer.')->grou
     });
 
     Route::prefix('deals')->name('deals.')->group(function () {
-        Route::get('/deals', [BuyerController::class, 'showAllDeals'])->name('index');
-        Route::patch('/deals/{deal}/make-deposit', [DealController::class, 'markDepositMade'])->name('markDepositMade');
-        Route::patch('/deals/{deal}/set-condition-day', [DealController::class, 'setConditionDay'])->name('setConditionDay');
-        Route::patch('/deals/{deal}/set-possession-day', [DealController::class, 'setPossessionDay'])->name('setPossessionDay');
+        Route::get('/', [BuyerController::class, 'showAllDeals'])->name('index');
+        Route::patch('/{deal}/make-deposit', [DealController::class, 'markDepositMade'])->name('markDepositMade');
+        Route::patch('/{deal}/set-condition-day', [DealController::class, 'setConditionDay'])->name('setConditionDay');
+        Route::patch('/{deal}/set-possession-day', [DealController::class, 'setPossessionDay'])->name('setPossessionDay');
     });
 });
