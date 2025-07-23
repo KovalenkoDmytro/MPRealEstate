@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -15,13 +16,13 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Buyer newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Buyer newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Buyer permission($permissions, $without = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Buyer query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Buyer role($roles, $guard = null, $without = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Buyer withoutPermission($permissions)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Buyer withoutRole($roles, $guard = null)
+ * @method static Builder<static>|Buyer newModelQuery()
+ * @method static Builder<static>|Buyer newQuery()
+ * @method static Builder<static>|Buyer permission($permissions, $without = false)
+ * @method static Builder<static>|Buyer query()
+ * @method static Builder<static>|Buyer role($roles, $guard = null, $without = false)
+ * @method static Builder<static>|Buyer withoutPermission($permissions)
+ * @method static Builder<static>|Buyer withoutRole($roles, $guard = null)
  * @mixin \Eloquent
  */
 class Buyer extends User

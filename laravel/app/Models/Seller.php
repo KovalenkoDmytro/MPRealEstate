@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -30,25 +32,25 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller permission($permissions, $without = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller role($roles, $guard = null, $without = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereIsBuyerLawyer($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereIsSellerLawyer($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereLawyerNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereRole($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller withoutPermission($permissions)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Seller withoutRole($roles, $guard = null)
+ * @method static Builder<static>|Seller newModelQuery()
+ * @method static Builder<static>|Seller newQuery()
+ * @method static Builder<static>|Seller permission($permissions, $without = false)
+ * @method static Builder<static>|Seller query()
+ * @method static Builder<static>|Seller role($roles, $guard = null, $without = false)
+ * @method static Builder<static>|Seller whereCreatedAt($value)
+ * @method static Builder<static>|Seller whereEmail($value)
+ * @method static Builder<static>|Seller whereEmailVerifiedAt($value)
+ * @method static Builder<static>|Seller whereId($value)
+ * @method static Builder<static>|Seller whereIsBuyerLawyer($value)
+ * @method static Builder<static>|Seller whereIsSellerLawyer($value)
+ * @method static Builder<static>|Seller whereLawyerNumber($value)
+ * @method static Builder<static>|Seller whereName($value)
+ * @method static Builder<static>|Seller wherePassword($value)
+ * @method static Builder<static>|Seller whereRememberToken($value)
+ * @method static Builder<static>|Seller whereRole($value)
+ * @method static Builder<static>|Seller whereUpdatedAt($value)
+ * @method static Builder<static>|Seller withoutPermission($permissions)
+ * @method static Builder<static>|Seller withoutRole($roles, $guard = null)
  * @mixin \Eloquent
  */
 class Seller extends User
@@ -63,7 +65,7 @@ class Seller extends User
         });
     }
 
-    public function listings(): Seller|\Illuminate\Database\Eloquent\Relations\HasMany {
+    public function listings(): Seller|HasMany {
         return $this->hasMany(RealEstateListing::class, 'seller_id');
     }
 

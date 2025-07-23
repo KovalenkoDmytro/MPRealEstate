@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -16,13 +17,13 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $permissions_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
  * @property-read int|null $roles_count
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Lawyer newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Lawyer newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Lawyer permission($permissions, $without = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Lawyer query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Lawyer role($roles, $guard = null, $without = false)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Lawyer withoutPermission($permissions)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Lawyer withoutRole($roles, $guard = null)
+ * @method static Builder<static>|Lawyer newModelQuery()
+ * @method static Builder<static>|Lawyer newQuery()
+ * @method static Builder<static>|Lawyer permission($permissions, $without = false)
+ * @method static Builder<static>|Lawyer query()
+ * @method static Builder<static>|Lawyer role($roles, $guard = null, $without = false)
+ * @method static Builder<static>|Lawyer withoutPermission($permissions)
+ * @method static Builder<static>|Lawyer withoutRole($roles, $guard = null)
  * @mixin \Eloquent
  */
 class Lawyer extends User

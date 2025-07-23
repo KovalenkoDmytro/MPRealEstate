@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int $id
@@ -36,31 +40,31 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int|null $offers_count
  * @property-read \App\Models\Seller $seller
  * @method static \Database\Factories\RealEstateListingFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereBathrooms($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereBedrooms($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereGarageSpaces($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereHasBasement($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereHasGarage($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereHoaFees($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereKeywords($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereLocation($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereLotSize($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing wherePrice($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing wherePriceReduced($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing wherePropertyTaxes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing wherePropertyType($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereSellerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereSquareFeet($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|RealEstateListing whereYearBuilt($value)
+ * @method static Builder<static>|RealEstateListing newModelQuery()
+ * @method static Builder<static>|RealEstateListing newQuery()
+ * @method static Builder<static>|RealEstateListing query()
+ * @method static Builder<static>|RealEstateListing whereBathrooms($value)
+ * @method static Builder<static>|RealEstateListing whereBedrooms($value)
+ * @method static Builder<static>|RealEstateListing whereCreatedAt($value)
+ * @method static Builder<static>|RealEstateListing whereDescription($value)
+ * @method static Builder<static>|RealEstateListing whereGarageSpaces($value)
+ * @method static Builder<static>|RealEstateListing whereHasBasement($value)
+ * @method static Builder<static>|RealEstateListing whereHasGarage($value)
+ * @method static Builder<static>|RealEstateListing whereHoaFees($value)
+ * @method static Builder<static>|RealEstateListing whereId($value)
+ * @method static Builder<static>|RealEstateListing whereKeywords($value)
+ * @method static Builder<static>|RealEstateListing whereLocation($value)
+ * @method static Builder<static>|RealEstateListing whereLotSize($value)
+ * @method static Builder<static>|RealEstateListing wherePrice($value)
+ * @method static Builder<static>|RealEstateListing wherePriceReduced($value)
+ * @method static Builder<static>|RealEstateListing wherePropertyTaxes($value)
+ * @method static Builder<static>|RealEstateListing wherePropertyType($value)
+ * @method static Builder<static>|RealEstateListing whereSellerId($value)
+ * @method static Builder<static>|RealEstateListing whereSquareFeet($value)
+ * @method static Builder<static>|RealEstateListing whereStatus($value)
+ * @method static Builder<static>|RealEstateListing whereTitle($value)
+ * @method static Builder<static>|RealEstateListing whereUpdatedAt($value)
+ * @method static Builder<static>|RealEstateListing whereYearBuilt($value)
  * @mixin \Eloquent
  */
 class RealEstateListing extends Model
@@ -70,22 +74,22 @@ class RealEstateListing extends Model
     protected $guarded = [];
 
     // A listing can have multiple offers
-    public function offers(): \Illuminate\Database\Eloquent\Relations\HasMany|RealEstateListing {
+    public function offers(): HasMany|RealEstateListing {
         return $this->hasMany(Offer::class, 'real_estate_listing_id');
     }
 
     // Relationship with seller
-    public function seller(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+    public function seller(): BelongsTo {
         return $this->belongsTo(Seller::class, 'seller_id');
     }
 
     // Relationship with Listing Images
-    public function images(): \Illuminate\Database\Eloquent\Relations\HasMany {
+    public function images(): HasMany {
         return $this->hasMany(ListingImage::class, 'real_estate_listing_id');
     }
 
     // Relationship with deal
-    public function deal(): \Illuminate\Database\Eloquent\Relations\HasOne {
+    public function deal(): HasOne {
         return $this->hasOne(Deal::class, 'real_estate_listing_id');
     }
 

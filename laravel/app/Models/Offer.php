@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
@@ -43,12 +44,12 @@ class Offer extends Model
     ];
 
     // Each offer belongs to one listing
-    public function listing(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+    public function listing(): BelongsTo {
         return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
     }
 
     // Each offer belongs to one buyer (user)
-    public function buyer(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+    public function buyer(): BelongsTo {
         return $this->belongsTo(User::class, 'buyer_id');
     }
 }

@@ -14,7 +14,7 @@ class StoreDealFileRequest extends FormRequest
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
-        return $user?->hasAnyRole(['buyer', 'seller', 'lawyer']) ?? false;;
+        return $user?->hasAnyRole(['buyer', 'seller', 'lawyer']) ?? false;
     }
 
     /**
