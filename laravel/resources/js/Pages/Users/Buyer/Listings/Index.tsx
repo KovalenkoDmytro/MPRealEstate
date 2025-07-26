@@ -1,16 +1,18 @@
-import { Link, router } from "@inertiajs/react";
-import { Head } from "@inertiajs/react";
-import { useState } from "react";
+import {router} from "@inertiajs/react";
+import {Head} from "@inertiajs/react";
+import {useState} from "react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
-import type { Listing } from "@/types/pageProps";
+import type {RealEstateListing} from "@/types";
 import {FilterForm} from "@/Components/listings/FilterForm";
 import {ListingsGrid} from "@/Components/listings/ListingsGrid";
 
 
 type Props = {
     listings: {
-        data: Listing[];
-        links: any[];
+        data: RealEstateListing[];
+        links: { url: string | null; label: string; active: boolean }[];
+        current_page: number;
+        last_page: number;
     };
     favoriteListings: number[];
     filters: Record<string, any>;
@@ -29,7 +31,7 @@ function getOptions(method: 'POST' | 'DELETE', body = {}) {
     };
 }
 
-export default function Index({ listings, favoriteListings, filters }: Props) {
+export default function Index({listings, favoriteListings, filters}: Props) {
 
     const [form, setForm] = useState({
         location: filters.location || '',
@@ -61,7 +63,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
     });
 
     const updateFilter = (key: string, value: string | boolean) => {
-        setForm((prev) => ({ ...prev, [key]: value }));
+        setForm((prev) => ({...prev, [key]: value}));
     };
 
     const isFavorited = (id: number) => favoriteListings.includes(id);
@@ -94,13 +96,13 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
 
         const options = isFav
             ? getOptions("DELETE")
-            : getOptions("POST", { listing_id: listingId });
+            : getOptions("POST", {listing_id: listingId});
 
         try {
             const response = await fetch(url, options);
             if (!response.ok) throw new Error("Favorite toggle failed");
 
-            router.reload({ only: ["favoriteListings"] });
+            router.reload({only: ["favoriteListings"]});
             alert(isFav ? "Removed from favorites" : "Added to favorites");
         } catch (error) {
             console.error("Error toggling favorite:", error);
@@ -111,28 +113,20 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
     return (
         <AuthenticatedLayout
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    My Listings
-                </h2>
+                <h1 className="text-xl font-semibold leading-tight text-gray-800">
+                    🏡 My Real Estate Listings
+                </h1>
             }
         >
-            <Head title="My Listings" />
+            <Head title="My Listings"/>
 
-            <div className="container mx-auto p-4">
-                <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-2xl font-bold">🏡 My Real Estate Listings</h1>
-                </div>
+            <FilterForm form={form} updateFilter={updateFilter} onApplyFilters={applyFilters}/>
 
-                {/* 🔍 Filter Form */}
-                <FilterForm form={form} updateFilter={updateFilter} onApplyFilters={applyFilters} />
-
-
-                <ListingsGrid
-                    listings={listings}
-                    isFavorited={isFavorited}
-                    toggleFavorite={toggleFavorite}
-                />
-            </div>
+            <ListingsGrid
+                listings={listings}
+                isFavorited={isFavorited}
+                toggleFavorite={toggleFavorite}
+            />
         </AuthenticatedLayout>
     );
 }

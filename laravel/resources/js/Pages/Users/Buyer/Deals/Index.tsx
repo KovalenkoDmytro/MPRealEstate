@@ -1,8 +1,8 @@
 import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import type { Deal } from '@/types/pageProps';
+import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
+import type { Deal } from '@/types';
 
-export default function BuyerDealsIndex({ deals }: { deals: Deal[] }) {
+export default function Index({ deals }: { deals: Deal[] }) {
     return (
         <AuthenticatedLayout
             header={<h2 className="text-xl font-semibold text-gray-800">📄 My Deals</h2>}

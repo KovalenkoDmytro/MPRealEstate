@@ -1,10 +1,9 @@
 import {Head, useForm} from "@inertiajs/react";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import {useState} from "react";
 import {useForm as useFormInvite} from '@inertiajs/react';
-import type { Deal } from "@/types/pageProps"; // or wherever DealProps is defined
-import type { User } from "@/types/pageProps"; // adjust if your User type is elsewhere
-import {filterFilesForUser} from "@/Helpers/fileHelpers";
+import type { Deal, User} from "@/types";
+import {filterFilesForUser} from "@/helpers/fileHelpers";
 
 export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: User}}) {
     // ✅ Find the seller in the users array

@@ -1,10 +1,10 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
-import {Offer} from "@/types/pageProps";
+import {Offer, User} from "@/types";
 
 
 type PageProps = {
-    auth: { user: { role: string } };
+    auth: { user: User};
     offers?: Offer[];
 };
 
@@ -42,7 +42,7 @@ export default function Dashboard({ auth, offers } : PageProps) {
                                             </h3>
                                             <p>💰 Listing Price: ${offer.listing.price.toLocaleString()}</p>
                                             <p>📌 Seller: {offer.listing.seller.name}</p>
-                                            <p><strong>My Offer:</strong> ${offer.offer_price.toLocaleString()}</p>
+                                            <p><strong>My Offer:</strong> ${offer.amount.toLocaleString()}</p>
                                             <p className="text-gray-600"><strong>Message:</strong> {offer.message}</p>
 
                                             {/* ✅ Offer Status */}

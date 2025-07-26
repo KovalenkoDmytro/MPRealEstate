@@ -1,4 +1,4 @@
-import {User, Deal, Offer, BaseEntity} from '@/types';
+import {User, BaseEntity} from '@/types';
 
 /**
  * Represents the status of a property listing
@@ -54,6 +54,8 @@ export interface RealEstateListing extends BaseEntity {
     status: PropertyStatus;
     /** ID of the seller */
     seller_id: number;
+    /** the seller */
+    seller: User;
     /** Main property image */
     main_image: MainImage;
     /** Additional property images */
@@ -63,7 +65,7 @@ export interface RealEstateListing extends BaseEntity {
     /** Type of property (e.g., single-family, condo) */
     property_type: string;
     /** Year the property was built */
-    year_built: number | null;
+    year_built: number;
     /** Whether the property has a garage */
     has_garage: boolean;
     /** Number of garage spaces */
@@ -73,7 +75,7 @@ export interface RealEstateListing extends BaseEntity {
     /** Homeowner association fees */
     hoa_fees: number | null;
     /** Annual property taxes */
-    property_taxes: number | null;
+    property_taxes: number;
     /** Whether the price has been reduced */
     price_reduced: boolean;
     /** Search keywords */

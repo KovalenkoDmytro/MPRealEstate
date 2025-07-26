@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('real_estate_listing_id')->constrained()->onDelete('cascade');
             $table->foreignId('buyer_id')->constrained('users')->onDelete('cascade');
-            $table->decimal('offer_price', 10, 2);
+            $table->decimal('amount', 10, 2);
             $table->text('message');
             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
             $table->timestamps();

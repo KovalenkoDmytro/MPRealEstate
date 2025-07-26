@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -10,50 +11,35 @@ class DealSeeder extends Seeder
 {
     public function run(): void
     {
+        $buyers = User::role('buyer')->get();
+        $sellers = User::role('seller')->get();
+        $lawyers = User::role('lawyer')->get();
 
-        $buyers = User::whereHas('roles', function ($query) {
-            $query->where('name', 'buyer');
-        })->get();
+        // Preload listings
+        $listings = RealEstateListing::all();
 
-        $sellers = User::whereHas('roles', function ($query) {
-            $query->where('name', 'seller');
-        })->get();
+        if ($sellers->isEmpty() || $listings->isEmpty()) {
+            return;
+        }
 
-        $lawyers = User::whereHas('roles', function ($query) {
-            $query->where('name', 'lawyer');
-        })->get();
-
-        $listings = RealEstateListing::inRandomOrder()->get(); // ✅ Get all available listings
-
-        foreach (range(1, 3) as $i) {
-            if ($sellers->isEmpty()) {
-                continue;
-            }
-
+        foreach (range(1, rand(3, 6)) as $i) {
             $seller = $sellers->random();
-            $sellerListing = RealEstateListing::where('seller_id', $seller->id)->inRandomOrder()->first();
+            $sellerListing = $listings->where('seller_id', $seller->id)->random();
 
-            if (!$sellerListing) {
-                continue; // Skip if seller has no listing
-            }
-
-            $deal = Deal::create([
-                'name' => "Deal $i",
-                'amount' => rand(5000, 50000),
-                'seller_message' => "Sample deal $i",
+            $deal = Deal::factory()->create([
                 'real_estate_listing_id' => $sellerListing->id,
+                'amount'                 => rand(5000, 50000),
+                'seller_message'         => "Sample deal $i",
             ]);
 
-            // Attach users
-            $deal->users()->attach($seller->id); // ✅ seller is owner of listing
-
+            // Attach participants
+            $deal->users()->syncWithoutDetaching([$seller->id]); // Seller always in deal
             if ($buyers->isNotEmpty()) {
-                $deal->users()->attach($buyers->random()->id);
+                $deal->users()->syncWithoutDetaching([$buyers->random()->id]);
             }
             if ($lawyers->isNotEmpty()) {
-                $deal->users()->attach($lawyers->random()->id);
+                $deal->users()->syncWithoutDetaching([$lawyers->random()->id]);
             }
         }
     }
 }
-

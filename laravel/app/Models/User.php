@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -27,7 +28,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $deals_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\RealEstateListing> $favoriteListings
  * @property-read int|null $favorite_listings_count
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int,
+ *     \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Permission> $permissions
  * @property-read int|null $permissions_count
@@ -66,13 +68,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-        'lawyer_number',
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -98,14 +94,15 @@ class User extends Authenticatable
         ];
     }
 
+
+
     // Relationship with Deals
     public function deals(): BelongsToMany {
         return $this->belongsToMany(Deal::class, 'deal_user');
     }
 
     // Relationship with RealEstateListing
-    public function favoriteListings()
-    {
+    public function favoriteListings(): BelongsToMany {
         return $this->belongsToMany(RealEstateListing::class, 'favorite_listings')->withTimestamps();
     }
 

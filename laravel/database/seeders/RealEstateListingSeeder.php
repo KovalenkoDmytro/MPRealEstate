@@ -16,7 +16,7 @@ class RealEstateListingSeeder extends Seeder
         foreach ($sellers as $seller) {
             RealEstateListing::factory()
                 ->count(rand(2, 5))
-                ->for($seller, 'seller') // sets seller_id
+                ->for($seller, 'seller')  // sets seller_id
                 ->create()
                 ->each(function ($listing) {
                     // Add images for each listing:

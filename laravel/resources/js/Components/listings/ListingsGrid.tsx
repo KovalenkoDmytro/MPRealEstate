@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Grid, // Updated Grid v2
+  Grid,
   Card,
   CardContent,
   CardMedia,

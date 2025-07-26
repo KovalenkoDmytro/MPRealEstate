@@ -1,4 +1,4 @@
-import {User, BaseEntity} from '@/types';
+import {User, BaseEntity, RealEstateListing} from '@/types';
 /**
  * Represents a real estate deal between buyers and sellers
  */
@@ -28,6 +28,8 @@ export interface Deal extends BaseEntity {
     is_made: boolean;
     /** ID of the associated real estate listing */
     real_estate_listing_id: number | null;
+    /** associated real estate listing */
+    real_estate_listing: RealEstateListing;
     /** Whether the condition day is confirmed */
     is_condition_day_confirmed: boolean;
     /** Whether the possession day is confirmed */

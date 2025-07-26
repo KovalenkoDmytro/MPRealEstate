@@ -17,7 +17,7 @@ export enum OfferStatus {
  */
 export interface Offer extends BaseEntity {
     /** Price offered by the buyer in dollars */
-    offer_price: number;
+    amount: number;
     /** Message from the buyer to the seller */
     message: string;
     /** Current status of the offer */

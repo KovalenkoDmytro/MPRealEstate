@@ -23,21 +23,21 @@ return new class extends Migration
             $table->string('location');
 
             // Property Specs
-            $table->enum('property_type', ['house', 'condo', 'townhouse', 'land', 'multi-family', 'farm'])->nullable();
+            $table->enum('property_type', ['house', 'condo', 'townhouse', 'land', 'multi-family', 'farm']);
             $table->integer('bedrooms');
             $table->integer('bathrooms');
             $table->integer('square_feet');
             $table->unsignedInteger('lot_size')->nullable(); // in sqft or meters
 
             // Additional Details
-            $table->year('year_built')->nullable();
+            $table->year('year_built');
             $table->boolean('has_garage')->default(false);
             $table->unsignedSmallInteger('garage_spaces')->nullable();
             $table->boolean('has_basement')->default(false);
 
             // Financials
-            $table->decimal('hoa_fees', 10, 2)->nullable();        // Monthly or yearly
-            $table->decimal('property_taxes', 10, 2)->nullable();  // Annual estimate
+            $table->decimal('hoa_fees', 10, 2);        // Monthly or yearly
+            $table->decimal('property_taxes', 10, 2);  // Annual estimate
 
             // Status
             $table->string('status')->default('available'); // available, sold, pending

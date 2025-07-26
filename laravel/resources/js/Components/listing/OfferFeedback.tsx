@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Offer } from '@/types/pageProps';
+import type { Offer } from '@/types';
 
 export const OfferFeedback = ({ userOffer }: { userOffer: Offer | null }) =>
   userOffer ? (
