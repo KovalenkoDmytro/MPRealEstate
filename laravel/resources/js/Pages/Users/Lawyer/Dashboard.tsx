@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
-import {Deal, User} from '@/types';
+import {Deal, User} from '@/types/pageProps';
 
 export default function Dashboard({ auth, deals }: { auth : {user : User} , deals : Deal[] }) {
 

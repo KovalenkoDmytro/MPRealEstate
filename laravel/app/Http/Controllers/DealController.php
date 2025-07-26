@@ -71,6 +71,7 @@ class DealController extends Controller
 
     public function getAllDeals()
     {
+        /** @var \App\Models\User $user */
         $user = auth()->user();
 
         return $user->deals()

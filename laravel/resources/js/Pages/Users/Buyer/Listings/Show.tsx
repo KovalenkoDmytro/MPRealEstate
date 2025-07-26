@@ -1,14 +1,13 @@
-import {Head, Link, useForm} from "@inertiajs/react";
-import type {Listing, Offer} from "@/types"; // adjust if your User type is elsewhere
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import React from 'react';
+import { Head } from '@inertiajs/react';
+import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
+import {ImageGallery} from "@/Components/listing/ImageGallery";
+import {ListingDetails} from "@/Components/listing/ListingDetails";
+import {OfferFeedback} from "@/Components/listing/OfferFeedback";
+import {OfferForm} from "@/Components/listing/OfferForm";
 
 
-export default function Show({listing, userOffer,}: { listing: Listing; userOffer: Offer | null; }) {
-    const {data, setData, post, processing, errors} = useForm({
-        offer_price: "",
-        message: "",
-    });
-
+export default function Show({ listing, userOffer }) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -47,140 +46,21 @@ export default function Show({listing, userOffer,}: { listing: Listing; userOffe
         }
     };
 
-    return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    My Listings
-                </h2>
-            }
-        >
-            <Head title="My Listings"/>
-            <div className="container mx-auto p-6">
-                {/* ✅ Image Gallery */}
-                <div className="w-full max-w-3xl mx-auto">
-                    {listing.main_image ? (
-                        <img
-                            src={listing.main_image.image_path}
-                            alt="Main Image"
-                            className="w-full h-72 object-cover rounded-lg shadow-md"
-                        />
-                    ) : (
-                        <div className="w-full h-72 bg-gray-200 flex items-center justify-center text-gray-500">
-                            ❌ No Image Available
-                        </div>
-                    )}
-                </div>
-
-                {/* ✅ Additional Images */}
-                {listing.images && listing.images.length > 0 && (
-                    <div className="grid grid-cols-3 gap-2 mt-4">
-                        {listing.images.map((img) => (
-                            <img
-                                key={img.id}
-                                src={img.image_path}
-                                alt="Gallery"
-                                className="h-24 w-full object-cover rounded-md"
-                            />
-                        ))}
-                    </div>
-                )}
-
-                {/* ✅ Listing Details */}
-                <div className="mt-6">
-                    <h1 className="text-2xl font-bold">{listing.title}</h1>
-                    <p className="text-lg">💰 Price: <strong>${listing.price.toLocaleString()}</strong></p>
-                    <p className="text-lg">📍 Location: {listing.location}</p>
-                    <p className="text-lg">🏠 Type: {listing.property_type || "N/A"}</p>
-                    <p className="text-lg">🛏 Bedrooms: {listing.bedrooms}</p>
-                    <p className="text-lg">🛁 Bathrooms: {listing.bathrooms}</p>
-                    <p className="text-lg">📏 Square Feet: {listing.square_feet}</p>
-                    <p className="text-lg">📐 Lot Size: {listing.lot_size ?? "N/A"}</p>
-                    <p className="text-lg">🏗 Year Built: {listing.year_built ?? "N/A"}</p>
-                    <p className="text-lg">🚗 Garage: {listing.has_garage ? `Yes (${listing.garage_spaces ?? 0} spaces)` : "No"}</p>
-                    <p className="text-lg">🏚 Basement: {listing.has_basement ? "Yes" : "No"}</p>
-                    <p className="text-lg">🏘 HOA Fees: {listing.hoa_fees ? `$${listing.hoa_fees}` : "N/A"}</p>
-                    <p className="text-lg">💸 Property Taxes: {listing.property_taxes ? `$${listing.property_taxes}` : "N/A"}</p>
-                    <p className="text-lg">📊 Status: {listing.status}</p>
-                    <p className="text-lg">⬇ Price Reduced: {listing.price_reduced ? "Yes" : "No"}</p>
-                    <p className="text-lg">👤 Seller: {listing.seller?.name || "N/A"}</p>
-
-                    <div className="mt-4">
-                        <Link href={route('buyer.listings.index')} className="text-blue-500">🔙 Back to Listings</Link>
-                    </div>
-                </div>
-
-                {listing.status === 'pending' && (
-                    <div className="mt-4">
-                        {userOffer ? (
-                            <div className="p-4 border border-gray-300 rounded-md bg-gray-50">
-                                {userOffer.status === "accepted" && (
-                                    <p className="text-green-600 font-semibold">✅ Your offer has been accepted.</p>
-                                )}
-                                {userOffer.status === "rejected" && (
-                                    <p className="text-red-500 font-semibold">❌ Your offer has been rejected.</p>
-                                )}
-                                {userOffer.status === "pending" && (
-                                    <p className="text-yellow-600 font-semibold">⌛ Your offer is still pending.</p>
-                                )}
-                            </div>
-                        ) : (
-                            <p className="text-gray-600">⌛ This listing is pending and you're not participating.</p>
-                        )}
-                    </div>
-                )}
-
-
-                {/* ✅ Offer Form (Only for Buyers) */}
-                {listing.status !== 'pending' && (
-                    <div className="mt-6 p-4 border border-gray-300 rounded-md">
-                        {userOffer ? (
-                            <>
-                                <h2 className="text-xl font-bold text-green-700">✅ Your Offer</h2>
-                                <p className="mt-2 text-lg">💵 <strong>${parseFloat(String(userOffer.offer_price)).toLocaleString()}</strong></p>
-                                <p className="mt-1 text-gray-700 whitespace-pre-line">📝 {userOffer.message}</p>
-                            </>
-                        ) : (
-                            <>
-                                <h2 className="text-xl font-bold">💰 Make an Offer</h2>
-                                <form onSubmit={handleSubmit} className="mt-4">
-                                    <label className="block mb-2">
-                                        Offer Price ($)
-                                        <input
-                                            type="number"
-                                            min="1"
-                                            value={data.offer_price}
-                                            onChange={(e) => setData("offer_price", e.target.value)}
-                                            className="w-full p-2 border rounded-md"
-                                            required
-                                        />
-                                    </label>
-                                    {errors.offer_price && <p className="text-red-500">{errors.offer_price}</p>}
-
-                                    <label className="block mt-2">
-                                        Message to Seller
-                                        <textarea
-                                            value={data.message}
-                                            onChange={(e) => setData("message", e.target.value)}
-                                            className="w-full p-2 border rounded-md"
-                                            required
-                                        />
-                                    </label>
-                                    {errors.message && <p className="text-red-500">{errors.message}</p>}
-
-                                    <button
-                                        type="submit"
-                                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md"
-                                        disabled={processing}
-                                    >
-                                        {processing ? "Sending..." : "Submit Offer"}
-                                    </button>
-                                </form>
-                            </>
-                        )}
-                    </div>
-                )}
-            </div>
-        </AuthenticatedLayout>
-    );
+  return (
+    <AuthenticatedLayout
+      header={<h2 className="text-xl font-semibold leading-tight text-gray-800">My Listings</h2>}
+    >
+      <Head title="My Listings" />
+      <div className="container mx-auto p-6">
+        <ImageGallery mainImage={listing.main_image} images={listing.images || []} />
+        <ListingDetails listing={listing} />
+        {listing.status === 'pending' && <OfferFeedback userOffer={userOffer} />}
+        {listing.status !== 'pending' && (
+          <div className="mt-6 p-4 border border-gray-300 rounded-md">
+            <OfferForm onSubmit={handleSubmit} processing={false} errors={{}} />
+          </div>
+        )}
+      </div>
+    </AuthenticatedLayout>
+  );
 }

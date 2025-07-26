@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {Head, Link} from "@inertiajs/react";
-import {Listing, Offer} from "@/types";
+import {Listing, Offer} from "@/types/pageProps";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 export default function Show({ listing }: {listing : Listing}) {

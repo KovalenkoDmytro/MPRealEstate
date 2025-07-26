@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {Head, Link} from "@inertiajs/react";
 import { useState, useTransition } from "react";
-import {Listing} from "@/types";
+import {Listing} from "@/types/pageProps";
 
 export default function EditListing( { listing }: { listing: Listing }) {
     const [data, setData] = useState({

@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
-import {Offer} from "@/types";
+import {Offer} from "@/types/pageProps";
 
 
 type PageProps = {

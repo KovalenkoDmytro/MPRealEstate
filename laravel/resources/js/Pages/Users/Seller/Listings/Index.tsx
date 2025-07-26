@@ -1,6 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import type { Listing } from "@/types";
+import type { Listing } from "@/types/pageProps";
 
 export default function Index({ listings }: { listings: Listing[] }) {
     return (

@@ -1,0 +1,81 @@
+import {User, Deal, Offer, BaseEntity} from '@/types';
+
+/**
+ * Represents the status of a property listing
+ */
+export enum PropertyStatus {
+    /** Property is available for purchase */
+    Available = 'available',
+    /** Property has been sold */
+    Sold = 'sold',
+    /** Property has a pending offer or deal */
+    Pending = 'pending'
+}
+
+/**
+ * Represents an image associated with a property listing
+ */
+export interface Image {
+    /** Unique identifier for the image */
+    id: number;
+    /** Path to the image file */
+    image_path: string;
+    /** Whether this is the main image (1) or not (0) */
+    is_main: number;
+}
+
+/**
+ * Represents the main image of a property listing
+ */
+export interface MainImage {
+    /** Path to the main image file */
+    image_path: string;
+}
+
+/**
+ * Represents a real estate listing in the system
+ */
+export interface RealEstateListing extends BaseEntity {
+    /** Title of the property listing */
+    title: string;
+    /** Detailed description of the property */
+    description: string;
+    /** Listing price in dollars */
+    price: number;
+    /** Property location/address */
+    location: string;
+    /** Number of bedrooms */
+    bedrooms: number;
+    /** Number of bathrooms */
+    bathrooms: number;
+    /** Total square footage of the property */
+    square_feet: number;
+    /** Current status of the listing */
+    status: PropertyStatus;
+    /** ID of the seller */
+    seller_id: number;
+    /** Main property image */
+    main_image: MainImage;
+    /** Additional property images */
+    images: Image[];
+    /** Size of the lot in acres */
+    lot_size: number | null;
+    /** Type of property (e.g., single-family, condo) */
+    property_type: string;
+    /** Year the property was built */
+    year_built: number | null;
+    /** Whether the property has a garage */
+    has_garage: boolean;
+    /** Number of garage spaces */
+    garage_spaces: number | null;
+    /** Whether the property has a basement */
+    has_basement: boolean;
+    /** Homeowner association fees */
+    hoa_fees: number | null;
+    /** Annual property taxes */
+    property_taxes: number | null;
+    /** Whether the price has been reduced */
+    price_reduced: boolean;
+    /** Search keywords */
+    keywords: string | null;
+}

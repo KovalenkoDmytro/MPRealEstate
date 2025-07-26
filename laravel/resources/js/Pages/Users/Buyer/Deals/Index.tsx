@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import type { Deal } from '@/types';
+import type { Deal } from '@/types/pageProps';
 
 export default function BuyerDealsIndex({ deals }: { deals: Deal[] }) {
     return (

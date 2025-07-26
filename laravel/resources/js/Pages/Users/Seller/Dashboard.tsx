@@ -1,6 +1,6 @@
 import {Head, Link} from "@inertiajs/react";
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import {Offer} from "@/types";
+import {Offer} from "@/types/pageProps";
 
 
 export default function Dashboard({ offers }: {offers: Offer[]}) {
