@@ -1,11 +1,11 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
-import { Deal } from '@/types';
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import {PropertyDetail} from '@/types';
 import { DealsList } from '@/Components/deals/DealsList';
 
 interface DealsIndexProps {
-  deals: Deal[];
+  deals: PropertyDetail[];
 }
 
 export const DealsIndex: React.FC<DealsIndexProps> = ({ deals }) => {

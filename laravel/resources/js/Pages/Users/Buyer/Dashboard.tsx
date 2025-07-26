@@ -1,68 +1,114 @@
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
-import {Offer, User} from "@/types";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import { Head, Link } from "@inertiajs/react";
+import { Offer, User } from "@/types";
 
+// MUI
+import {
+    Box,
+    Typography,
+    Card,
+    CardContent,
+    Divider,
+} from "@mui/material";
+import Grid from "@mui/material/Grid"; // Grid v2
 
 type PageProps = {
-    auth: { user: User};
+    auth: { user: User };
     offers?: Offer[];
 };
 
-export default function Dashboard({ auth, offers } : PageProps) {
-
+export default function Dashboard({ auth, offers }: PageProps) {
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Dashboard</h2>}
+            header={
+                <Typography variant="h5" fontWeight="bold" color="text.primary">
+                    Dashboard
+                </Typography>
+            }
         >
             <Head title="Dashboard" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
+            {/* Logged-in message */}
+            <Box py={6} maxWidth="lg" mx="auto">
+                <Card>
+                    <CardContent>
+                        <Typography>
                             You're logged in as <strong>{auth.user.role.toUpperCase()}!</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        </Typography>
+                    </CardContent>
+                </Card>
+            </Box>
 
-            <div className="py-6">
-                    <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                        <div className="bg-white p-6 shadow-md rounded-lg">
-                            <h2 className="text-2xl font-semibold">📜 My Offers</h2>
+            {/* Offers Section */}
+            <Box py={4} maxWidth="lg" mx="auto">
+                <Card>
+                    <CardContent>
+                        <Typography variant="h6" fontWeight="bold" gutterBottom>
+                            📜 My Offers
+                        </Typography>
+                        <Divider sx={{ mb: 2 }} />
 
-                            {offers && offers.length > 0 ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                                    {offers.map((offer) => (
-                                        <div key={offer.id} className="border p-4 rounded-lg shadow-md">
-                                            <h3 className="text-lg font-semibold">
-                                                <Link href={`buyer/listings/${offer.listing.id}`} className="text-blue-500">
-                                                    {offer.listing.title}
-                                                </Link>
-                                            </h3>
-                                            <p>💰 Listing Price: ${offer.listing.price.toLocaleString()}</p>
-                                            <p>📌 Seller: {offer.listing.seller.name}</p>
-                                            <p><strong>My Offer:</strong> ${offer.amount.toLocaleString()}</p>
-                                            <p className="text-gray-600"><strong>Message:</strong> {offer.message}</p>
+                        {offers && offers.length > 0 ? (
+                            <Grid container spacing={3} sx={{ width: "100%" }}>
+                                {offers.map((offer) => (
+                                    <Grid key={offer.id} size={{ xs: 12, md: 6, lg: 4 }}>
+                                        <Card
+                                            variant="outlined"
+                                            sx={{
+                                                borderRadius: 2,
+                                                "&:hover": { boxShadow: 3 },
+                                                transition: "0.2s",
+                                            }}
+                                        >
+                                            <CardContent>
+                                                <Typography variant="subtitle1" fontWeight="bold">
+                                                    <Link
+                                                        href={`buyer/listings/${offer.listing.id}`}
+                                                        style={{ color: "#1976d2", textDecoration: "none" }}
+                                                    >
+                                                        {offer.listing.title}
+                                                    </Link>
+                                                </Typography>
 
-                                            {/* ✅ Offer Status */}
-                                            <p className={`mt-2 font-semibold ${
-                                                offer.status === 'accepted' ? 'text-green-500' :
-                                                    offer.status === 'rejected' ? 'text-red-500' :
-                                                        'text-yellow-500'
-                                            }`}>
-                                                Status: {offer.status.toUpperCase()}
-                                            </p>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="mt-4 text-gray-600">No offers made yet.</p>
-                            )}
-                        </div>
-                    </div>
-                </div>
+                                                <Typography>
+                                                    💰 Listing Price: ${offer.listing.price.toLocaleString()}
+                                                </Typography>
+                                                <Typography>📌 Seller: {offer.listing.seller.name}</Typography>
+                                                <Typography>
+                                                    <strong>My Offer:</strong> ${offer.amount.toLocaleString()}
+                                                </Typography>
+                                                <Typography color="text.secondary">
+                                                    <strong>Message:</strong> {offer.message}
+                                                </Typography>
 
+                                                {/* Offer Status */}
+                                                <Typography
+                                                    mt={2}
+                                                    fontWeight="bold"
+                                                    sx={{
+                                                        color:
+                                                            offer.status === "accepted"
+                                                                ? "green"
+                                                                : offer.status === "rejected"
+                                                                    ? "red"
+                                                                    : "orange",
+                                                    }}
+                                                >
+                                                    Status: {offer.status.toUpperCase()}
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        ) : (
+                            <Typography mt={2} color="text.secondary">
+                                No offers made yet.
+                            </Typography>
+                        )}
+                    </CardContent>
+                </Card>
+            </Box>
         </AuthenticatedLayout>
     );
 }
