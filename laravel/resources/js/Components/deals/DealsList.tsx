@@ -1,9 +1,9 @@
 import React from 'react';
-import { Deal } from '@/types';
+import {PropertyDetail} from '@/types';
 import { DealCard } from './DealCard';
 
 interface DealsListProps {
-    deals: Deal[];
+    deals: PropertyDetail[];
 }
 
 export const DealsList: React.FC<DealsListProps> = ({ deals }) => {

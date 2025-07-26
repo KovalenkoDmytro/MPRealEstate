@@ -1,34 +1,61 @@
-import React from 'react';
-import { Deal } from '@/types';
-import { Link } from '@inertiajs/react';
+import React from "react";
+import { PropertyDetail } from "@/types";
+import { Link } from "@inertiajs/react";
+
+// MUI imports
+import { Card, CardContent, Typography, Box } from "@mui/material";
 
 interface DealCardProps {
-    deal: Deal;
+    deal: PropertyDetail;
 }
 
 export const DealCard: React.FC<DealCardProps> = ({ deal }) => {
     return (
-        <div className="border rounded-md p-4 shadow hover:shadow-md transition">
-            {deal.is_broken && (
-                <h2 className="text-red-700 font-bold text-lg">
-                    ❌ Deal has been broken
-                </h2>
-            )}
+        <Card
+            variant="outlined"
+            sx={{
+                transition: "box-shadow 0.2s",
+                "&:hover": { boxShadow: 3 },
+                borderRadius: 2,
+            }}
+        >
+            <CardContent>
+                {/* Broken Deal Status */}
+                {deal.is_broken && (
+                    <Typography color="error" fontWeight="bold" variant="subtitle1">
+                        ❌ Deal has been broken
+                    </Typography>
+                )}
 
-            <h2 className="text-lg font-semibold">{deal.name}</h2>
-            <p className="text-gray-700">
-                💰 <strong>Amount:</strong> ${deal.amount.toLocaleString()}
-            </p>
-            <p className="text-gray-600">
-                🏡 <strong>Listing:</strong> {deal.real_estate_listing?.title ?? 'N/A'}
-            </p>
+                {/* Deal Title */}
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    {deal.name}
+                </Typography>
 
-            <Link
-                href={route('deals.show', deal.id)}
-                className="inline-block mt-2 text-blue-600 hover:underline"
-            >
-                View Deal →
-            </Link>
-        </div>
+                {/* Deal Amount */}
+                <Typography variant="body1">
+                    💰 <strong>Amount:</strong> ${deal.amount.toLocaleString()}
+                </Typography>
+
+                {/* Listing Title */}
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                    🏡 <strong>Listing:</strong> {deal.real_estate_listing.title ?? "N/A"}
+                </Typography>
+
+                {/* View Deal Link */}
+                <Box mt={2}>
+                    <Link
+                        href={route("deals.show", deal.id)}
+                        style={{
+                            color: "#1976d2",
+                            textDecoration: "none",
+                            fontWeight: 500,
+                        }}
+                    >
+                        View Deal →
+                    </Link>
+                </Box>
+            </CardContent>
+        </Card>
     );
 };
