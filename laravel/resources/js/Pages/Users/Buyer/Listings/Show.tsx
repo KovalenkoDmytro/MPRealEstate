@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head } from '@inertiajs/react';
+import {Head} from '@inertiajs/react';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import {ImageGallery} from "@/Components/listing/ImageGallery";
 import {ListingDetails} from "@/Components/listing/ListingDetails";
@@ -7,7 +7,7 @@ import {OfferFeedback} from "@/Components/listing/OfferFeedback";
 import {OfferForm} from "@/Components/listing/OfferForm";
 import {Offer, RealEstateListing} from "@/types";
 
-export default function Show({ listing, userOffer } : {listing : RealEstateListing, userOffer : Offer}) {
+export default function Show({listing, userOffer}: { listing: RealEstateListing, userOffer: Offer }) {
     // const handleSubmit = async (e: React.FormEvent) => {
     //     e.preventDefault();
     //
@@ -46,28 +46,29 @@ export default function Show({ listing, userOffer } : {listing : RealEstateListi
     //     }
     // };
 
-  return (
-    <AuthenticatedLayout
-      header={<h2 className="text-xl font-semibold leading-tight text-gray-800">My Listings</h2>}
-    >
-      <Head title="My Listings" />
-      <div className="container mx-auto p-6">
-        <ImageGallery mainImage={listing.main_image} images={listing.images || []} />
-        <ListingDetails listing={listing} />
-        {listing.status === 'pending' && <OfferFeedback userOffer={userOffer} />}
-      {listing.status !== 'pending' && (
-          <div className="mt-6 p-4 border border-gray-300 rounded-md">
-              {userOffer ? (
-                  <>
-                      <h2 className="text-xl font-bold text-green-700">✅ Your Offer</h2>
-                      <p className="mt-2 text-lg">💵 <strong>${parseFloat(String(userOffer.amount)).toLocaleString()}</strong></p>
-                      <p className="mt-1 text-gray-700 whitespace-pre-line">📝 {userOffer.message}</p>
-                  </>
-              ) : (
-                  <OfferForm  processing={false} errors={{}} />)
-              }
-          </div>)}
-      </div>
-    </AuthenticatedLayout>
-  );
+    return (
+        <AuthenticatedLayout
+            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">My Listings</h2>}
+        >
+            <Head title="My Listings"/>
+            <div className="container mx-auto p-6">
+                <ImageGallery mainImage={listing.main_image} images={listing.images || []}/>
+                <ListingDetails listing={listing}/>
+                {listing.status === 'pending' && <OfferFeedback userOffer={userOffer}/>}
+                {listing.status !== 'pending' && (
+                    <div className="mt-6 p-4 border border-gray-300 rounded-md">
+                        {userOffer ? (
+                            <>
+                                <h2 className="text-xl font-bold text-green-700">✅ Your Offer</h2>
+                                <p className="mt-2 text-lg">💵 <strong>${parseFloat(String(userOffer.amount)).toLocaleString()}</strong>
+                                </p>
+                                <p className="mt-1 text-gray-700 whitespace-pre-line">📝 {userOffer.message}</p>
+                            </>
+                        ) : (
+                            <OfferForm processing={false} errors={{}}/>)
+                        }
+                    </div>)}
+            </div>
+        </AuthenticatedLayout>
+    );
 }

@@ -1,4 +1,4 @@
-import { Head } from "@inertiajs/react";
+import {Head} from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import {User, PropertyDetail} from "@/types";
 import DealHeader from "@/Components/deal/DealHeader";
@@ -12,39 +12,33 @@ import FileUploadSection from "@/Components/deal/FileUploadSection";
 import BreakDealSection from "@/Components/deal/BreakDealSection";
 
 
-
-
-export default function DealShowPage({ deal, auth }: { deal: PropertyDetail; auth: { user: User } }) {
+export default function DealShowPage({deal, auth}: { deal: PropertyDetail; auth: { user: User } }) {
     const seller = deal.users.find((user) => user.role === "seller");
     const lawyer = deal.users.find((user) => user.role === "lawyer");
 
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold">Deal Details</h2>}>
-            <Head title="Deal Details" />
+            <Head title="Deal Details"/>
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg p-6">
-                        <DealHeader deal={deal} />
 
-                        <PropertyDetails listing={deal.real_estate_listing} />
+            <DealHeader deal={deal}/>
 
-                        {seller && <SellerInfo seller={seller} />}
+            <PropertyDetails listing={deal.real_estate_listing}/>
 
-                        <DepositSection deal={deal} />
+            {seller && <SellerInfo seller={seller}/>}
 
-                        <ConditionDayForm deal={deal} />
+            <DepositSection deal={deal}/>
 
-                        <PossessionDayForm deal={deal} />
+            <ConditionDayForm deal={deal}/>
 
-                        <LawyerInvite deal={deal} lawyer={lawyer} />
+            <PossessionDayForm deal={deal}/>
 
-                        <FileUploadSection deal={deal} user={auth.user} />
+            <LawyerInvite deal={deal} lawyer={lawyer}/>
 
-                        <BreakDealSection deal={deal} authUser={auth.user} />
-                    </div>
-                </div>
-            </div>
+            <FileUploadSection deal={deal} user={auth.user}/>
+
+            <BreakDealSection deal={deal} authUser={auth.user}/>
+
         </AuthenticatedLayout>
     );
 }
