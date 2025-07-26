@@ -67,6 +67,7 @@ class Deal extends Model
         'possession_day' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'is_broken' => 'boolean',
     ];
 
     // Relationship with users
