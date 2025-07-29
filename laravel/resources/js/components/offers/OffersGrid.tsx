@@ -1,77 +1,46 @@
 import { Offer } from "@/types";
-import { Link } from "@inertiajs/react";
-import {
-    Card,
-    CardContent,
-    Typography,
-} from "@mui/material";
-import Grid from "@mui/material/Grid";
+import { Typography, Grid } from "@mui/material";
+import BuyerOfferCard from "@/components/offers/OffersGrid/BuyerOfferCard";
+import SellerOfferCard from "@/components/offers/OffersGrid/SellerOfferCard";
+
 
 interface OffersGridProps {
     offers: Offer[];
+    filterStatus?: string; // e.g., 'pending'
+    variant?: "buyer" | "seller"; // default = buyer
 }
 
-export default function OffersGrid({ offers }: OffersGridProps) {
-    if (!offers || offers.length === 0) {
+export default function OffersGrid({offers, filterStatus, variant = "buyer",}: OffersGridProps) {
+    // Apply filtering
+    const filteredOffers = filterStatus
+        ? offers.filter((offer) => offer.status === filterStatus)
+        : offers;
+
+    if (!filteredOffers || filteredOffers.length === 0) {
         return (
             <Typography mt={2} color="text.secondary">
-                No offers made yet.
+                No offers available.
             </Typography>
         );
     }
 
+    // Render buyer layout (grid)
+    if (variant === "buyer") {
+        return (
+            <Grid container spacing={3} sx={{ width: "100%" }}>
+                {filteredOffers.map((offer) => (
+                    <BuyerOfferCard key={offer.id} offer={offer} />
+                ))}
+            </Grid>
+        );
+    }
+
+    // Render seller layout (list)
     return (
-        <Grid container spacing={3} sx={{ width: "100%" }}>
-            {offers.map((offer) => (
-                <Grid key={offer.id} size={{ xs: 12, md: 6, lg: 4 }}>
-                    <Card
-                        variant="outlined"
-                        sx={{
-                            borderRadius: 2,
-                            "&:hover": { boxShadow: 3 },
-                            transition: "0.2s",
-                        }}
-                    >
-                        <CardContent>
-                            <Typography variant="subtitle1" fontWeight="bold">
-                                <Link
-                                    href={`buyer/listings/${offer.listing.id}`}
-                                    style={{ color: "#1976d2", textDecoration: "none" }}
-                                >
-                                    {offer.listing.title}
-                                </Link>
-                            </Typography>
-
-                            <Typography>
-                                💰 Listing Price: ${offer.listing.price.toLocaleString()}
-                            </Typography>
-                            <Typography>📌 Seller: {offer.listing.seller.name}</Typography>
-                            <Typography>
-                                <strong>My Offer:</strong> ${offer.amount.toLocaleString()}
-                            </Typography>
-                            <Typography color="text.secondary">
-                                <strong>Message:</strong> {offer.message}
-                            </Typography>
-
-                            {/* Offer Status */}
-                            <Typography
-                                mt={2}
-                                fontWeight="bold"
-                                sx={{
-                                    color:
-                                        offer.status === "accepted"
-                                            ? "green"
-                                            : offer.status === "rejected"
-                                                ? "red"
-                                                : "orange",
-                                }}
-                            >
-                                Status: {offer.status.toUpperCase()}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
+        <div>
+            {filteredOffers.map((offer) => (
+                <SellerOfferCard key={offer.id} offer={offer} />
             ))}
-        </Grid>
+        </div>
     );
 }

@@ -1,6 +1,7 @@
 import {Head, Link} from "@inertiajs/react";
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import {Offer} from "@/types/pageProps";
+import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
+import {Offer} from "@/types";
+import OffersGrid from "@/components/offers/OffersGrid";
 
 
 export default function Dashboard({ offers }: {offers: Offer[]}) {
@@ -17,21 +18,12 @@ export default function Dashboard({ offers }: {offers: Offer[]}) {
             <h1 className="text-2xl font-bold">Seller Dashboard</h1>
             <h2 className="text-xl mt-4 font-semibold">Pending Offers</h2>
 
-            {offers.length > 0 ? (
-                offers
-                    .filter((offer) => offer.status === 'pending')
-                    .map((offer) => (
-                    <div key={offer.id} className="border p-4 mt-2 rounded-md shadow-sm">
-                        <p><strong>Listing:</strong> <Link href={route('seller.listings.show', offer.listing.id)} className="text-blue-500">{offer.listing.title}</Link> </p>
-                        <p><strong>Buyer:</strong> {offer.buyer.name} ({offer.buyer.email})</p>
-                        <p><strong>Offer Price:</strong> ${offer.offer_price}</p>
-                        <p><strong>Message:</strong> {offer.message}</p>
-                        <p><strong>Status:</strong> <span className="text-yellow-600">{offer.status}</span></p>
-                    </div>
-                ))
-            ) : (
-                <p className="mt-4 text-gray-500">No pending offers at the moment.</p>
-            )}
+            <OffersGrid
+                offers={offers}
+                variant="seller"
+                filterStatus="pending"
+            />
+
 
             <div className="mt-6">
                 <Link href={route('seller.listings.index')} className="text-blue-500">View My Listings</Link>

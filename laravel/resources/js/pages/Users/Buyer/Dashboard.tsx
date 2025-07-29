@@ -6,7 +6,7 @@ import {Box, Typography, Card, CardContent, Divider,} from "@mui/material";
 
 type PageProps = {
     auth: { user: User };
-    offers?: Offer[];
+    offers: Offer[];
 };
 
 export default function Dashboard({ auth, offers }: PageProps) {
@@ -40,7 +40,7 @@ export default function Dashboard({ auth, offers }: PageProps) {
                         </Typography>
                         <Divider sx={{ mb: 2 }} />
 
-                        <OffersGrid offers={offers || []} />
+                        {offers.length && <OffersGrid offers={offers} variant="buyer" />}
 
                     </CardContent>
                 </Card>
