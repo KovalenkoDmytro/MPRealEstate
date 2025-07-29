@@ -10,15 +10,13 @@ import {
     Typography,
     Card,
     CardContent,
-    CardMedia,
-    Grid,
     Button,
-    Chip,
     Divider,
     Stack,
-    Alert,
 } from "@mui/material";
 import {ImageGallery} from "@/components/listing/ImageGallery";
+import {ListingDetails} from "@/components/listing/ListingDetails";
+import {ReceivedOffers} from "@/components/listing/ReceivedOffers";
 
 interface PageProps {
     listing: RealEstateListing & {
@@ -68,14 +66,8 @@ export default function Show({ listing }: PageProps) {
 
 
                 {/* Property Details */}
-                <Typography variant="body1">📍 Location: {listing.location}</Typography>
-                <Typography variant="body1">
-                    💰 Price: <strong>${listing.price.toLocaleString()}</strong>
-                </Typography>
-                <Typography variant="body1">
-                    🛏 {listing.bedrooms} Bedrooms | 🛁 {listing.bathrooms} Bathrooms
-                </Typography>
-                <Typography variant="body1">📏 {listing.square_feet} sqft</Typography>
+                <ListingDetails listing={listing} />
+
 
                 <Divider sx={{ my: 3 }} />
 
@@ -98,51 +90,7 @@ export default function Show({ listing }: PageProps) {
                             📑 Offers Received
                         </Typography>
 
-                        {offers.length > 0 ? (
-                            offers.map((offer) => (
-                                <Card key={offer.id} sx={{ mb: 2, p: 2 }} variant="outlined">
-                                    <Typography><strong>👤 Buyer:</strong> {offer.buyer?.name || "Unknown Buyer"}</Typography>
-                                    <Typography><strong>📧 Email:</strong> {offer.buyer?.email || "No Email"}</Typography>
-                                    <Typography><strong>💰 Offer Price:</strong> ${offer.amount.toLocaleString()}</Typography>
-                                    <Typography><strong>📝 Message:</strong> {offer.message}</Typography>
-                                    <Typography>
-                                        <strong>📌 Status:</strong>{" "}
-                                        <Chip
-                                            label={offer.status}
-                                            color={
-                                                offer.status === "accepted"
-                                                    ? "success"
-                                                    : offer.status === "rejected"
-                                                        ? "error"
-                                                        : "warning"
-                                            }
-                                            size="small"
-                                        />
-                                    </Typography>
-
-                                    {offer.status === "pending" && (
-                                        <Stack direction="row" spacing={1} mt={2}>
-                                            <Button
-                                                variant="contained"
-                                                color="success"
-                                                onClick={() => handleUpdateStatus(offer.id, "accepted")}
-                                            >
-                                                ✅ Accept
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                color="error"
-                                                onClick={() => handleUpdateStatus(offer.id, "rejected")}
-                                            >
-                                                ❌ Reject
-                                            </Button>
-                                        </Stack>
-                                    )}
-                                </Card>
-                            ))
-                        ) : (
-                            <Alert severity="info">No offers yet.</Alert>
-                        )}
+                        <ReceivedOffers offers={offers} onUpdateStatus={handleUpdateStatus} />
                     </CardContent>
                 </Card>
             </Box>
