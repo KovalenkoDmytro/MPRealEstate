@@ -2,7 +2,7 @@ import React from 'react';
 import {Head} from '@inertiajs/react';
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import {PropertyDetail} from '@/types';
-import {DealsList} from '@/Components/deals/DealsList';
+import {DealsList} from '@/components/deals/DealsList';
 
 interface DealsIndexProps {
     deals: PropertyDetail[];

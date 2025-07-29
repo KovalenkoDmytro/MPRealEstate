@@ -1,8 +1,7 @@
-// components/listings/OfferForm.tsx
 import React from 'react';
 
 interface OfferFormProps {
-  onSubmit: (data: { offer_price: string; message: string }) => void;
+  onSubmit: (data: { amount: string; message: string }) => void;
   processing: boolean;
   errors: Record<string, string>;
 }
@@ -13,7 +12,7 @@ export const OfferForm = ({ onSubmit, processing, errors }: OfferFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ offer_price: offerPrice, message });
+    onSubmit({ amount: offerPrice, message });
   };
 
   return (
@@ -29,7 +28,7 @@ export const OfferForm = ({ onSubmit, processing, errors }: OfferFormProps) => {
           required
         />
       </label>
-      {errors.offer_price && <p className="text-red-500">{errors.offer_price}</p>}
+      {errors.amount && <p className="text-red-500">{errors.amount}</p>}
 
       <label className="block mt-2">
         Message to Seller

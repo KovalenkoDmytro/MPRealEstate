@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SubmitOfferRequest;
+use App\Http\Requests\UpdateOfferStatusRequest;
 use App\Models\Offer;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Request;
 use App\Services\OfferService;
 use Illuminate\Http\JsonResponse;
 
@@ -17,12 +18,12 @@ class OfferController extends Controller
         $this->offerService = $offerService;
     }
 
-    public function store(Request $request, $listing_id): JsonResponse
+    public function store(SubmitOfferRequest $request, $listing_id): JsonResponse
     {
         return $this->offerService->submitOffer($request, $listing_id);
     }
 
-    public function updateStatus(Request $request, Offer $offer): JsonResponse
+    public function updateStatus(UpdateOfferStatusRequest $request, Offer $offer): JsonResponse
     {
         return $this->offerService->updateStatus($request, $offer);
     }

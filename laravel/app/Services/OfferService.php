@@ -32,7 +32,7 @@ class OfferService
         $offer = Offer::create([
             'real_estate_listing_id' => $listing_id,
             'buyer_id' => $request->user()->id,
-            'offer_price' => $request->offer_price,
+            'amount' => $request->amount,
             'message' => $request->message,
             'status' => 'pending',
         ]);

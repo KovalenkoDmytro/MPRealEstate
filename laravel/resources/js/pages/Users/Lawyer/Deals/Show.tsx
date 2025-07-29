@@ -3,7 +3,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {useState} from "react";
 import {useForm as useFormInvite} from '@inertiajs/react';
 import type { Deal } from "@/types/pageProps"; // or wherever DealProps is defined
-import type { User } from "@/types/pageProps"; // adjust if your User type is elsewhere
+import type { User } from "@/types"; // adjust if your User type is elsewhere
 import {filterFilesForUser} from "@/Helpers/fileHelpers";
 
 

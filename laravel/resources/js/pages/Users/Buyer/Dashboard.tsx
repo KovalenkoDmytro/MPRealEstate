@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { Offer, User } from "@/types";
-import OffersGrid from "@/Components/offers/OffersGrid";
+import OffersGrid from "@/components/offers/OffersGrid";
 import {
     Box,
     Typography,

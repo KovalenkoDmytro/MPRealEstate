@@ -1,15 +1,15 @@
 import {Head} from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import {User, PropertyDetail} from "@/types";
-import DealHeader from "@/Components/deal/DealHeader";
-import PropertyDetails from "@/Components/deal/PropertyDetails";
-import SellerInfo from "@/Components/deal/SellerInfo";
-import DepositSection from "@/Components/deal/DepositSection";
-import ConditionDayForm from "@/Components/deal/ConditionDayForm";
-import PossessionDayForm from "@/Components/deal/PossessionDayForm";
-import LawyerInvite from "@/Components/deal/LawyerInvite";
-import FileUploadSection from "@/Components/deal/FileUploadSection";
-import BreakDealSection from "@/Components/deal/BreakDealSection";
+import DealHeader from "@/components/deal/DealHeader";
+import PropertyDetails from "@/components/deal/PropertyDetails";
+import SellerInfo from "@/components/deal/SellerInfo";
+import DepositSection from "@/components/deal/DepositSection";
+import ConditionDayForm from "@/components/deal/ConditionDayForm";
+import PossessionDayForm from "@/components/deal/PossessionDayForm";
+import LawyerInvite from "@/components/deal/LawyerInvite";
+import FileUploadSection from "@/components/deal/FileUploadSection";
+import BreakDealSection from "@/components/deal/BreakDealSection";
 
 
 export default function DealShowPage({deal, auth}: { deal: PropertyDetail; auth: { user: User } }) {

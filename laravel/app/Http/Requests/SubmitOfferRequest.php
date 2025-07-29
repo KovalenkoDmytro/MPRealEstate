@@ -25,7 +25,7 @@ class SubmitOfferRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'offer_price' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:1',
             'message' => 'required|string|max:500',
         ];
     }

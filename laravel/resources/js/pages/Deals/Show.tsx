@@ -1,7 +1,7 @@
 import React from "react";
 import { Head } from "@inertiajs/react";
 
-import type { Deal } from "@/types/pageProps"; // or wherever DealProps is defined
+import type { Deal } from "@/types"; // or wherever DealProps is defined
 
 export default  function Show (deal : Deal) {
 

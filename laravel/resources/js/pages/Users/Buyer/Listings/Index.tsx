@@ -3,8 +3,8 @@ import {Head} from "@inertiajs/react";
 import {useState} from "react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import type {RealEstateListing} from "@/types";
-import {FilterForm} from "@/Components/listings/FilterForm";
-import {ListingsGrid} from "@/Components/listings/ListingsGrid";
+import {FilterForm} from "@/components/listings/FilterForm";
+import {ListingsGrid} from "@/components/listings/ListingsGrid";
 
 
 type Props = {
