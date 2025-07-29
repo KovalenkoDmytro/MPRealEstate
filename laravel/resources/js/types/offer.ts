@@ -6,9 +6,9 @@ import {User, RealEstateListing, BaseEntity} from '@/types'
 export enum OfferStatus {
     /** Offer is awaiting response */
     Pending = 'pending',
-    /** Offer has been accepted by the seller */
+    /** The seller has accepted the offer */
     Accepted = 'accepted',
-    /** Offer has been rejected by the seller */
+    /** The seller has rejected the offer */
     Rejected = 'rejected',
 }
 

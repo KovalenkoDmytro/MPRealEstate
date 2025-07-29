@@ -1,137 +1,151 @@
-import { useState } from "react";
-import {Head, Link} from "@inertiajs/react";
-import {Listing, Offer} from "@/types/pageProps";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import React, { useState } from "react";
+import { Head, Link } from "@inertiajs/react";
+import { RealEstateListing, Offer } from "@/types";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import { offerService } from "@/services/offerService";
 
-export default function Show({ listing }: {listing : Listing}) {
+// MUI Components
+import {
+    Box,
+    Typography,
+    Card,
+    CardContent,
+    CardMedia,
+    Grid,
+    Button,
+    Chip,
+    Divider,
+    Stack,
+    Alert,
+} from "@mui/material";
+import {ImageGallery} from "@/components/listing/ImageGallery";
+
+interface PageProps {
+    listing: RealEstateListing & {
+        offers: Offer[];
+    };
+}
+
+export default function Show({ listing }: PageProps) {
     const [offers, setOffers] = useState<Offer[]>(listing.offers || []);
 
-    const updateOfferStatus = async (offerId: number, status: "accepted" | "rejected") => {
+    const handleUpdateStatus = async (offerId: number, status: "accepted" | "rejected") => {
         try {
-            const response = await fetch(`/seller/offers/${offerId}/update-status`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || "",
-                    Accept: "application/json",
-                },
-                body: JSON.stringify({ status }),
-            });
+            const response = await offerService.updateOfferStatus(offerId, status);
 
-            const result = await response.json();
+            if (response.ok && response.data.offerStatus) {
+                const updatedStatus = response.data.offerStatus;
 
-            if (response.ok && result.status === "success") {
-                const updatedStatus = result.data?.offerStatus || status;
-
-                setOffers(prev =>
-                    prev.map(offer =>
+                setOffers((prev) =>
+                    prev.map((offer) =>
                         offer.id === offerId ? { ...offer, status: updatedStatus } : offer
                     )
                 );
 
-                alert(result.message || `Offer ${updatedStatus} successfully!`);
+                alert(`Offer ${updatedStatus} successfully!`);
             } else {
-                alert(result.message || "Failed to update offer status.");
+                alert("Failed to update offer status.");
             }
         } catch (error) {
-            console.error("Fetch error:", error);
+            console.error("Error updating offer status:", error);
             alert("Network error. Please try again.");
         }
     };
 
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Listing
-                </h2>
-            }
+            header={<Typography variant="h5" fontWeight="bold">Listing</Typography>}
         >
             <Head title="Listings" />
 
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold">{listing.title}</h1>
+            <Box p={3}>
+                {/* Title */}
+                <Typography variant="h4" fontWeight="bold" gutterBottom>
+                    {listing.title}
+                </Typography>
 
-            {/* ✅ Display Main Image */}
-            {listing.main_image && (
-                <img
-                    src={`${listing.main_image.image_path}`}
-                    alt="Main Property Image"
-                    className="w-full h-64 object-cover rounded-lg my-4"
-                />
-            )}
+                <ImageGallery mainImage={listing.main_image} images={listing.images} />
 
-            {/* ✅ Display Gallery Images */}
-            {listing.images && listing.images.length > 0 && (
-                <div className="grid grid-cols-3 gap-2 my-4">
-                    {listing.images.map((image, index) => (
-                        <img
-                            key={index}
-                            src={image.image_path}
-                            alt="Gallery Image"
-                            className="w-full h-32 object-cover rounded-lg"
-                        />
-                    ))}
-                </div>
-            )}
 
-            <p className="text-lg">📍 Location: {listing.location}</p>
-            <p className="text-lg">💰 Price: <strong>${listing.price.toLocaleString()}</strong></p>
-            <p className="text-lg">🛏 {listing.bedrooms} Bedrooms | 🛁 {listing.bathrooms} Bathrooms</p>
-            <p className="text-lg">📏 {listing.square_feet} sqft</p>
+                {/* Property Details */}
+                <Typography variant="body1">📍 Location: {listing.location}</Typography>
+                <Typography variant="body1">
+                    💰 Price: <strong>${listing.price.toLocaleString()}</strong>
+                </Typography>
+                <Typography variant="body1">
+                    🛏 {listing.bedrooms} Bedrooms | 🛁 {listing.bathrooms} Bathrooms
+                </Typography>
+                <Typography variant="body1">📏 {listing.square_feet} sqft</Typography>
 
-            <div className="mt-4">
-                <Link href={route('seller.listings.index')} className="text-blue-500">🔙 Back to Listings</Link>
-                {listing.offers && listing.offers.length === 0 && (
-                    <Link
-                        href={route('seller.listings.edit', listing.id)}
-                        className="text-blue-500 ml-4 inline-block"
-                    >
-                        ✏️ Edit Listing
+                <Divider sx={{ my: 3 }} />
+
+                {/* Navigation Links */}
+                <Stack direction="row" spacing={2} mb={2}>
+                    <Link href={route("seller.listings.index")}>
+                        <Button variant="outlined">🔙 Back to Listings</Button>
                     </Link>
-                )}
-
-            </div>
-
-
-            <div className="mt-6 p-4 border border-gray-300 rounded-md">
-                    <h2 className="text-xl font-bold">📑 Offers Received</h2>
-                    {offers.length > 0 ? (
-                        offers.map((offer) => (
-                            <div key={offer.id} className="border p-4 mt-2 rounded-lg">
-                                <p><strong>👤 Buyer:</strong> {offer.buyer?.name || "Unknown Buyer"}</p>
-                                <p><strong>📧 Email:</strong> {offer.buyer?.email || "No Email"}</p>
-                                <p><strong>💰 Offer Price:</strong> ${offer.offer_price.toLocaleString()}</p>
-                                <p><strong>📝 Message:</strong> {offer.message}</p>
-                                <p><strong>📌 Status:</strong> {offer.status}</p>
-
-                                {offer.status === "pending" && (
-                                    <div className="mt-2">
-                                        <button
-                                            type="button"
-                                            onClick={() => updateOfferStatus(offer.id, "accepted")}
-                                            className="px-3 py-1 bg-green-500 text-white rounded-md mr-2"
-                                        >
-                                            ✅ Accept
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => updateOfferStatus(offer.id, "rejected")}
-                                            className="px-3 py-1 bg-red-500 text-white rounded-md"
-                                        >
-                                            ❌ Reject
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        ))
-                    ) : (
-                        <p>No offers yet.</p>
+                    {listing.offers?.length === 0 && (
+                        <Link href={route("seller.listings.edit", listing.id)}>
+                            <Button variant="outlined">✏️ Edit Listing</Button>
+                        </Link>
                     )}
-                </div>
+                </Stack>
 
-        </div>
+                {/* Offers Section */}
+                <Card variant="outlined">
+                    <CardContent>
+                        <Typography variant="h6" fontWeight="bold" gutterBottom>
+                            📑 Offers Received
+                        </Typography>
 
+                        {offers.length > 0 ? (
+                            offers.map((offer) => (
+                                <Card key={offer.id} sx={{ mb: 2, p: 2 }} variant="outlined">
+                                    <Typography><strong>👤 Buyer:</strong> {offer.buyer?.name || "Unknown Buyer"}</Typography>
+                                    <Typography><strong>📧 Email:</strong> {offer.buyer?.email || "No Email"}</Typography>
+                                    <Typography><strong>💰 Offer Price:</strong> ${offer.amount.toLocaleString()}</Typography>
+                                    <Typography><strong>📝 Message:</strong> {offer.message}</Typography>
+                                    <Typography>
+                                        <strong>📌 Status:</strong>{" "}
+                                        <Chip
+                                            label={offer.status}
+                                            color={
+                                                offer.status === "accepted"
+                                                    ? "success"
+                                                    : offer.status === "rejected"
+                                                        ? "error"
+                                                        : "warning"
+                                            }
+                                            size="small"
+                                        />
+                                    </Typography>
+
+                                    {offer.status === "pending" && (
+                                        <Stack direction="row" spacing={1} mt={2}>
+                                            <Button
+                                                variant="contained"
+                                                color="success"
+                                                onClick={() => handleUpdateStatus(offer.id, "accepted")}
+                                            >
+                                                ✅ Accept
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                color="error"
+                                                onClick={() => handleUpdateStatus(offer.id, "rejected")}
+                                            >
+                                                ❌ Reject
+                                            </Button>
+                                        </Stack>
+                                    )}
+                                </Card>
+                            ))
+                        ) : (
+                            <Alert severity="info">No offers yet.</Alert>
+                        )}
+                    </CardContent>
+                </Card>
+            </Box>
         </AuthenticatedLayout>
     );
 }
