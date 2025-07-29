@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "@inertiajs/react";
 import { Deal, User } from "@/types";
-import { DealService } from "@/services/DealService";
+import { DealService } from "@/services/dealService";
 
 // MUI imports
 import { Box, Typography, TextField, Button, Stack, Alert } from "@mui/material";

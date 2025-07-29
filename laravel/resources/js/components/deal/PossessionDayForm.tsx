@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Deal } from "@/types";
-import { DealService } from "@/services/DealService";
+import { DealService } from "@/services/dealService";
 
 // MUI imports
 import { Box, Button, Stack } from "@mui/material";

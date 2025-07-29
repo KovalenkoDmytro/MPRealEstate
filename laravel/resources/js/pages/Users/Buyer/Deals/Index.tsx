@@ -8,7 +8,7 @@ interface DealsIndexProps {
     deals: PropertyDetail[];
 }
 
-export const DealsIndex: React.FC<DealsIndexProps> = ({deals}) => {
+export default function DealsIndex({ deals }: DealsIndexProps)  {
     return (
         <AuthenticatedLayout
             header={<h1 className="text-xl font-semibold text-gray-800">📄 My Deals</h1>}
@@ -28,5 +28,3 @@ export const DealsIndex: React.FC<DealsIndexProps> = ({deals}) => {
 const NoDealsMessage: React.FC = () => (
     <p className="text-gray-600">You don't have any deals yet.</p>
 );
-
-export default DealsIndex;

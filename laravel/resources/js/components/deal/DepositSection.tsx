@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "@inertiajs/react";
-import { DealService } from "@/services/DealService";
+import { DealService } from "@/services/dealService";
 import { Deal } from "@/types";
 
 // MUI Imports

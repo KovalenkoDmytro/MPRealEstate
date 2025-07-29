@@ -19,17 +19,17 @@ type ListingsGridProps = {
     current_page: number;
     last_page: number ;
   };
-  isFavorited: (listingId: number) => boolean;
+  isFavorite: (listingId: number) => boolean;
   toggleFavorite: (
     e: React.FormEvent,
     listingId: number,
-    isCurrentlyFavorited: boolean
+    isCurrentlyFavorite: boolean
   ) => void;
 };
 
 export const ListingsGrid: React.FC<ListingsGridProps> = ({
   listings,
-  isFavorited,
+  isFavorite,
   toggleFavorite,
 }) => {
   return (
@@ -41,7 +41,7 @@ export const ListingsGrid: React.FC<ListingsGridProps> = ({
             <Grid key={listing.id} size={{ xs: 12, sm: 6, md: 4 }}>
               <ListingCard
                 listing={listing}
-                isFavorited={isFavorited}
+                isFavorite={isFavorite}
                 toggleFavorite={toggleFavorite}
               />
             </Grid>
@@ -82,20 +82,20 @@ export const ListingsGrid: React.FC<ListingsGridProps> = ({
 
 type ListingCardProps = {
   listing: RealEstateListing;
-  isFavorited: (listingId: number) => boolean;
+  isFavorite: (listingId: number) => boolean;
   toggleFavorite: (
     e: React.FormEvent,
     listingId: number,
-    isCurrentlyFavorited: boolean
+    isCurrentlyFavorite: boolean
   ) => void;
 };
 
 const ListingCard: React.FC<ListingCardProps> = ({
   listing,
-  isFavorited,
+  isFavorite,
   toggleFavorite,
 }) => {
-  const favorited = isFavorited(listing.id);
+  const favorite = isFavorite(listing.id);
 
   return (
     <Card elevation={3} sx={{ borderRadius: 2 }}>
@@ -191,14 +191,14 @@ const ListingCard: React.FC<ListingCardProps> = ({
           }}
         >
           <form
-            onSubmit={(e) => toggleFavorite(e, listing.id, favorited)}
+            onSubmit={(e) => toggleFavorite(e, listing.id, favorite)}
           >
             <Button
               type="submit"
               variant="text"
-              sx={{ fontSize: 24, color: favorited ? 'red' : 'grey.500' }}
+              sx={{ fontSize: 24, color: favorite ? 'red' : 'grey.500' }}
             >
-              {favorited ? '💔' : '❤️'}
+              {favorite ? '💔' : '❤️'}
             </Button>
           </form>
           <Link

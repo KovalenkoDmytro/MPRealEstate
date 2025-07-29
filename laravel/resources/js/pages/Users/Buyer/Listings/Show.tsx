@@ -6,7 +6,7 @@ import { ListingDetails } from "@/components/listing/ListingDetails";
 import { OfferFeedback } from "@/components/listing/OfferFeedback";
 import { OfferForm } from "@/components/listing/OfferForm";
 import { Offer, RealEstateListing } from "@/types";
-import { offerService } from "@/services/OfferService";
+import { offerService } from "@/services/offerService";
 
 export default function Show({ listing, userOffer }: { listing: RealEstateListing; userOffer: Offer }) {
     const handleSubmit = async (data: { amount: string; message: string }) => {

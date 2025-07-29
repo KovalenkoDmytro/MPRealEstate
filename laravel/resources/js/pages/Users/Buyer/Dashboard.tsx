@@ -2,13 +2,7 @@ import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { Offer, User } from "@/types";
 import OffersGrid from "@/components/offers/OffersGrid";
-import {
-    Box,
-    Typography,
-    Card,
-    CardContent,
-    Divider,
-} from "@mui/material";
+import {Box, Typography, Card, CardContent, Divider,} from "@mui/material";
 
 type PageProps = {
     auth: { user: User };
