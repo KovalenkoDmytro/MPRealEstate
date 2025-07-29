@@ -37,7 +37,7 @@ export default function Show({ listing, userOffer }: { listing: RealEstateListin
             <Head title="My Listings" />
             <div className="container mx-auto p-6">
                 <ImageGallery mainImage={listing.main_image} images={listing.images || []} />
-                <ListingDetails listing={listing} />
+                <ListingDetails listing={listing} role={'buyer'} />
                 {listing.status === "pending" && <OfferFeedback userOffer={userOffer} />}
                 {listing.status !== "pending" && (
                     <div className="mt-6 p-4 border border-gray-300 rounded-md">

@@ -3,7 +3,12 @@ import { Link } from "@inertiajs/react";
 import { RealEstateListing } from "@/types";
 import { Box, Typography, Divider, Stack, Button } from "@mui/material";
 
-export const ListingDetails = ({ listing }: { listing: RealEstateListing }) => (
+type ListingDetailsProps = {
+    listing: RealEstateListing
+    role : 'seller' | 'buyer'
+}
+
+export const ListingDetails = ({ listing, role }: ListingDetailsProps) => (
     <Box mt={4}>
         {/* Title */}
         <Typography variant="h4" fontWeight="bold" gutterBottom>
@@ -68,7 +73,7 @@ export const ListingDetails = ({ listing }: { listing: RealEstateListing }) => (
 
         {/* Back Button */}
         <Box mt={3}>
-            <Link href={route("buyer.listings.index")}>
+            <Link href={route(`${role}.listings.index`)}>
                 <Button variant="outlined" color="primary">
                     Back to Listings
                 </Button>

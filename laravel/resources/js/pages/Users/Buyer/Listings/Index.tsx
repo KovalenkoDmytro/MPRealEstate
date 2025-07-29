@@ -3,7 +3,7 @@ import React, {useCallback, useState} from "react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import type { RealEstateListing } from "@/types";
 import { FilterForm } from "@/components/listings/FilterForm";
-import { ListingsGrid } from "@/components/listings/ListingsGrid";
+import ListingsGrid from "@/components/listings/ListingsGrid";
 import { listingService } from "@/services/listingService";
 
 type Props = {

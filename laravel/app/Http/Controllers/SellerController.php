@@ -50,7 +50,9 @@ class SellerController extends Controller {
         $listings = RealEstateListing::where('seller_id', $user->id)
             ->where('status', '!=', 'inactive')
             ->with(['mainImage'])
-            ->get();
+            ->paginate(9)
+            ->withQueryString();
+
 
         return Inertia::render('Users/Seller/Listings/Index', [
             'listings' => $listings,

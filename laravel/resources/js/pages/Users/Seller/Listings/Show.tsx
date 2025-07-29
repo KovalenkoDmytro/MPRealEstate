@@ -66,16 +66,13 @@ export default function Show({ listing }: PageProps) {
 
 
                 {/* Property Details */}
-                <ListingDetails listing={listing} />
+                <ListingDetails listing={listing} role={'seller'}/>
 
 
                 <Divider sx={{ my: 3 }} />
 
                 {/* Navigation Links */}
                 <Stack direction="row" spacing={2} mb={2}>
-                    <Link href={route("seller.listings.index")}>
-                        <Button variant="outlined">🔙 Back to Listings</Button>
-                    </Link>
                     {listing.offers?.length === 0 && (
                         <Link href={route("seller.listings.edit", listing.id)}>
                             <Button variant="outlined">✏️ Edit Listing</Button>
