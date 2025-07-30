@@ -15,22 +15,16 @@ export enum PropertyStatus {
 /**
  * Represents an image associated with a property listing
  */
-export interface Image {
-    /** Unique identifier for the image */
-    id: number;
+export interface Image extends BaseEntity {
+    /** Unique identifier property listing */
+    real_estate_listing_id: number;
     /** Path to the image file */
     image_path: string;
-    /** Whether this is the main image (1) or not (0) */
-    is_main: number;
+    /** Whether this is the main image true or not false */
+    is_main: boolean;
 }
 
-/**
- * Represents the main image of a property listing
- */
-export interface MainImage {
-    /** Path to the main image file */
-    image_path: string;
-}
+
 
 /**
  * Represents a real estate listing in the system
@@ -57,7 +51,7 @@ export interface RealEstateListing extends BaseEntity {
     /** the seller */
     seller: User;
     /** Main property image */
-    main_image: MainImage;
+    main_image: Image;
     /** Additional property images */
     images: Image[];
     /** Size of the lot in acres */

@@ -14,6 +14,12 @@ class RealEstateListing extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+      'has_basement' => 'boolean',
+      'has_garage' => 'boolean',
+      'price_reduced' => 'boolean',
+    ];
+
     // A listing can have multiple offers
     public function offers(): HasMany|RealEstateListing {
         return $this->hasMany(Offer::class, 'real_estate_listing_id');
