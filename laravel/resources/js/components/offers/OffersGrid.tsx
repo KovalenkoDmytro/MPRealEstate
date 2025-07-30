@@ -2,16 +2,18 @@ import { Offer } from "@/types";
 import { Typography, Grid } from "@mui/material";
 import BuyerOfferCard from "@/components/offers/OffersGrid/BuyerOfferCard";
 import SellerOfferCard from "@/components/offers/OffersGrid/SellerOfferCard";
+import {useAuth} from "@/hooks/useAuth";
 
 
 interface OffersGridProps {
     offers: Offer[];
     filterStatus?: string; // e.g., 'pending'
-    variant?: "buyer" | "seller"; // default = buyer
 }
 
-export default function OffersGrid({offers, filterStatus, variant = "buyer",}: OffersGridProps) {
-    // Apply filtering
+export default function OffersGrid({offers, filterStatus}: OffersGridProps) {
+    const user = useAuth();
+    const role = user.role;
+
     const filteredOffers = filterStatus
         ? offers.filter((offer) => offer.status === filterStatus)
         : offers;
@@ -25,7 +27,7 @@ export default function OffersGrid({offers, filterStatus, variant = "buyer",}: O
     }
 
     // Render buyer layout (grid)
-    if (variant === "buyer") {
+    if (role === "buyer") {
         return (
             <Grid container spacing={3} sx={{ width: "100%" }}>
                 {filteredOffers.map((offer) => (
@@ -37,10 +39,10 @@ export default function OffersGrid({offers, filterStatus, variant = "buyer",}: O
 
     // Render seller layout (list)
     return (
-        <div>
+        <Grid container spacing={3} sx={{ width: "100%" }}>
             {filteredOffers.map((offer) => (
                 <SellerOfferCard key={offer.id} offer={offer} />
             ))}
-        </div>
+        </Grid>
     );
 }

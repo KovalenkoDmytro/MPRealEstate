@@ -20,7 +20,6 @@ export default function Dashboard({ offers }: {offers: Offer[]}) {
 
             <OffersGrid
                 offers={offers}
-                variant="seller"
                 filterStatus="pending"
             />
 

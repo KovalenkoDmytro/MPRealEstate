@@ -40,7 +40,7 @@ export default function Dashboard({ auth, offers }: PageProps) {
                         </Typography>
                         <Divider sx={{ mb: 2 }} />
 
-                        {offers.length && <OffersGrid offers={offers} variant="buyer" />}
+                        {offers.length && <OffersGrid offers={offers}/>}
 
                     </CardContent>
                 </Card>
