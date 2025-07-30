@@ -26,4 +26,29 @@ export const listingService = {
             Object.entries(form).filter(([_, value]) => value !== "" && value !== false)
         );
     },
+
+    // Update seller listing
+    async updateSellerListing(listingId: number, formData: FormData) {
+        const response = await fetch(route("seller.listings.update", { listing: listingId }), {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": (
+                    document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
+                )?.content || "",
+                Accept: "application/json",
+                "X-HTTP-Method-Override": "PUT",
+            },
+            body: formData,
+        });
+
+        if (response.ok) {
+            return { success: true };
+        } else if (response.status === 422) {
+            const json = await response.json();
+            return { success: false, errors: json.errors };
+        } else {
+            console.error("Unexpected error", response);
+            throw new Error("Unexpected error occurred");
+        }
+    },
 };

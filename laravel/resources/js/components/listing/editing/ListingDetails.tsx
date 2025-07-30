@@ -1,161 +1,115 @@
 import React from "react";
+import {
+    Grid,
+    Typography,
+    TextField,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
+    FormControlLabel,
+    Checkbox,
+    Box,
+} from "@mui/material";
 
 interface Props {
     data: any;
-    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+    handleChange: (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => void;
 }
 
 export default function ListingDetails({ data, handleChange }: Props) {
     return (
-        <div className="bg-white p-6 rounded-lg shadow-sm space-y-6">
-            {/* Property & Financial Info */}
-            <div>
-                <h3 className="text-xl font-semibold mb-4">🏠 Property & Financial Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                        name="title"
-                        value={data.title}
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="Title"
-                    />
-                    <input
-                        name="location"
-                        value={data.location}
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="Location"
-                    />
-                    <textarea
+        <Box sx={{ backgroundColor: "white", p: 3, borderRadius: 2, boxShadow: 1 }}>
+            {/* Section Title */}
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+                🏠 Property & Financial Details
+            </Typography>
+
+            {/* Property & Financial Fields */}
+            <Grid container spacing={2} sx={{ width: "100%" }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="title" label="Title" value={data.title} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="location" label="Location" value={data.location} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                    <TextField
                         name="description"
+                        label="Description"
                         value={data.description}
                         onChange={handleChange}
-                        className="textarea textarea-bordered md:col-span-2"
+                        fullWidth
+                        multiline
                         rows={4}
-                        placeholder="Description"
                     />
-                    <select
-                        name="property_type"
-                        value={data.property_type}
-                        onChange={handleChange}
-                        className="select select-bordered"
-                    >
-                        <option value="">Select Type</option>
-                        <option value="house">House</option>
-                        <option value="condo">Condo</option>
-                        <option value="townhouse">Townhouse</option>
-                        <option value="land">Land</option>
-                        <option value="multi-family">Multi-family</option>
-                        <option value="farm">Farm</option>
-                    </select>
-                    <input
-                        name="year_built"
-                        value={data.year_built}
-                        type="number"
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="Year Built"
-                    />
-                    <input
-                        name="bedrooms"
-                        value={data.bedrooms}
-                        type="number"
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="Bedrooms"
-                    />
-                    <input
-                        name="bathrooms"
-                        value={data.bathrooms}
-                        type="number"
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="Bathrooms"
-                    />
-                    <input
-                        name="square_feet"
-                        value={data.square_feet}
-                        type="number"
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="Sq Ft"
-                    />
-                    <input
-                        name="lot_size"
-                        value={data.lot_size}
-                        type="number"
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="Lot Size"
-                    />
-                    <input
-                        name="price"
-                        value={data.price}
-                        type="number"
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="Price"
-                    />
-                    <input
-                        name="hoa_fees"
-                        value={data.hoa_fees}
-                        type="number"
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="HOA Fees"
-                    />
-                    <input
-                        name="property_taxes"
-                        value={data.property_taxes}
-                        type="number"
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="Property Taxes"
-                    />
-                    <input
-                        name="keywords"
-                        value={data.keywords}
-                        onChange={handleChange}
-                        className="input input-bordered md:col-span-2"
-                        placeholder="Keywords"
-                    />
-                </div>
-            </div>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControl fullWidth>
+                        <InputLabel>Property Type</InputLabel>
+                        <Select name="property_type" value={data.property_type} onChange={handleChange as any}>
+                            <MenuItem value="">Select Type</MenuItem>
+                            <MenuItem value="house">House</MenuItem>
+                            <MenuItem value="condo">Condo</MenuItem>
+                            <MenuItem value="townhouse">Townhouse</MenuItem>
+                            <MenuItem value="land">Land</MenuItem>
+                            <MenuItem value="multi-family">Multi-family</MenuItem>
+                            <MenuItem value="farm">Farm</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="year_built" label="Year Built" type="number" value={data.year_built} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="bedrooms" label="Bedrooms" type="number" value={data.bedrooms} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="bathrooms" label="Bathrooms" type="number" value={data.bathrooms} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="square_feet" label="Square Feet" type="number" value={data.square_feet} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="lot_size" label="Lot Size" type="number" value={data.lot_size} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="price" label="Price" type="number" value={data.price} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="hoa_fees" label="HOA Fees" type="number" value={data.hoa_fees} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="property_taxes" label="Property Taxes" type="number" value={data.property_taxes} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                    <TextField name="keywords" label="Keywords" value={data.keywords} onChange={handleChange} fullWidth />
+                </Grid>
+            </Grid>
 
-            {/* Features */}
-            <div>
-                <h3 className="text-xl font-semibold mb-4">🧱 Features</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <label className="flex items-center gap-2">
-                        <input
-                            type="checkbox"
-                            name="has_garage"
-                            checked={data.has_garage}
-                            onChange={handleChange}
-                            className="checkbox"
-                        />
-                        Has Garage
-                    </label>
-                    <input
-                        name="garage_spaces"
-                        value={data.garage_spaces}
-                        type="number"
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="Garage Spaces"
+            {/* Features Section */}
+            <Typography variant="h6" fontWeight="bold" sx={{ mt: 4 }} gutterBottom>
+                🧱 Features
+            </Typography>
+            <Grid container spacing={2} sx={{ width: "100%" }}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControlLabel
+                        control={<Checkbox name="has_garage" checked={data.has_garage} onChange={handleChange} />}
+                        label="Has Garage"
                     />
-                    <label className="flex items-center gap-2">
-                        <input
-                            type="checkbox"
-                            name="has_basement"
-                            checked={data.has_basement}
-                            onChange={handleChange}
-                            className="checkbox"
-                        />
-                        Has Basement
-                    </label>
-                </div>
-            </div>
-        </div>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField name="garage_spaces" label="Garage Spaces" type="number" value={data.garage_spaces} onChange={handleChange} fullWidth />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControlLabel
+                        control={<Checkbox name="has_basement" checked={data.has_basement} onChange={handleChange} />}
+                        label="Has Basement"
+                    />
+                </Grid>
+            </Grid>
+        </Box>
     );
 }

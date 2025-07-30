@@ -1,4 +1,14 @@
 import React from "react";
+import {
+    Box,
+    Typography,
+    ImageList,
+    ImageListItem,
+    IconButton,
+    Button,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import UploadIcon from "@mui/icons-material/CloudUpload";
 
 interface GalleryImagePreview {
     id?: number;
@@ -25,70 +35,114 @@ interface Props {
     disableGalleryUpload?: boolean;
 }
 
-export default function ListingImagesSection({ images, handlers, disableGalleryUpload }: Props) {
-    const {previewMainImage, previewGalleryImages, totalGalleryImages,} = images;
-
+export default function ListingImagesSection({images, handlers, disableGalleryUpload,}: Props) {
+    const {previewMainImage, previewGalleryImages, totalGalleryImages} = images;
     const {handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,} = handlers;
 
     return (
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-xl font-semibold mb-4">📸 Images</h3>
+        <Box sx={{backgroundColor: "white", p: 3, borderRadius: 2, boxShadow: 1}}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+                📸 Images
+            </Typography>
 
             {/* Main Image */}
-            <div className="mb-4">
-                <label className="block mb-1 font-medium">Main Image</label>
-                <input type="file" accept="image/*" onChange={handleMainImageChange} className="file-input w-full" />
+            <Box sx={{mb: 3}}>
+                <Typography variant="subtitle2" gutterBottom>
+                    Main Image
+                </Typography>
+                <Button
+                    component="label"
+                    variant="outlined"
+                    startIcon={<UploadIcon/>}
+                    sx={{mb: 2}}
+                >
+                    Upload Main Image
+                    <input type="file" hidden accept="image/*" onChange={handleMainImageChange}/>
+                </Button>
+
                 {previewMainImage && (
-                    <div className="mt-2 relative inline-block">
+                    <Box sx={{position: "relative", display: "inline-block", mt: 1}}>
                         <img
                             src={previewMainImage}
-                            alt="Preview"
-                            className="w-40 h-28 object-cover rounded-lg"
+                            alt="Main Preview"
+                            style={{
+                                width: 160,
+                                height: 110,
+                                objectFit: "cover",
+                                borderRadius: 8,
+                            }}
                         />
-                        <button
-                            type="button"
+                        <IconButton
+                            size="small"
                             onClick={removeMainImage}
-                            className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-2"
+                            sx={{
+                                position: "absolute",
+                                top: 4,
+                                right: 4,
+                                backgroundColor: "rgba(0,0,0,0.5)",
+                                color: "white",
+                                "&:hover": {backgroundColor: "rgba(0,0,0,0.7)"},
+                            }}
                         >
-                            ❌
-                        </button>
-                    </div>
+                            <DeleteIcon fontSize="small"/>
+                        </IconButton>
+                    </Box>
                 )}
-            </div>
+            </Box>
 
             {/* Gallery Images */}
-            <div>
-                <label className="block mb-1 font-medium">Gallery Images</label>
-                <p className="text-sm text-gray-500">
-                    {totalGalleryImages} of 7 images selected
-                </p>
-                <input
-                    type="file"
-                    accept="image/*"
+            <Box>
+                <Typography variant="subtitle2" gutterBottom>
+                    Gallery Images ({totalGalleryImages}/7)
+                </Typography>
+                <Button
+                    component="label"
+                    variant="outlined"
+                    startIcon={<UploadIcon/>}
                     disabled={disableGalleryUpload || previewGalleryImages.length >= 7}
-                    multiple
-                    onChange={handleGalleryImagesChange}
-                    className="file-input w-full"
-                />
-                <div className="flex gap-2 mt-2 flex-wrap">
+                >
+                    Upload Gallery Images
+                    <input
+                        type="file"
+                        hidden
+                        accept="image/*"
+                        multiple
+                        onChange={handleGalleryImagesChange}
+                    />
+                </Button>
+
+                {/* Gallery Preview */}
+                <ImageList cols={4} gap={8} sx={{mt: 2}}>
                     {previewGalleryImages.map((image, index) => (
-                        <div key={index} className="relative inline-block">
+                        <ImageListItem key={index} sx={{position: "relative"}}>
                             <img
                                 src={image.url}
-                                alt="Preview"
-                                className="w-16 h-16 object-cover rounded-lg"
+                                alt={`Gallery image ${index + 1}`}
+                                style={{
+                                    width: "100%",
+                                    height: 80,
+                                    objectFit: "cover",
+                                    borderRadius: 6,
+                                }}
                             />
-                            <button
-                                type="button"
+                            <IconButton
+                                size="small"
                                 onClick={() => removeGalleryImage(index)}
-                                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs"
+                                sx={{
+                                    position: "absolute",
+                                    top: 4,
+                                    right: 4,
+                                    backgroundColor: "rgba(0,0,0,0.5)",
+                                    color: "white",
+                                    "&:hover": {backgroundColor: "rgba(0,0,0,0.7)"},
+                                }}
                             >
-                                ❌
-                            </button>
-                        </div>
+                                <DeleteIcon fontSize="small"/>
+                            </IconButton>
+                        </ImageListItem>
                     ))}
-                </div>
-            </div>
-        </div>
+                </ImageList>
+            </Box>
+        </Box>
     );
 }
