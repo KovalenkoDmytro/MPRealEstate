@@ -2,8 +2,18 @@ import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import type { RealEstateListing } from "@/types";
 import SellerListingsGrid from "@/components/listings/ListingsGrid";
+import React from "react";
 
-export default function Index({ listings }: { listings: RealEstateListing[] }) {
+type ComponentProps = {
+    listings: {
+        data: RealEstateListing[];
+        links: { url: string | null; label: string; active: boolean }[];
+        current_page: number;
+        last_page: number;
+    };
+};
+
+export default function Index({ listings }: ComponentProps) {
     return (
         <AuthenticatedLayout
             header={

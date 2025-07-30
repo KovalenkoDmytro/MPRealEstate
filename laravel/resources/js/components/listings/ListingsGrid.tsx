@@ -31,7 +31,7 @@ export default function ListingsGrid({listings, isFavorite, toggleFavorite,}: Co
                 <Grid container spacing={3}>
                     {listings.data.map((listing) => (
                         <Grid size={{ xs: 12, sm: 6, md: 3 }} key={listing.id}>
-                            {role === "buyer" && (
+                            {role === "buyer" && isFavorite && toggleFavorite &&  (
                                 <BuyerListingCard
                                     listing={listing}
                                     isFavorite={isFavorite}
