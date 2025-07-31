@@ -14,9 +14,7 @@ import {
 
 interface Props {
     data: any;
-    handleChange: (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-    ) => void;
+    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
 export default function ListingDetails({ data, handleChange }: Props) {

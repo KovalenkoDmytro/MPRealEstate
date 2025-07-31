@@ -1,6 +1,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { useState } from "react";
+import {listingService} from "@/services/listingService";
 
 export default function CreateListing() {
     const [form, setForm] = useState({
@@ -89,34 +90,15 @@ export default function CreateListing() {
             formData.append("gallery_images[]", file);
         });
 
-        try {
-            const response = await fetch(route('seller.listings.store'), {
-                method: "POST",
-                credentials: "same-origin",
+        const result = await listingService.createSellerListing(formData);
 
-                headers: {
-                    "X-CSRF-TOKEN": (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || "",
-                    "Accept": "application/json"
-                },
-                body: formData,
-            });
-
-            if (response.ok) {
-                window.location.href = "/seller/listings";
-                // if (response.status === 422) {
-                //     const { errors } = await response.json();
-                //     setErrors(errors);
-                // } else {
-                //     throw new Error("Something went wrong");
-                // }
-            } else {
-                // window.location.href = "/listings";
-            }
-        } catch (error) {
-            console.error("Form submission error:", error);
-        } finally {
-            setProcessing(false);
+        if (result.success) {
+            window.location.href = "/seller/listings";
+        } else if (result.errors) {
+            setErrors(result.errors);
         }
+
+        setProcessing(false);
     };
 
     return (

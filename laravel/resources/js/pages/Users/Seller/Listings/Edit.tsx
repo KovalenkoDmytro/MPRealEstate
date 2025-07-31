@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import {Head, Link} from "@inertiajs/react";
 import React, {useState, useTransition} from "react";
-import {RealEstateListing} from "@/types";
+import {RealEstateListing, User, Image, PropertyStatus} from "@/types";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import {listingService} from "@/services/listingService";
@@ -14,12 +14,38 @@ type GalleryImagePreview = {
     url: string;
 };
 
+type ListingFormData = {
+    title: string;
+    description: string;
+    price: number;
+    location: string;
+    bedrooms: number;
+    bathrooms: number;
+    square_feet: number;
+    lot_size: number;
+    property_type: string;
+    year_built: number;
+    has_garage: boolean;
+    garage_spaces: number;
+    has_basement: boolean;
+    hoa_fees: number;
+    property_taxes: number;
+    status: PropertyStatus;
+    price_reduced: boolean;
+    keywords: string;
+
+    // Upload-specific fields
+    main_image: File | null;
+    gallery_images: File[];
+    remove_images: number[];
+}
+
 
 export default function EditListing({listing}: { listing: RealEstateListing }) {
     // ==========================
     // State
     // ==========================
-    const [data, setData] = useState({
+    const [data, setData] = useState<ListingFormData>({
         title: listing.title || "",
         description: listing.description || "",
         price: listing.price || 0,
@@ -56,10 +82,8 @@ export default function EditListing({listing}: { listing: RealEstateListing }) {
 
 
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-    ) => {
-        const {name, type, checked, value} = e.target;
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const {name, type, checked, value} = event.target;
         setData((prev) => ({
             ...prev,
             [name]: type === "checkbox" ? checked : type === "number" ? Number(value) || 0 : value,
@@ -117,29 +141,45 @@ export default function EditListing({listing}: { listing: RealEstateListing }) {
     };
 
 
-    const submit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const buildFormData = (data: ListingFormData, removeMainImageFlag: boolean): FormData => {
+        const formData = new FormData();
 
+        // Handle gallery images
+        data.gallery_images.forEach((file) => {
+            formData.append("gallery_images[]", file);
+        });
+
+        // Handle images to remove
+        data.remove_images.forEach((id) => {
+            formData.append("remove_images[]", id.toString());
+        });
+
+        // Handle main image
+        if (data.main_image) {
+            formData.append("main_image", data.main_image);
+        }
+
+        // Handle remaining primitive fields
+        Object.entries(data).forEach(([key, value]) => {
+            if (!["gallery_images", "remove_images", "main_image"].includes(key) && value !== null && typeof value !== "object") {
+                formData.append(key, String(value));
+            }
+        });
+
+        // Handle remove flag
+        if (removeMainImageFlag && !data.main_image) {
+            formData.append("remove_main_image", "true");
+        }
+
+        return formData;
+    };
+
+
+    const submit = async () => {
         startTransition(() => {
             (async () => {
-                const formData = new FormData();
-                Object.entries(data).forEach(([key, value]) => {
-                    if (key === "gallery_images" && Array.isArray(value)) {
-                        value.forEach((file) => formData.append("gallery_images[]", file));
-                    } else if (key === "remove_images" && Array.isArray(value)) {
-                        value.forEach((id) => formData.append("remove_images[]", id.toString()));
-                    } else if (key === "main_image" && value) {
-                        formData.append("main_image", value);
-                    } else if (typeof value !== "object" && value !== null) {
-                        formData.append(key, String(value));
-                    }
-                });
-
-                if (removeMainImageFlag && !data.main_image) {
-                    formData.append("remove_main_image", "true");
-                }
-
                 try {
+                    const formData = buildFormData(data, removeMainImageFlag);
                     const result = await listingService.updateSellerListing(listing.id, formData);
 
                     if (result.success) {
@@ -154,13 +194,9 @@ export default function EditListing({listing}: { listing: RealEstateListing }) {
         });
     };
 
-
-    // ==========================
-    // Render
-    // ==========================
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold text-gray-800">Edit Listing</h2>}>
-            <Head title="Edit Listing"/>
+            <Head title="Edit Listing" />
             <div className="container mx-auto p-4">
                 <div className="mt-4">
                     <Link href={route("seller.listings.index")} className="text-blue-500">
@@ -168,38 +204,28 @@ export default function EditListing({listing}: { listing: RealEstateListing }) {
                     </Link>
                 </div>
 
-                <form onSubmit={submit} encType="multipart/form-data" className="space-y-8">
-                    {/* Property, Financial & Features */}
-                    <ListingDetails data={data} handleChange={handleChange}/>
+                {/* Property, Financial & Features */}
+                <ListingDetails data={data} handleChange={handleChange} />
 
-                    {/* Images */}
-                    <ImagesSection
-                        images={{
-                            previewMainImage,
-                            previewGalleryImages,
-                            totalGalleryImages: previewGalleryImages.length,
-                        }}
-                        handlers={{
-                            handleMainImageChange,
-                            removeMainImage,
-                            handleGalleryImagesChange,
-                            removeGalleryImage,
-                        }}
-                        disableGalleryUpload={data.gallery_images.length >= 7}
-                    />
+                {/* Images */}
+                <ImagesSection
+                    images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
+                    handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
+                    disableGalleryUpload={data.gallery_images.length >= 7}
+                />
 
-                    {/* Submit */}
-                    <div className="text-end">
-                        <button
-                            type="submit"
-                            disabled={isPending}
-                            className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
-                        >
-                            {isPending ? "Saving..." : "Save Changes"}
-                        </button>
-                    </div>
-                </form>
+                {/* Submit Button */}
+                <div className="text-end mt-8">
+                    <button
+                        onClick={submit}
+                        disabled={isPending}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
+                    >
+                        {isPending ? "Saving..." : "Save Changes"}
+                    </button>
+                </div>
             </div>
         </AuthenticatedLayout>
     );
 }
+

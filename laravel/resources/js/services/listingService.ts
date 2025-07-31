@@ -51,4 +51,28 @@ export const listingService = {
             throw new Error("Unexpected error occurred");
         }
     },
+
+    // **Create seller listing**
+    async createSellerListing(formData: FormData) {
+        const response = await fetch(route("seller.listings.store"), {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": (
+                    document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
+                )?.content || "",
+                Accept: "application/json",
+            },
+            body: formData,
+        });
+
+        if (response.ok) {
+            return { success: true };
+        } else if (response.status === 422) {
+            const json = await response.json();
+            return { success: false, errors: json.errors };
+        } else {
+            console.error("Unexpected error", response);
+            throw new Error("Unexpected error occurred");
+        }
+    },
 };
