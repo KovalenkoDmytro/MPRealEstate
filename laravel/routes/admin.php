@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\AdminController;
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin', fn () =>
-    Inertia::render('Users/Admin/Dashboard')
-    )->name('admin.dashboard');
+// Admin Dashboard
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('listings', [AdminController::class, 'showAllListings'])->name('listings.index');
 });

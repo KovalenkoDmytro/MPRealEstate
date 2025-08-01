@@ -1,20 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{BuyerController, OfferController, DealController};
+use App\Http\Controllers\BuyerController;
+use App\Http\Controllers\OfferController;
 
-Route::middleware(['auth', 'role:buyer'])->prefix('buyer')->name('buyer.')->group(function () {
+// Buyer Dashboard & Listings
+Route::prefix('buyer')->middleware(['auth', 'role:buyer'])->name('buyer.')->group(function () {
+    Route::get('deals', [BuyerController::class, 'showAllDeals'])->name('deals.index');
 
     Route::prefix('listings')->name('listings.')->group(function () {
-        Route::get('/', [BuyerController::class, 'showAllListings'])->name('index');
-        Route::get('/{listing}', [BuyerController::class, 'showListing'])->name('show');
-        Route::post('/{listing}/make-offer', [OfferController::class, 'store'])->name('makeOffer');
-    });
-
-    Route::prefix('deals')->name('deals.')->group(function () {
-        Route::get('/', [BuyerController::class, 'showAllDeals'])->name('index');
-        Route::patch('/{deal}/make-deposit', [DealController::class, 'markDepositMade'])->name('markDepositMade');
-        Route::patch('/{deal}/set-condition-day', [DealController::class, 'setConditionDay'])->name('setConditionDay');
-        Route::patch('/{deal}/set-possession-day', [DealController::class, 'setPossessionDay'])->name('setPossessionDay');
+        Route::get('{listing}', [BuyerController::class, 'showListing'])->name('show');
+        Route::post('{listing}/make-offer', [OfferController::class, 'store'])->name('makeOffer');
     });
 });

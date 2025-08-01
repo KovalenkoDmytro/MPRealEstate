@@ -1,26 +1,32 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{SellerController, OfferController, RealEstateListingController, DealController};
+use App\Http\Controllers\SellerController;
+use App\Http\Controllers\RealEstateListingController;
+use App\Http\Controllers\OfferController;
+use App\Http\Controllers\DealController;
 
-Route::middleware(['auth', 'role:seller'])->prefix('seller')->name('seller.')->group(function () {
-    Route::patch('/offers/{offer}/update-status', [OfferController::class, 'updateStatus'])->name('offers.updateStatus');
+// Seller Dashboard & Listings
+Route::prefix('seller')->middleware(['auth', 'role:seller'])->name('seller.')->group(function () {
+    Route::get('deals', [SellerController::class, 'showAllDeals'])->name('deals.index');
 
     Route::prefix('listings')->name('listings.')->group(function () {
-        Route::get('/', [SellerController::class, 'showAllListings'])->name('index');
-        Route::get('/create', [RealEstateListingController::class, 'create'])->name('create');
         Route::post('/', [RealEstateListingController::class, 'store'])->name('store');
-        Route::get('/{listing}/edit', [RealEstateListingController::class, 'edit'])->name('edit');
-        Route::put('/{listing}', [RealEstateListingController::class, 'update'])->name('update');
-        Route::get('/{listing}', [SellerController::class, 'showListing'])->name('show');
-        Route::patch('/{listing}/deactivate', [RealEstateListingController::class, 'softDelete'])->name('deactivate');
+        Route::get('create', [RealEstateListingController::class, 'create'])->name('create');
+        Route::put('{listing}', [RealEstateListingController::class, 'update'])->name('update');
+        Route::get('{listing}', [SellerController::class, 'showListing'])->name('show');
+        Route::patch('{listing}/deactivate', [RealEstateListingController::class, 'softDelete'])->name('deactivate');
+        Route::get('{listing}/edit', [RealEstateListingController::class, 'edit'])->name('edit');
+    });
+
+    Route::prefix('offers')->name('offers.')->group(function () {
+        Route::patch('{offer}/update-status', [OfferController::class, 'updateStatus'])->name('updateStatus');
     });
 
     Route::prefix('deals')->name('deals.')->group(function () {
-        Route::get('/', [SellerController::class, 'showAllDeals'])->name('index');
-        Route::patch('/{deal}/set-deposit', [DealController::class, 'setDeposit'])->name('setDeposit');
-        Route::post('/{deal}/confirm-deposit', [DealController::class, 'confirmDeposit'])->name('confirmDeposit');
-        Route::patch('/{deal}/confirm-condition-day', [DealController::class, 'confirmConditionDay'])->name('confirmConditionDay');
-        Route::patch('/{deal}/confirm-possession-day', [DealController::class, 'confirmPossessionDay'])->name('confirmPossessionDay');
+        Route::patch('{deal}/confirm-condition-day', [DealController::class, 'confirmConditionDay'])->name('confirmConditionDay');
+        Route::post('{deal}/confirm-deposit', [DealController::class, 'confirmDeposit'])->name('confirmDeposit');
+        Route::patch('{deal}/confirm-possession-day', [DealController::class, 'confirmPossessionDay'])->name('confirmPossessionDay');
+        Route::patch('{deal}/set-deposit', [DealController::class, 'setDeposit'])->name('setDeposit');
     });
 });

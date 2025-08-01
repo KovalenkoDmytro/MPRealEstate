@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\LawyerController;
 
-Route::middleware(['auth', 'role:lawyer'])->prefix('lawyer')->name('lawyer.')->group(function () {
-    Route::get('/', fn () => Inertia::render('Users/Lawyer/Dashboard'))->name('dashboard');
+// Lawyer Dashboard
+Route::prefix('lawyer')->middleware(['auth', 'role:lawyer'])->name('lawyer.')->group(function () {
+    Route::get('/', [LawyerController::class, 'dashboard'])->name('dashboard');
 });

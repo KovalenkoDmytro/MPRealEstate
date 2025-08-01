@@ -20,8 +20,8 @@ const NavigationLinks = ({ role }: { role: string }) => {
             {role === 'buyer' && (
                 <>
                     <NavLink
-                        href={route('buyer.listings.index')}
-                        active={route().current('buyer.listings.index')}
+                        href={route('listings.index')}
+                        active={route().current('listings.index')}
                     >
                         Listings
                     </NavLink>
@@ -37,8 +37,8 @@ const NavigationLinks = ({ role }: { role: string }) => {
             {role === 'seller' && (
                 <>
                     <NavLink
-                        href={route('seller.listings.index')}
-                        active={route().current('seller.listings.index')}
+                        href={route('listings.index')}
+                        active={route().current('listings.index')}
                     >
                         My Listings
                     </NavLink>
@@ -77,8 +77,8 @@ const MobileNavigationLinks = ({ role }: { role: string }) => {
             {role === 'buyer' && (
                 <>
                     <ResponsiveNavLink
-                        href={route('buyer.listings.index')}
-                        active={route().current('buyer.listings.index')}
+                        href={route('listings.index')}
+                        active={route().current('listings.index')}
                     >
                         Listings
                     </ResponsiveNavLink>
@@ -94,14 +94,14 @@ const MobileNavigationLinks = ({ role }: { role: string }) => {
             {role === 'seller' && (
                 <>
                     <ResponsiveNavLink
-                        href={route('seller.listings.index')}
-                        active={route().current('seller.listings.index')}
+                        href={route('listings.index')}
+                        active={route().current('listings.index')}
                     >
                         My Listings
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
-                        href={route('seller.deals.index')}
-                        active={route().current('seller.deals.index')}
+                        href={route('deals.index')}
+                        active={route().current('deals.index')}
                     >
                         My Deals
                     </ResponsiveNavLink>

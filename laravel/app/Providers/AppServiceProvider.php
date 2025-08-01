@@ -37,13 +37,5 @@ class AppServiceProvider extends ServiceProvider
             return $deal->users()->where('user_id', $user->id)->exists();
         });
 
-        Route::middleware('web')
-            ->group(function () {
-                require base_path('routes/web.php');
-                require base_path('routes/admin.php');
-                require base_path('routes/buyer.php');
-                require base_path('routes/seller.php');
-                require base_path('routes/lawyer.php');
-            });
     }
 }

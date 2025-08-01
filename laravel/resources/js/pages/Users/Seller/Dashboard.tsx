@@ -25,7 +25,7 @@ export default function Dashboard({ offers }: {offers: Offer[]}) {
 
 
             <div className="mt-6">
-                <Link href={route('seller.listings.index')} className="text-blue-500">View My Listings</Link>
+                <Link href={route('listings.index')} className="text-blue-500">View My Listings</Link>
             </div>
         </div>
         </AuthenticatedLayout>

@@ -18,4 +18,10 @@ class RealEstateListingPolicy
     public function delete(User $user, RealEstateListing $listing): bool {
         return $user->id === $listing->seller_id;
     }
+
+    public function viewAny(User $user): bool
+    {
+        return $user->hasAnyRole(['buyer', 'seller', 'admin']);
+    }
+
 }

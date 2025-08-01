@@ -185,7 +185,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
             <Head title="Edit Listing" />
             <div className="container mx-auto p-4">
                 <div className="mt-4">
-                    <Link href={route("seller.listings.index")} className="text-blue-500">
+                    <Link href={route("listings.index")} className="text-blue-500">
                         🔙 Back to Listings
                     </Link>
                 </div>

@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
+use App\Http\Requests\ListingFilterRequest;
+use App\Models\User;
+use App\Services\BuyerService;
+use App\Services\DealService;
 use App\Services\RealEstateListingService;
 use App\Models\RealEstateListing;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Requests\RealEstateListingRequest;
@@ -19,25 +22,23 @@ class RealEstateListingController extends Controller {
     use AuthorizesRequests;
 
     private RealEstateListingService $listingService;
+    private DealService $dealService;
+    private BuyerService $buyerService;
 
-    public function __construct(RealEstateListingService $listingService)
+    public function __construct(RealEstateListingService $listingService, DealService $dealService, BuyerService $buyerService)
     {
         $this->listingService = $listingService;
+        $this->dealService = $dealService;
+        $this->buyerService = $buyerService;
     }
 
     /**
      * List all real estate listings.
      */
-    public function index(): Response {
-        $user = auth()->user();
-        $listings = RealEstateListing::with(['seller', 'mainImage'])->get();
-        $favoriteListings = $user->favoriteListings()->pluck(
-            'real_estate_listing_id'
-        );
-        return Inertia::render('RealEstateListings/Index', [
-            'listings' => $listings,
-            'favoriteListings' => $favoriteListings,
-        ]);
+    public function index(ListingFilterRequest $request): Response {
+        $this->authorize('viewAny', RealEstateListing::class);
+
+        return $this->renderViewForRole(auth()->user(), $request);
     }
 
     public function create(): Response {
@@ -60,9 +61,7 @@ class RealEstateListingController extends Controller {
             );
         }
     }
-    /**
-     * ✅ Show the edit form for a listing
-     */
+
     public function edit(RealEstateListing $listing): Response {
 
         $this->authorize('update', $listing);
@@ -71,9 +70,7 @@ class RealEstateListingController extends Controller {
             'listing' => $listing->load('mainImage', 'images'),
         ]);
     }
-    /**
-     * ✅ Handle the update request
-     */
+
     public function update(RealEstateListingRequest $request, RealEstateListing $listing):JsonResponse {
         /** @var \App\Models\User $user */
         try {
@@ -114,6 +111,28 @@ class RealEstateListingController extends Controller {
         );
 
     }
+
+    private function renderViewForRole(User $user, ListingFilterRequest $request): Response
+    {
+        $role = strtolower($user->role);
+
+        return match ($role) {
+            'seller' => Inertia::render('Users/Seller/Deals/Index', [
+                'deals' => $this->dealService->getAllDealsForUser($user),
+            ]),
+            'buyer' => Inertia::render('Users/Buyer/Listings/Index', [
+                'listings' => $this->buyerService->getFilteredListings($user, $request),
+                'favoriteListings' => $this->listingService->getFavoriteListingIds($user),
+                'filters' => $request->validatedFilters(),
+            ]),
+            'admin' => Inertia::render('Users/Admin/Listings/Index', [
+                'listings' => RealEstateListing::with(['seller', 'mainImage'])->get(),
+                'favoriteListings' => $this->listingService->getFavoriteListingIds($user),
+            ]),
+            default => abort(403, 'Unauthorized role'),
+        };
+    }
+
 
 
 }
