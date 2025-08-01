@@ -50,7 +50,7 @@ class RealEstateListingController extends Controller {
                 abort(403, 'Unauthorized: Only sellers can create listings.');
             }
 
-           $this->listingService->createListing($request, $user);
+           $this->listingService->createListing($request);
 
             return JsonResponder::send(
                 new SuccessResponse('Listing created successfully!', [])

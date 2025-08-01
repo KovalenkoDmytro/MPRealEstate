@@ -1,12 +1,11 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
-import {Head, Link} from "@inertiajs/react";
-import React, {useState, useTransition} from "react";
-import {RealEstateListing, User, Image, PropertyStatus} from "@/types";
+import { Head, Link } from "@inertiajs/react";
+import React, { useState } from "react";
+import { RealEstateListing, PropertyStatus } from "@/types";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
-import {listingService} from "@/services/listingService";
-import {imageService} from "@/services/imageService";
-
+import { listingService } from "@/services/listingService";
+import { imageService } from "@/services/imageService";
 
 type GalleryImagePreview = {
     id?: number;
@@ -38,13 +37,9 @@ type ListingFormData = {
     main_image: File | null;
     gallery_images: File[];
     remove_images: number[];
-}
+};
 
-
-export default function EditListing({listing}: { listing: RealEstateListing }) {
-    // ==========================
-    // State
-    // ==========================
+export default function EditListing({ listing }: { listing: RealEstateListing }) {
     const [data, setData] = useState<ListingFormData>({
         title: listing.title || "",
         description: listing.description || "",
@@ -61,112 +56,104 @@ export default function EditListing({listing}: { listing: RealEstateListing }) {
         has_basement: listing.has_basement || false,
         hoa_fees: listing.hoa_fees || 0,
         property_taxes: listing.property_taxes || 0,
-        status: listing.status || "available",
+        status: listing.status || PropertyStatus.Available,
         price_reduced: listing.price_reduced || false,
         keywords: listing.keywords || "",
-        main_image: null as File | null,
-        gallery_images: [] as File[],
-        remove_images: [] as number[],
+        main_image: null,
+        gallery_images: [],
+        remove_images: [],
     });
 
     const [previewMainImage, setPreviewMainImage] = useState<string | null>(listing.main_image.image_path);
 
-    const initialGalleryImages: GalleryImagePreview[] = listing.images
-        ?.filter((img) => !img.is_main)
-        .map((img) => ({id: img.id, url: img.image_path,})) || [];
+    const initialGalleryImages: GalleryImagePreview[] =
+        listing.images?.filter((img) => !img.is_main).map((img) => ({ id: img.id, url: img.image_path })) || [];
 
     const [previewGalleryImages, setPreviewGalleryImages] = useState<GalleryImagePreview[]>(initialGalleryImages);
     const [removeMainImageFlag, setRemoveMainImageFlag] = useState(false);
-    const [isPending, startTransition] = useTransition();
+    const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
-
-
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const {name, type, checked, value} = event.target;
-        setData((prev) => ({
-            ...prev,
-            [name]: type === "checkbox" ? checked : type === "number" ? Number(value) || 0 : value,
-        }));
+        const { name, type, checked, value } = event.target;
+        const val = type === "checkbox" ? checked : value;
+        setData((prev) => ({ ...prev, [name]: val }));
     };
 
     const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setData((prev) => ({...prev, main_image: file}));
+            setData((prev) => ({ ...prev, main_image: file }));
             setPreviewMainImage(URL.createObjectURL(file));
         }
     };
 
     const removeMainImage = () => {
         if (previewMainImage) imageService.revokePreview(previewMainImage);
-        setData((prev) => ({...prev, main_image: null}));
+        setData((prev) => ({ ...prev, main_image: null }));
         setPreviewMainImage(null);
         setRemoveMainImageFlag(true);
     };
-
 
     const handleGalleryImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
 
         const newFiles = Array.from(e.target.files);
 
-        // Validate count using service
+        // Validate count
         if (!imageService.canAddImages(previewGalleryImages.length, newFiles.length)) {
             alert("You can only upload up to 7 images total.");
             return;
         }
 
-        // Update data state
+        // Update data
         setData((prev) => ({
             ...prev,
             gallery_images: [...prev.gallery_images, ...newFiles],
         }));
 
-        // Generate previews using service
+        // Add previews
         const newPreviews = imageService.createPreviews(newFiles);
         setPreviewGalleryImages((prev) => [...prev, ...newPreviews]);
     };
 
-
     const removeGalleryImage = (index: number) => {
-        const {updatedPreviews, updatedRemoveIds} = imageService.removeGalleryImage(
+        const { updatedPreviews, updatedRemoveIds } = imageService.removeGalleryImage(
             index,
             previewGalleryImages,
             data.remove_images
         );
 
         setPreviewGalleryImages(updatedPreviews);
-        setData((prev) => ({...prev, remove_images: updatedRemoveIds}));
+        setData((prev) => ({ ...prev, remove_images: updatedRemoveIds }));
     };
-
 
     const buildFormData = (data: ListingFormData, removeMainImageFlag: boolean): FormData => {
         const formData = new FormData();
 
-        // Handle gallery images
+        // Gallery images
         data.gallery_images.forEach((file) => {
             formData.append("gallery_images[]", file);
         });
 
-        // Handle images to remove
+        // Images to remove
         data.remove_images.forEach((id) => {
             formData.append("remove_images[]", id.toString());
         });
 
-        // Handle main image
+        // Main image
         if (data.main_image) {
             formData.append("main_image", data.main_image);
         }
 
-        // Handle remaining primitive fields
+        // Primitive fields
         Object.entries(data).forEach(([key, value]) => {
             if (!["gallery_images", "remove_images", "main_image"].includes(key) && value !== null && typeof value !== "object") {
                 formData.append(key, String(value));
             }
         });
 
-        // Handle remove flag
+        // Remove main flag
         if (removeMainImageFlag && !data.main_image) {
             formData.append("remove_main_image", "true");
         }
@@ -174,24 +161,23 @@ export default function EditListing({listing}: { listing: RealEstateListing }) {
         return formData;
     };
 
-
     const submit = async () => {
-        startTransition(() => {
-            (async () => {
-                try {
-                    const formData = buildFormData(data, removeMainImageFlag);
-                    const result = await listingService.updateSellerListing(listing.id, formData);
+        setProcessing(true);
 
-                    if (result.success) {
-                        window.location.href = "/seller/listings";
-                    } else {
-                        setErrors(result.errors);
-                    }
-                } catch (error) {
-                    console.error("Submission failed:", error);
-                }
-            })();
-        });
+        try {
+            const formData = buildFormData(data, removeMainImageFlag);
+            const result = await listingService.updateSellerListing(listing.id, formData);
+
+            if (result.success) {
+                window.location.href = "/seller/listings";
+            } else {
+                setErrors(result.errors);
+            }
+        } catch (error) {
+            console.error("Submission failed:", error);
+        } finally {
+            setProcessing(false);
+        }
     };
 
     return (
@@ -209,8 +195,17 @@ export default function EditListing({listing}: { listing: RealEstateListing }) {
 
                 {/* Images */}
                 <ImagesSection
-                    images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
-                    handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
+                    images={{
+                        previewMainImage,
+                        previewGalleryImages,
+                        totalGalleryImages: previewGalleryImages.length,
+                    }}
+                    handlers={{
+                        handleMainImageChange,
+                        removeMainImage,
+                        handleGalleryImagesChange,
+                        removeGalleryImage,
+                    }}
                     disableGalleryUpload={data.gallery_images.length >= 7}
                 />
 
@@ -218,14 +213,13 @@ export default function EditListing({listing}: { listing: RealEstateListing }) {
                 <div className="text-end mt-8">
                     <button
                         onClick={submit}
-                        disabled={isPending}
+                        disabled={processing}
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
                     >
-                        {isPending ? "Saving..." : "Save Changes"}
+                        {processing ? "Saving..." : "Save Changes"}
                     </button>
                 </div>
             </div>
         </AuthenticatedLayout>
     );
 }
-

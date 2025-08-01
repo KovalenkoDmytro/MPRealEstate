@@ -54,6 +54,7 @@ export const listingService = {
 
     // **Create seller listing**
     async createSellerListing(formData: FormData) {
+        console.log(formData)
         const response = await fetch(route("seller.listings.store"), {
             method: "POST",
             headers: {

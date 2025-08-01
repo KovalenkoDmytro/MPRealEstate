@@ -10,13 +10,20 @@ use Illuminate\Support\Facades\Storage;
 
 class RealEstateListingService
 {
-    public function createListing(RealEstateListingRequest $request, $user): RealEstateListing
+    public function createListing(RealEstateListingRequest $request): RealEstateListing
     {
-        $listing = new RealEstateListing($request->validated());
+        $user = auth()->user();
+
+        // Exclude image fields from the data we use for main model
+        $data = $request->safe()->except(['main_image', 'gallery_images', 'remove_images', 'remove_main_image']);
+
+        // Create listing
+        $listing = new RealEstateListing($data);
         $listing->seller_id = $user->id;
         $listing->status = 'available';
         $listing->save();
 
+        // Handle images separately
         $this->handleListingImages($listing, $request);
 
         return $listing;
@@ -24,8 +31,8 @@ class RealEstateListingService
 
     public function updateListing(RealEstateListingRequest $request, RealEstateListing $listing ): void
     {
-
-        $listing->update($request->validated());
+        $data = $request->safe()->except(['main_image', 'gallery_images', 'remove_images', 'remove_main_image']);
+        $listing->update($data);
         $this->handleListingImages($listing, $request);
     }
 
@@ -43,17 +50,22 @@ class RealEstateListingService
     //Shared logic for storing/updating images
     private function handleListingImages(RealEstateListing $listing, Request $request): void
     {
+
         if ($request->hasFile('main_image')) {
+
             if ($listing->mainImage) {
                 Storage::disk('public')->delete(str_replace('/storage/', '', $listing->mainImage->image_path));
                 $listing->mainImage->delete();
             }
 
             $mainPath = $request->file('main_image')->store('listings', 'public');
+
             $listing->images()->create([
                 'image_path' => "/storage/$mainPath",
                 'is_main' => true,
             ]);
+
+
         }
 
         if ($request->hasFile('gallery_images')) {
