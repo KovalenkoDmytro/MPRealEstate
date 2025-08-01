@@ -8,6 +8,7 @@ use App\Helpers\Responses\SuccessResponse;
 use App\Services\RealEstateListingService;
 use App\Models\RealEstateListing;
 use Exception;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -15,6 +16,8 @@ use App\Http\Requests\RealEstateListingRequest;
 use Illuminate\Http\JsonResponse;
 
 class RealEstateListingController extends Controller {
+    use AuthorizesRequests;
+
     private RealEstateListingService $listingService;
 
     public function __construct(RealEstateListingService $listingService)
@@ -42,15 +45,10 @@ class RealEstateListingController extends Controller {
     }
 
     public function store(RealEstateListingRequest $request): JsonResponse {
-        /** @var \App\Models\User $user */
         try{
-            $user = auth()->user();
-            // ✅ Only sellers can create listings
-            if (!$user->hasRole('seller')) {
-                abort(403, 'Unauthorized: Only sellers can create listings.');
-            }
+            $this->authorize('create', RealEstateListing::class);
 
-           $this->listingService->createListing($request);
+            $this->listingService->createListing($request);
 
             return JsonResponder::send(
                 new SuccessResponse('Listing created successfully!', [])
@@ -61,22 +59,13 @@ class RealEstateListingController extends Controller {
                 new ErrorResponse($e->getMessage())
             );
         }
-
-
-
-
     }
     /**
      * ✅ Show the edit form for a listing
      */
     public function edit(RealEstateListing $listing): Response {
-        /** @var \App\Models\User $user */
-        $user = auth()->user();
 
-        // ✅ Ensure only the owner can edit the listing
-        if ($listing->seller_id !== $user->id) {
-            abort(403, 'Unauthorized: You do not own this listing.');
-        }
+        $this->authorize('update', $listing);
 
         return Inertia::render('Users/Seller/Listings/Edit', [
             'listing' => $listing->load('mainImage', 'images'),
@@ -88,10 +77,7 @@ class RealEstateListingController extends Controller {
     public function update(RealEstateListingRequest $request, RealEstateListing $listing):JsonResponse {
         /** @var \App\Models\User $user */
         try {
-            $user = auth()->user();
-            if ($listing->seller_id !== $user->id) {
-                abort(403, 'Unauthorized: You do not own this listing.');
-            }
+            $this->authorize('update', $listing);
 
             $this->listingService->updateListing($request, $listing);
 
@@ -107,13 +93,8 @@ class RealEstateListingController extends Controller {
     }
 
     public function softDelete(RealEstateListing $listing): JsonResponse {
-        /** @var \App\Models\User $user */
-        $user = auth()->user();
+        $this->authorize('delete', $listing);
 
-        // 1. 🔒 Check ownership
-        if ($listing->seller_id !== $user->id) {
-            abort(403, 'Unauthorized action.');
-        }
 
         // 2. ❌ Check if any deal exists and is not completed
         $hasActiveDeal = $listing->deal()->where('is_completed', false)->exists();

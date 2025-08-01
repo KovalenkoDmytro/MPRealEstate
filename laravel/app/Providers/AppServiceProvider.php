@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 
+use App\Models\RealEstateListing;
+use App\Policies\RealEstateListingPolicy;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -12,6 +14,10 @@ use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
+    protected $policies = [
+        RealEstateListing::class => RealEstateListingPolicy::class,
+    ];
+
     /**
      * Register any application services.
      */
