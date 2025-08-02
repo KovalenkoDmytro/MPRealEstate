@@ -44,22 +44,6 @@ class BuyerController extends Controller
 
     }
 
-    public function showAllListings(ListingFilterRequest $request): Response {
-        /** @var \App\Models\User $user */
-
-        $user = auth()->user();
-        $filters = $request->validatedFilters();
-        $listings = $this->buyerService->getFilteredListings($user, $request);
-        $favoriteListings = $user->favoriteListings()->pluck('real_estate_listing_id');
-
-
-        return Inertia::render('Users/Buyer/Listings/Index', [
-            'listings' => $listings,
-            'favoriteListings' => $favoriteListings,
-            'filters' => $filters,
-        ]);
-    }
-
     public function showListing(RealEstateListing $listing): Response {
         /** @var \App\Models\User $user */
 
