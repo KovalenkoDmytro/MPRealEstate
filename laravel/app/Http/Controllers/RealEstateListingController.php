@@ -11,6 +11,7 @@ use App\Services\BuyerService;
 use App\Services\DealService;
 use App\Services\RealEstateListingService;
 use App\Models\RealEstateListing;
+use App\Services\SellerService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Inertia\Inertia;
@@ -22,13 +23,13 @@ class RealEstateListingController extends Controller {
     use AuthorizesRequests;
 
     private RealEstateListingService $listingService;
-    private DealService $dealService;
+    private SellerService $dealService;
     private BuyerService $buyerService;
 
-    public function __construct(RealEstateListingService $listingService, DealService $dealService, BuyerService $buyerService)
+    public function __construct(RealEstateListingService $listingService, SellerService $sellerService, BuyerService $buyerService)
     {
         $this->listingService = $listingService;
-        $this->dealService = $dealService;
+        $this->sellerService = $sellerService;
         $this->buyerService = $buyerService;
     }
 
@@ -117,8 +118,8 @@ class RealEstateListingController extends Controller {
         $role = strtolower($user->role);
 
         return match ($role) {
-            'seller' => Inertia::render('Users/Seller/Deals/Index', [
-                'deals' => $this->dealService->getAllDealsForUser($user),
+            'seller' => Inertia::render('Users/Seller/Listings/Index', [
+                'listings' => $this->sellerService->getSellerListings(),
             ]),
             'buyer' => Inertia::render('Users/Buyer/Listings/Index', [
                 'listings' => $this->buyerService->getFilteredListings($user, $request),

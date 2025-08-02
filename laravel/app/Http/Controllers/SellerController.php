@@ -6,6 +6,7 @@ use App\Services\OfferService;
 use App\Services\DealService;
 use App\Models\Deal;
 use App\Models\RealEstateListing;
+use App\Services\SellerService;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,10 +15,12 @@ class SellerController extends Controller {
 
     protected OfferService $offerService;
     protected DealService $dealService;
+    protected SellerService $sellerService;
 
-    public function __construct(OfferService $offerService, DealService $dealService) {
+    public function __construct(OfferService $offerService, DealService $dealService, SellerService $sellerService ) {
         $this->offerService = $offerService;
         $this->dealService = $dealService;
+        $this->sellerService = $sellerService;
     }
 
 
@@ -43,40 +46,14 @@ class SellerController extends Controller {
         ]);
     }
 
-    public function showAllListings(): Response {
-        /** @var \App\Models\User $user */
+
+    public function showListing(RealEstateListing $listing): Response
+    {
         $user = auth()->user();
+        $listingDetails = $this->sellerService->getSellerListingDetails($user, $listing);
 
-        $listings = RealEstateListing::where('seller_id', $user->id)
-            ->where('status', '!=', 'inactive')
-            ->with(['mainImage'])
-            ->paginate(9)
-            ->withQueryString();
-
-
-        return Inertia::render('Users/Seller/Listings/Index', [
-            'listings' => $listings,
-        ]);
-    }
-
-    public function showListing(RealEstateListing $listing): Response {
-        /** @var \App\Models\User $user */
-        $user = auth()->user();
-
-        // If user is a seller, ensure they only access their own listings
-        if ($listing->seller_id !== $user->id) {
-            abort(403, 'Unauthorized Access: This listing does not belong to you.');
-        }
-        $listing = RealEstateListing::with([
-            'offers' => function ($query) {
-                $query->with(['buyer:id,name,email']); // Select only necessary buyer details
-            },
-            'images',
-            'mainImage'])
-            ->findOrFail($listing['id']);
-
-        return Inertia::render('Users/Seller/Listings/Show',[
-            'listing' => $listing,
+        return Inertia::render('Users/Seller/Listings/Show', [
+            'listing' => $listingDetails,
         ]);
     }
 }

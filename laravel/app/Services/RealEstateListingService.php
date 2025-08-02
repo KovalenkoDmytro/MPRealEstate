@@ -7,6 +7,7 @@ use App\Models\RealEstateListing;
 use App\Models\ListingImage;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class RealEstateListingService
@@ -89,8 +90,7 @@ class RealEstateListingService
         }
     }
 
-    public function getFavoriteListingIds(User $user)
-    {
+    public function getFavoriteListingIds(User $user): Collection {
         // Only return favorites for roles that support it
         if ($user->hasAnyRole(['buyer', 'admin'])) {
             return $user->favoriteListings()->pluck('real_estate_listing_id');

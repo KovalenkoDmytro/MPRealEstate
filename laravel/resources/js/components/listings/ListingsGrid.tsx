@@ -24,7 +24,6 @@ export default function ListingsGrid({listings, isFavorite, toggleFavorite,}: Co
     const user = useAuth();
     const role = user.role;
 
-
     return (
         <Box>
             {listings.data.length > 0 ? (
