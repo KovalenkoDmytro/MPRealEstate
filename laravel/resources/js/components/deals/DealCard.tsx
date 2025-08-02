@@ -10,6 +10,16 @@ interface DealCardProps {
 }
 
 export const DealCard: React.FC<DealCardProps> = ({ deal }) => {
+
+    const formattedDate = new Date(deal.created_at).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+
+
     return (
         <Card
             variant="outlined"
@@ -40,6 +50,11 @@ export const DealCard: React.FC<DealCardProps> = ({ deal }) => {
                 {/* Listing Title */}
                 <Typography variant="body2" color="text.secondary" gutterBottom>
                     🏡 <strong>Listing:</strong> {deal.real_estate_listing.title ?? "N/A"}
+                </Typography>
+
+                {/* Deal Date */}
+                <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                    📅 Created: {formattedDate}
                 </Typography>
 
                 {/* View Deal Link */}

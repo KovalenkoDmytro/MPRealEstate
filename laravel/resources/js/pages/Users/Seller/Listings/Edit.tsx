@@ -195,17 +195,8 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
 
                 {/* Images */}
                 <ImagesSection
-                    images={{
-                        previewMainImage,
-                        previewGalleryImages,
-                        totalGalleryImages: previewGalleryImages.length,
-                    }}
-                    handlers={{
-                        handleMainImageChange,
-                        removeMainImage,
-                        handleGalleryImagesChange,
-                        removeGalleryImage,
-                    }}
+                    images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
+                    handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
                     disableGalleryUpload={data.gallery_images.length >= 7}
                 />
 

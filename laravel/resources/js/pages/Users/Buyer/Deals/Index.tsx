@@ -15,11 +15,8 @@ export default function DealsIndex({ deals }: DealsIndexProps)  {
         >
             <Head title="My Deals"/>
 
-            {deals.length === 0 ? (
-                <NoDealsMessage/>
-            ) : (
-                <DealsList deals={deals}/>
-            )}
+            <DealsList deals={deals} />
+
 
         </AuthenticatedLayout>
     );
