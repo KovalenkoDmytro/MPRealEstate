@@ -25,17 +25,6 @@ class BuyerController extends Controller
         $this->dealController = $dealController;
     }
 
-    /**
-     * ✅ Display Buyer Dashboard with their Offers
-     */
-    public function index(): Response
-        {/** @var \App\Models\User $user */
-        $user = auth()->user();
-
-        return Inertia::render('Users/Buyer/Dashboard', [
-            'offers' => $this->offerController->showBuyerOffers($user->id),
-        ]);
-    }
     public function showAllDeals(): Response {
 
         return Inertia::render('Users/Buyer/Deals/Index', [

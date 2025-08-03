@@ -2,21 +2,13 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Services\DashboardService;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DashboardController extends Controller
 {
-    public function __invoke()
+    public function __invoke(DashboardService $dashboardService)
     {
-        $user = Auth::user();
-
-        return match (true) {
-            $user->hasRole('buyer')  => app(BuyerController::class)->index(),
-            $user->hasRole('seller') => app(SellerController::class)->index(),
-            $user->hasRole('lawyer') => app(LawyerController::class)->index(),
-            default => throw new HttpException(403, 'Unauthorized'),
-        };
+        return $dashboardService->getDashboard(Auth::user());
     }
 }

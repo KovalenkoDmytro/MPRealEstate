@@ -24,18 +24,6 @@ class SellerController extends Controller {
     }
 
 
-    /**
-     * Display Seller Dashboard with their Offers
-     */
-     public function index(): Response {
-         /** @var \App\Models\User $user */
-        $user = auth()->user();
-
-        return Inertia::render('Users/Seller/Dashboard', [
-            'offers' => $this->offerService->getAllOffersForSeller($user->id)
-        ]);
-    }
-
 
     public function showAllDeals(): Response {
         /** @var \App\Models\User $user */
