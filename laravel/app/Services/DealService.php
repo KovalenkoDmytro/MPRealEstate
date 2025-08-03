@@ -218,7 +218,7 @@ class DealService
 
         $deal = Deal::create([
             'name' => "Deal for " . $listing->title,
-            'amount' => $offer->offer_price,
+            'amount' => $offer->amount,
             'seller_message' => $offer->message,
             'real_estate_listing_id' => $listing->id,
         ]);

@@ -7,7 +7,7 @@ export const DealService = {
     },
 
     async markDepositMade(dealId: number) {
-        return await fetchWithCsrf(`/deals/${dealId}/mark-deposit-made`, {
+        return await fetchWithCsrf(`/buyer/deals/${dealId}/make-deposit`, {
             method: "PATCH",
             body: JSON.stringify({ confirmed: true }),
         });
@@ -20,7 +20,7 @@ export const DealService = {
     },
 
     async setConditionDay(dealId: number, conditionDay: string) {
-        return await fetchWithCsrf(`/deals/${dealId}/condition-day`, {
+        return await fetchWithCsrf(`/buyer/deals/${dealId}/set-condition-day`, {
             method: "PATCH",
             body: JSON.stringify({ condition_day: conditionDay }),
         });
@@ -33,7 +33,7 @@ export const DealService = {
     },
 
     async setPossessionDay(dealId: number, possessionDay: string) {
-        return await fetchWithCsrf(`/deals/${dealId}/possession-day`, {
+        return await fetchWithCsrf(`/buyer/deals/${dealId}/set-possession-day`, {
             method: "PATCH",
             body: JSON.stringify({ possession_day: possessionDay }),
         });

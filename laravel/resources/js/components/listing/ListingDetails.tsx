@@ -73,7 +73,7 @@ export const ListingDetails = ({ listing, role }: ListingDetailsProps) => (
 
         {/* Back Button */}
         <Box mt={3}>
-            <Link href={route(`${role}.listings.index`)}>
+            <Link href={route(`listings.index`)}>
                 <Button variant="outlined" color="primary">
                     Back to Listings
                 </Button>

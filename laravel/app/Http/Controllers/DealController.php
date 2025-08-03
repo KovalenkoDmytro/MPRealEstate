@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Http\Requests\DealBreakRequest;
+use App\Http\Requests\InviteLawyerRequest;
+use App\Http\Requests\SetConditionDayRequest;
+use App\Http\Requests\SetDepositRequest;
+use App\Http\Requests\SetPossessionDayRequest;
 use App\Models\Deal;
 use App\Services\DealService;
 use Illuminate\Http\Request;
@@ -79,7 +83,7 @@ class DealController extends Controller
             ->get();
     }
 
-    public function setDeposit(Request $request, Deal $deal): JsonResponse {
+    public function setDeposit(SetDepositRequest $request, Deal $deal): JsonResponse {
         return $this->dealerService->setDeposit($request, $deal);
     }
 
@@ -91,7 +95,7 @@ class DealController extends Controller
         return $this->dealerService->confirmDeposit($deal);
     }
 
-    public function setConditionDay(Request $request, Deal $deal): JsonResponse {
+    public function setConditionDay(SetConditionDayRequest $request, Deal $deal): JsonResponse {
         return $this->dealerService->setConditionDay($request, $deal);
     }
 
@@ -99,7 +103,7 @@ class DealController extends Controller
         return $this->dealerService->confirmConditionDay($deal);
     }
 
-    public function setPossessionDay(Request $request, Deal $deal): JsonResponse {
+    public function setPossessionDay(SetPossessionDayRequest $request, Deal $deal): JsonResponse {
         return $this->dealerService->setPossessionDay($request, $deal);
     }
 
@@ -107,7 +111,7 @@ class DealController extends Controller
         return $this->dealerService->confirmPossessionDay($deal);
     }
 
-    public function inviteLawyer(Request $request, Deal $deal): JsonResponse {
+    public function inviteLawyer(InviteLawyerRequest $request, Deal $deal): JsonResponse {
         return $this->dealerService->inviteLawyer($request, $deal);
     }
 

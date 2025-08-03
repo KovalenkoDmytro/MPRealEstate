@@ -57,7 +57,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
         e.preventDefault();
         const query = listingService.applyFilters(form);
 
-        router.get(route("buyer.listings.index"), query, {
+        router.get(route("listings.index"), query, {
             preserveScroll: true,
             preserveState: true,
         });

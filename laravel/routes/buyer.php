@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DealController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\OfferController;
@@ -11,5 +12,13 @@ Route::prefix('buyer')->middleware(['auth', 'role:buyer'])->name('buyer.')->grou
     Route::prefix('listings')->name('listings.')->group(function () {
         Route::get('{listing}', [BuyerController::class, 'showListing'])->name('show');
         Route::post('{listing}/make-offer', [OfferController::class, 'store'])->name('makeOffer');
+    });
+
+
+    Route::prefix('deals')->name('deals.')->group(function () {
+        Route::get('/', [BuyerController::class, 'showAllDeals'])->name('index');
+        Route::patch('/{deal}/make-deposit', [DealController::class, 'markDepositMade'])->name('markDepositMade');
+        Route::patch('/{deal}/set-condition-day', [DealController::class, 'setConditionDay'])->name('setConditionDay');
+        Route::patch('/{deal}/set-possession-day', [DealController::class, 'setPossessionDay'])->name('setPossessionDay');
     });
 });

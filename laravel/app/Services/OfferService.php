@@ -57,11 +57,11 @@ class OfferService
             );
         }
 
-        $offer->update(['status' => $request->status]);
-
         if ($request->status === 'accepted') {
             $this->dealService->createDealFromOffer($offer);
         }
+
+        $offer->update(['status' => $request->status]);
 
         $offer->buyer->notify(new OfferStatusUpdated($offer->listing, $request->status));
 
