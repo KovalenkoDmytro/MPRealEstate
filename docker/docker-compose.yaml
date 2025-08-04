@@ -5,17 +5,25 @@ services:
       - "8000:80"
     volumes:
       - "./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro"
-      - "../laravel:/var/www/laravel"
+      # Mount only public assets (optional for live reload)
+      - ../laravel/public:/var/www/laravel/public:cached
     depends_on:
       - php
       - mysql
 
   php:
     build:
-      context: "./dockerfiles"
-      dockerfile: "php.Dockerfile"
+      context: ../laravel
+      dockerfile: ../docker/dockerfiles/php.Dockerfile
     volumes:
-      - "../laravel:/var/www/laravel"
+      # Mount only editable folders
+      - ../laravel/app:/var/www/laravel/app:cached
+      - ../laravel/bootstrap:/var/www/laravel/bootstrap:cached
+      - ../laravel/config:/var/www/laravel/config:cached
+      - ../laravel/database:/var/www/laravel/database:cached
+      - ../laravel/resources:/var/www/laravel/resources:cached
+      - ../laravel/routes:/var/www/laravel/routes:cached
+      - ../laravel/storage:/var/www/laravel/storage:cached
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
@@ -30,7 +38,6 @@ services:
       - "env/mysql.env"
     volumes:
       - "db_data:/var/lib/mysql"
-
 
 volumes:
   db_data:

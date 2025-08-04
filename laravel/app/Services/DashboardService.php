@@ -37,7 +37,6 @@ class DashboardService
             $user->hasRole('admin')  => Inertia::render('Users/Admin/Dashboard', [
                 'stats' => $this->getAdminStats(),
             ]),
-            default => abort(403, 'Unauthorized'),
         };
     }
 

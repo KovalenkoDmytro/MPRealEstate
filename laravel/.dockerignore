@@ -1,0 +1,7 @@
+public/storage
+storage/*
+!storage/app
+!storage/framework
+!storage/logs
+node_modules
+vendor
