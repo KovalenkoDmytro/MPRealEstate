@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { DealService } from "@/services/dealService";
 import { Deal } from "@/types";
-
-// MUI Imports
 import { Box, Checkbox, FormControlLabel, Button, Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 
 export default function DepositSection({ deal }: { deal: Deal }) {
-    const depositForm = useForm({ confirmed: false });
+    const depositForm = useForm<{ confirmed: boolean }>({ confirmed: false });
     const [depositDateTime, setDepositDateTime] = useState<Date | null>(null);
 
     const handleDepositSubmit = async (e: React.FormEvent) => {

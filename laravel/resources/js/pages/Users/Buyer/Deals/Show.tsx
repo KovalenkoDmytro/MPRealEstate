@@ -3,7 +3,7 @@ import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import {User, PropertyDetail} from "@/types";
 import DealHeader from "@/components/deal/DealHeader";
 import PropertyDetails from "@/components/deal/PropertyDetails";
-import SellerInfo from "@/components/deal/SellerInfo";
+import DealPersonInfo from "@/components/deal/DealPersonInfo";
 import DepositSection from "@/components/deal/DepositSection";
 import ConditionDayForm from "@/components/deal/ConditionDayForm";
 import PossessionDayForm from "@/components/deal/PossessionDayForm";
@@ -25,7 +25,7 @@ export default function DealShowPage({deal, auth}: { deal: PropertyDetail; auth:
 
             <PropertyDetails listing={deal.real_estate_listing}/>
 
-            {seller && <SellerInfo seller={seller}/>}
+            {seller && <DealPersonInfo person={seller}/>}
 
             <DepositSection deal={deal}/>
 
@@ -35,7 +35,7 @@ export default function DealShowPage({deal, auth}: { deal: PropertyDetail; auth:
 
             <LawyerInvite deal={deal} lawyer={lawyer}/>
 
-            <FileUploadSection deal={deal} user={auth.user}/>
+            <FileUploadSection deal={deal}/>
 
             <BreakDealSection deal={deal}/>
 
