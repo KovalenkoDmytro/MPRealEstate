@@ -28,7 +28,7 @@ export default function DealTimeline({ deal }: { deal: Deal }) {
         });
     }
 
-    if (deal.is_made) {
+    if (deal.is_security_deposit_made) {
         timeline.push({
             label: "Security Deposit sent by buyer",
             timestamp: deal.deposit_made_at!,
@@ -37,7 +37,7 @@ export default function DealTimeline({ deal }: { deal: Deal }) {
         });
     }
 
-    if (deal.is_confirmed) {
+    if (deal.is_security_deposit_confirmed) {
         timeline.push({
             label: "Seller confirmed the security deposit",
             timestamp: deal.deposit_confirmed_at!,

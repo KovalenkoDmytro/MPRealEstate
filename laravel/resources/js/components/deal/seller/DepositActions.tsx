@@ -2,7 +2,7 @@ import React from "react";
 import { PropertyDetail } from "@/types";
 
 export default function DepositActions({ deal }: { deal: PropertyDetail }) {
-    if (!deal.is_made || deal.is_confirmed) return null;
+    if (!deal.is_security_deposit_made || deal.is_security_deposit_confirmed) return null;
 
     const confirmDeposit = async () => {
         if (!confirm("Confirm deposit received?")) return;

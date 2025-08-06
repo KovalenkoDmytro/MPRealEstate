@@ -63,8 +63,8 @@ class DealService
             abort(403, 'Unauthorized');
         }
 
-        if (!$deal->is_made) {
-            $deal->is_made = true;
+        if (!$deal->is_security_deposit_made) {
+            $deal->is_security_deposit_made = true;
             $deal->save();
 
             $seller = $deal->users()->where('role', 'seller')->first();
@@ -81,13 +81,13 @@ class DealService
 
     public function confirmDeposit(Deal $deal): JsonResponse
     {
-        if (!$deal->is_made) {
+        if (!$deal->is_security_deposit_made) {
             return JsonResponder::send(
                 new ErrorResponse('Security deposit has not been marked as made.', [], 400),
             );
         }
 
-        $deal->is_confirmed = true;
+        $deal->is_security_deposit_confirmed = true;
         $deal->save();
 
         $buyer = $deal->users()->where('role', 'buyer')->first();

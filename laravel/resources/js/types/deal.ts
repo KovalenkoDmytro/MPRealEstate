@@ -23,9 +23,9 @@ export interface Deal extends BaseEntity {
     /** Optional message from the seller */
     seller_message: string | null;
     /** Whether the deal is confirmed by all parties */
-    is_confirmed: boolean;
+    is_security_deposit_confirmed: boolean;
     /** Whether the deal has been made */
-    is_made: boolean;
+    is_security_deposit_made: boolean;
     /** ID of the associated real estate listing */
     real_estate_listing_id: number | null;
     /** Whether the condition day is confirmed */

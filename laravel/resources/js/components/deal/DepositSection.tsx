@@ -33,7 +33,7 @@ export default function DepositSection({ deal }: { deal: Deal }) {
     };
 
     // Don't render if deposit isn't required or already made
-    if (!deal.security_deposit || deal.is_made) return null;
+    if (!deal.security_deposit || deal.is_security_deposit_made) return null;
 
     return (
         <Box mt={4} p={3} border="1px solid #e0e0e0" borderRadius={2}>

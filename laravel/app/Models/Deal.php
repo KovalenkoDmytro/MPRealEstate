@@ -22,8 +22,8 @@ class Deal extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'is_broken' => 'boolean',
-        'is_confirmed' => 'boolean',//Security Deposit
-        'is_made' => 'boolean',  //Security Deposit
+        'is_security_deposit_confirmed' => 'boolean',//Security Deposit
+        'is_security_deposit_made' => 'boolean',  //Security Deposit
         'is_completed' => 'boolean',
         'is_condition_day_confirmed' => 'boolean',
         'is_possession_day_confirmed' => 'boolean',
