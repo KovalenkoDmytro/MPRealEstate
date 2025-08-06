@@ -42,6 +42,7 @@ class DealService
         }
 
         $deal->security_deposit = $request->security_deposit;
+        $deal->security_deposit_set_at = now();
         $deal->save();
 
         $buyer = $deal->users()->where('role', 'buyer')->first();
@@ -65,6 +66,7 @@ class DealService
 
         if (!$deal->is_security_deposit_made) {
             $deal->is_security_deposit_made = true;
+            $deal->security_deposit_made_at =  now();
             $deal->save();
 
             $seller = $deal->users()->where('role', 'seller')->first();
@@ -88,6 +90,7 @@ class DealService
         }
 
         $deal->is_security_deposit_confirmed = true;
+        $deal->security_deposit_confirmed_at = now();
         $deal->save();
 
         $buyer = $deal->users()->where('role', 'buyer')->first();
@@ -110,6 +113,7 @@ class DealService
         }
 
         $deal->condition_day = $request->condition_day;
+        $deal->condition_day_selected_at = now();
         $deal->save();
 
         $seller = $deal->users()->where('role', 'seller')->first();
@@ -126,6 +130,7 @@ class DealService
     public function confirmConditionDay(Deal $deal): JsonResponse
     {
         $deal->is_condition_day_confirmed = true;
+        $deal->condition_day_confirmed_at = now();
         $deal->save();
 
         $buyer = $deal->users()->where('role', 'buyer')->first();
@@ -148,6 +153,7 @@ class DealService
         }
 
         $deal->possession_day = $request->possession_day;
+        $deal->possession_day_selected_at = now();
         $deal->save();
 
         $seller = $deal->users()->where('role', 'seller')->first();
@@ -164,6 +170,7 @@ class DealService
     public function confirmPossessionDay(Deal $deal): JsonResponse
     {
         $deal->is_possession_day_confirmed = true;
+        $deal->possession_day_confirmed_at = now();
         $deal->save();
 
         $buyer = $deal->users()->where('role', 'buyer')->first();
@@ -298,6 +305,7 @@ class DealService
 
         if ($accepted === 'approved') {
             $deal->is_broken = true;
+            $deal->broken_at = now();
 
             // Delete all associated files
             $deal->files->each(function ($file) {

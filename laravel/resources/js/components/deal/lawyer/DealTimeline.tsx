@@ -22,7 +22,7 @@ export default function DealTimeline({ deal }: { deal: Deal }) {
             label: `Set Required Security Deposit: $${Number(
                 deal.security_deposit
             ).toLocaleString()}`,
-            timestamp: deal.security_deposit_timestamp!,
+            timestamp: deal.security_deposit_set_at!,
             color: "#1976d2", // Blue
             Icon: LockIcon,
         });
@@ -31,7 +31,7 @@ export default function DealTimeline({ deal }: { deal: Deal }) {
     if (deal.is_security_deposit_made) {
         timeline.push({
             label: "Security Deposit sent by buyer",
-            timestamp: deal.deposit_made_at!,
+            timestamp: deal.security_deposit_made_at!,
             color: "#2e7d32", // Green
             Icon: AttachMoneyIcon,
         });
@@ -40,7 +40,7 @@ export default function DealTimeline({ deal }: { deal: Deal }) {
     if (deal.is_security_deposit_confirmed) {
         timeline.push({
             label: "Seller confirmed the security deposit",
-            timestamp: deal.deposit_confirmed_at!,
+            timestamp: deal.security_deposit_confirmed_at!,
             color: "#2e7d32",
             Icon: CheckCircleIcon,
         });
@@ -49,7 +49,7 @@ export default function DealTimeline({ deal }: { deal: Deal }) {
     if (deal.condition_day) {
         timeline.push({
             label: "Buyer selected Condition Day",
-            timestamp: deal.condition_day_at!,
+            timestamp: deal.condition_day_selected_at!,
             color: "#2e7d32",
             Icon: EventIcon,
         });
@@ -67,7 +67,7 @@ export default function DealTimeline({ deal }: { deal: Deal }) {
     if (deal.possession_day) {
         timeline.push({
             label: "Buyer selected Possession Day",
-            timestamp: deal.possession_day_at!,
+            timestamp: deal.possession_day_selected_at!,
             color: "#2e7d32",
             Icon: HomeIcon,
         });
