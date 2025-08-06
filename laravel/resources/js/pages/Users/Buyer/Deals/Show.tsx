@@ -37,7 +37,7 @@ export default function DealShowPage({deal, auth}: { deal: PropertyDetail; auth:
 
             <FileUploadSection deal={deal} user={auth.user}/>
 
-            <BreakDealSection deal={deal} authUser={auth.user}/>
+            <BreakDealSection deal={deal}/>
 
         </AuthenticatedLayout>
     );

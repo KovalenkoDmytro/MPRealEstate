@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Deal, User } from "@/types";
+import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
 
 // MUI imports
-import { TextField, Button, Box, Stack, Alert, Typography } from "@mui/material";
+import { TextField, Button, Box, Stack, Alert } from "@mui/material";
+import {useAuth} from "@/hooks/useAuth";
 
-export default function BreakDealSection({ deal, authUser }: { deal: Deal; authUser: User }) {
+export default function BreakDealSection({ deal }: { deal: Deal }) {
+    const user = useAuth();
     const [message, setMessage] = useState("");
 
     const handleBreakRequest = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -58,7 +60,7 @@ export default function BreakDealSection({ deal, authUser }: { deal: Deal; authU
             )}
 
             {/* Waiting for Confirmation */}
-            {authUser.id === deal.break_request?.initiator_id &&
+            {user.id === deal.break_request?.initiator_id &&
                 deal.break_request &&
                 deal.break_request.status === "pending" && (
                     <Alert severity="warning" sx={{ mt: 2 }}>
@@ -67,7 +69,7 @@ export default function BreakDealSection({ deal, authUser }: { deal: Deal; authU
                 )}
 
             {/* Rejected by Seller */}
-            {authUser.id === deal.break_request?.initiator_id &&
+            {user.id === deal.break_request?.initiator_id &&
                 deal.break_request &&
                 deal.break_request.status === "rejected" && (
                     <Alert severity="error" sx={{ mt: 2 }}>
@@ -78,14 +80,14 @@ export default function BreakDealSection({ deal, authUser }: { deal: Deal; authU
             {/* You Refused to Break */}
             {deal.break_request &&
                 deal.break_request.status === "rejected" &&
-                authUser.id !== deal.break_request.initiator_id && (
+                user.id !== deal.break_request.initiator_id && (
                     <Alert severity="info" sx={{ mt: 2 }}>
                         ⏳ You have refused to break the deal.
                     </Alert>
                 )}
 
             {/* Respond to Break Request */}
-            {authUser.id !== deal.break_request?.initiator_id &&
+            {user.id !== deal.break_request?.initiator_id &&
                 deal.break_request &&
                 deal.break_request.status === "pending" && (
                     <Box mt={2}>

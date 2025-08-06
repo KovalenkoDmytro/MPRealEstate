@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "@inertiajs/react";
 import { filterFilesForUser } from "@/helpers/fileHelpers";
-import { User, File, PropertyDetail } from "@/types";
-
-// MUI imports
+import { File, PropertyDetail } from "@/types";
 import {
     Box,
     Typography,
@@ -18,14 +16,11 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
+import {useAuth} from "@/hooks/useAuth";
 
-type PageProps = {
-    deal: PropertyDetail;
-    user: User;
-};
-
-export default function FileUploadSection({ deal, user }: PageProps) {
+export default function FileUploadSection({ deal }: { deal: PropertyDetail;}) {
     // Initialize file upload form
+    const user = useAuth();
     const { data, setData, post, progress } = useForm({ file: null as File | null });
 
     // Filter files based on user permissions

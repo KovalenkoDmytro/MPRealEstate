@@ -1,6 +1,6 @@
 import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
-import { User, PropertyDetail } from "@/types";
+import { PropertyDetail } from "@/types";
 import DealHeader from "@/components/deal/DealHeader";
 import PropertyDetails from "@/components/deal/PropertyDetails";
 import SellerInfo from "@/components/deal/SellerInfo";
@@ -13,7 +13,8 @@ import ConditionDayActions from "@/components/deal/seller/ConditionDayActions";
 import PossessionDayActions from "@/components/deal/seller/PossessionDayActions";
 import SetDepositForm from "@/components/deal/seller/SetDepositForm";
 
-export default function SellerDealShowPage({ deal, auth }: { deal: PropertyDetail; auth: { user: User } }) {
+export default function SellerDealShowPage({ deal }: { deal: PropertyDetail;}) {
+
     const buyer = deal.users.find((user) => user.role === "buyer");
     const lawyer = deal.users.find((user) => user.role === "lawyer");
 
@@ -35,9 +36,9 @@ export default function SellerDealShowPage({ deal, auth }: { deal: PropertyDetai
 
             <LawyerInvite deal={deal} lawyer={lawyer} />
 
-            <FileUploadSection deal={deal} user={auth.user} />
+            <FileUploadSection deal={deal} />
 
-            <BreakDealSection deal={deal} authUser={auth.user} />
+            <BreakDealSection deal={deal}  />
         </AuthenticatedLayout>
     );
 }

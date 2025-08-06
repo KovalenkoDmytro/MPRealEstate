@@ -1,19 +1,18 @@
-import {Head, useForm, Link} from "@inertiajs/react";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import {Head, useForm} from "@inertiajs/react";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import {useState} from "react";
 import {useForm as useFormInvite} from '@inertiajs/react';
-import type { Deal } from "@/types/pageProps"; // or wherever DealProps is defined
-import type { User } from "@/types"; // adjust if your User type is elsewhere
-import {filterFilesForUser} from "@/Helpers/fileHelpers";
+import {PropertyDetail, User} from "@/types"; // adjust if your User type is elsewhere
+import {filterFilesForUser} from "@/helpers/fileHelpers";
+import {useAuth} from "@/hooks/useAuth";
 
 
 
-export default function DealShowPage({deal, auth}: {deal: Deal, auth: {user: User}})
+export default function DealShowPage({deal}: {deal: PropertyDetail})
 {
-    // ✅ Find the seller in the users array
+    const user = useAuth();
     const seller = deal.users.find(user => user.role === "seller");
     const buyer = deal.users.find(user => user.role === "buyer");
-    const {user} = auth
 
     // ✅ File Upload Handling
     const {data, setData, post, progress} = useForm({file: null as File | null});
