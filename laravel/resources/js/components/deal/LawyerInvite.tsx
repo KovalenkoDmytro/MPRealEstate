@@ -20,8 +20,9 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
         }
     };
 
+
     // If lawyer already assigned
-    if (lawyer?.is_buyer_lawyer) {
+    if (lawyer?.is_buyer_lawyer || lawyer?.is_seller_lawyer) {
         return (
             <Box mt={4} p={3} border="1px solid #e0e0e0" borderRadius={2} bgcolor="#e8f5e9">
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
