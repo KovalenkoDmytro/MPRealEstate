@@ -134,6 +134,11 @@ return [
     */
 
     'watchers' => [
+//        App\Telescope\Watchers\CustomLogWatcher::class => [
+//            'enabled' => true,
+//            'level' => 'debug',
+//        ],
+
         Watchers\BatchWatcher::class => env('TELESCOPE_BATCH_WATCHER', true),
 
         Watchers\CacheWatcher::class => [
@@ -172,7 +177,7 @@ return [
 
         Watchers\LogWatcher::class => [
             'enabled' => env('TELESCOPE_LOG_WATCHER', true),
-            'level' => 'error',
+            'level' => 'debug',
         ],
 
         Watchers\MailWatcher::class => env('TELESCOPE_MAIL_WATCHER', true),

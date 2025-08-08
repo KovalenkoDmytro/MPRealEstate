@@ -25,7 +25,7 @@ class StoreDealFileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'file' => 'required|file|max:10240',
+            'file' => 'required|file|mimes:doc,docx,pdf|max:10240',
         ];
     }
 }

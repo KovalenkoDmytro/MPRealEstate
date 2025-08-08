@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Gate;
+use Laravel\Telescope\EntryType;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeApplicationServiceProvider;
-
+use Illuminate\Support\Facades\Event;
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
     /**
@@ -15,19 +17,16 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     public function register(): void
     {
         // Telescope::night();
+//        Event::listen(MessageLogged::class, function ($event) {
+//            Telescope::recordLog($event);
+//        });
 
         $this->hideSensitiveRequestDetails();
 
-        $isLocal = $this->app->environment('local');
-
-        Telescope::filter(function (IncomingEntry $entry) use ($isLocal) {
-            return $isLocal ||
-                   $entry->isReportableException() ||
-                   $entry->isFailedRequest() ||
-                   $entry->isFailedJob() ||
-                   $entry->isScheduledTask() ||
-                   $entry->hasMonitoredTag();
+        Telescope::filter(function (IncomingEntry $entry) {
+            return true;
         });
+
     }
 
     /**

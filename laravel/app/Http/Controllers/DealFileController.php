@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreDealFileRequest;
 use App\Services\DealFileService;
 
 use App\Models\Deal;
@@ -20,7 +21,7 @@ class DealFileController extends Controller
         $this->dealFileService = $dealFileService;
     }
 
-    public function store(Request $request, Deal $deal): RedirectResponse {
+    public function store(StoreDealFileRequest $request, Deal $deal): RedirectResponse {
         $this->dealFileService->storeFile($request, $deal);
         return back()->with('success', 'File uploaded successfully.');
     }
