@@ -1,6 +1,4 @@
 export const DealService = {
-    //todo  route("seller.deals.setDeposit", deal.id)
-
 
     async setDeposit(dealId: number, securityDeposit: number) {
         return await fetchWithCsrf(route("seller.deals.setDeposit", dealId), {
@@ -20,7 +18,7 @@ export const DealService = {
     },
 
     async confirmDeposit(dealId: number, depositDateTime : Date) {
-        return await fetchWithCsrf(`/seller/deals/${dealId}/confirm-deposit`, {
+        return await fetchWithCsrf(route("seller.deals.confirmDeposit", dealId), {
             method: "PATCH",
             body: JSON.stringify({
                 is_security_deposit_confirmed: true,
@@ -30,7 +28,7 @@ export const DealService = {
     },
 
     async setConditionDay(dealId: number, conditionDay: string) {
-        return await fetchWithCsrf(`/buyer/deals/${dealId}/set-condition-day`, {
+        return await fetchWithCsrf( route('buyer.deals.setConditionDay', dealId), {
             method: "PATCH",
             body: JSON.stringify({ condition_day: conditionDay }),
         });
@@ -43,7 +41,7 @@ export const DealService = {
     // },
 
     async setPossessionDay(dealId: number, possessionDay: string) {
-        return await fetchWithCsrf(`/buyer/deals/${dealId}/set-possession-day`, {
+        return await fetchWithCsrf( route('buyer.deals.setPossessionDay', dealId), {
             method: "PATCH",
             body: JSON.stringify({ possession_day: possessionDay }),
         });
@@ -56,25 +54,26 @@ export const DealService = {
     // },
 
     async inviteLawyer(dealId: number, lawyerCode: string) {
-        return await fetchWithCsrf(`/deals/${dealId}/invite-lawyer`, {
+        return await fetchWithCsrf(route('deals.inviteLawyer', dealId), {
             method: "POST",
             body: JSON.stringify({ lawyer_code: lawyerCode }),
         });
     },
 
     async breakDeal(dealId: number, message: string) {
-        return await fetchWithCsrf(`/deals/${dealId}/break-deal`, {
+        return await fetchWithCsrf(route('deals.break.request', dealId), {
             method: "POST",
             body: JSON.stringify({ message }),
         });
     },
 
-    async respondToBreakRequest(dealId: number, response: "approved" | "rejected") {
-        return await fetchWithCsrf(`/deals/${dealId}/break-response`, {
-            method: "POST",
-            body: JSON.stringify({ response }),
-        });
-    },
+
+    // async respondToBreakRequest(dealId: number, response: "approved" | "rejected") {
+    //     return await fetchWithCsrf(`/deals/${dealId}/break-response`, {
+    //         method: "POST",
+    //         body: JSON.stringify({ response }),
+    //     });
+    // },
 };
 
 // Utility function to handle CSRF-enabled fetch requests
