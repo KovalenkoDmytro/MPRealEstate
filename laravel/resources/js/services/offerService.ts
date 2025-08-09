@@ -1,3 +1,4 @@
+import { api } from "@/axios";
 import { OfferStatus } from "@/types";
 
 export type OfferPayload = {
@@ -31,37 +32,30 @@ export const offerService = {
         formData.append("message", payload.message);
 
         try {
-            const response = await fetch(route("buyer.listings.makeOffer", listingId), {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN":
-                        (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || "",
-                    Accept: "application/json",
-                },
-                body: formData,
-            });
-
-            const data: MakeOfferApiResponse = await response.json();
-            return { ok: response.ok, status: response.status, data };
-        } catch (error) {
-            console.error("Fetch failed:", error);
-            throw new Error("Network error. Please try again later.");
+            const r = await api.post(
+                route("buyer.listings.makeOffer", listingId, false),
+                formData,
+                { headers: { Accept: "application/json" } }
+            );
+            return { ok: true, status: r.status, data: r.data as MakeOfferApiResponse };
+        } catch (err: any) {
+            const status = err?.response?.status ?? 0;
+            const data = (err?.response?.data ?? null) as MakeOfferApiResponse | null;
+            return Promise.reject(
+                new Error(
+                    data && (data as any).message
+                        ? (data as any).message
+                        : status ? `Request failed (${status})` : "Network error. Please try again later."
+                )
+            );
         }
     },
 
     async getUserOffers<T = any>(listingId: number): Promise<T> {
-        const response = await fetch(route("buyer.listings.userOffers", listingId), {
-            method: "GET",
-            headers: {
-                Accept: "application/json",
-            },
+        const r = await api.get(route("buyer.listings.userOffers", listingId, false), {
+            headers: { Accept: "application/json" },
         });
-
-        if (!response.ok) {
-            throw new Error(`Failed to fetch user offers (Status: ${response.status})`);
-        }
-
-        return response.json();
+        return r.data as T;
     },
 
     async updateOfferStatus(
@@ -69,21 +63,23 @@ export const offerService = {
         status: "accepted" | "rejected"
     ): Promise<ApiResponse<UpdateStatusOfferApiResponse>> {
         try {
-            const response = await fetch(`/seller/offers/${offerId}/update-status`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
-                    Accept: "application/json",
-                },
-                body: JSON.stringify({ status }),
-            });
-
-            const data: UpdateStatusOfferApiResponse = await response.json();
-            return { ok: response.ok, status: response.status, data };
-        } catch (error) {
-            console.error("Update offer status failed:", error);
-            throw new Error("Network error. Please try again later.");
+            // keep relative URL; swap to a named route if you have one
+            const r = await api.patch(
+                `/seller/offers/${offerId}/update-status`,
+                { status },
+                { headers: { Accept: "application/json" } }
+            );
+            return { ok: true, status: r.status, data: r.data as UpdateStatusOfferApiResponse };
+        } catch (err: any) {
+            const status = err?.response?.status ?? 0;
+            const data = (err?.response?.data ?? null) as UpdateStatusOfferApiResponse | null;
+            return Promise.reject(
+                new Error(
+                    (data as any)?.message
+                        ? (data as any).message
+                        : status ? `Request failed (${status})` : "Network error. Please try again later."
+                )
+            );
         }
-    }
+    },
 };

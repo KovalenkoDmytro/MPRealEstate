@@ -1,102 +1,84 @@
-export const DealService = {
+import {api} from "@/axios";
 
+
+export const DealService = {
     async setDeposit(dealId: number, securityDeposit: number) {
-        return await fetchWithCsrf(route("seller.deals.setDeposit", dealId), {
-            method: "PATCH",
-            body: JSON.stringify({ security_deposit: securityDeposit }),
-        });
+        const r = await api
+            .patch(route('seller.deals.setDeposit', dealId, false), {
+                security_deposit: securityDeposit,
+            });
+        return r.data;
     },
 
-    async markDepositMade(dealId: number, depositDateTime: Date ) {
-        return await fetchWithCsrf(route("buyer.deals.markDepositMade", dealId), {
-            method: "PATCH",
-            body: JSON.stringify({
+    async markDepositMade(dealId: number, depositDateTime: Date) {
+        const r = await api
+            .patch(route('buyer.deals.markDepositMade', dealId, false), {
                 is_security_deposit_made: true,
                 security_deposit_made_at: depositDateTime,
-            }),
-        });
+            });
+        return r.data;
     },
 
-    async confirmDeposit(dealId: number, depositDateTime : Date) {
-        return await fetchWithCsrf(route("seller.deals.confirmDeposit", dealId), {
-            method: "PATCH",
-            body: JSON.stringify({
+    async confirmDeposit(dealId: number, depositDateTime: Date) {
+        const r = await api
+            .patch(route('seller.deals.confirmDeposit', dealId, false), {
                 is_security_deposit_confirmed: true,
                 security_deposit_confirmed_at: depositDateTime,
-            }),
-        });
+            });
+        return r.data;
     },
 
     async setConditionDay(dealId: number, conditionDay: string) {
-        return await fetchWithCsrf( route('buyer.deals.setConditionDay', dealId), {
-            method: "PATCH",
-            body: JSON.stringify({ condition_day: conditionDay }),
-        });
+        const r = await api
+            .patch(route('buyer.deals.setConditionDay', dealId, false), {
+                condition_day: conditionDay,
+            });
+        return r.data;
     },
 
     async confirmConditionDay(dealId: number) {
-        return await fetchWithCsrf(route('seller.deals.confirmConditionDay', dealId), {
-            method: "PATCH",
-        });
+        const r = await api
+            .patch(route('seller.deals.confirmConditionDay', dealId, false), {});
+        return r.data;
     },
 
     async setPossessionDay(dealId: number, possessionDay: string) {
-        return await fetchWithCsrf( route('buyer.deals.setPossessionDay', dealId), {
-            method: "PATCH",
-            body: JSON.stringify({ possession_day: possessionDay }),
-        });
+        const r = await api
+            .patch(route('buyer.deals.setPossessionDay', dealId, false), {
+                possession_day: possessionDay,
+            });
+        return r.data;
     },
 
     async confirmPossessionDay(dealId: number) {
-        return await fetchWithCsrf(route('seller.deals.confirmPossessionDay', dealId), {
-            method: "PATCH",
-        });
+        const r = await api
+            .patch(route('seller.deals.confirmPossessionDay', dealId, false), {});
+        return r.data;
     },
 
     async inviteLawyer(dealId: number, lawyerCode: string) {
-        return await fetchWithCsrf(route('deals.inviteLawyer', dealId), {
-            method: "POST",
-            body: JSON.stringify({ lawyer_code: lawyerCode }),
-        });
+        const r = await api
+            .post(route('deals.inviteLawyer', dealId, false), {
+                lawyer_code: lawyerCode,
+            });
+        return r.data;
     },
 
     async breakTheDeal(dealId: number, message: string) {
-        return await fetchWithCsrf(route('deals.break.request', dealId), {
-            method: "POST",
-            body: JSON.stringify({
+        const r = await api
+            .post(route('deals.break.request', dealId, false), {
                 action: 'request',
-                message
-            }),
-        });
+                message,
+            });
+        return r.data;
     },
 
-    async respondToBreakTheDeal(dealId: number, response: "approved" | "rejected") {
-        return await fetchWithCsrf(route('deals.break.request', dealId), {
-            method: "POST",
-            body: JSON.stringify({
+    async respondToBreakTheDeal(dealId: number, response: 'approved' | 'rejected') {
+        const r = await api
+            .post(route('deals.break.request', dealId, false), {
                 action: 'respond',
-                response
-            }),
-        });
+                response,
+            });
+        return r.data;
     },
 };
-
-// Utility function to handle CSRF-enabled fetch requests
-async function fetchWithCsrf(url: string, options: RequestInit) {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-    const headers = {
-        'X-CSRF-TOKEN': csrfToken,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        ...(options.headers || {}),
-    };
-
-    const response = await fetch(url, { ...options, headers });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'An error occurred');
-    }
-
-    return response.json();
-}

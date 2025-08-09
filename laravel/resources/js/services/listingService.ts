@@ -1,79 +1,59 @@
+import { api } from "@/axios";
+
 export const listingService = {
     // Toggle favorite
     async toggleFavorite(listingId: number, isFavorite: boolean) {
-        const url = isFavorite
-            ? route("favorites.destroy", listingId)
-            : route("favorites.store");
-
-        const options: RequestInit = {
-            method: isFavorite ? "DELETE" : "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN":
-                    (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || "",
-            },
-            body: isFavorite ? undefined : JSON.stringify({ listing_id: listingId }),
-        };
-
-        const response = await fetch(url, options);
-        if (!response.ok) throw new Error("Failed to toggle favorite");
-        return response.json();
+        if (isFavorite) {
+            const r = await api.delete(route("favorites.destroy", listingId, false));
+            return r.data;
+        } else {
+            const r = await api.post(route("favorites.store", [], false), {
+                listing_id: listingId,
+            });
+            return r.data;
+        }
     },
 
     // Apply filters (return filtered query object)
     applyFilters(form: Record<string, any>) {
         return Object.fromEntries(
-            Object.entries(form).filter(([_, value]) => value !== "" && value !== false)
+            Object.entries(form).filter(([, value]) => value !== "" && value !== false)
         );
     },
 
-    // Update seller listing
+    // Update seller listing (multipart)
     async updateSellerListing(listingId: number, formData: FormData) {
-        const response = await fetch(route("seller.listings.update", { listing: listingId }), {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": (
-                    document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
-                )?.content || "",
-                Accept: "application/json",
-                "X-HTTP-Method-Override": "PUT",
-            },
-            body: formData,
-        });
-
-        if (response.ok) {
-            return { success: true };
-        } else if (response.status === 422) {
-            const json = await response.json();
-            return { success: false, errors: json.errors };
-        } else {
-            console.error("Unexpected error", response);
-            throw new Error("Unexpected error occurred");
+        try {
+            const r = await api.put(
+                route("seller.listings.update", { listing: listingId }, false),
+                formData,
+                { headers: { Accept: "application/json" } } // let Axios set multipart boundary
+            );
+            return { success: true, data: r.data };
+        } catch (err: any) {
+            if (err.response?.status === 422) {
+                return { success: false, errors: err.response.data?.errors ?? {} };
+            }
+            console.error("Unexpected error", err);
+            throw new Error(err.message || "Unexpected error occurred");
         }
     },
 
-    // **Create seller listing**
+    // Create seller listing (multipart)
     async createSellerListing(formData: FormData) {
-        console.log(formData)
-        const response = await fetch(route("seller.listings.store"), {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": (
-                    document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement
-                )?.content || "",
-                Accept: "application/json",
-            },
-            body: formData,
-        });
-
-        if (response.ok) {
-            return { success: true };
-        } else if (response.status === 422) {
-            const json = await response.json();
-            return { success: false, errors: json.errors };
-        } else {
-            console.error("Unexpected error", response);
-            throw new Error("Unexpected error occurred");
+        try {
+            const r = await api.post(
+                route("seller.listings.store", [], false),
+                formData,
+                { headers: { Accept: "application/json" } }
+            );
+            return { success: true, data: r.data };
+        } catch (err: any) {
+            if (err.response?.status === 422) {
+                return { success: false, errors: err.response.data?.errors ?? {} };
+            }
+            console.error("Unexpected error", err);
+            throw new Error(err.message || "Unexpected error occurred");
         }
     },
 };
