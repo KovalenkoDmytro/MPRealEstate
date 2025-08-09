@@ -25,7 +25,7 @@ Route::prefix('seller')->middleware(['auth', 'role:seller'])->name('seller.')->g
 
     Route::prefix('deals')->name('deals.')->group(function () {
         Route::patch('{deal}/confirm-condition-day', [DealController::class, 'confirmConditionDay'])->name('confirmConditionDay');
-        Route::post('{deal}/confirm-deposit', [DealController::class, 'confirmDeposit'])->name('confirmDeposit');
+        Route::patch('{deal}/confirm-deposit', [DealController::class, 'confirmDeposit'])->name('confirmDeposit');
         Route::patch('{deal}/confirm-possession-day', [DealController::class, 'confirmPossessionDay'])->name('confirmPossessionDay');
         Route::patch('{deal}/set-deposit', [DealController::class, 'setDeposit'])->name('setDeposit');
     });

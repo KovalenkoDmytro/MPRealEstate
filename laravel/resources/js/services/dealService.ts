@@ -1,21 +1,28 @@
 export const DealService = {
-    async setDeposit(dealId: number, securityDeposit: number) {
-        return await fetchWithCsrf(`/deals/${dealId}/security-deposit`, {
-            method: "POST",
-            body: JSON.stringify({ security_deposit: securityDeposit }),
-        });
-    },
+    // async setDeposit(dealId: number, securityDeposit: number) {
+    //     return await fetchWithCsrf(`/deals/${dealId}/security-deposit`, {
+    //         method: "POST",
+    //         body: JSON.stringify({ security_deposit: securityDeposit }),
+    //     });
+    // },
 
-    async markDepositMade(dealId: number) {
-        return await fetchWithCsrf(`/buyer/deals/${dealId}/make-deposit`, {
-            method: "PATCH",
-            body: JSON.stringify({ confirmed: true }),
-        });
-    },
+    // async markDepositMade(dealId: number, time: Date ) {
+    //     return await fetchWithCsrf(`/buyer/deals/${dealId}/make-deposit`, {
+    //         method: "PATCH",
+    //         body: JSON.stringify({
+    //             is_security_deposit_made: true,
+    //             security_deposit_made_at: time,
+    //         }),
+    //     });
+    // },
 
-    async confirmDeposit(dealId: number) {
-        return await fetchWithCsrf(`/deals/${dealId}/confirm-deposit`, {
+    async confirmDeposit(dealId: number, depositDateTime : Date) {
+        return await fetchWithCsrf(`/seller/deals/${dealId}/confirm-deposit`, {
             method: "PATCH",
+            body: JSON.stringify({
+                is_security_deposit_confirmed: true,
+                security_deposit_confirmed_at: depositDateTime,
+            }),
         });
     },
 
@@ -26,11 +33,11 @@ export const DealService = {
         });
     },
 
-    async confirmConditionDay(dealId: number) {
-        return await fetchWithCsrf(`/deals/${dealId}/confirm-condition-day`, {
-            method: "PATCH",
-        });
-    },
+    // async confirmConditionDay(dealId: number) {
+    //     return await fetchWithCsrf(`/deals/${dealId}/confirm-condition-day`, {
+    //         method: "PATCH",
+    //     });
+    // },
 
     async setPossessionDay(dealId: number, possessionDay: string) {
         return await fetchWithCsrf(`/buyer/deals/${dealId}/set-possession-day`, {
@@ -39,11 +46,11 @@ export const DealService = {
         });
     },
 
-    async confirmPossessionDay(dealId: number) {
-        return await fetchWithCsrf(`/deals/${dealId}/confirm-possession-day`, {
-            method: "PATCH",
-        });
-    },
+    // async confirmPossessionDay(dealId: number) {
+    //     return await fetchWithCsrf(`/deals/${dealId}/confirm-possession-day`, {
+    //         method: "PATCH",
+    //     });
+    // },
 
     async inviteLawyer(dealId: number, lawyerCode: string) {
         return await fetchWithCsrf(`/deals/${dealId}/invite-lawyer`, {

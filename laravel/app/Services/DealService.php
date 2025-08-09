@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
+use App\Http\Requests\ConfirmDepositRequest;
 use App\Http\Requests\InviteLawyerRequest;
 use App\Http\Requests\SetConditionDayRequest;
 use App\Http\Requests\SetDepositRequest;
@@ -24,6 +25,7 @@ use App\Notifications\PossessionDaySet;
 use App\Notifications\SecurityDepositSet;
 use App\Notifications\DepositConfirmed;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -66,7 +68,7 @@ class DealService
 
         if (!$deal->is_security_deposit_made) {
             $deal->is_security_deposit_made = true;
-            $deal->security_deposit_made_at =  now();
+            $deal->security_deposit_made_at =  $request['security_deposit_made_at'];
             $deal->save();
 
             $seller = $deal->users()->where('role', 'seller')->first();
@@ -81,16 +83,11 @@ class DealService
         );
     }
 
-    public function confirmDeposit(Deal $deal): JsonResponse
+    public function confirmDeposit(ConfirmDepositRequest $request, Deal $deal): JsonResponse
     {
-        if (!$deal->is_security_deposit_made) {
-            return JsonResponder::send(
-                new ErrorResponse('Security deposit has not been marked as made.', [], 400),
-            );
-        }
 
-        $deal->is_security_deposit_confirmed = true;
-        $deal->security_deposit_confirmed_at = now();
+        $deal->is_security_deposit_confirmed = $request->is_security_deposit_confirmed;
+        $deal->security_deposit_confirmed_at = Carbon::parse($request->security_deposit_confirmed_at);
         $deal->save();
 
         $buyer = $deal->users()->where('role', 'buyer')->first();

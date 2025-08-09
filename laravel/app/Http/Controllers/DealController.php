@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
+use App\Http\Requests\ConfirmDepositRequest;
 use App\Http\Requests\DealBreakRequest;
 use App\Http\Requests\InviteLawyerRequest;
 use App\Http\Requests\SetConditionDayRequest;
@@ -32,14 +33,14 @@ class DealController extends Controller
     /**
      * Show all deals in Inertia React view.
      */
-    public function index(): Response
-    {
-        $deals = Deal::with(['users', 'realEstateListing'])->get();
-
-        return Inertia::render('Deals/Index', [
-            'deals' => $deals,
-        ]);
-    }
+//    public function index(): Response
+//    {
+//        $deals = Deal::with(['users', 'realEstateListing'])->get();
+//
+//        return Inertia::render('Deals/Index', [
+//            'deals' => $deals,
+//        ]);
+//    }
 
     /**
      * Show a single deal with users and step details.
@@ -59,6 +60,7 @@ class DealController extends Controller
             'lawyer' => 'Users/Lawyer/Deals/Show',
             'seller' => 'Users/Seller/Deals/Show',
             'buyer'  => 'Users/Buyer/Deals/Show',
+            default => throw new \Exception('Unexpected match value'),
         };
 
         return Inertia::render($viewPath, [
@@ -88,11 +90,12 @@ class DealController extends Controller
     }
 
     public function markDepositMade(Request $request, Deal $deal): JsonResponse {
+        dd('markDepositMade');
         return $this->dealerService->markDepositMade($request, $deal);
     }
 
-    public function confirmDeposit(Deal $deal): JsonResponse {
-        return $this->dealerService->confirmDeposit($deal);
+    public function confirmDeposit(ConfirmDepositRequest $request, Deal $deal): JsonResponse {
+        return $this->dealerService->confirmDeposit($request , $deal);
     }
 
     public function setConditionDay(SetConditionDayRequest $request, Deal $deal): JsonResponse {

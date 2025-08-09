@@ -4,7 +4,6 @@ import { PropertyDetail } from "@/types";
 import DealHeader from "@/components/deal/DealHeader";
 import PropertyDetails from "@/components/deal/PropertyDetails";
 import DealPersonInfo from "@/components/deal/DealPersonInfo";
-import DepositSection from "@/components/deal/DepositSection";
 import LawyerInvite from "@/components/deal/LawyerInvite";
 import FileUploadSection from "@/components/deal/FileUploadSection";
 import BreakDealSection from "@/components/deal/BreakDealSection";
@@ -28,7 +27,6 @@ export default function SellerDealShowPage({ deal }: { deal: PropertyDetail;}) {
 
             {buyer && <DealPersonInfo person={buyer} />}
 
-            <DepositSection deal={deal} />
             <SetDepositForm deal={deal} />
             <DepositActions deal={deal} />
             <ConditionDayActions deal={deal} />

@@ -6,11 +6,13 @@ import { Box, Checkbox, FormControlLabel, Button, Typography } from "@mui/materi
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import {useAuth} from "@/hooks/useAuth";
 
 export default function DepositSection({ deal }: { deal: Deal }) {
     const depositForm = useForm<{ confirmed: boolean }>({ confirmed: false });
     const [depositDateTime, setDepositDateTime] = useState<Date | null>(null);
-
+    const user = useAuth()
+    console.log(user.role)
     const handleDepositSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -20,10 +22,8 @@ export default function DepositSection({ deal }: { deal: Deal }) {
         }
 
         try {
-            await DealService.markDepositMade(deal.id);
+            await DealService.markDepositMade(deal.id, depositDateTime.toISOString());
 
-            // Optionally send depositDateTime to backend
-            // await DealService.setDepositDateTime(deal.id, depositDateTime.toISOString());
 
             alert("Deposit confirmed successfully!");
             window.location.reload();
@@ -43,6 +43,7 @@ export default function DepositSection({ deal }: { deal: Deal }) {
 
             <Box component="form" onSubmit={handleDepositSubmit} display="flex" flexDirection="column" gap={2}>
                 {/* Checkbox */}
+
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -53,10 +54,11 @@ export default function DepositSection({ deal }: { deal: Deal }) {
                     label="I confirm I have made the security deposit."
                 />
 
+
                 {/* MUI DateTimePicker */}
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DateTimePicker
-                        label="Deposit Date & Time"
+                        label="I confirm I have recived the security deposit."
                         value={depositDateTime}
                         onChange={(newValue) => setDepositDateTime(newValue)}
                         slotProps={{ textField: { fullWidth: true } }}
