@@ -5,9 +5,11 @@ import { DealService } from "@/services/dealService";
 
 // MUI imports
 import { Box, Typography, TextField, Button, Stack, Alert } from "@mui/material";
+import {useAuth} from "@/hooks/useAuth";
 
 export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: User }) {
     const inviteForm = useForm({ lawyer_code: "" });
+    const user = useAuth();
 
     const handleInvite = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,26 +22,19 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
         }
     };
 
+    const roleKey = user?.role === 'seller' ? 'is_seller_lawyer' : user?.role === 'buyer'  ? 'is_buyer_lawyer'  : null;
 
-    // If lawyer already assigned
-    if (lawyer?.is_buyer_lawyer || lawyer?.is_seller_lawyer) {
+    if (roleKey && lawyer?.[roleKey]) {
         return (
             <Box mt={4} p={3} border="1px solid #e0e0e0" borderRadius={2} bgcolor="#e8f5e9">
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    📩 Your Lawyer
-                </Typography>
-                <Typography>
-                    <strong>Name:</strong> {lawyer.name}
-                </Typography>
-                <Typography>
-                    <strong>Email:</strong> {lawyer.email}
-                </Typography>
-                <Typography>
-                    <strong>Lawyer Code:</strong> {lawyer.lawyer_number || "N/A"}
-                </Typography>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>📩 Your Lawyer</Typography>
+                <Typography><strong>Name:</strong> {lawyer.name}</Typography>
+                <Typography><strong>Email:</strong> {lawyer.email}</Typography>
+                <Typography><strong>Lawyer Code:</strong> {lawyer.lawyer_number || 'N/A'}</Typography>
             </Box>
         );
     }
+
 
     // Invite form
     return (

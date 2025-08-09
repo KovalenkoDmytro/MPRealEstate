@@ -16,7 +16,7 @@ import SetDepositForm from "@/components/deal/seller/SetDepositForm";
 export default function SellerDealShowPage({ deal }: { deal: PropertyDetail;}) {
 
     const buyer = deal.users.find((user) => user.role === "buyer");
-    const lawyer = deal.users.find((user) => user.role === "lawyer");
+    const lawyer = deal.users.find((user) => user.role === "lawyer" && user.is_seller_lawyer);
 
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold">Deal Details</h2>}>

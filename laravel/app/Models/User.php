@@ -20,6 +20,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $casts = [
+        'is_buyer_lawyer' => 'boolean',
+        'is_seller_lawyer' => 'boolean',
+    ];
 
     protected function casts(): array
     {
