@@ -1,5 +1,6 @@
 import React from "react";
 import { PropertyDetail } from "@/types";
+import {DealService} from "@/services/dealService";
 
 export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) {
     if (!deal.condition_day || deal.is_condition_day_confirmed) return null;
@@ -7,13 +8,7 @@ export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) 
     const confirmConditionDay = async () => {
         if (!confirm("Confirm the buyer's proposed condition day?")) return;
         try {
-            const response = await fetch(route("seller.deals.confirmConditionDay", deal.id), {
-                method: "PATCH",
-                headers: {
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
-                    "Accept": "application/json",
-                },
-            });
+            const response = await DealService.confirmConditionDay(deal.id);
 
             if (response.ok) {
                 alert("Condition day confirmed.");

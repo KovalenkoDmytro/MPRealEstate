@@ -1,35 +1,45 @@
 import React, { useState } from "react";
 import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
-
-// MUI imports
 import { TextField, Button, Box, Stack, Alert } from "@mui/material";
-import {useAuth} from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 
-export default function BreakDealSection({ deal }: { deal: Deal }) {
-    const user = useAuth();
+type Props = { deal: Deal };
+
+export default function BreakDealSection({ deal }: Props) {
+    const user = useAuth(); // assumes it returns { id: string | number, ... }
     const [message, setMessage] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
-    const handleBreakRequest = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        const action = event.currentTarget.dataset.action;
-        const value = event.currentTarget.dataset.value;
-
-        if (!confirm(`Are you sure you want to ${action === "request" ? "request to break" : value} this deal?`)) return;
-
+    const handleBreakTheDealRequest = async () => {
         try {
-            if (action === "request") {
-                await DealService.breakDeal(deal.id, message);
-            } else {
-                const response = value === "accept" ? "approved" : "rejected";
-                await DealService.respondToBreakRequest(deal.id, response as "approved" | "rejected");
-            }
-
+            setSubmitting(true);
+            await DealService.breakTheDeal(deal.id, message.trim());
             alert("Action completed successfully.");
             window.location.reload();
         } catch (error: any) {
-            alert(error.message || "Action failed.");
+            alert(error?.message ?? "Action failed.");
+        } finally {
+            setSubmitting(false);
         }
     };
+
+    // NOTE: align the payload/status strings with your backend: 'approved' | 'rejected'
+    const handleRespondToBreakTheDeal = async (response: "approved" | "rejected") => {
+        try {
+            setSubmitting(true);
+            await DealService.respondToBreakTheDeal(deal.id, response);
+            alert("Action completed successfully.");
+            window.location.reload();
+        } catch (error: any) {
+            alert(error?.message ?? "Action failed.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const isInitiator = user?.id === deal.break_request?.initiator_id;
+    const status = deal.break_request?.status; // 'pending' | 'rejected' | 'approved' | undefined
 
     return (
         <Box mt={4}>
@@ -50,72 +60,61 @@ export default function BreakDealSection({ deal }: { deal: Deal }) {
                     <Button
                         variant="contained"
                         color="error"
-                        data-action="request"
-                        onClick={handleBreakRequest}
-                        disabled={!message.trim()}
+                        disabled={!message.trim() || submitting}
+                        onClick={handleBreakTheDealRequest}
                     >
-                        Request to Break Deal
+                        {submitting ? "Submitting..." : "Request to Break Deal"}
                     </Button>
                 </Stack>
             )}
 
             {/* Waiting for Confirmation */}
-            {user.id === deal.break_request?.initiator_id &&
-                deal.break_request &&
-                deal.break_request.status === "pending" && (
-                    <Alert severity="warning" sx={{ mt: 2 }}>
-                        ⏳ Waiting for seller confirmation to break the deal.
-                    </Alert>
-                )}
+            {isInitiator && status === "pending" && (
+                <Alert severity="warning" sx={{ mt: 2 }}>
+                    ⏳ Waiting for seller confirmation to break the deal.
+                </Alert>
+            )}
 
             {/* Rejected by Seller */}
-            {user.id === deal.break_request?.initiator_id &&
-                deal.break_request &&
-                deal.break_request.status === "rejected" && (
-                    <Alert severity="error" sx={{ mt: 2 }}>
-                        Seller rejected your request to break the deal.
-                    </Alert>
-                )}
+            {isInitiator && status === "rejected" && (
+                <Alert severity="error" sx={{ mt: 2 }}>
+                    Seller rejected your request to break the deal.
+                </Alert>
+            )}
 
             {/* You Refused to Break */}
-            {deal.break_request &&
-                deal.break_request.status === "rejected" &&
-                user.id !== deal.break_request.initiator_id && (
-                    <Alert severity="info" sx={{ mt: 2 }}>
-                        ⏳ You have refused to break the deal.
-                    </Alert>
-                )}
+            {!isInitiator && status === "rejected" && (
+                <Alert severity="info" sx={{ mt: 2 }}>
+                    ⏳ You have refused to break the deal.
+                </Alert>
+            )}
 
             {/* Respond to Break Request */}
-            {user.id !== deal.break_request?.initiator_id &&
-                deal.break_request &&
-                deal.break_request.status === "pending" && (
-                    <Box mt={2}>
-                        <Alert severity="warning" sx={{ mb: 2 }}>
-                            ⏳ Seller wants to break the deal. Please make a decision.
-                        </Alert>
-                        <Stack direction="row" spacing={2}>
-                            <Button
-                                variant="contained"
-                                color="error"
-                                data-action="respond"
-                                data-value="accept"
-                                onClick={handleBreakRequest}
-                            >
-                                Accept
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                color="error"
-                                data-action="respond"
-                                data-value="reject"
-                                onClick={handleBreakRequest}
-                            >
-                                Reject
-                            </Button>
-                        </Stack>
-                    </Box>
-                )}
+            {!isInitiator && status === "pending" && (
+                <Box mt={2}>
+                    <Alert severity="warning" sx={{ mb: 2 }}>
+                        ⏳ The other party wants to break the deal. Please make a decision.
+                    </Alert>
+                    <Stack direction="row" spacing={2}>
+                        <Button
+                            variant="contained"
+                            color="error"
+                            disabled={submitting}
+                            onClick={() => handleRespondToBreakTheDeal("approved")}
+                        >
+                            Accept
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            disabled={submitting}
+                            onClick={() => handleRespondToBreakTheDeal("rejected")}
+                        >
+                            Reject
+                        </Button>
+                    </Stack>
+                </Box>
+            )}
         </Box>
     );
 }

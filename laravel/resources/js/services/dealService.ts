@@ -34,11 +34,11 @@ export const DealService = {
         });
     },
 
-    // async confirmConditionDay(dealId: number) {
-    //     return await fetchWithCsrf(`/deals/${dealId}/confirm-condition-day`, {
-    //         method: "PATCH",
-    //     });
-    // },
+    async confirmConditionDay(dealId: number) {
+        return await fetchWithCsrf(route('seller.deals.confirmConditionDay', dealId), {
+            method: "PATCH",
+        });
+    },
 
     async setPossessionDay(dealId: number, possessionDay: string) {
         return await fetchWithCsrf( route('buyer.deals.setPossessionDay', dealId), {
@@ -47,11 +47,11 @@ export const DealService = {
         });
     },
 
-    // async confirmPossessionDay(dealId: number) {
-    //     return await fetchWithCsrf(`/deals/${dealId}/confirm-possession-day`, {
-    //         method: "PATCH",
-    //     });
-    // },
+    async confirmPossessionDay(dealId: number) {
+        return await fetchWithCsrf(route('seller.deals.confirmPossessionDay', dealId), {
+            method: "PATCH",
+        });
+    },
 
     async inviteLawyer(dealId: number, lawyerCode: string) {
         return await fetchWithCsrf(route('deals.inviteLawyer', dealId), {
@@ -60,20 +60,25 @@ export const DealService = {
         });
     },
 
-    async breakDeal(dealId: number, message: string) {
+    async breakTheDeal(dealId: number, message: string) {
         return await fetchWithCsrf(route('deals.break.request', dealId), {
             method: "POST",
-            body: JSON.stringify({ message }),
+            body: JSON.stringify({
+                action: 'request',
+                message
+            }),
         });
     },
 
-
-    // async respondToBreakRequest(dealId: number, response: "approved" | "rejected") {
-    //     return await fetchWithCsrf(`/deals/${dealId}/break-response`, {
-    //         method: "POST",
-    //         body: JSON.stringify({ response }),
-    //     });
-    // },
+    async respondToBreakTheDeal(dealId: number, response: "approved" | "rejected") {
+        return await fetchWithCsrf(route('deals.break.request', dealId), {
+            method: "POST",
+            body: JSON.stringify({
+                action: 'respond',
+                response
+            }),
+        });
+    },
 };
 
 // Utility function to handle CSRF-enabled fetch requests

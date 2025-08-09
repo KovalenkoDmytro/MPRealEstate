@@ -1,5 +1,6 @@
 import React from "react";
 import { PropertyDetail } from "@/types";
+import {DealService} from "@/services/dealService";
 
 export default function PossessionDayActions({ deal }: { deal: PropertyDetail }) {
     if (!deal.possession_day || deal.is_possession_day_confirmed) return null;
@@ -7,16 +8,10 @@ export default function PossessionDayActions({ deal }: { deal: PropertyDetail })
     const confirmPossessionDay = async () => {
         if (!confirm("Confirm the buyer's proposed possession day?")) return;
         try {
-            const response = await fetch(route("seller.deals.confirmPossessionDay", deal.id), {
-                method: "PATCH",
-                headers: {
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
-                    "Accept": "application/json",
-                },
-            });
+            const response = await DealService.confirmPossessionDay(deal.id)
 
             if (response.ok) {
-                alert("Possession day confirmed.");
+                alert(response.message);
                 window.location.reload();
             } else {
                 const data = await response.json();

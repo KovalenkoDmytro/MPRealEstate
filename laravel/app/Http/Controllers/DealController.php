@@ -32,18 +32,6 @@ class DealController extends Controller
     }
 
     /**
-     * Show all deals in Inertia React view.
-     */
-//    public function index(): Response
-//    {
-//        $deals = Deal::with(['users', 'realEstateListing'])->get();
-//
-//        return Inertia::render('Deals/Index', [
-//            'deals' => $deals,
-//        ]);
-//    }
-
-    /**
      * Show a single deal with users and step details.
      */
     public function show(Deal $deal): Response
