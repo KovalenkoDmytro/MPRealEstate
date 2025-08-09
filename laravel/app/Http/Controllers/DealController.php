@@ -8,6 +8,7 @@ use App\Http\Requests\ConfirmDepositRequest;
 use App\Http\Requests\DealBreakRequest;
 use App\Http\Requests\InviteLawyerRequest;
 use App\Http\Requests\SetConditionDayRequest;
+use App\Http\Requests\SetDepositMadeRequest;
 use App\Http\Requests\SetDepositRequest;
 use App\Http\Requests\SetPossessionDayRequest;
 use App\Models\Deal;
@@ -89,8 +90,7 @@ class DealController extends Controller
         return $this->dealerService->setDeposit($request, $deal);
     }
 
-    public function markDepositMade(Request $request, Deal $deal): JsonResponse {
-        dd('markDepositMade');
+    public function markDepositMade(SetDepositMadeRequest $request, Deal $deal): JsonResponse {
         return $this->dealerService->markDepositMade($request, $deal);
     }
 

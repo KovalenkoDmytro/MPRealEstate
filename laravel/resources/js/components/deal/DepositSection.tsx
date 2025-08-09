@@ -6,13 +6,11 @@ import { Box, Checkbox, FormControlLabel, Button, Typography } from "@mui/materi
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import {useAuth} from "@/hooks/useAuth";
 
 export default function DepositSection({ deal }: { deal: Deal }) {
     const depositForm = useForm<{ confirmed: boolean }>({ confirmed: false });
-    const [depositDateTime, setDepositDateTime] = useState<Date | null>(null);
-    const user = useAuth()
-    console.log(user.role)
+    const [depositDateTime, setDepositDateTime] =  useState<Date>(new Date());
+
     const handleDepositSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -22,7 +20,7 @@ export default function DepositSection({ deal }: { deal: Deal }) {
         }
 
         try {
-            await DealService.markDepositMade(deal.id, depositDateTime.toISOString());
+            await DealService.markDepositMade(deal.id, depositDateTime);
 
 
             alert("Deposit confirmed successfully!");

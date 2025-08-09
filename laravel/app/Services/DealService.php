@@ -8,6 +8,7 @@ use App\Helpers\Responses\SuccessResponse;
 use App\Http\Requests\ConfirmDepositRequest;
 use App\Http\Requests\InviteLawyerRequest;
 use App\Http\Requests\SetConditionDayRequest;
+use App\Http\Requests\SetDepositMadeRequest;
 use App\Http\Requests\SetDepositRequest;
 use App\Http\Requests\SetPossessionDayRequest;
 use App\Models\Deal;
@@ -59,7 +60,7 @@ class DealService
         );
     }
 
-    public function markDepositMade(Request $request, Deal $deal): JsonResponse
+    public function markDepositMade(SetDepositMadeRequest $request, Deal $deal): JsonResponse
     {
         $user = $request->user();
 
@@ -68,8 +69,8 @@ class DealService
         }
 
         if (!$deal->is_security_deposit_made) {
-            $deal->is_security_deposit_made = true;
-            $deal->security_deposit_made_at =  $request['security_deposit_made_at'];
+            $deal->is_security_deposit_made = $request->is_security_deposit_made;
+            $deal->security_deposit_made_at =  $request->security_deposit_made_at;
             $deal->save();
 
             $seller = $deal->users()->where('role', 'seller')->first();

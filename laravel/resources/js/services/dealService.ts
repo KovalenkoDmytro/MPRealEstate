@@ -9,15 +9,15 @@ export const DealService = {
         });
     },
 
-    // async markDepositMade(dealId: number, time: Date ) {
-    //     return await fetchWithCsrf(`/buyer/deals/${dealId}/make-deposit`, {
-    //         method: "PATCH",
-    //         body: JSON.stringify({
-    //             is_security_deposit_made: true,
-    //             security_deposit_made_at: time,
-    //         }),
-    //     });
-    // },
+    async markDepositMade(dealId: number, depositDateTime: Date ) {
+        return await fetchWithCsrf(route("buyer.deals.markDepositMade", dealId), {
+            method: "PATCH",
+            body: JSON.stringify({
+                is_security_deposit_made: true,
+                security_deposit_made_at: depositDateTime,
+            }),
+        });
+    },
 
     async confirmDeposit(dealId: number, depositDateTime : Date) {
         return await fetchWithCsrf(`/seller/deals/${dealId}/confirm-deposit`, {
