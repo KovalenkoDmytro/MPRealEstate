@@ -4,7 +4,7 @@ import { Deal, User } from "@/types";
 import { DealService } from "@/services/dealService";
 
 // MUI imports
-import { Box, Typography, TextField, Button, Stack, Alert } from "@mui/material";
+import { Box, Typography, TextField, Button, Stack } from "@mui/material";
 import {useAuth} from "@/hooks/useAuth";
 
 export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: User }) {
@@ -49,7 +49,13 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
                         onChange={(e) => inviteForm.setData("lawyer_code", e.target.value)}
                         label="Lawyer Code"
                         placeholder="Enter 9-character code"
-                        inputProps={{ maxLength: 9, pattern: "[A-Za-z0-9]{9}" }}
+                        slotProps={{
+                            htmlInput: {
+                                maxLength: 9,
+                                pattern: "[A-Za-z0-9]{9}",
+                            }
+                        }}
+
                         required
                         fullWidth
                     />

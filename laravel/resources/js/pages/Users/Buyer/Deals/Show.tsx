@@ -1,6 +1,6 @@
 import {Head} from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
-import {User, PropertyDetail} from "@/types";
+import {PropertyDetail} from "@/types";
 import DealHeader from "@/components/deal/DealHeader";
 import PropertyDetails from "@/components/deal/PropertyDetails";
 import DealPersonInfo from "@/components/deal/DealPersonInfo";
@@ -12,14 +12,13 @@ import FileUploadSection from "@/components/deal/FileUploadSection";
 import BreakDealSection from "@/components/deal/BreakDealSection";
 
 
-export default function DealShowPage({deal, auth}: { deal: PropertyDetail; auth: { user: User } }) {
+export default function DealShowPage({deal}: { deal: PropertyDetail }) {
     const seller = deal.users.find((user) => user.role === "seller");
     const lawyer = deal.users.find((user) => user.role === "lawyer" && user.is_buyer_lawyer);
 
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold">Deal Details</h2>}>
             <Head title="Deal Details"/>
-
 
             <DealHeader deal={deal}/>
 
