@@ -1,10 +1,13 @@
 export const DealService = {
-    // async setDeposit(dealId: number, securityDeposit: number) {
-    //     return await fetchWithCsrf(`/deals/${dealId}/security-deposit`, {
-    //         method: "POST",
-    //         body: JSON.stringify({ security_deposit: securityDeposit }),
-    //     });
-    // },
+    //todo  route("seller.deals.setDeposit", deal.id)
+
+
+    async setDeposit(dealId: number, securityDeposit: number) {
+        return await fetchWithCsrf(route("seller.deals.setDeposit", dealId), {
+            method: "PATCH",
+            body: JSON.stringify({ security_deposit: securityDeposit }),
+        });
+    },
 
     // async markDepositMade(dealId: number, time: Date ) {
     //     return await fetchWithCsrf(`/buyer/deals/${dealId}/make-deposit`, {

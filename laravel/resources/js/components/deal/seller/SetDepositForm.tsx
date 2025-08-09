@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Deal } from "@/types";
+import {DealService} from "@/services/dealService";
+import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 
 export default function SetDepositForm({ deal }: { deal: Deal }) {
-    const [deposit, setDeposit] = useState<string>("");
+    const [depositAmount, setDepositAmount] = useState<number>(0);
 
     // Only show if deposit is NOT set yet
     if (deal.security_deposit) {
@@ -17,18 +19,8 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
         e.preventDefault();
 
         try {
-            const response = await fetch(route("seller.deals.setDeposit", deal.id), {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document
-                        .querySelector('meta[name="csrf-token"]')
-                        ?.getAttribute("content") || "",
-                },
-                body: JSON.stringify({ security_deposit: deposit }),
-            });
-
-            if (!response.ok) throw new Error("Failed to set deposit");
+            const response = await DealService.setDeposit(deal.id, depositAmount)
+            if (response.status !== 'success') throw new Error("Failed to set deposit");
 
             alert("Deposit saved successfully!");
             window.location.reload();
@@ -39,22 +31,57 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="mt-4 p-4 border rounded-md bg-gray-50">
-            <label className="block text-sm font-medium mb-2">Set Security Deposit Amount</label>
-            <input
+        <Paper
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{
+                mt: 4,
+                p: 4,
+                borderRadius: 2,
+                backgroundColor: "#f9fafb", // matches bg-gray-50
+            }}
+        >
+            <Typography variant="subtitle2" sx={{ mb: 2 }}>
+                Set Security Deposit Amount
+            </Typography>
+
+            <TextField
                 type="number"
-                value={deposit}
-                onChange={(e) => setDeposit(e.target.value)}
-                className="border p-2 rounded w-full"
-                placeholder="Enter deposit amount"
+                label="Enter deposit amount"
+                fullWidth
+                variant="outlined"
                 required
+                inputProps={{
+                    step: "0.01",
+                    min: "0",
+                }}
+                value={depositAmount || ""}
+                onChange={(e) => {
+                    const value = e.target.value;
+                    setDepositAmount(value === "" ? 0 : parseFloat(value));
+                }}
+                onBlur={(e) => {
+                    if (e.target.value) {
+                        setDepositAmount(
+                            parseFloat(parseFloat(e.target.value).toFixed(2))
+                        );
+                    }
+                }}
             />
-            <button
-                type="submit"
-                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            >
-                Save Deposit
-            </button>
-        </form>
+
+            <Box mt={2}>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                        textTransform: "none",
+                        "&:hover": { backgroundColor: "#1e40af" }, // hover:bg-blue-700
+                    }}
+                >
+                    Save Deposit
+                </Button>
+            </Box>
+        </Paper>
     );
 }

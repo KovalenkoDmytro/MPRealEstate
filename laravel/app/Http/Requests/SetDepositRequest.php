@@ -25,7 +25,7 @@ class SetDepositRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'security_deposit' => 'required|numeric|min:100',
+            'security_deposit' => 'required|numeric',
         ];
     }
 }

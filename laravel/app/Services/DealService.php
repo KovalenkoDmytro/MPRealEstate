@@ -36,6 +36,7 @@ class DealService
 {
     public function setDeposit(SetDepositRequest $request, Deal $deal): JsonResponse
     {
+
         if (!is_null($deal->security_deposit)) {
             return JsonResponder::send(
                 new ErrorResponse('Security deposit has already been set and cannot be changed.', [], 400)
