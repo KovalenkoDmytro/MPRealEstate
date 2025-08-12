@@ -64,8 +64,7 @@ export const offerService = {
     ): Promise<ApiResponse<UpdateStatusOfferApiResponse>> {
         try {
             // keep relative URL; swap to a named route if you have one
-            const r = await api.patch(
-                `/seller/offers/${offerId}/update-status`,
+            const r = await api.patch(route('seller.offers.updateStatus', offerId),
                 { status },
                 { headers: { Accept: "application/json" } }
             );

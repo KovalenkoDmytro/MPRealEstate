@@ -1,33 +1,45 @@
-import React, { useState } from "react";
-import { useForm } from "@inertiajs/react";
+import React, { useState, useMemo } from "react";
 import { DealService } from "@/services/dealService";
 import { Deal } from "@/types";
-import { Box, Checkbox, FormControlLabel, Button, Typography } from "@mui/material";
+
+import {
+    Box,
+    Checkbox,
+    FormControlLabel,
+    Button,
+    Typography,
+} from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { format } from "date-fns";
+
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function DepositSection({ deal }: { deal: Deal }) {
-    const depositForm = useForm<{ confirmed: boolean }>({ confirmed: false });
-    const [depositDateTime, setDepositDateTime] =  useState<Date>(new Date());
+    const [confirmed, setConfirmed] = useState(false);
+    const [depositDateTime, setDepositDateTime] = useState<Date | null>(new Date());
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
-    const handleDepositSubmit = async (e: React.FormEvent) => {
+    const canSubmit = useMemo(
+        () => confirmed && !!depositDateTime,
+        [confirmed, depositDateTime]
+    );
+
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!depositForm.data.confirmed || !depositDateTime) {
+        if (!canSubmit) {
             alert("Please confirm deposit and select date/time.");
             return;
         }
+        setConfirmOpen(true);
+    };
 
-        try {
-            await DealService.markDepositMade(deal.id, depositDateTime);
-
-
-            alert("Deposit confirmed successfully!");
-            window.location.reload();
-        } catch (error: any) {
-            alert(error.message || "Error confirming deposit.");
-        }
+    const save = async () => {
+        // If your API expects a string, use depositDateTime!.toISOString()
+        await DealService.markDepositMade(deal.id, depositDateTime as Date);
+        alert("Deposit confirmed successfully!");
+        window.location.reload();
     };
 
     // Don't render if deposit isn't required or already made
@@ -39,40 +51,58 @@ export default function DepositSection({ deal }: { deal: Deal }) {
                 💸 Security Deposit
             </Typography>
 
-            <Box component="form" onSubmit={handleDepositSubmit} display="flex" flexDirection="column" gap={2}>
-                {/* Checkbox */}
-
+            <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" gap={2}>
                 <FormControlLabel
                     control={
                         <Checkbox
-                            checked={depositForm.data.confirmed}
-                            onChange={(e) => depositForm.setData("confirmed", e.target.checked)}
+                            checked={confirmed}
+                            onChange={(e) => setConfirmed(e.target.checked)}
                         />
                     }
                     label="I confirm I have made the security deposit."
                 />
 
-
-                {/* MUI DateTimePicker */}
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DateTimePicker
-                        label="I confirm I have recived the security deposit."
+                        label="Deposit received date & time"
                         value={depositDateTime}
                         onChange={(newValue) => setDepositDateTime(newValue)}
                         slotProps={{ textField: { fullWidth: true } }}
                     />
                 </LocalizationProvider>
 
-                {/* Submit Button */}
                 <Button
                     type="submit"
                     variant="contained"
                     color="success"
-                    disabled={!depositForm.data.confirmed || !depositDateTime}
+                    disabled={!canSubmit}
                 >
                     Confirm Deposit
                 </Button>
             </Box>
+
+            <ConfirmDialog
+                open={confirmOpen}
+                onClose={() => setConfirmOpen(false)}
+                title="Confirm Security Deposit?"
+                description={
+                    <div>
+                        <Typography variant="body2" color="text.secondary" gutterBottom>
+                            You’re about to confirm the security deposit for this deal.
+                        </Typography>
+                        <Typography variant="body2">
+                            <strong>Confirmed by checkbox:</strong> {confirmed ? "Yes" : "No"}
+                        </Typography>
+                        <Typography variant="body2">
+                            <strong>Deposit date & time:</strong>{" "}
+                            {depositDateTime ? format(depositDateTime, "PPpp") : "—"}
+                        </Typography>
+                    </div>
+                }
+                confirmLabel="Confirm"
+                confirmColor="success"
+                onConfirm={save}
+            />
         </Box>
     );
 }

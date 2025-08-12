@@ -1,40 +1,78 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { PropertyDetail } from "@/types";
-import {DealService} from "@/services/dealService";
+import { DealService } from "@/services/dealService";
+
+import { Card, CardContent, CardActions, Typography, Button, Stack } from "@mui/material";
+import { format } from "date-fns";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function PossessionDayActions({ deal }: { deal: PropertyDetail }) {
+    // Only show if a possession day exists and isn't confirmed yet
     if (!deal.possession_day || deal.is_possession_day_confirmed) return null;
 
-    const confirmPossessionDay = async () => {
-        if (!confirm("Confirm the buyer's proposed possession day?")) return;
-        try {
-            const response = await DealService.confirmPossessionDay(deal.id)
+    const [open, setOpen] = useState(false);
+    const possessionDayStr: string = deal.possession_day as string;
+    const possessionDate = useMemo(
+        () => new Date(possessionDayStr),
+        [possessionDayStr]
+    );
 
-            if (response.ok) {
-                alert(response.message);
-                window.location.reload();
-            } else {
-                const data = await response.json();
-                alert(data.message || "Failed to confirm possession day.");
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Error confirming possession day.");
+    const doConfirm = async () => {
+        const res = await DealService.confirmPossessionDay(deal.id);
+
+        // Adjust success check to your service shape
+        if (res?.status === "success") {
+            alert(res?.message || "Possession day confirmed.");
+            window.location.reload();
+            return;
         }
+        // Fallback if it returns a fetch-like Response
+        // if (!res.ok) {
+        //   const data = await res.json().catch(() => ({}));
+        //   throw new Error(data.message || `Failed with status ${res.status}`);
+        // }
+
+        if (res?.message) throw new Error(res.message);
+        throw new Error("Failed to confirm possession day.");
     };
 
     return (
-        <div className="mt-6 p-4 border rounded-md bg-yellow-50">
-            <h3 className="text-lg font-semibold">📅 Confirm Possession Day</h3>
-            <p>
-                Buyer selected <strong>{new Date(deal.possession_day).toLocaleDateString()}</strong> as the possession day.
-            </p>
-            <button
-                onClick={confirmPossessionDay}
-                className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-            >
-                ✅ Confirm Possession Day
-            </button>
-        </div>
+        <Card variant="outlined" sx={{ mt: 3, bgcolor: "warning.50" as any }}>
+            <CardContent>
+                <Stack spacing={0.5}>
+                    <Typography variant="h6">📅 Confirm Possession Day</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Buyer selected <strong>{format(possessionDate, "PPP")}</strong> as the possession day.
+                    </Typography>
+                </Stack>
+            </CardContent>
+
+            <CardActions sx={{ p: 2, pt: 0 }}>
+                <Button
+                    variant="contained"
+                    color="success"
+                    startIcon={<CheckCircleIcon />}
+                    onClick={() => setOpen(true)}
+                >
+                    Confirm Possession Day
+                </Button>
+            </CardActions>
+
+            <ConfirmDialog
+                open={open}
+                onClose={() => setOpen(false)}
+                title="Confirm the buyer’s possession day?"
+                description={
+                    <Typography variant="body2" color="text.secondary">
+                        This will mark <strong>{format(possessionDate, "PPP")}</strong> as the official
+                        possession day and notify all parties.
+                    </Typography>
+                }
+                confirmLabel="Confirm"
+                confirmColor="success"
+                onConfirm={doConfirm}
+            />
+        </Card>
     );
 }

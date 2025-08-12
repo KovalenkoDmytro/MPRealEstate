@@ -1,40 +1,69 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import { PropertyDetail } from "@/types";
-import {DealService} from "@/services/dealService";
+import { DealService } from "@/services/dealService";
+
+import { Card, CardContent, CardActions, Typography, Button, Stack } from "@mui/material";
+import { format } from "date-fns";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) {
+    // Only show if a condition day exists and isn't confirmed yet
     if (!deal.condition_day || deal.is_condition_day_confirmed) return null;
 
-    const confirmConditionDay = async () => {
-        if (!confirm("Confirm the buyer's proposed condition day?")) return;
-        try {
-            const response = await DealService.confirmConditionDay(deal.id);
+    const [open, setOpen] = useState(false);
+    const conditionDayStr: string = deal.condition_day as string;
+    const conditionDate = useMemo(
+        () => new Date(conditionDayStr),
+        [conditionDayStr]
+    );
 
-            if (response.ok) {
-                alert("Condition day confirmed.");
-                window.location.reload();
-            } else {
-                const data = await response.json();
-                alert(data.message || "Failed to confirm condition day.");
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Error confirming condition day.");
+    const doConfirm = async () => {
+        // If your service returns {status:'success'}:
+        const res = await DealService.confirmConditionDay(deal.id);
+        if (res?.status !== "success") {
+            throw new Error(res?.message || "Failed to confirm condition day.");
         }
+        alert("Condition day confirmed.");
+        window.location.reload();
     };
 
     return (
-        <div className="mt-6 p-4 border rounded-md bg-yellow-50">
-            <h3 className="text-lg font-semibold">📅 Confirm Condition Day</h3>
-            <p>
-                Buyer selected <strong>{new Date(deal.condition_day).toLocaleDateString()}</strong> as the condition day.
-            </p>
-            <button
-                onClick={confirmConditionDay}
-                className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-            >
-                ✅ Confirm Condition Day
-            </button>
-        </div>
+        <Card variant="outlined" sx={{ mt: 3, bgcolor: "warning.50" as any }}>
+            <CardContent>
+                <Stack spacing={0.5}>
+                    <Typography variant="h6">📅 Confirm Condition Day</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Buyer selected <strong>{format(conditionDate, "PPP")}</strong> as the condition day.
+                    </Typography>
+                </Stack>
+            </CardContent>
+
+            <CardActions sx={{ p: 2, pt: 0 }}>
+                <Button
+                    variant="contained"
+                    color="success"
+                    startIcon={<CheckCircleIcon />}
+                    onClick={() => setOpen(true)}
+                >
+                    Confirm Condition Day
+                </Button>
+            </CardActions>
+
+            <ConfirmDialog
+                open={open}
+                onClose={() => setOpen(false)}
+                title="Confirm the buyer’s condition day?"
+                description={
+                    <Typography variant="body2" color="text.secondary">
+                        This will mark <strong>{format(conditionDate, "PPP")}</strong> as the official
+                        condition day and notify all parties.
+                    </Typography>
+                }
+                confirmLabel="Confirm"
+                confirmColor="success"
+                onConfirm={doConfirm}
+            />
+        </Card>
     );
 }
