@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useMemo, useState} from "react";
 import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
 import { Box, Button, Stack, Typography } from "@mui/material";
@@ -7,6 +7,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { format } from "date-fns";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import {InfoBlock} from "@/components/InfoBlock";
 
 export default function PossessionDayForm({ deal }: { deal: Deal }) {
     const [possessionDay, setPossessionDay] = useState<Date | null>(
@@ -30,8 +31,32 @@ export default function PossessionDayForm({ deal }: { deal: Deal }) {
         window.location.reload();
     };
 
+    const banner = useMemo(() => {
+        if (deal.possession_day !== null && !deal.is_possession_day_confirmed) {
+            return {
+                type: "warning" as const,
+                title: "Under consideration",
+                message: "Waiting for the seller to confirm the possession day.",
+            };
+        }
+        if (deal.possession_day !== null && deal.is_possession_day_confirmed) {
+            return {
+                type: "success" as const,
+                title: "Confirmed",
+                message: "The seller has confirmed the possession day.",
+            };
+        }
+        return null;
+    }, [deal.possession_day, deal.is_possession_day_confirmed]);
+
     return (
         <>
+
+            {banner && (
+                <InfoBlock type={banner.type} title={banner.title} message={banner.message} />
+            )}
+
+
             <Box component="form" onSubmit={handleSubmit} mt={4}>
                 <Stack spacing={2} direction="row" alignItems="center">
                     <LocalizationProvider dateAdapter={AdapterDateFns}>

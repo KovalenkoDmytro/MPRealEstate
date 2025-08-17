@@ -10,6 +10,8 @@ import PossessionDayForm from "@/components/deal/PossessionDayForm";
 import LawyerInvite from "@/components/deal/LawyerInvite";
 import FileUploadSection from "@/components/deal/FileUploadSection";
 import BreakDealSection from "@/components/deal/BreakDealSection";
+import React from "react";
+
 
 
 export default function DealShowPage({deal}: { deal: PropertyDetail }) {

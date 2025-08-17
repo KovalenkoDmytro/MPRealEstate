@@ -8,15 +8,6 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
     const [depositAmount, setDepositAmount] = useState<number | ''>('');
     const [confirmOpen, setConfirmOpen] = useState(false);
 
-    // Only show if deposit is NOT set yet
-    if (deal.security_deposit) {
-        return (
-            <p className="text-green-600 font-medium mt-4">
-                Security deposit already set: ${deal.security_deposit}
-            </p>
-        );
-    }
-
     const amountNumber = typeof depositAmount === "number" ? depositAmount : parseFloat(depositAmount || "0");
     const canSubmit = useMemo(() => !Number.isNaN(amountNumber) && amountNumber > 0, [amountNumber]);
 

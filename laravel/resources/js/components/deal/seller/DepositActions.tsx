@@ -2,15 +2,8 @@ import * as React from "react";
 import { useCallback, useState } from "react";
 import { PropertyDetail } from "@/types";
 import {
-    Card,
-    CardContent,
-    CardActions,
-    Typography,
-    Button,
-    Alert,
-    CircularProgress,
-    Stack,
-    Box,
+    Card, CardContent, CardActions, Typography, Button,
+    Alert, CircularProgress, Stack, Box
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import LockIcon from "@mui/icons-material/Lock";
@@ -22,18 +15,16 @@ import { format } from "date-fns";
 
 import { DealService } from "@/services/dealService";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import SetDepositForm from "@/components/deal/seller/SetDepositForm";
+import {InfoBlock} from "@/components/InfoBlock";
+
 
 export default function DepositActions({ deal }: { deal: PropertyDetail }) {
+    // const notify = useNotify();
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
-    // prefill with now; set to null if you want to force explicit selection
     const [depositDateTime, setDepositDateTime] = useState<Date | null>(new Date());
-
-    // Only render when buyer marked as made, and it’s NOT yet confirmed
-    if (!deal.is_security_deposit_made || deal.is_security_deposit_confirmed) return null;
-
 
     const handleConfirm = useCallback(async () => {
         if (!depositDateTime) return;
@@ -42,19 +33,17 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
             setError(null);
             setSubmitting(true);
 
-            // If backend expects ISO string:
-            // const res = await DealService.confirmDeposit(deal.id, depositDateTime.toISOString());
             const res = await DealService.confirmDeposit(deal.id, depositDateTime);
-
-            // Adjust this check to match your service shape
             if (res?.status !== "success") {
                 throw new Error(res?.message || "Failed to confirm deposit.");
             }
 
+            // notify?.success("Security deposit confirmed");
             window.location.reload();
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Something went wrong.";
             setError(msg);
+            // notify?.error(msg);
         } finally {
             setSubmitting(false);
             setConfirmOpen(false);
@@ -62,67 +51,89 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
     }, [deal.id, depositDateTime]);
 
     return (
-        <Card variant="outlined" sx={{ mt: 3, bgcolor: "warning.50" as any }}>
-            <CardContent>
-                <Stack direction="row" spacing={1} alignItems="center">
-                    <LockIcon color="warning" />
-                    <Typography variant="h6" color="warning.dark">
-                        Confirm Security Deposit
-                    </Typography>
-                </Stack>
+        <Box mt={3}>
+            {/* 🔔 Seller-side notifications (as you requested) */}
+            {deal.security_deposit && (
+                <InfoBlock
+                    type="success"
+                    title="Security deposit set"
+                    message={`You set security deposit - ${deal.security_deposit} at ${deal.security_deposit_set_at}`}
+                />
+            )}
 
-                <Typography variant="body2" sx={{ mt: 1.5 }} color="text.secondary">
-                    The buyer has marked the security deposit as made. Please review the uploaded
-                    confirmation file and confirm.
-                </Typography>
+            {deal.security_deposit && deal.security_deposit_set_at && !deal.is_security_deposit_made && (
+                <InfoBlock
+                    type="warning"
+                    title="Under consideration"
+                    message="Waiting for the buyer to confirm the security deposit."
+                />
+            )}
 
-                {error && (
-                    <Alert severity="error" sx={{ mt: 2 }}>
-                        {error}
-                    </Alert>
-                )}
-            </CardContent>
+            {!deal.security_deposit && <SetDepositForm deal={deal} />}
 
-            <CardActions sx={{ p: 2, pt: 0 }}>
-                <Button
-                    variant="contained"
-                    startIcon={submitting ? <CircularProgress size={18} /> : <CheckCircleIcon />}
-                    onClick={() => setConfirmOpen(true)}
-                    disabled={submitting}
-                >
-                    {submitting ? "Confirming..." : "Confirm Deposit"}
-                </Button>
-            </CardActions>
+            {/* Show confirm only when buyer marked as made but not yet confirmed */}
+            {deal.is_security_deposit_made && !deal.is_security_deposit_confirmed && (
+                <Card variant="outlined" sx={{ mt: 3, bgcolor: "warning.50" as any }}>
+                    <CardContent>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                            <LockIcon color="warning" />
+                            <Typography variant="h6" color="warning.dark">
+                                Confirm Security Deposit
+                            </Typography>
+                        </Stack>
 
-            {/* Confirmation dialog (reusable) */}
-            <ConfirmDialog
-                open={confirmOpen}
-                onClose={() => setConfirmOpen(false)}
-                title="Confirm deposit received?"
-                description={
-                    <Box>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                            This will mark the buyer’s security deposit as <strong>confirmed</strong>.
+                        <Typography variant="body2" sx={{ mt: 1.5 }} color="text.secondary">
+                            The buyer has marked the security deposit as made. Please review the confirmation and confirm.
                         </Typography>
 
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <DateTimePicker
-                                label="Deposit received date & time"
-                                value={depositDateTime}
-                                onChange={(dt) => setDepositDateTime(dt)}
-                                slotProps={{ textField: { fullWidth: true } }}
-                            />
-                        </LocalizationProvider>
+                        {error && (
+                            <Alert severity="error" sx={{ mt: 2 }}>
+                                {error}
+                            </Alert>
+                        )}
+                    </CardContent>
 
-                        <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>
-                            Selected: {depositDateTime ? format(depositDateTime, "PPpp") : "—"}
-                        </Typography>
-                    </Box>
-                }
-                confirmLabel="Confirm"
-                confirmColor="success"
-                onConfirm={handleConfirm}
-            />
-        </Card>
+                    <CardActions sx={{ p: 2, pt: 0 }}>
+                        <Button
+                            variant="contained"
+                            startIcon={submitting ? <CircularProgress size={18} /> : <CheckCircleIcon />}
+                            onClick={() => setConfirmOpen(true)}
+                            disabled={submitting}
+                        >
+                            {submitting ? "Confirming..." : "Confirm Deposit"}
+                        </Button>
+                    </CardActions>
+
+                    <ConfirmDialog
+                        open={confirmOpen}
+                        onClose={() => setConfirmOpen(false)}
+                        title="Confirm deposit received?"
+                        description={
+                            <Box>
+                                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                    This will mark the buyer’s security deposit as <strong>confirmed</strong>.
+                                </Typography>
+
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <DateTimePicker
+                                        label="Deposit received date & time"
+                                        value={depositDateTime}
+                                        onChange={(dt) => setDepositDateTime(dt)}
+                                        slotProps={{ textField: { fullWidth: true } }}
+                                    />
+                                </LocalizationProvider>
+
+                                <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 1 }}>
+                                    Selected: {depositDateTime ? format(depositDateTime, "PPpp") : "—"}
+                                </Typography>
+                            </Box>
+                        }
+                        confirmLabel="Confirm"
+                        confirmColor="success"
+                        onConfirm={handleConfirm}
+                    />
+                </Card>
+            )}
+        </Box>
     );
 }
