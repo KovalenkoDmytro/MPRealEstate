@@ -36,14 +36,14 @@ export default function PossessionDayForm({ deal }: { deal: Deal }) {
             return {
                 type: "warning" as const,
                 title: "Under consideration",
-                message: "Waiting for the seller to confirm the possession day.",
+                message: `Waiting for the seller to confirm the possession day for ${deal.possession_day}`,
             };
         }
         if (deal.possession_day !== null && deal.is_possession_day_confirmed) {
             return {
                 type: "success" as const,
                 title: "Confirmed",
-                message: "The seller has confirmed the possession day.",
+                message:`The seller has confirmed the possession day for ${deal.possession_day} .`,
             };
         }
         return null;
@@ -56,8 +56,8 @@ export default function PossessionDayForm({ deal }: { deal: Deal }) {
                 <InfoBlock type={banner.type} title={banner.title} message={banner.message} />
             )}
 
-
-            <Box component="form" onSubmit={handleSubmit} mt={4}>
+            {!deal.possession_day &&
+                <Box component="form" onSubmit={handleSubmit} mt={4}>
                 <Stack spacing={2} direction="row" alignItems="center">
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DatePicker
@@ -78,22 +78,25 @@ export default function PossessionDayForm({ deal }: { deal: Deal }) {
                     </Button>
                 </Stack>
             </Box>
+            }
 
-            <ConfirmDialog
-                open={confirmOpen}
-                onClose={() => setConfirmOpen(false)}
-                title="Set Possession Day?"
-                description={
-                    <Typography variant="body2" color="text.secondary">
-                        You’re about to set the possession day to{" "}
-                        <strong>{possessionDay ? format(possessionDay, "PPP") : "—"}</strong>.
-                        This will update the deal for all parties.
-                    </Typography>
-                }
-                confirmLabel="Set Day"
-                confirmColor="success"
-                onConfirm={save}
-            />
+            {!deal.possession_day &&
+                <ConfirmDialog
+                    open={confirmOpen}
+                    onClose={() => setConfirmOpen(false)}
+                    title="Set Possession Day?"
+                    description={
+                        <Typography variant="body2" color="text.secondary">
+                            You’re about to set the possession day to{" "}
+                            <strong>{possessionDay ? format(possessionDay, "PPP") : "—"}</strong>.
+                            This will update the deal for all parties.
+                        </Typography>
+                    }
+                    confirmLabel="Set Day"
+                    confirmColor="success"
+                    onConfirm={save}
+                />
+            }
         </>
     );
 }

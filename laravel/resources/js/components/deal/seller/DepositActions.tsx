@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { PropertyDetail } from "@/types";
 import {
     Card, CardContent, CardActions, Typography, Button,
@@ -16,19 +16,51 @@ import { format } from "date-fns";
 import { DealService } from "@/services/dealService";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import SetDepositForm from "@/components/deal/seller/SetDepositForm";
-import {InfoBlock} from "@/components/InfoBlock";
-
+import { InfoBlock } from "@/components/InfoBlock";
 
 export default function DepositActions({ deal }: { deal: PropertyDetail }) {
-    // const notify = useNotify();
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [depositDateTime, setDepositDateTime] = useState<Date | null>(new Date());
 
+    // central banner logic
+    const banner = useMemo(() => {
+        if (deal.security_deposit && deal.is_security_deposit_confirmed) {
+            return {
+                type: "success" as const,
+                title: "Security deposit received",
+                message: `You received security deposit - ${deal.security_deposit} at ${deal.security_deposit_confirmed_at}`,
+            };
+        }
+
+        if (deal.security_deposit && deal.security_deposit_set_at && !deal.is_security_deposit_made) {
+            return {
+                type: "warning" as const,
+                title: "Under consideration",
+                message: "Waiting for the buyer to confirm the security deposit.",
+            };
+        }
+
+        if (deal.security_deposit) {
+            return {
+                type: "success" as const,
+                title: "Security deposit set",
+                message: `You set security deposit - ${deal.security_deposit} at ${deal.security_deposit_set_at}`,
+            };
+        }
+
+        return null;
+    }, [
+        deal.security_deposit,
+        deal.security_deposit_set_at,
+        deal.is_security_deposit_made,
+        deal.is_security_deposit_confirmed,
+        deal.security_deposit_confirmed_at,
+    ]);
+
     const handleConfirm = useCallback(async () => {
         if (!depositDateTime) return;
-
         try {
             setError(null);
             setSubmitting(true);
@@ -38,12 +70,10 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
                 throw new Error(res?.message || "Failed to confirm deposit.");
             }
 
-            // notify?.success("Security deposit confirmed");
             window.location.reload();
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Something went wrong.";
             setError(msg);
-            // notify?.error(msg);
         } finally {
             setSubmitting(false);
             setConfirmOpen(false);
@@ -52,26 +82,17 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
 
     return (
         <Box mt={3}>
-            {/* 🔔 Seller-side notifications (as you requested) */}
-            {deal.security_deposit && (
-                <InfoBlock
-                    type="success"
-                    title="Security deposit set"
-                    message={`You set security deposit - ${deal.security_deposit} at ${deal.security_deposit_set_at}`}
-                />
+            {/* banner always on top */}
+            {banner && (
+                <Box mb={2}>
+                    <InfoBlock type={banner.type} title={banner.title} message={banner.message} />
+                </Box>
             )}
 
-            {deal.security_deposit && deal.security_deposit_set_at && !deal.is_security_deposit_made && (
-                <InfoBlock
-                    type="warning"
-                    title="Under consideration"
-                    message="Waiting for the buyer to confirm the security deposit."
-                />
-            )}
-
+            {/* if no deposit exists yet, show SetDepositForm */}
             {!deal.security_deposit && <SetDepositForm deal={deal} />}
 
-            {/* Show confirm only when buyer marked as made but not yet confirmed */}
+            {/* confirmation card only when buyer marked deposit as made, but not confirmed */}
             {deal.is_security_deposit_made && !deal.is_security_deposit_confirmed && (
                 <Card variant="outlined" sx={{ mt: 3, bgcolor: "warning.50" as any }}>
                     <CardContent>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { DealService } from "@/services/dealService";
 import { Deal } from "@/types";
 
@@ -15,17 +15,59 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { format } from "date-fns";
 
 import ConfirmDialog from "@/components/ConfirmDialog";
-import {InfoBlock} from "@/components/InfoBlock";
+import { InfoBlock } from "@/components/InfoBlock"; // keep as named if your component exports named
 
 export default function DepositSection({ deal }: { deal: Deal }) {
     const [confirmed, setConfirmed] = useState(false);
     const [depositDateTime, setDepositDateTime] = useState<Date | null>(new Date());
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+
+    // Don't render if deposit isn't required
+    if (!deal.security_deposit) return null;
 
     const canSubmit = useMemo(
         () => confirmed && !!depositDateTime,
         [confirmed, depositDateTime]
     );
+
+    // Single banner derived from deal state
+    const banner = useMemo(() => {
+        // 1) Final state: confirmed
+        if (deal.is_security_deposit_confirmed && deal.security_deposit_confirmed_at) {
+            return {
+                type: "success" as const,
+                title: "Security deposit confirmed",
+                message: `Seller confirmed receiving ${deal.security_deposit} on ${deal.security_deposit_confirmed_at}.`,
+            };
+        }
+
+        // 2) Pending seller confirmation (you already marked deposit made)
+        if (deal.security_deposit_made_at && !deal.is_security_deposit_confirmed) {
+            return {
+                type: "warning" as const,
+                title: "Awaiting confirmation",
+                message: "Please wait for the seller to confirm receipt of your security deposit.",
+            };
+        }
+
+        // 3) Action required (seller set a deposit; you haven’t marked it as made yet)
+        if (deal.security_deposit && !deal.is_security_deposit_made) {
+            return {
+                type: "warning" as const,
+                title: "Action required",
+                message: `Seller set a required security deposit of ${deal.security_deposit}. Please make the deposit and confirm the date & time below.`,
+            };
+        }
+
+        return null;
+    }, [
+        deal.security_deposit,
+        deal.is_security_deposit_made,
+        deal.security_deposit_made_at,
+        deal.is_security_deposit_confirmed,
+        deal.security_deposit_confirmed_at,
+    ]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,13 +79,17 @@ export default function DepositSection({ deal }: { deal: Deal }) {
     };
 
     const save = async () => {
-        await DealService.markDepositMade(deal.id, depositDateTime as Date);
-        alert("Deposit confirmed successfully!");
-        window.location.reload();
+        try {
+            setSubmitting(true);
+            await DealService.markDepositMade(deal.id, depositDateTime as Date);
+            alert("Deposit confirmed successfully!");
+            window.location.reload();
+        } catch (e: any) {
+            alert(e?.message || "Failed to confirm deposit. Please try again.");
+        } finally {
+            setSubmitting(false);
+        }
     };
-
-    // Don't render if deposit isn't required
-    if (!deal.security_deposit) return null;
 
     return (
         <Box mt={4} p={3} border="1px solid #e0e0e0" borderRadius={2}>
@@ -51,32 +97,13 @@ export default function DepositSection({ deal }: { deal: Deal }) {
                 💸 Security Deposit
             </Typography>
 
-            {/* 🔔 Info blocks for different states */}
-            {deal.security_deposit && !deal.is_security_deposit_made && (
-                <InfoBlock
-                    type="warning"
-                    title="Action required"
-                    message={`Seller has set required security deposit - ${deal.security_deposit}`}
-                />
+            {banner && (
+                <Box mb={2}>
+                    <InfoBlock type={banner.type} title={banner.title} message={banner.message} />
+                </Box>
             )}
 
-            {deal.security_deposit_made_at && !deal.is_security_deposit_confirmed && (
-                <InfoBlock
-                    type="warning"
-                    title="Waiting confirmation"
-                    message="Please wait till seller confirm receiving security deposit"
-                />
-            )}
-
-            {deal.is_security_deposit_confirmed && deal.security_deposit_confirmed_at && (
-                <InfoBlock
-                    type="success"
-                    title="Security deposit confirmed"
-                    message={`Seller has confirmed receiving security deposit ${deal.security_deposit} at - ${deal.security_deposit_confirmed_at}`}
-                />
-            )}
-
-            {/* Form only if deposit not yet made */}
+            {/* Show form only if deposit not yet marked as made */}
             {!deal.is_security_deposit_made && (
                 <Box
                     component="form"
@@ -108,9 +135,9 @@ export default function DepositSection({ deal }: { deal: Deal }) {
                         type="submit"
                         variant="contained"
                         color="success"
-                        disabled={!canSubmit}
+                        disabled={!canSubmit || submitting}
                     >
-                        Confirm Deposit
+                        {submitting ? "Saving..." : "Confirm Deposit"}
                     </Button>
                 </Box>
             )}

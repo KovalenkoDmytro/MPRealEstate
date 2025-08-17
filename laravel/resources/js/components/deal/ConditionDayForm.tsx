@@ -59,7 +59,7 @@ export default function ConditionDayForm({ deal }: { deal: Deal }) {
                 />
             )}
 
-            {!deal.is_condition_day_confirmed &&
+            {!deal.condition_day &&
                 <Box component="form" onSubmit={handleSubmit} mt={4}>
                     <Stack spacing={2} direction="row" alignItems="center">
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -83,7 +83,7 @@ export default function ConditionDayForm({ deal }: { deal: Deal }) {
             }
 
 
-            {!deal.is_condition_day_confirmed &&
+            {!deal.condition_day &&
                 <ConfirmDialog
                     open={confirmOpen}
                     onClose={() => setConfirmOpen(false)}
