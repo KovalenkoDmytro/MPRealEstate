@@ -20,7 +20,7 @@ class OfferSeeder extends Seeder
 
         foreach ($listings as $listing) {
             Offer::factory()
-                ->count(rand(1, 3))
+                ->count(random_int(1, 3))
                 ->create([
                     'real_estate_listing_id' => $listing->id,
                     'buyer_id' => $buyers->random()->id,

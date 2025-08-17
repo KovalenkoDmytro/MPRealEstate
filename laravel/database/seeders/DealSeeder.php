@@ -22,13 +22,13 @@ class DealSeeder extends Seeder
             return;
         }
 
-        foreach (range(1, rand(3, 6)) as $i) {
+        foreach ( range(1, random_int(3, 6)) as $i) {
             $seller = $sellers->random();
             $sellerListing = $listings->where('seller_id', $seller->id)->random();
 
             $deal = Deal::factory()->create([
                 'real_estate_listing_id' => $sellerListing->id,
-                'amount'                 => rand(5000, 50000),
+                'amount'                 => random_int(5000, 50000),
                 'seller_message'         => "Sample deal $i",
             ]);
 

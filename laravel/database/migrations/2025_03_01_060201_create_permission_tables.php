@@ -7,35 +7,35 @@ use Illuminate\Support\Facades\Schema;
 class CreatePermissionTables extends Migration
 {
     public function up(): void {
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('permissions', static function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('guard_name');
             $table->timestamps();
         });
 
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('roles', static function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('guard_name');
             $table->timestamps();
         });
 
-        Schema::create('model_has_permissions', function (Blueprint $table) {
+        Schema::create('model_has_permissions', static function (Blueprint $table) {
             $table->unsignedBigInteger('permission_id');
             $table->string('model_type');
             $table->unsignedBigInteger('model_id');
             $table->primary(['permission_id', 'model_id', 'model_type']);
         });
 
-        Schema::create('model_has_roles', function (Blueprint $table) {
+        Schema::create('model_has_roles', static function (Blueprint $table) {
             $table->unsignedBigInteger('role_id');
             $table->string('model_type');
             $table->unsignedBigInteger('model_id');
             $table->primary(['role_id', 'model_id', 'model_type']);
         });
 
-        Schema::create('role_has_permissions', function (Blueprint $table) {
+        Schema::create('role_has_permissions', static function (Blueprint $table) {
             $table->unsignedBigInteger('permission_id');
             $table->unsignedBigInteger('role_id');
             $table->primary(['permission_id', 'role_id']);

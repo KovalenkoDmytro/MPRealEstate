@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-it('filters by min price', function () {
+it('filters by min price', static function () {
     RealEstateListing::factory()->create(['price' => 100000]);
     RealEstateListing::factory()->create(['price' => 500000]);
 
@@ -18,7 +18,7 @@ it('filters by min price', function () {
         ->and($filtered->first()->price)->toBe(500000);
 });
 
-it('filters by has_garage boolean', function () {
+it('filters by has_garage boolean', static function () {
     RealEstateListing::factory()->create(['has_garage' => true]);
     RealEstateListing::factory()->create(['has_garage' => false]);
 
@@ -29,7 +29,7 @@ it('filters by has_garage boolean', function () {
         ->and($filtered->first()->has_garage)->toBeTrue();
 });
 
-it('filters by keyword in title or description', function () {
+it('filters by keyword in title or description', static function () {
     RealEstateListing::factory()->create(['title' => 'Oceanfront villa', 'description' => '']);
     RealEstateListing::factory()->create(['title' => 'Cottage', 'description' => 'Hidden near the ocean']);
     RealEstateListing::factory()->create(['title' => 'Mountain cabin']);
@@ -40,7 +40,7 @@ it('filters by keyword in title or description', function () {
     expect($filtered)->toHaveCount(2);
 });
 
-it('filters by favorites_only for the user', function () {
+it('filters by favorites_only for the user', static function () {
     $user = User::factory()->create();
 
     $favListing = RealEstateListing::factory()->create();

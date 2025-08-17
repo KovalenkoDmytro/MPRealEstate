@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
 use Throwable;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
@@ -23,22 +24,21 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      */
-    public function report(Throwable $exception): void
+    public function report(Throwable $e): void
     {
-        parent::report($exception);
+        parent::report($e);
     }
 
     /**
      * Render an exception into an HTTP response.
      */
-    public function render($request, Throwable $exception): JsonResponse|\Illuminate\Http\Response
-    {
+    public function render($request, Throwable $e): \Symfony\Component\HttpFoundation\Response {
         // Handle unauthorized access globally
-        if ($exception instanceof HttpException && $exception->getStatusCode() === 403) {
+        if ($e instanceof HttpException && $e->getStatusCode() === 403) {
             return response()->json(['error' => 'Access Denied'], 403);
         }
 
-        return parent::render($request, $exception);
+        return parent::render($request, $e);
     }
 
     /**

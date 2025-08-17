@@ -51,7 +51,7 @@ class UserSeeder extends Seeder
                 }
 
                 // Randomly assign the lawyer as either a seller's or buyer's lawyer (but not both)
-                $isSellerLawyer = rand(0, 1) === 1;
+                $isSellerLawyer = random_int(0, 1) === 1;
                 $user->is_seller_lawyer = $isSellerLawyer;
                 $user->is_buyer_lawyer  = !$isSellerLawyer;
 

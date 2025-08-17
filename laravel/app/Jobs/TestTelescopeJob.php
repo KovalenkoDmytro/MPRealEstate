@@ -13,8 +13,7 @@ class TestTelescopeJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function handle()
-    {
+    public function handle(): void {
         Log::info('TestTelescopeJob .');
     }
 }

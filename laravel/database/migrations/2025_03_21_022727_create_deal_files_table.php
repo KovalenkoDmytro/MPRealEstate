@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deal_files', function (Blueprint $table) {
+        Schema::create('deal_files', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('deal_id')->constrained()->onDelete('cascade'); // Link file to deal
             $table->string('file_name'); // Original filename

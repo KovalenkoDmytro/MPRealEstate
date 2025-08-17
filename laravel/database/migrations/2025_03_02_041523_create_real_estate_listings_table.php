@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('real_estate_listings', function (Blueprint $table) {
+        Schema::create('real_estate_listings', static function (Blueprint $table) {
             $table->id();
 
             // Ownership

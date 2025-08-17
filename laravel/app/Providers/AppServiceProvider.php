@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
-        Gate::define('view-deal', function (User $user, Deal $deal) {
+        Gate::define('view-deal', static function (User $user, Deal $deal) {
             return $deal->users()->where('user_id', $user->id)->exists();
         });
 

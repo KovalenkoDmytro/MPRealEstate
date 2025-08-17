@@ -2,13 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Telescope\EntryType;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeApplicationServiceProvider;
-use Illuminate\Support\Facades\Event;
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
     /**
@@ -16,14 +13,14 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     public function register(): void
     {
-        // Telescope::night();
+         Telescope::night();
 //        Event::listen(MessageLogged::class, function ($event) {
 //            Telescope::recordLog($event);
 //        });
 
         $this->hideSensitiveRequestDetails();
 
-        Telescope::filter(function (IncomingEntry $entry) {
+        Telescope::filter(static function () {
             return true;
         });
 
@@ -54,10 +51,10 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function gate(): void
     {
-        Gate::define('viewTelescope', function ($user) {
+        Gate::define('viewTelescope', static function ($user) {
             return in_array($user->email, [
                 //
-            ]);
+            ], true);
         });
     }
 }

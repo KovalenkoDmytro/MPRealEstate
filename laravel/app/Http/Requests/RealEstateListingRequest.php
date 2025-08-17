@@ -70,7 +70,7 @@ class RealEstateListingRequest extends FormRequest
 
     private function removeMainImageRequired(): bool
     {
-        return $this->isMethod('post') ||  $this->isMethod('put') && $this->boolean('remove_main_image') === true;
+        return $this->isMethod('post') || ($this->isMethod('put') && $this->boolean('remove_main_image') === true);
     }
 
     /**

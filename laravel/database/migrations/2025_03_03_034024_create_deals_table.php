@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deals', function (Blueprint $table) {
+        Schema::create('deals', static function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->decimal('amount', 10, 2);

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('favorite_listings', function (Blueprint $table) {
+        Schema::create('favorite_listings', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('real_estate_listing_id')->constrained()->onDelete('cascade');

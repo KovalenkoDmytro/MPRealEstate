@@ -9,9 +9,8 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
-    {
-        Schema::create('offers', function (Blueprint $table) {
+    public function up(): void {
+        Schema::create('offers', static function (Blueprint $table) {
             $table->id();
             $table->foreignId('real_estate_listing_id')->constrained()->onDelete('cascade');
             $table->foreignId('buyer_id')->constrained('users')->onDelete('cascade');

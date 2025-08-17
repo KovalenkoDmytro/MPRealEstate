@@ -12,7 +12,7 @@ use App\Http\Controllers\{
 };
 
 // Public Home Route
-Route::get('/', fn () =>
+Route::get('/', static fn () =>
 Inertia::render('Welcome', [
     'canLogin'       => Route::has('login'),
     'canRegister'    => Route::has('register'),
