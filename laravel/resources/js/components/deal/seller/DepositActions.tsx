@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState } from "react";
 import { PropertyDetail } from "@/types";
 import {
     Card, CardContent, CardActions, Typography, Button,
@@ -12,11 +12,11 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { format } from "date-fns";
-
+import DealStatusBanner from "@/components/deal/DealStatusBanner";
 import { DealService } from "@/services/dealService";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import SetDepositForm from "@/components/deal/seller/SetDepositForm";
-import { InfoBlock } from "@/components/InfoBlock";
+
 
 export default function DepositActions({ deal }: { deal: PropertyDetail }) {
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -24,40 +24,6 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
     const [error, setError] = useState<string | null>(null);
     const [depositDateTime, setDepositDateTime] = useState<Date | null>(new Date());
 
-    // central banner logic
-    const banner = useMemo(() => {
-        if (deal.security_deposit && deal.is_security_deposit_confirmed) {
-            return {
-                type: "success" as const,
-                title: "Security deposit received",
-                message: `You received security deposit - ${deal.security_deposit} at ${deal.security_deposit_confirmed_at}`,
-            };
-        }
-
-        if (deal.security_deposit && deal.security_deposit_set_at && !deal.is_security_deposit_made) {
-            return {
-                type: "warning" as const,
-                title: "Under consideration",
-                message: "Waiting for the buyer to confirm the security deposit.",
-            };
-        }
-
-        if (deal.security_deposit) {
-            return {
-                type: "success" as const,
-                title: "Security deposit set",
-                message: `You set security deposit - ${deal.security_deposit} at ${deal.security_deposit_set_at}`,
-            };
-        }
-
-        return null;
-    }, [
-        deal.security_deposit,
-        deal.security_deposit_set_at,
-        deal.is_security_deposit_made,
-        deal.is_security_deposit_confirmed,
-        deal.security_deposit_confirmed_at,
-    ]);
 
     const handleConfirm = useCallback(async () => {
         if (!depositDateTime) return;
@@ -83,11 +49,7 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
     return (
         <Box mt={3}>
             {/* banner always on top */}
-            {banner && (
-                <Box mb={2}>
-                    <InfoBlock type={banner.type} title={banner.title} message={banner.message} />
-                </Box>
-            )}
+            <DealStatusBanner deal={deal} role="seller" feature="deposit" />
 
             {/* if no deposit exists yet, show SetDepositForm */}
             {!deal.security_deposit && <SetDepositForm deal={deal} />}

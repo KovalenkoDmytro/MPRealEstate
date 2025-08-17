@@ -6,7 +6,7 @@ import { Card, CardContent, CardActions, Typography, Button, Stack } from "@mui/
 import { format } from "date-fns";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import {InfoBlock} from "@/components/InfoBlock";
+import DealStatusBanner from "@/components/deal/DealStatusBanner";
 
 export default function PossessionDayActions({ deal }: { deal: PropertyDetail }) {
 
@@ -33,13 +33,7 @@ export default function PossessionDayActions({ deal }: { deal: PropertyDetail })
 
     return (
         <div>
-            {deal.is_possession_day_confirmed &&
-                <InfoBlock
-                    type="success"
-                    title="Possasion day confirmed"
-                    message={`You have confirmed condition day for ${deal.possession_day}`}
-                />
-            }
+            <DealStatusBanner deal={deal} role="seller" feature="possessionDay" />
 
             {!deal.is_possession_day_confirmed &&
                 <Card variant="outlined" sx={{ mt: 3, bgcolor: "warning.50" as any }}>

@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useState} from "react";
 import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
 import { Box, Button, Stack, Typography } from "@mui/material";
@@ -7,7 +7,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { format } from "date-fns";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import {InfoBlock} from "@/components/InfoBlock";
+import DealStatusBanner from "@/components/deal/DealStatusBanner";
 
 export default function ConditionDayForm({ deal }: { deal: Deal }) {
     const [conditionDay, setConditionDay] = useState<Date | null>(
@@ -31,33 +31,10 @@ export default function ConditionDayForm({ deal }: { deal: Deal }) {
         window.location.reload();
     };
 
-    const banner = useMemo(() => {
-        if (deal.condition_day !== null && !deal.is_condition_day_confirmed) {
-            return {
-                type: "warning" as const,
-                title: "Under consideration",
-                message: `Waiting for the seller to confirm the condition day for ${deal.condition_day}`,
-            };
-        }
-        if (deal.condition_day !== null && deal.is_condition_day_confirmed) {
-            return {
-                type: "success" as const,
-                title: "Confirmed",
-                message:`The seller has confirmed the condition day for ${deal.condition_day} .`,
-            };
-        }
-        return null;
-    }, [deal.condition_day, deal.is_condition_day_confirmed]);
 
     return (
         <>
-            {banner  && (
-                <InfoBlock
-                    type={banner.type}
-                    title={banner.title}
-                    message={banner.message}
-                />
-            )}
+            <DealStatusBanner deal={deal} role="buyer" feature="conditionDay" />
 
             {!deal.condition_day &&
                 <Box component="form" onSubmit={handleSubmit} mt={4}>

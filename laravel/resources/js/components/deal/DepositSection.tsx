@@ -13,9 +13,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { format } from "date-fns";
-
 import ConfirmDialog from "@/components/ConfirmDialog";
-import { InfoBlock } from "@/components/InfoBlock"; // keep as named if your component exports named
+import DealStatusBanner from "@/components/deal/DealStatusBanner";
 
 export default function DepositSection({ deal }: { deal: Deal }) {
     const [confirmed, setConfirmed] = useState(false);
@@ -31,43 +30,6 @@ export default function DepositSection({ deal }: { deal: Deal }) {
         [confirmed, depositDateTime]
     );
 
-    // Single banner derived from deal state
-    const banner = useMemo(() => {
-        // 1) Final state: confirmed
-        if (deal.is_security_deposit_confirmed && deal.security_deposit_confirmed_at) {
-            return {
-                type: "success" as const,
-                title: "Security deposit confirmed",
-                message: `Seller confirmed receiving ${deal.security_deposit} on ${deal.security_deposit_confirmed_at}.`,
-            };
-        }
-
-        // 2) Pending seller confirmation (you already marked deposit made)
-        if (deal.security_deposit_made_at && !deal.is_security_deposit_confirmed) {
-            return {
-                type: "warning" as const,
-                title: "Awaiting confirmation",
-                message: "Please wait for the seller to confirm receipt of your security deposit.",
-            };
-        }
-
-        // 3) Action required (seller set a deposit; you haven’t marked it as made yet)
-        if (deal.security_deposit && !deal.is_security_deposit_made) {
-            return {
-                type: "warning" as const,
-                title: "Action required",
-                message: `Seller set a required security deposit of ${deal.security_deposit}. Please make the deposit and confirm the date & time below.`,
-            };
-        }
-
-        return null;
-    }, [
-        deal.security_deposit,
-        deal.is_security_deposit_made,
-        deal.security_deposit_made_at,
-        deal.is_security_deposit_confirmed,
-        deal.security_deposit_confirmed_at,
-    ]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -97,11 +59,8 @@ export default function DepositSection({ deal }: { deal: Deal }) {
                 💸 Security Deposit
             </Typography>
 
-            {banner && (
-                <Box mb={2}>
-                    <InfoBlock type={banner.type} title={banner.title} message={banner.message} />
-                </Box>
-            )}
+            <DealStatusBanner deal={deal} role="buyer" feature="deposit" />
+
 
             {/* Show form only if deposit not yet marked as made */}
             {!deal.is_security_deposit_made && (

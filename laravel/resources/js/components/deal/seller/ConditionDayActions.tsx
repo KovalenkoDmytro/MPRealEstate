@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import {InfoBlock} from "@/components/InfoBlock";
+import DealStatusBanner from "@/components/deal/DealStatusBanner";
 
 export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) {
 
@@ -28,13 +29,8 @@ export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) 
 
     return (
         <div>
-            {deal.is_condition_day_confirmed &&
-                <InfoBlock
-                    type="success"
-                    title="Condition day confirmed"
-                    message={`You have confirmed condition day for ${deal.condition_day}`}
-                />
-            }
+            <DealStatusBanner deal={deal} role="seller" feature="conditionDay" />
+
             {!deal.is_condition_day_confirmed &&
             <Card variant="outlined" sx={{ mt: 3, bgcolor: "warning.50" as any }}>
                 <CardContent>
