@@ -36,14 +36,14 @@ export default function ConditionDayForm({ deal }: { deal: Deal }) {
             return {
                 type: "warning" as const,
                 title: "Under consideration",
-                message: "Waiting for the seller to confirm the condition day.",
+                message: `Waiting for the seller to confirm the condition day for ${deal.condition_day}`,
             };
         }
         if (deal.condition_day !== null && deal.is_condition_day_confirmed) {
             return {
                 type: "success" as const,
                 title: "Confirmed",
-                message: "The seller has confirmed the condition day.",
+                message:`The seller has confirmed the condition day for ${deal.condition_day} .`,
             };
         }
         return null;
@@ -59,43 +59,47 @@ export default function ConditionDayForm({ deal }: { deal: Deal }) {
                 />
             )}
 
-            <Box component="form" onSubmit={handleSubmit} mt={4}>
-                <Stack spacing={2} direction="row" alignItems="center">
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                        <DatePicker
-                            label="Select Condition Day"
-                            value={conditionDay}
-                            onChange={(d) => setConditionDay(d)}
-                            disabled={!!deal.condition_day}
-                            slotProps={{ textField: { fullWidth: true } }}
-                        />
-                    </LocalizationProvider>
+            {!deal.is_condition_day_confirmed &&
+                <Box component="form" onSubmit={handleSubmit} mt={4}>
+                    <Stack spacing={2} direction="row" alignItems="center">
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DatePicker
+                                label="Select Condition Day"
+                                value={conditionDay}
+                                onChange={(d) => setConditionDay(d)}
+                                slotProps={{ textField: { fullWidth: true } }}
+                            />
+                        </LocalizationProvider>
 
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="success"
-                        disabled={!!deal.condition_day || !conditionDay}
-                    >
-                        Select
-                    </Button>
-                </Stack>
-            </Box>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="success"
+                        >
+                            Select
+                        </Button>
+                    </Stack>
+                </Box>
+            }
 
-            <ConfirmDialog
-                open={confirmOpen}
-                onClose={() => setConfirmOpen(false)}
-                title="Set Condition Day?"
-                description={
-                    <Typography variant="body2" color="text.secondary">
-                        You’re about to set the condition day to{" "}
-                        <strong>{conditionDay ? format(conditionDay, "PPP") : "—"}</strong>.
-                    </Typography>
-                }
-                confirmLabel="Set Day"
-                confirmColor="success"
-                onConfirm={save}
-            />
+
+            {!deal.is_condition_day_confirmed &&
+                <ConfirmDialog
+                    open={confirmOpen}
+                    onClose={() => setConfirmOpen(false)}
+                    title="Set Condition Day?"
+                    description={
+                        <Typography variant="body2" color="text.secondary">
+                            You’re about to set the condition day to{" "}
+                            <strong>{conditionDay ? format(conditionDay, "PPP") : "—"}</strong>.
+                        </Typography>
+                    }
+                    confirmLabel="Set Day"
+                    confirmColor="success"
+                    onConfirm={save}
+                />
+            }
+
         </>
     );
 }

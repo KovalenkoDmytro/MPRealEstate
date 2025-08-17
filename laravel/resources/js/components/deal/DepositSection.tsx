@@ -60,14 +60,6 @@ export default function DepositSection({ deal }: { deal: Deal }) {
                 />
             )}
 
-            {deal.security_deposit && deal.is_security_deposit_made && deal.security_deposit_made_at && (
-                <InfoBlock
-                    type="success"
-                    title="Security deposit set"
-                    message={`You made security deposit - ${deal.security_deposit} at ${deal.security_deposit_made_at}`}
-                />
-            )}
-
             {deal.security_deposit_made_at && !deal.is_security_deposit_confirmed && (
                 <InfoBlock
                     type="warning"
@@ -80,7 +72,7 @@ export default function DepositSection({ deal }: { deal: Deal }) {
                 <InfoBlock
                     type="success"
                     title="Security deposit confirmed"
-                    message={`Seller has confirmed receiving security deposit at - ${deal.security_deposit_confirmed_at}`}
+                    message={`Seller has confirmed receiving security deposit ${deal.security_deposit} at - ${deal.security_deposit_confirmed_at}`}
                 />
             )}
 

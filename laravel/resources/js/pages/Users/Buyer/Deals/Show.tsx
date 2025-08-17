@@ -12,8 +12,6 @@ import FileUploadSection from "@/components/deal/FileUploadSection";
 import BreakDealSection from "@/components/deal/BreakDealSection";
 import React from "react";
 
-
-
 export default function DealShowPage({deal}: { deal: PropertyDetail }) {
     const seller = deal.users.find((user) => user.role === "seller");
     const lawyer = deal.users.find((user) => user.role === "lawyer" && user.is_buyer_lawyer);
@@ -28,7 +26,7 @@ export default function DealShowPage({deal}: { deal: PropertyDetail }) {
 
             {seller && <DealPersonInfo person={seller}/>}
 
-            <DepositSection deal={deal}/>
+            {deal.security_deposit &&  <DepositSection deal={deal}/>}
 
             <ConditionDayForm deal={deal}/>
 

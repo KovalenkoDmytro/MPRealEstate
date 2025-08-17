@@ -17,7 +17,7 @@ export default function SellerDealShowPage({ deal }: { deal: PropertyDetail;}) {
     const buyer = deal.users.find((user) => user.role === "buyer");
     const lawyer = deal.users.find((user) => user.role === "lawyer" && user.is_seller_lawyer);
 
-
+    console.log(deal);
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold">Deal Details</h2>}>
             <Head title="Deal Details" />
@@ -30,9 +30,9 @@ export default function SellerDealShowPage({ deal }: { deal: PropertyDetail;}) {
 
             <DepositActions deal={deal} />
 
-            <ConditionDayActions deal={deal} />
+            {deal.condition_day && <ConditionDayActions deal={deal} />}
 
-            <PossessionDayActions deal={deal} />
+            {deal.possession_day && <PossessionDayActions deal={deal} />}
 
             <LawyerInvite deal={deal} lawyer={lawyer} />
 

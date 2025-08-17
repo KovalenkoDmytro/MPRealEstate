@@ -1,15 +1,13 @@
 import React, { useMemo, useState } from "react";
 import { PropertyDetail } from "@/types";
 import { DealService } from "@/services/dealService";
-
 import { Card, CardContent, CardActions, Typography, Button, Stack } from "@mui/material";
 import { format } from "date-fns";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import {InfoBlock} from "@/components/InfoBlock";
 
 export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) {
-    // Only show if a condition day exists and isn't confirmed yet
-    if (!deal.condition_day || deal.is_condition_day_confirmed) return null;
 
     const [open, setOpen] = useState(false);
     const conditionDayStr: string = deal.condition_day as string;
@@ -29,41 +27,52 @@ export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) 
     };
 
     return (
-        <Card variant="outlined" sx={{ mt: 3, bgcolor: "warning.50" as any }}>
-            <CardContent>
-                <Stack spacing={0.5}>
-                    <Typography variant="h6">📅 Confirm Condition Day</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        Buyer selected <strong>{format(conditionDate, "PPP")}</strong> as the condition day.
-                    </Typography>
-                </Stack>
-            </CardContent>
+        <div>
+            {deal.is_condition_day_confirmed &&
+                <InfoBlock
+                    type="success"
+                    title="Condition day confirmed"
+                    message={`You have confirmed condition day for ${deal.condition_day}`}
+                />
+            }
+            {!deal.is_condition_day_confirmed &&
+            <Card variant="outlined" sx={{ mt: 3, bgcolor: "warning.50" as any }}>
+                <CardContent>
+                    <Stack spacing={0.5}>
+                        <Typography variant="h6">📅 Confirm Condition Day</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Buyer selected <strong>{format(conditionDate, "PPP")}</strong> as the condition day.
+                        </Typography>
+                    </Stack>
+                </CardContent>
 
-            <CardActions sx={{ p: 2, pt: 0 }}>
-                <Button
-                    variant="contained"
-                    color="success"
-                    startIcon={<CheckCircleIcon />}
-                    onClick={() => setOpen(true)}
-                >
-                    Confirm Condition Day
-                </Button>
-            </CardActions>
+                <CardActions sx={{ p: 2, pt: 0 }}>
+                    <Button
+                        variant="contained"
+                        color="success"
+                        startIcon={<CheckCircleIcon />}
+                        onClick={() => setOpen(true)}
+                    >
+                        Confirm Condition Day
+                    </Button>
+                </CardActions>
 
-            <ConfirmDialog
-                open={open}
-                onClose={() => setOpen(false)}
-                title="Confirm the buyer’s condition day?"
-                description={
-                    <Typography variant="body2" color="text.secondary">
-                        This will mark <strong>{format(conditionDate, "PPP")}</strong> as the official
-                        condition day and notify all parties.
-                    </Typography>
-                }
-                confirmLabel="Confirm"
-                confirmColor="success"
-                onConfirm={doConfirm}
-            />
-        </Card>
+                <ConfirmDialog
+                    open={open}
+                    onClose={() => setOpen(false)}
+                    title="Confirm the buyer’s condition day?"
+                    description={
+                        <Typography variant="body2" color="text.secondary">
+                            This will mark <strong>{format(conditionDate, "PPP")}</strong> as the official
+                            condition day and notify all parties.
+                        </Typography>
+                    }
+                    confirmLabel="Confirm"
+                    confirmColor="success"
+                    onConfirm={doConfirm}
+                />
+            </Card>
+            }
+        </div>
     );
 }
