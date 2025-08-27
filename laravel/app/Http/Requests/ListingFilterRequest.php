@@ -21,7 +21,11 @@ class ListingFilterRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // If user not logged in, or not buyer/seller, deny
+        return $user?->hasAnyRole(['buyer', 'seller', 'lawyer']) ?? false;
     }
 
     /**

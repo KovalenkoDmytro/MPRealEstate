@@ -8,8 +8,11 @@ class SetDepositMadeRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // Add any auth logic if needed
-        return true;
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // If user not logged in, or not buyer/seller, deny
+        return $user?->hasRole('buyer') ?? false;
     }
 
     public function rules(): array {

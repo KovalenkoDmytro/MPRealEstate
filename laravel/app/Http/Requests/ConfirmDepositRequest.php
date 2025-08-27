@@ -7,8 +7,11 @@ use Illuminate\Foundation\Http\FormRequest;
 class ConfirmDepositRequest extends FormRequest {
 
     public function authorize(): bool {
-        // You can add auth checks here if needed
-        return true;
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+
+        // If user not logged in, or not buyer/seller, deny
+        return $user?->hasRole('seller') ?? false;
     }
 
     public function rules(): array {
