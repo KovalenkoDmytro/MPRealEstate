@@ -23,11 +23,12 @@ export const listingService = {
 
     // Update seller listing (multipart)
     async updateSellerListing(listingId: number, formData: FormData) {
+        formData.append("_method", "PUT");
         try {
-            const r = await api.put(
+            const r = await api.post(
                 route("seller.listings.update", { listing: listingId }, false),
                 formData,
-                { headers: { Accept: "application/json" } } // let Axios set multipart boundary
+                { headers: { Accept: "application/json"} } // let Axios set multipart boundary
             );
             return { success: true, data: r.data };
         } catch (err: any) {

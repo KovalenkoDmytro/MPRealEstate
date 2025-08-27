@@ -169,7 +169,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
             const result = await listingService.updateSellerListing(listing.id, formData);
 
             if (result.success) {
-                window.location.href = "/seller/listings";
+                alert(result.data.message);
             } else {
                 setErrors(result.errors);
             }
