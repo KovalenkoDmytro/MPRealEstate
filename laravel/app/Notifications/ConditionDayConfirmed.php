@@ -6,8 +6,9 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
 use App\Notifications\MailBuilders\ConditionDayConfirmedMailBuilder;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ConditionDayConfirmed extends Notification
+class ConditionDayConfirmed extends Notification implements ShouldQueue
 {
     public Deal $deal;
 

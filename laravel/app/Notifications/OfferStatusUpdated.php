@@ -6,8 +6,9 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\RealEstateListing;
 use App\Notifications\MailBuilders\OfferStatusUpdatedMailBuilder;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class OfferStatusUpdated extends Notification
+class OfferStatusUpdated extends Notification implements ShouldQueue
 {
     public RealEstateListing $listing;
     public string $status;

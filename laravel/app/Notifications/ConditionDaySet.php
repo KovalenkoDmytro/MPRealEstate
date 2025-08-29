@@ -6,9 +6,9 @@ use App\Notifications\MailBuilders\ConditionDaySetMailBuilder;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-
-class ConditionDaySet extends Notification
+class ConditionDaySet extends Notification implements ShouldQueue
 {
     public Deal $deal;
 

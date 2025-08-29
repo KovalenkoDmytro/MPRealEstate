@@ -7,9 +7,10 @@ use App\Notifications\MailBuilders\DealBreakRequestedMailBuilder;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 
-class DealBreakRequested extends Notification
+class DealBreakRequested extends Notification implements ShouldQueue
 {
     use Queueable;
 

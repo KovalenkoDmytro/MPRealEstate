@@ -6,8 +6,9 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Notifications\MailBuilders\PossessionDaySetMailBuilder;
 use App\Models\Deal;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class PossessionDaySet extends Notification
+class PossessionDaySet extends Notification implements ShouldQueue
 {
     protected PossessionDaySetMailBuilder $builder;
     protected Deal $deal;

@@ -8,8 +8,9 @@ use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Offer;
 use App\Models\RealEstateListing;
 use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class OfferSubmitted extends Notification
+class OfferSubmitted extends Notification implements ShouldQueue
 {
     public RealEstateListing $listing;
     public User $buyer;

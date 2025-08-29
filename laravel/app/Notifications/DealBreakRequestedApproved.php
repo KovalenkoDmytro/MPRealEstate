@@ -6,9 +6,10 @@ use App\Models\Deal;
 use App\Notifications\MailBuilders\DealBreakRequestedApprovedMailBuilder;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 
-class DealBreakRequestedApproved extends Notification
+class DealBreakRequestedApproved extends Notification implements ShouldQueue
 {
 
     protected Deal $deal;

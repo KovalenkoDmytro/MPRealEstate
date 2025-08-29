@@ -6,8 +6,9 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
 use App\Notifications\MailBuilders\DepositConfirmedMailBuilder;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class DepositConfirmed extends Notification
+class DepositConfirmed extends Notification implements ShouldQueue
 {
     public Deal $deal;
 

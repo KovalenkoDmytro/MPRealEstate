@@ -6,8 +6,9 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
 use App\Notifications\MailBuilders\DepositMarkedAsMadeMailBuilder;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class DepositMarkedAsMade extends Notification
+class DepositMarkedAsMade extends Notification implements ShouldQueue
 {
     public Deal $deal;
 
