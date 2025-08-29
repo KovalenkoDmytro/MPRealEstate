@@ -18,11 +18,22 @@ class DepositConfirmed extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail' ,'database'];
     }
 
     public function toMail($notifiable): MailMessage
     {
         return (new DepositConfirmedMailBuilder($this->deal))->build($notifiable);
+    }
+
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'type'     => 'deposit_confirmed',
+            'title'    => '--Deposit Confirmed',
+            'body'     => "--Deposit for Deal #{$this->deal->name} has been confirmed.",
+           'url'      => route('deals.show', $this->deal), // adjust if your route differs
+
+        ];
     }
 }

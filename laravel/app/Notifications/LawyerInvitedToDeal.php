@@ -18,11 +18,21 @@ class LawyerInvitedToDeal extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage
     {
         return (new LawyerInvitedToDealMailBuilder($this->deal))->build($notifiable);
+    }
+
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'type'     => 'lawyer_invited_to_deal',
+            'title'    => '--Lawyer Invited to Deal',
+            'body'     => "--You were invited to Deal #{$this->deal->name}.",
+            'url'      => route('deals.show', $this->deal), // adjust if your route differs
+        ];
     }
 }

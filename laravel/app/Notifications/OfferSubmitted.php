@@ -23,10 +23,20 @@ class OfferSubmitted extends Notification
     }
 
     public function via($notifiable): array {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage {
           return (new OfferSubmittedMailBuilder($this->listing, $this->buyer, $this->offer))->build($notifiable);
+    }
+
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'type'       => 'offer_submitted',
+            'title'      => '--Offer Submitted',
+            'body'       => "--Someone submitted an offer on Listing #{$this->listing->title}.",
+            'url'        => route('seller.listings.show', $this->listing), // or route('offers.show', $this->offer->id)
+        ];
     }
 }

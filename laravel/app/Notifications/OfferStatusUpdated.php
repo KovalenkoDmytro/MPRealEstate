@@ -20,11 +20,28 @@ class OfferStatusUpdated extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail','database'];
     }
 
     public function toMail($notifiable): MailMessage
     {
         return (new OfferStatusUpdatedMailBuilder($this->listing, $this->status))->build($notifiable);
+    }
+
+    public function toDatabase($notifiable): array
+    {
+
+        if ($this->status === 'accepted') {
+            $body = "🎉 Your offer for {$this->listing->title} has been accepted.";
+        } else{
+            $body = "Unfortunately, your offer for {$this->listing->title} has been rejected.";
+        }
+
+        return [
+            'type'  => 'offer_status_updated',
+            'title' => 'Offer Status Updated',
+            'body'  => $body,
+            'url'   => route('buyer.listings.show', $this->listing),
+        ];
     }
 }

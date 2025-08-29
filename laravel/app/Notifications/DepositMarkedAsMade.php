@@ -18,11 +18,21 @@ class DepositMarkedAsMade extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage
     {
         return (new DepositMarkedAsMadeMailBuilder($this->deal))->build($notifiable);
+    }
+
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'type'     => 'deposit_marked_as_made',
+            'title'    => '--Deposit Marked as Made',
+           'body'     => "--Deposit for Deal #{$this->deal->name} was marked as made.",
+            'url'      => route('deals.show', $this->deal), // adjust if your route differs
+        ];
     }
 }

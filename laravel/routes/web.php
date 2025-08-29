@@ -56,6 +56,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->group(function () {
             Route::get('/', [RealEstateListingController::class, 'index'])->name('index');
         });
+
+
+    // Notifications (read + window)
+    Route::post('/notifications/{id}/read', function (string $id) {
+        $n = auth()->user()->notifications()->where('id', $id)->firstOrFail();
+        if (is_null($n->read_at)) $n->markAsRead();
+        return back();
+    })->name('notifications.readOne');
+
+    Route::post('/notifications/read-all', function () {
+        auth()->user()->unreadNotifications->markAsRead();
+        return back();
+    })->name('notifications.readAll');
+
+// Optional dedicated window/page (Inertia + React)
+    Route::get('/notifications/window', function () {
+        $u = auth()->user();
+        return Inertia::render('Notifications/Window', [
+            'notifications' => [
+                'unread_count' => $u->unreadNotifications()->count(),
+                'items' => $u->notifications()->latest()->take(100)->get()->map(fn($n) => [
+                    'id'         => $n->id,
+                    'title'      => $n->data['title'] ?? 'Notification',
+                    'body'       => $n->data['body'] ?? '',
+                    'url'        => $n->data['url'] ?? null,
+                    'read_at'    => optional($n->read_at)?->toISOString(),
+                    'created_at' => $n->created_at->toISOString(),
+                ]),
+            ],
+        ]);
+    })->name('notifications.window');
 });
 
 // Laravel Breeze Auth Routes

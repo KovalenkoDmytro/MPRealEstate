@@ -20,10 +20,20 @@ class OfferConfirmation extends Notification
     }
 
     public function via($notifiable): array {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage {
         return (new OfferConfirmationMailBuilder($this->listing, $this->offer))->build($notifiable);
+    }
+
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'type'       => 'offer_confirmation',
+            'title'      => '--Offer Confirmation',
+            'body'       => "--Offer was confirmed for Listing #{$this->listing->title}.",
+            'url'        => route('buyer.listings.show', $this->listing), // or route('offers.show', $this->offer->id)
+        ];
     }
 }

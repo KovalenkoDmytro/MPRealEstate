@@ -20,13 +20,24 @@ class DealBreakRequestedApproved extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
 
     public function toMail($notifiable): MailMessage
     {
         return app(DealBreakRequestedApprovedMailBuilder::class, ['deal' => $this->deal])->build($notifiable);
+    }
+
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'type'     => 'deal_break_requested_approved',
+            'title'    => '---Deal Break Approved',
+           'body'     => "---Your deal-break request for Deal #{$this->deal->name} was approved.",
+            'url'      => route('deals.show', $this->deal), // adjust if route differs
+
+        ];
     }
 
 }

@@ -10,15 +10,17 @@ use App\Models\Deal;
 class PossessionDayConfirmed extends Notification
 {
     protected PossessionDayConfirmedMailBuilder $builder;
+    protected Deal $deal;
 
     public function __construct(Deal $deal)
     {
+        $this->deal = $deal;
         $this->builder = new PossessionDayConfirmedMailBuilder($deal);
     }
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage
@@ -29,5 +31,16 @@ class PossessionDayConfirmed extends Notification
     public function buildMailMessage($notifiable): MailMessage
     {
         return $this->builder->build($notifiable);
+    }
+
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'type'     => 'possession_day_confirmed',
+            'title'    => '---Possession Day Confirmed',
+            'body'     => "--Possession day for Deal #{$this->deal->name} has been confirmed.",
+            'url'      =>  route('deals.show', $this->deal),
+
+        ];
     }
 }

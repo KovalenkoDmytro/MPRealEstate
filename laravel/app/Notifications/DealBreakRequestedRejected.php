@@ -20,13 +20,23 @@ class DealBreakRequestedRejected extends Notification
 
     public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail',];
     }
 
 
     public function toMail($notifiable): MailMessage
     {
         return app(DealBreakRequestedRejectedMailBuilder::class, ['deal' => $this->deal])->build($notifiable);
+    }
+
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'type'     => 'deal_break_requested_rejected',
+            'title'    => '---Deal Break Rejected',
+            'body'     => "---Your deal-break request for Deal #{$this->deal->name} was rejected.",
+            'url'      => route('deals.show', $this->deal), // adjust to your route
+        ];
     }
 
 }
