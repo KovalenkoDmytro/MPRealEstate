@@ -46,5 +46,14 @@ services:
     command: sh -c "npm install && npm run dev"
     ports:
       - "5173:5173"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"      # expose for local tools; can remove in prod
+    command: [ "redis-server", "--appendonly", "yes" ]
+    volumes:
+      - redis_data:/data
 volumes:
   db_data:
+  redis_data:
