@@ -18,10 +18,19 @@ class DepositConfirmedMailBuilder implements MailableContentBuilderInterface
     public function build($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Deposit Confirmed for {$this->deal->listing->title}")
-            ->greeting("Hello {$notifiable->name},")
-            ->line("Your deposit for the deal on \"{$this->deal->listing->title}\" has been confirmed by the seller.")
-            ->action('View Deal Details', url("/deals/{$this->deal->id}"))
-            ->line("Next steps will follow shortly.");
+            ->subject(__('mainBuilders.depositConfirmed.subject', [
+                'listingTitle' => $this->deal->listing->title,
+            ]))
+            ->greeting(__('mainBuilders.depositConfirmed.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.depositConfirmed.lines.0', [
+                'listingTitle' => $this->deal->listing->title,
+            ]))
+            ->action(
+                __('mainBuilders.depositConfirmed.action.label'),
+                url(str_replace(':dealId', $this->deal->id, __('mainBuilders.depositConfirmed.action.url')))
+            )
+            ->line(__('mainBuilders.depositConfirmed.lines.1'));
     }
 }

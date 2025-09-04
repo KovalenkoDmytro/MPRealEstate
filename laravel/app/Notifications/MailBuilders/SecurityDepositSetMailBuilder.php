@@ -19,10 +19,20 @@ class SecurityDepositSetMailBuilder implements MailableContentBuilderInterface
     public function build($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->greeting("Hello {$notifiable->name},")
-            ->line("The seller has set a security deposit for your deal related to \"{$this->deal->listing->title}\".")
-            ->line("💰 Security Deposit: \${$this->deal->security_deposit}")
-            ->action('View Deal', url("/deals/{$this->deal->id}"))
-            ->line("Please review and proceed with the next steps.");
+            ->subject(__('mainBuilders.securityDepositSet.subject'))
+            ->greeting(__('mainBuilders.securityDepositSet.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.securityDepositSet.lines.0', [
+                'listingTitle' => $this->deal->listing->title,
+            ]))
+            ->line(__('mainBuilders.securityDepositSet.lines.1', [
+                'securityDeposit' => number_format($this->deal->security_deposit, 2),
+            ]))
+            ->action(
+                __('mainBuilders.securityDepositSet.action.label'),
+                url(str_replace(':dealId', $this->deal->id, __('mainBuilders.securityDepositSet.action.url')))
+            )
+            ->line(__('mainBuilders.securityDepositSet.lines.2'));
     }
 }

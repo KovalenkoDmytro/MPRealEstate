@@ -31,16 +31,13 @@ class OfferStatusUpdated extends Notification implements ShouldQueue
 
     public function toDatabase($notifiable): array
     {
-
-        if ($this->status === 'accepted') {
-            $body = "🎉 Your offer for {$this->listing->title} has been accepted.";
-        } else{
-            $body = "Unfortunately, your offer for {$this->listing->title} has been rejected.";
-        }
+        $body = $this->status === 'accepted'
+            ? __('notifications.offerStatusUpdated.accepted', ['listing' => $this->listing->title])
+            : __('notifications.offerStatusUpdated.rejected', ['listing' => $this->listing->title]);
 
         return [
-            'type'  => 'offer_status_updated',
-            'title' => 'Offer Status Updated',
+            'type'  => __('notifications.offerStatusUpdated.type'),
+            'title' => __('notifications.offerStatusUpdated.title'),
             'body'  => $body,
             'url'   => route('buyer.listings.show', $this->listing),
         ];

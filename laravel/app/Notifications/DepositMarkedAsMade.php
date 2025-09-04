@@ -30,10 +30,12 @@ class DepositMarkedAsMade extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'     => 'deposit_marked_as_made',
-            'title'    => '--Deposit Marked as Made',
-           'body'     => "--Deposit for Deal #{$this->deal->name} was marked as made.",
-            'url'      => route('deals.show', $this->deal), // adjust if your route differs
+            'type'  => __('notifications.depositMarkedAsMade.type'),
+            'title' => __('notifications.depositMarkedAsMade.title'),
+            'body'  => __('notifications.depositMarkedAsMade.body', [
+                'deal' => $this->deal->name,
+            ]),
+            'url'   => route('deals.show', $this->deal),
         ];
     }
 }

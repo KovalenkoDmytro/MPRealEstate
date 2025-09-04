@@ -37,11 +37,12 @@ class PossessionDayConfirmed extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'     => 'possession_day_confirmed',
-            'title'    => '---Possession Day Confirmed',
-            'body'     => "--Possession day for Deal #{$this->deal->name} has been confirmed.",
-            'url'      =>  route('deals.show', $this->deal),
-
+            'type'  => __('notifications.possessionDayConfirmed.type'),
+            'title' => __('notifications.possessionDayConfirmed.title'),
+            'body'  => __('notifications.possessionDayConfirmed.body', [
+                'deal' => $this->deal->name,
+            ]),
+            'url'   => route('deals.show', $this->deal),
         ];
     }
 }

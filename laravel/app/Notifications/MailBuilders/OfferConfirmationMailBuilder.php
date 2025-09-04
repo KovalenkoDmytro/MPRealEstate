@@ -21,12 +21,24 @@ class OfferConfirmationMailBuilder implements MailableContentBuilderInterface
     public function build($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->greeting("Hi {$notifiable->name},")
-            ->line("Thank you for submitting an offer on \"{$this->listing->title}\".")
-            ->line("💰 Offered Price: \${$this->offer->offer_price}")
-            ->line("📍 Listing Location: {$this->listing->location}")
-            ->action('View Your Offer', url("/listings/{$this->listing->id}"))
-            ->line("We’ve notified the seller and they’ll respond soon.");
+            ->subject(__('mainBuilders.offerConfirmation.subject'))
+            ->greeting(__('mainBuilders.offerConfirmation.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.offerConfirmation.lines.0', [
+                'listingTitle' => $this->listing->title,
+            ]))
+            ->line(__('mainBuilders.offerConfirmation.lines.1', [
+                'offerPrice' => number_format($this->offer->offer_price, 2),
+            ]))
+            ->line(__('mainBuilders.offerConfirmation.lines.2', [
+                'listingLocation' => $this->listing->location,
+            ]))
+            ->action(
+                __('mainBuilders.offerConfirmation.action.label'),
+                url(str_replace(':listingId', $this->listing->id, __('mainBuilders.offerConfirmation.action.url')))
+            )
+            ->line(__('mainBuilders.offerConfirmation.lines.3'));
     }
 
 }

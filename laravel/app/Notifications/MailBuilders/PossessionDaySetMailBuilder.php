@@ -19,10 +19,20 @@ class PossessionDaySetMailBuilder implements MailableContentBuilderInterface
     public function build($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->greeting("Hello {$notifiable->name},")
-            ->line("The buyer has set the possession day for your deal on \"{$this->deal->listing->title}\".")
-            ->line("📅 Possession Day: {$this->deal->possession_day->format('F j, Y')}")
-            ->action('View Deal', url("/deals/{$this->deal->id}"))
-            ->line("Please review and confirm when ready.");
+            ->subject(__('mainBuilders.possessionDaySet.subject'))
+            ->greeting(__('mainBuilders.possessionDaySet.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.possessionDaySet.lines.0', [
+                'listingTitle' => $this->deal->listing->title,
+            ]))
+            ->line(__('mainBuilders.possessionDaySet.lines.1', [
+                'possessionDay' => $this->deal->possession_day->format('F j, Y'),
+            ]))
+            ->action(
+                __('mainBuilders.possessionDaySet.action.label'),
+                url(str_replace(':dealId', $this->deal->id, __('mainBuilders.possessionDaySet.action.url')))
+            )
+            ->line(__('mainBuilders.possessionDaySet.lines.2'));
     }
 }

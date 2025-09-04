@@ -18,10 +18,16 @@ class ConditionDayConfirmedMailBuilder implements MailableContentBuilderInterfac
     public function build($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->greeting("Hello {$notifiable->name},")
-            ->line("The seller has confirmed the condition day for your deal on \"{$this->deal->listing->title}\".")
-            ->line("📅 Confirmed Condition Day: {$this->deal->condition_day->format('F j, Y')}")
-            ->action('View Deal', url("/deals/{$this->deal->id}"))
-            ->line("Thank you for continuing the transaction process.");
+            ->greeting(__('mainBuilders.conditionDaySet.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.conditionDaySet.lines.0', [
+                'listingTitle' => $this->deal->listing->title,
+            ]))
+            ->line(__('mainBuilders.conditionDaySet.lines.1', [
+                'conditionDay' => $this->deal->condition_day->format('F j, Y'),
+            ]))
+            ->action(__('mainBuilders.conditionDaySet.action.label'), url("/deals/{$this->deal->id}"))
+            ->line(__('mainBuilders.conditionDaySet.closing'));
     }
 }

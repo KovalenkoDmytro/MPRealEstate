@@ -33,11 +33,12 @@ class DealBreakRequestedApproved extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'     => 'deal_break_requested_approved',
-            'title'    => '---Deal Break Approved',
-           'body'     => "---Your deal-break request for Deal #{$this->deal->name} was approved.",
-            'url'      => route('deals.show', $this->deal), // adjust if route differs
-
+            'type'  => __('notifications.dealBreakRequestedApproved.type'),
+            'title' => __('notifications.dealBreakRequestedApproved.title'),
+            'body'  => __('notifications.dealBreakRequestedApproved.body', [
+                'deal' => $this->deal->name,
+            ]),
+            'url'   => route('deals.show', $this->deal),
         ];
     }
 

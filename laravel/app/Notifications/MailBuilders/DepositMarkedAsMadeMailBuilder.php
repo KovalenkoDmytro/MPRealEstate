@@ -18,10 +18,19 @@ class DepositMarkedAsMadeMailBuilder implements MailableContentBuilderInterface
     public function build($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("Deposit Marked as Made for {$this->deal->listing->title}")
-            ->greeting("Hello {$notifiable->name},")
-            ->line("The buyer has marked their security deposit as made for the listing \"{$this->deal->listing->title}\".")
-            ->action('View Deal', url("/deals/{$this->deal->id}"))
-            ->line("Please log in to verify and confirm receipt.");
+            ->subject(__('mainBuilders.depositMarkedAsMade.subject', [
+                'listingTitle' => $this->deal->listing->title,
+            ]))
+            ->greeting(__('mainBuilders.depositMarkedAsMade.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.depositMarkedAsMade.lines.0', [
+                'listingTitle' => $this->deal->listing->title,
+            ]))
+            ->action(
+                __('mainBuilders.depositMarkedAsMade.action.label'),
+                url(str_replace(':dealId', $this->deal->id, __('mainBuilders.depositMarkedAsMade.action.url')))
+            )
+            ->line(__('mainBuilders.depositMarkedAsMade.lines.1'));
     }
 }

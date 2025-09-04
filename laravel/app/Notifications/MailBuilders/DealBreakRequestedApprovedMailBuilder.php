@@ -17,10 +17,13 @@ class DealBreakRequestedApprovedMailBuilder implements MailableContentBuilderInt
 
     public function build($notifiable): MailMessage
     {
-
         return (new MailMessage)
-            ->subject('Deal Break Request Has been Approved')
-            ->greeting('Hello ' . $notifiable->name)
-            ->line("A request to break the deal: {$this->deal->name} has been approved.");
+            ->subject(__('mainBuilders.dealBreakRequestedApproved.subject'))
+            ->greeting(__('mainBuilders.dealBreakRequestedApproved.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.dealBreakRequestedApproved.lines.0', [
+                'deal' => $this->deal->name,
+            ]));
     }
 }

@@ -19,28 +19,44 @@ class OfferStatusUpdatedMailBuilder implements MailableContentBuilderInterface
 
     public function build($notifiable): MailMessage
     {
-
-
         if ($this->status === 'accepted') {
             return (new MailMessage)
-                ->greeting("Congratulations {$notifiable->name}!")
-                ->line("🎉 Your offer for \"{$this->listing->title}\" has been accepted.")
-                ->line("Our team has created a deal and the process has started.")
-                ->action('View Your Deal', url("/deals"))
-                ->line("Thank you for using our platform!");
+                ->greeting(__('mainBuilders.offerStatusUpdated.accepted.greeting', [
+                    'name' => $notifiable->name,
+                ]))
+                ->line(__('mainBuilders.offerStatusUpdated.accepted.lines.0', [
+                    'listingTitle' => $this->listing->title,
+                ]))
+                ->line(__('mainBuilders.offerStatusUpdated.accepted.lines.1'))
+                ->action(
+                    __('mainBuilders.offerStatusUpdated.accepted.action.label'),
+                    url(__('mainBuilders.offerStatusUpdated.accepted.action.url'))
+                )
+                ->line(__('mainBuilders.offerStatusUpdated.accepted.lines.2'));
         }
 
         if ($this->status === 'rejected') {
             return (new MailMessage)
-                ->greeting("Hello {$notifiable->name},")
-                ->line("Unfortunately, your offer for \"{$this->listing->title}\" has been rejected.")
-                ->line("We encourage you to explore other available listings.")
-                ->action('Browse Listings', url("/listings"))
-                ->line("Thank you for your interest.");
+                ->greeting(__('mainBuilders.offerStatusUpdated.rejected.greeting', [
+                    'name' => $notifiable->name,
+                ]))
+                ->line(__('mainBuilders.offerStatusUpdated.rejected.lines.0', [
+                    'listingTitle' => $this->listing->title,
+                ]))
+                ->line(__('mainBuilders.offerStatusUpdated.rejected.lines.1'))
+                ->action(
+                    __('mainBuilders.offerStatusUpdated.rejected.action.label'),
+                    url(__('mainBuilders.offerStatusUpdated.rejected.action.url'))
+                )
+                ->line(__('mainBuilders.offerStatusUpdated.rejected.lines.2'));
         }
 
         return (new MailMessage)
-            ->greeting("Hello {$notifiable->name},")
-            ->line("Your offer status on \"{$this->listing->title}\" has been updated.");
+            ->greeting(__('mainBuilders.offerStatusUpdated.updated.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.offerStatusUpdated.updated.lines.0', [
+                'listingTitle' => $this->listing->title,
+            ]));
     }
 }

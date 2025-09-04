@@ -37,11 +37,12 @@ class PossessionDaySet extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'     => 'possession_day_set',
-            'title'    => '--Possession Day Set',
-            'body'     => "--Possession day was set for Deal # {$this->deal->name}",
-            'url'      => route('deals.show', $this->deal), // adjust if your route differs
-
+            'type'  => __('notifications.possessionDaySet.type'),
+            'title' => __('notifications.possessionDaySet.title'),
+            'body'  => __('notifications.possessionDaySet.body', [
+                'deal' => $this->deal->name,
+            ]),
+            'url'   => route('deals.show', $this->deal),
         ];
     }
 }

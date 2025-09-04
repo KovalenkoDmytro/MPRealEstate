@@ -32,10 +32,12 @@ class SecurityDepositSet extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'     => 'security_deposit_set',
-            'title'    => '--Security Deposit Set',
-            'body'     => "--Security deposit was set for Deal #{$this->deal->name}.",
-            'url'      => route('deals.show', $this->deal),
+            'type'  => __('notifications.securityDepositSet.type'),
+            'title' => __('notifications.securityDepositSet.title'),
+            'body'  => __('notifications.securityDepositSet.body', [
+                'deal' => $this->deal->name,
+            ]),
+            'url'   => route('deals.show', $this->deal),
         ];
     }
 }

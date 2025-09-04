@@ -30,11 +30,12 @@ class DepositConfirmed extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'     => 'deposit_confirmed',
-            'title'    => '--Deposit Confirmed',
-            'body'     => "--Deposit for Deal #{$this->deal->name} has been confirmed.",
-           'url'      => route('deals.show', $this->deal), // adjust if your route differs
-
+            'type'  => __('notifications.depositConfirmed.type'),
+            'title' => __('notifications.depositConfirmed.title'),
+            'body'  => __('notifications.depositConfirmed.body', [
+                'deal' => $this->deal->name,
+            ]),
+            'url'   => route('deals.show', $this->deal),
         ];
     }
 }

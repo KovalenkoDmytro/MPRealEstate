@@ -32,17 +32,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-
 class DealService
 {
     public function setDeposit(SetDepositRequest $request, Deal $deal): JsonResponse
     {
-
         if (!is_null($deal->security_deposit)) {
             return JsonResponder::send(
-                new ErrorResponse('Security deposit has already been set and cannot be changed.', [], 400)
+                new ErrorResponse(__('deals.errors.security_deposit_already_set'), [], 400)
             );
-
         }
 
         $deal->security_deposit = $request->security_deposit;
@@ -56,7 +53,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Security deposit has been set successfully.', $deal->toArray())
+            new SuccessResponse(__('deals.success.security_deposit_set'), $deal->toArray())
         );
     }
 
@@ -65,12 +62,12 @@ class DealService
         $user = $request->user();
 
         if (!$deal->users->contains($user)) {
-            abort(403, 'Unauthorized');
+            abort(403, __('global.errors.unauthorized'));
         }
 
         if (!$deal->is_security_deposit_made) {
             $deal->is_security_deposit_made = $request->is_security_deposit_made;
-            $deal->security_deposit_made_at =  $request->security_deposit_made_at;
+            $deal->security_deposit_made_at = $request->security_deposit_made_at;
             $deal->save();
 
             $seller = $deal->users()->where('role', 'seller')->first();
@@ -81,13 +78,12 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Deposit marked as made.', $deal->toArray())
+            new SuccessResponse(__('deals.success.deposit_marked_made'), $deal->toArray())
         );
     }
 
     public function confirmDeposit(ConfirmDepositRequest $request, Deal $deal): JsonResponse
     {
-
         $deal->is_security_deposit_confirmed = $request->is_security_deposit_confirmed;
         $deal->security_deposit_confirmed_at = Carbon::parse($request->security_deposit_confirmed_at);
         $deal->save();
@@ -99,7 +95,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Deposit confirmed.', $deal->toArray()),
+            new SuccessResponse(__('deals.success.deposit_confirmed'), $deal->toArray())
         );
     }
 
@@ -107,7 +103,7 @@ class DealService
     {
         if (!is_null($deal->condition_day)) {
             return JsonResponder::send(
-                new ErrorResponse('Condition day has already been set and cannot be changed.', [], 400),
+                new ErrorResponse(__('deals.errors.condition_day_already_set'), [], 400)
             );
         }
 
@@ -122,7 +118,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Condition day has been set successfully.', $deal->toArray()),
+            new SuccessResponse(__('deals.success.condition_day_set'), $deal->toArray())
         );
     }
 
@@ -139,7 +135,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Condition day has confirmed.', $deal->toArray()),
+            new SuccessResponse(__('deals.success.condition_day_confirmed'), $deal->toArray())
         );
     }
 
@@ -147,7 +143,7 @@ class DealService
     {
         if (!is_null($deal->possession_day)) {
             return JsonResponder::send(
-                new ErrorResponse('Possession day has already been set and cannot be changed.', [], 400)
+                new ErrorResponse(__('deals.errors.possession_day_already_set'), [], 400)
             );
         }
 
@@ -162,7 +158,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Possession day has been set successfully.', $deal->toArray()),
+            new SuccessResponse(__('deals.success.possession_day_set'), $deal->toArray())
         );
     }
 
@@ -179,26 +175,25 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse('Possession day has confirmed.', $deal->toArray()),
+            new SuccessResponse(__('deals.success.possession_day_confirmed'), $deal->toArray())
         );
     }
 
     public function inviteLawyer(InviteLawyerRequest $request, Deal $deal): JsonResponse
     {
-
         $lawyer = User::where('lawyer_number', $request->lawyer_code)
-            ->whereHas('roles', fn ($q) => $q->where('name', 'lawyer'))
+            ->whereHas('roles', fn($q) => $q->where('name', 'lawyer'))
             ->first();
 
         if (!$lawyer) {
             return JsonResponder::send(
-                new ErrorResponse('No lawyer found with this code.', [],404)
+                new ErrorResponse(__('deals.errors.no_lawyer_found'), [], 404)
             );
         }
 
         if ($deal->users->contains($lawyer->id)) {
             return JsonResponder::send(
-                new ErrorResponse('This lawyer is already part of this deal.', [],422)
+                new ErrorResponse(__('deals.errors.lawyer_already_in_deal'), [], 422)
             );
         }
 
@@ -213,13 +208,12 @@ class DealService
         $lawyer->notify(new LawyerInvitedToDeal($deal));
 
         return JsonResponder::send(
-            new SuccessResponse('Lawyer invited successfully.', $lawyer->toArray())
+            new SuccessResponse(__('deals.success.lawyer_invited'), $lawyer->toArray())
         );
     }
 
     public function createDealFromOffer(Offer $offer): void
     {
-
         $listing = $offer->listing;
 
         $deal = Deal::create([
@@ -250,14 +244,13 @@ class DealService
 
         if ($deal->is_completed) {
             return JsonResponder::send(
-                new ErrorResponse('Cannot break a completed deal.', [], 400)
+                new ErrorResponse(__('deals.errors.deal_completed_cannot_break'), [], 400)
             );
         }
 
-        // Prevent duplicate break requests
         if ($deal->breakRequest) {
             return JsonResponder::send(
-                new ErrorResponse('Break request already exists.', [], 400)
+                new ErrorResponse(__('deals.errors.break_request_exists'), [], 400)
             );
         }
 
@@ -268,16 +261,14 @@ class DealService
             'message' => $data['message'],
         ]);
 
-
         // Notify counterparty
         $main_sides = $deal->users()->whereIn('role', ['buyer', 'seller'])->get();
         foreach ($main_sides as $user) {
             $user->notify(new DealBreakRequested($deal));
         }
 
-
         return JsonResponder::send(
-            new SuccessResponse('Break request sent successfully.')
+            new SuccessResponse(__('deals.success.break_request_sent'))
         );
     }
 
@@ -289,16 +280,15 @@ class DealService
             ->whereIn('role', ['buyer', 'seller'])
             ->first();
 
-
         if (!$breakRequest) {
             return JsonResponder::send(
-                new ErrorResponse('No break request exists for this deal.', [], 404)
+                new ErrorResponse(__('deals.errors.no_break_request'), [], 404)
             );
         }
 
         if ($breakRequest->initiator_id === $responder->id) {
             return JsonResponder::send(
-                new ErrorResponse('You cannot respond to your own break request.', [], 403)
+                new ErrorResponse(__('deals.errors.cannot_respond_own_break'), [], 403)
             );
         }
 
@@ -308,9 +298,8 @@ class DealService
 
             // Delete all associated files
             $deal->files->each(function ($file) {
-                // Delete the physical file from storage
-                Storage::delete($file->file_path); // Make sure 'file_path' is correct
-                $file->delete(); // Remove the database record
+                Storage::delete($file->file_path);
+                $file->delete();
             });
             $deal->save();
 
@@ -320,7 +309,7 @@ class DealService
             $receiver->notify(new DealBreakRequestedApproved($deal));
 
             return JsonResponder::send(
-                new SuccessResponse('Deal break confirmed. The deal has been broken.')
+                new SuccessResponse(__('deals.success.break_confirmed'))
             );
         }
 
@@ -331,12 +320,12 @@ class DealService
             $receiver->notify(new DealBreakRequestedRejected($deal));
 
             return JsonResponder::send(
-                new SuccessResponse('Deal break request rejected.')
+                new SuccessResponse(__('deals.success.break_rejected'))
             );
         }
 
         return JsonResponder::send(
-            new ErrorResponse('Invalid response type.', [], 400)
+            new ErrorResponse(__('deals.errors.invalid_response_type'), [], 400)
         );
     }
 }

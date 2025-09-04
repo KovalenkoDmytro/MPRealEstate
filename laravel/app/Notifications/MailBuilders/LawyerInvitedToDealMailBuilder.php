@@ -18,11 +18,20 @@ class LawyerInvitedToDealMailBuilder implements MailableContentBuilderInterface
     public function build($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject("You’ve Been Invited to a Deal: {$this->deal->listing->title}")
-            ->greeting("Hello {$notifiable->name},")
-            ->line("You have been invited to participate in a real estate deal.")
-            ->line("🏡 Property: {$this->deal->listing->title}")
-            ->action('View Deal', url("/deals/{$this->deal->id}"))
-            ->line('Please review the deal and take action where needed.');
+            ->subject(__('mainBuilders.lawyerInvitedToDeal.subject', [
+                'listingTitle' => $this->deal->listing->title,
+            ]))
+            ->greeting(__('mainBuilders.lawyerInvitedToDeal.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.lawyerInvitedToDeal.lines.0'))
+            ->line(__('mainBuilders.lawyerInvitedToDeal.lines.1', [
+                'listingTitle' => $this->deal->listing->title,
+            ]))
+            ->action(
+                __('mainBuilders.lawyerInvitedToDeal.action.label'),
+                url(str_replace(':dealId', $this->deal->id, __('mainBuilders.lawyerInvitedToDeal.action.url')))
+            )
+            ->line(__('mainBuilders.lawyerInvitedToDeal.lines.2'));
     }
 }

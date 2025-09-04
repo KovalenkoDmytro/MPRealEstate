@@ -22,7 +22,6 @@ interface PageProps {
 
 const NotificationBell: React.FC = () => {
     const { props } = usePage<PageProps>()
-    console.log(props)
     const [open, setOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement | null>(null)
 

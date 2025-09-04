@@ -26,7 +26,7 @@ class SellerService
     public function getSellerListingDetails(User $seller, RealEstateListing $listing): RealEstateListing
     {
         if ($listing->seller_id !== $seller->id) {
-            abort(403, 'Unauthorized Access: This listing does not belong to you.');
+            abort(403, __('global.errors.unauthorized'));
         }
 
         return RealEstateListing::with([

@@ -29,10 +29,12 @@ class ConditionDayConfirmed extends Notification implements ShouldQueue
     {
 
         return [
-            'type'     => 'condition_day_confirmed',
-            'title'    => 'Condition Day Confirmed--',
-            'body' => "---Confirmed Condition Day View Deal #{$this->deal->name}",
-            'url'      => route('deals.show', $this->deal),
-        ];
+            'type'  => __('notifications.conditionDayConfirmed.type'),
+            'title' => __('notifications.conditionDayConfirmed.title'),
+            'body'  => __('notifications.conditionDayConfirmed.body', [
+                'deal' => $this->deal->name
+            ]),
+            'url'   => route('deals.show', $this->deal),
+            ];
     }
 }

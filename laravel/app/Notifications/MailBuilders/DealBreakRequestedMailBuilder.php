@@ -22,19 +22,33 @@ class DealBreakRequestedMailBuilder implements MailableContentBuilderInterface
         if ($notifiable->id === $initiatorId) {
             // Sender: confirmation message
             return (new MailMessage)
-                ->subject('Break Request Sent')
-                ->greeting('Hello ' . $notifiable->name)
-                ->line("You have successfully requested to break the deal: {$this->deal->name}.")
-                ->action('View Deal', url("/deals/{$this->deal->id}"))
-                ->line('We have notified the other party. You will be informed once they respond.');
+                ->subject(__('mainBuilders.dealBreakRequested.sender.subject'))
+                ->greeting(__('mainBuilders.dealBreakRequested.sender.greeting', [
+                    'name' => $notifiable->name,
+                ]))
+                ->line(__('mainBuilders.dealBreakRequested.sender.lines.0', [
+                    'deal' => $this->deal->name,
+                ]))
+                ->action(
+                    __('mainBuilders.dealBreakRequested.sender.action.label'),
+                    url(str_replace(':dealId', $this->deal->id, __('mainBuilders.dealBreakRequested.sender.action.url')))
+                )
+                ->line(__('mainBuilders.dealBreakRequested.sender.lines.1'));
         }
 
         // Receiver: action required message
         return (new MailMessage)
-            ->subject('Deal Break Request')
-            ->greeting('Hello ' . $notifiable->name)
-            ->line("A request has been made to break the deal: {$this->deal->name}.")
-            ->action('Review Deal', url("/deals/{$this->deal->id}"))
-            ->line('Please review and respond to the break request.');
+            ->subject(__('mainBuilders.dealBreakRequested.receiver.subject'))
+            ->greeting(__('mainBuilders.dealBreakRequested.receiver.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.dealBreakRequested.receiver.lines.0', [
+                'deal' => $this->deal->name,
+            ]))
+            ->action(
+                __('mainBuilders.dealBreakRequested.receiver.action.label'),
+                url(str_replace(':dealId', $this->deal->id, __('mainBuilders.dealBreakRequested.receiver.action.url')))
+            )
+            ->line(__('mainBuilders.dealBreakRequested.receiver.lines.1'));
     }
 }

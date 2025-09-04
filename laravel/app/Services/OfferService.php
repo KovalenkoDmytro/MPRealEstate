@@ -41,7 +41,7 @@ class OfferService
         $request->user()->notify(new OfferConfirmation($listing, $offer));
 
         return JsonResponder::send(
-            new SuccessResponse('Offer submitted successfully.', [
+            new SuccessResponse(__('offers.success.submitted'), [
                 'offer_id' => $offer->id,
                 'listing_id' => $listing->id,
                 'status' => $offer->status,
@@ -53,7 +53,7 @@ class OfferService
 
         if ($offer->listing->seller_id !== auth()->id()) {
             return JsonResponder::send(
-                new ErrorResponse('Unauthorized', [], 403)
+                new ErrorResponse(__('global.errors.unauthorized'), [], 403)
             );
         }
 
@@ -66,7 +66,7 @@ class OfferService
         $offer->buyer->notify(new OfferStatusUpdated($offer->listing, $request->status));
 
         return JsonResponder::send(
-            new SuccessResponse('Offer status updated.', [
+            new SuccessResponse(__('offers.success.status_updated'), [
                 'offerStatus' => $offer->status,
             ])
         );

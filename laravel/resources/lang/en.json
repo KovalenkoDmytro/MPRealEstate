@@ -1,0 +1,332 @@
+{
+    "global": {
+        "errors" : {
+            "unauthorized": "Unauthorized Access"
+        }
+    },
+    "files": {
+        "not_found": "File not found.",
+        "unauthorized": "You are not authorized to access this file.",
+        "invalid_type": "Invalid file type.",
+        "upload_success": "File uploaded successfully.",
+        "upload_failed": "File upload failed. Please try again.",
+        "delete_success": "File deleted successfully.",
+        "delete_failed": "File could not be deleted.",
+        "too_large": "The uploaded file exceeds the maximum allowed size.",
+        "missing_path": "File path is missing."
+    },
+    "deals": {
+        "errors": {
+            "security_deposit_already_set": "Security deposit has already been set and cannot be changed.",
+            "no_lawyer_found": "No lawyer found with this code.",
+            "lawyer_already_in_deal": "This lawyer is already part of this deal.",
+            "condition_day_already_set": "Condition day has already been set and cannot be changed.",
+            "possession_day_already_set": "Possession day has already been set and cannot be changed.",
+            "deal_completed_cannot_break": "Cannot break a completed deal.",
+            "break_request_exists": "Break request already exists.",
+            "no_break_request": "No break request exists for this deal.",
+            "cannot_respond_own_break": "You cannot respond to your own break request.",
+            "invalid_response_type": "Invalid response type."
+        },
+        "success": {
+            "security_deposit_set": "Security deposit has been set successfully.",
+            "deposit_marked_made": "Deposit marked as made.",
+            "deposit_confirmed": "Deposit confirmed.",
+            "condition_day_set": "Condition day has been set successfully.",
+            "condition_day_confirmed": "Condition day has confirmed.",
+            "possession_day_set": "Possession day has been set successfully.",
+            "possession_day_confirmed": "Possession day has confirmed.",
+            "lawyer_invited": "Lawyer invited successfully.",
+            "break_request_sent": "Break request sent successfully.",
+            "break_confirmed": "Deal break confirmed. The deal has been broken.",
+            "break_rejected": "Deal break request rejected."
+        }
+    },
+    "offers": {
+        "success": {
+            "submitted": "Offer submitted successfully.",
+            "status_updated": "Offer status updated."
+        }
+    },
+    "notifications": {
+        "conditionDaySet": {
+            "type": "condition_day_set",
+            "title": "--Condition Day Set",
+            "body": "--Condition day was set for Deal #:deal"
+        },
+        "conditionDayConfirmed": {
+            "type": "Condition Day Confirmed",
+            "title": "Condition Day Confirmed",
+            "body": "---Confirmed Condition Day View Deal #:deal"
+        },
+        "dealBreakRequested": {
+            "type": "deal_break_requested",
+            "title": "--Deal Break Requested",
+            "body": "---Deal #:deal requires your review."
+        },
+        "dealBreakRequestedApproved": {
+            "type": "deal_break_requested_approved",
+            "title": "---Deal Break Approved",
+            "body": "---Your deal-break request for Deal #:deal was approved."
+        },
+        "dealBreakRequestedRejected": {
+            "type": "deal_break_requested_rejected",
+            "title": "---Deal Break Rejected",
+            "body": "---Your deal-break request for Deal #:deal was rejected."
+        },
+        "depositConfirmed": {
+            "type": "deposit_confirmed",
+            "title": "--Deposit Confirmed",
+            "body": "--Deposit for Deal #:deal has been confirmed."
+        },
+        "depositMarkedAsMade": {
+            "type": "deposit_marked_as_made",
+            "title": "--Deposit Marked as Made",
+            "body": "--Deposit for Deal #:deal was marked as made."
+        },
+        "lawyerInvitedToDeal": {
+            "type": "lawyer_invited_to_deal",
+            "title": "--Lawyer Invited to Deal",
+            "body": "--You were invited to Deal #:deal."
+        },
+        "offerConfirmation": {
+            "type": "offer_confirmation",
+            "title": "--Offer Confirmation",
+            "body": "--Offer was confirmed for Listing #:listing."
+        },
+        "offerStatusUpdated": {
+            "type": "offer_status_updated",
+            "title": "Offer Status Updated",
+            "accepted": "🎉 Your offer for :listing has been accepted.",
+            "rejected": "Unfortunately, your offer for :listing has been rejected."
+        },
+        "offerSubmitted": {
+            "type": "offer_submitted",
+            "title": "--Offer Submitted",
+            "body": "--Someone submitted an offer on Listing #:listing."
+        },
+        "possessionDayConfirmed": {
+            "type": "possession_day_confirmed",
+            "title": "---Possession Day Confirmed",
+            "body": "--Possession day for Deal #:deal has been confirmed."
+        },
+        "possessionDaySet": {
+            "type": "possession_day_set",
+            "title": "--Possession Day Set",
+            "body": "--Possession day was set for Deal #:deal"
+        },
+        "securityDepositSet": {
+            "type": "security_deposit_set",
+            "title": "--Security Deposit Set",
+            "body": "--Security deposit was set for Deal #:deal."
+        }
+
+    },
+    "mainBuilders": {
+        "conditionDaySet": {
+            "greeting": "Hello :name,",
+            "lines": [
+                "The seller has confirmed the condition day for your deal on \":listingTitle\".",
+                "📅 Confirmed Condition Day: :conditionDay"
+            ],
+            "action": {
+                "label": "View Deal",
+                "url": "/deals/:dealId"
+            },
+            "closing": "Thank you for continuing the transaction process."
+        },
+        "conditionDayConfirmed": {
+            "greeting": "Hello :name,",
+            "lines": [
+                "The seller has confirmed the condition day for your deal on \":listingTitle\".",
+                "📅 Confirmed Condition Day: :conditionDay"
+            ],
+            "action": {
+                "label": "View Deal",
+                "url": "/deals/:dealId"
+            },
+            "closing": "Thank you for continuing the transaction process."
+        },
+        "securityDepositSet": {
+            "subject": "Security Deposit Set",
+            "greeting": "Hello :name,",
+            "lines": [
+                "The seller has set a security deposit for your deal related to \":listingTitle\".",
+                "💰 Security Deposit: $:securityDeposit",
+                "Please review and proceed with the next steps."
+            ],
+            "action": {
+                "label": "View Deal",
+                "url": "/deals/:dealId"
+            }
+        },
+        "depositMarkedAsMade": {
+            "subject": "Deposit Marked as Made for :listingTitle",
+            "greeting": "Hello :name,",
+            "lines": [
+                "The buyer has marked their security deposit as made for the listing \":listingTitle\".",
+                "Please log in to verify and confirm receipt."
+            ],
+            "action": {
+                "label": "View Deal",
+                "url": "/deals/:dealId"
+            }
+        },
+        "depositConfirmed": {
+            "subject": "Deposit Confirmed for :listingTitle",
+            "greeting": "Hello :name,",
+            "lines": [
+                "Your deposit for the deal on \":listingTitle\" has been confirmed by the seller.",
+                "Next steps will follow shortly."
+            ],
+            "action": {
+                "label": "View Deal Details",
+                "url": "/deals/:dealId"
+            }
+        },
+        "lawyerInvitedToDeal": {
+            "subject": "You’ve Been Invited to a Deal: :listingTitle",
+            "greeting": "Hello :name,",
+            "lines": [
+                "You have been invited to participate in a real estate deal.",
+                "🏡 Property: :listingTitle",
+                "Please review the deal and take action where needed."
+            ],
+            "action": {
+                "label": "View Deal",
+                "url": "/deals/:dealId"
+            }
+        },
+        "possessionDaySet": {
+            "subject": "Possession Day Set",
+            "greeting": "Hello :name,",
+            "lines": [
+                "The buyer has set the possession day for your deal on \":listingTitle\".",
+                "📅 Possession Day: :possessionDay",
+                "Please review and confirm when ready."
+            ],
+            "action": {
+                "label": "View Deal",
+                "url": "/deals/:dealId"
+            }
+        },
+        "possessionDayConfirmed": {
+            "subject": "Possession Day Confirmed",
+            "greeting": "Hello :name,",
+            "lines": [
+                "Your possession day for the listing \":listingTitle\" has been confirmed by the seller.",
+                "📅 Confirmed Possession Day: :possessionDay",
+                "Please prepare for the next steps in your property transaction."
+            ],
+            "action": {
+                "label": "View Deal Details",
+                "url": "/deals/:dealId"
+            }
+        },
+        "dealBreakRequested": {
+            "sender": {
+                "subject": "Break Request Sent",
+                "greeting": "Hello :name,",
+                "lines": [
+                    "You have successfully requested to break the deal: :deal.",
+                    "We have notified the other party. You will be informed once they respond."
+                ],
+                "action": {
+                    "label": "View Deal",
+                    "url": "/deals/:dealId"
+                }
+            },
+            "receiver": {
+                "subject": "Deal Break Request",
+                "greeting": "Hello :name,",
+                "lines": [
+                    "A request has been made to break the deal: :deal.",
+                    "Please review and respond to the break request."
+                ],
+                "action": {
+                    "label": "Review Deal",
+                    "url": "/deals/:dealId"
+                }
+            }
+        },
+        "dealBreakRequestedApproved": {
+            "subject": "Deal Break Request Has been Approved",
+            "greeting": "Hello :name,",
+            "lines": [
+                "A request to break the deal: :deal has been approved."
+            ]
+        },
+        "dealBreakRequestedRejected": {
+            "subject": "Deal Break Request has been Rejected",
+            "greeting": "Hello :name,",
+            "lines": [
+                "A request to break the deal: :deal has been rejected."
+            ],
+            "action": {
+                "label": "Review Deal",
+                "url": "/deals/:dealId"
+            }
+        },
+        "offerSubmitted": {
+            "subject": "New Offer on Your Listing",
+            "greeting": "Hi :name,",
+            "lines": [
+                "You’ve received a new offer on your listing: \":listingTitle\".",
+                "👤 Buyer: :buyerName (:buyerEmail)",
+                "💰 Offered Price: $:offerPrice",
+                "📩 Message: :message",
+                "Please review and respond to the offer."
+            ],
+            "action": {
+                "label": "View Offer Details",
+                "url": "/dashboard/offers/:offerId"
+            }
+        },
+        "offerConfirmation": {
+            "subject": "Offer Confirmation",
+            "greeting": "Hi :name,",
+            "lines": [
+                "Thank you for submitting an offer on \":listingTitle\".",
+                "💰 Offered Price: $:offerPrice",
+                "📍 Listing Location: :listingLocation",
+                "We’ve notified the seller and they’ll respond soon."
+            ],
+            "action": {
+                "label": "View Your Offer",
+                "url": "/listings/:listingId"
+            }
+        },
+        "offerStatusUpdated": {
+            "accepted": {
+                "greeting": "Congratulations :name!",
+                "lines": [
+                    "🎉 Your offer for \":listingTitle\" has been accepted.",
+                    "Our team has created a deal and the process has started.",
+                    "Thank you for using our platform!"
+                ],
+                "action": {
+                    "label": "View Your Deal",
+                    "url": "/deals"
+                }
+            },
+            "rejected": {
+                "greeting": "Hello :name,",
+                "lines": [
+                    "Unfortunately, your offer for \":listingTitle\" has been rejected.",
+                    "We encourage you to explore other available listings.",
+                    "Thank you for your interest."
+                ],
+                "action": {
+                    "label": "Browse Listings",
+                    "url": "/listings"
+                }
+            },
+            "updated": {
+                "greeting": "Hello :name,",
+                "lines": [
+                    "Your offer status on \":listingTitle\" has been updated."
+                ]
+            }
+        }
+    }
+}

@@ -18,10 +18,19 @@ class ConditionDaySetMailBuilder implements MailableContentBuilderInterface
     public function build($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->greeting("Hello {$notifiable->name},")
-            ->line("The buyer has set the condition day for your deal on \"{$this->deal->listing->title}\".")
-            ->line("📅 Condition Day: {$this->deal->condition_day->format('F j, Y')}")
-            ->action('View Deal', url("/deals/{$this->deal->id}"))
-            ->line("Please review the schedule and plan accordingly.");
+            ->greeting(__('mainBuilders.conditionDaySet.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.conditionDaySet.lines.0', [
+                'listingTitle' => $this->deal->listing->title,
+            ]))
+            ->line(__('mainBuilders.conditionDaySet.lines.1', [
+                'conditionDay' => $this->deal->condition_day->format('F j, Y'),
+            ]))
+            ->action(
+                __('mainBuilders.conditionDaySet.action.label'),
+                url(str_replace(':dealId', $this->deal->id, __('mainBuilders.conditionDaySet.action.url')))
+            )
+            ->line(__('mainBuilders.conditionDaySet.closing'));
     }
 }

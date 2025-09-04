@@ -31,10 +31,12 @@ class LawyerInvitedToDeal extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'     => 'lawyer_invited_to_deal',
-            'title'    => '--Lawyer Invited to Deal',
-            'body'     => "--You were invited to Deal #{$this->deal->name}.",
-            'url'      => route('deals.show', $this->deal), // adjust if your route differs
+            'type'  => __('notifications.lawyerInvitedToDeal.type'),
+            'title' => __('notifications.lawyerInvitedToDeal.title'),
+            'body'  => __('notifications.lawyerInvitedToDeal.body', [
+                'deal' => $this->deal->name,
+            ]),
+            'url'   => route('deals.show', $this->deal),
         ];
     }
 }

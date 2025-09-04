@@ -31,10 +31,12 @@ class OfferConfirmation extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'       => 'offer_confirmation',
-            'title'      => '--Offer Confirmation',
-            'body'       => "--Offer was confirmed for Listing #{$this->listing->title}.",
-            'url'        => route('buyer.listings.show', $this->listing), // or route('offers.show', $this->offer->id)
+            'type'  => __('notifications.offerConfirmation.type'),
+            'title' => __('notifications.offerConfirmation.title'),
+            'body'  => __('notifications.offerConfirmation.body', [
+                'listing' => $this->listing->title,
+            ]),
+            'url'   => route('buyer.listings.show', $this->listing),
         ];
     }
 }

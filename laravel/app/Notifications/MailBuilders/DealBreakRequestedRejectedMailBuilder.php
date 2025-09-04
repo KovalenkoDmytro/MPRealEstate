@@ -17,11 +17,17 @@ class DealBreakRequestedRejectedMailBuilder implements MailableContentBuilderInt
 
     public function build($notifiable): MailMessage
     {
-
         return (new MailMessage)
-            ->subject('Deal Break Request has been Rejected')
-            ->greeting('Hello ' . $notifiable->name)
-            ->line("A request to break the deal: {$this->deal->name} has been rejected.")
-            ->action('Review Deal', url("/deals/{$this->deal->id}"));
+            ->subject(__('mainBuilders.dealBreakRequestedRejected.subject'))
+            ->greeting(__('mainBuilders.dealBreakRequestedRejected.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.dealBreakRequestedRejected.lines.0', [
+                'deal' => $this->deal->name,
+            ]))
+            ->action(
+                __('mainBuilders.dealBreakRequestedRejected.action.label'),
+                url(str_replace(':dealId', $this->deal->id, __('mainBuilders.dealBreakRequestedRejected.action.url')))
+            );
     }
 }

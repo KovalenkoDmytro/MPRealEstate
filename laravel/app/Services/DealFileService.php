@@ -32,7 +32,7 @@ class DealFileService
         $filePath = $file->file_path;
 
         if (!Storage::disk('public')->exists($filePath)) {
-            abort(404, 'File not found.');
+            abort(404, __('files.not_found'));
         }
 
         return Storage::disk('public')->download($filePath, $file->file_name);

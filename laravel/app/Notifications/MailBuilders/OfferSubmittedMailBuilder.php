@@ -24,12 +24,27 @@ class OfferSubmittedMailBuilder implements MailableContentBuilderInterface
     public function build($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->greeting("Hi {$notifiable->name},")
-            ->line("You’ve received a new offer on your listing: \"{$this->listing->title}\".")
-            ->line("👤 Buyer: {$this->buyer->name} ({$this->buyer->email})")
-            ->line("💰 Offered Price: \${$this->offer->offer_price}")
-            ->line("📩 Message: {$this->offer->message}")
-            ->action('View Offer Details', url("/dashboard/offers/{$this->offer->id}"))
-            ->line("Please review and respond to the offer.");
+            ->subject(__('mainBuilders.offerSubmitted.subject'))
+            ->greeting(__('mainBuilders.offerSubmitted.greeting', [
+                'name' => $notifiable->name,
+            ]))
+            ->line(__('mainBuilders.offerSubmitted.lines.0', [
+                'listingTitle' => $this->listing->title,
+            ]))
+            ->line(__('mainBuilders.offerSubmitted.lines.1', [
+                'buyerName'  => $this->buyer->name,
+                'buyerEmail' => $this->buyer->email,
+            ]))
+            ->line(__('mainBuilders.offerSubmitted.lines.2', [
+                'offerPrice' => number_format($this->offer->offer_price, 2),
+            ]))
+            ->line(__('mainBuilders.offerSubmitted.lines.3', [
+                'message' => $this->offer->message ?: __('(no message)'),
+            ]))
+            ->action(
+                __('mainBuilders.offerSubmitted.action.label'),
+                url(str_replace(':offerId', $this->offer->id, __('mainBuilders.offerSubmitted.action.url')))
+            )
+            ->line(__('mainBuilders.offerSubmitted.lines.4'));
     }
 }

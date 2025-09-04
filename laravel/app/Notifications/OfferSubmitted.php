@@ -34,10 +34,12 @@ class OfferSubmitted extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'       => 'offer_submitted',
-            'title'      => '--Offer Submitted',
-            'body'       => "--Someone submitted an offer on Listing #{$this->listing->title}.",
-            'url'        => route('seller.listings.show', $this->listing), // or route('offers.show', $this->offer->id)
+            'type'  => __('notifications.offerSubmitted.type'),
+            'title' => __('notifications.offerSubmitted.title'),
+            'body'  => __('notifications.offerSubmitted.body', [
+                'listing' => $this->listing->title,
+            ]),
+            'url'   => route('seller.listings.show', $this->listing),
         ];
     }
 }
