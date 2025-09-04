@@ -2,18 +2,20 @@
 
 namespace App\Services;
 
+use App\Helpers\Responses\JsonResponder;
+use App\Helpers\Responses\SuccessResponse;
 use App\Http\Requests\RealEstateListingRequest;
 use App\Models\RealEstateListing;
 use App\Models\ListingImage;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class RealEstateListingService
 {
-    public function createListing(RealEstateListingRequest $request): RealEstateListing
-    {
+    public function createListing(RealEstateListingRequest $request): JsonResponse {
         $user = auth()->user();
 
         // Exclude image fields from the data we use for main model
@@ -28,17 +30,23 @@ class RealEstateListingService
         // Handle images separately
         $this->handleListingImages($listing, $request);
 
-        return $listing;
+        return JsonResponder::send(
+            new SuccessResponse(__('listings.success.created'), $listing->toArray())
+        );
     }
 
-    public function updateListing(RealEstateListingRequest $request, RealEstateListing $listing ): void
+    public function updateListing(RealEstateListingRequest $request, RealEstateListing $listing ): JsonResponse
     {
         $data = $request->safe()->except(['main_image', 'gallery_images', 'remove_images', 'remove_main_image']);
         $listing->update($data);
         $this->handleListingImages($listing, $request);
+
+        return JsonResponder::send(
+            new SuccessResponse(__('listings.success.updated'))
+        );
     }
 
-    public function deactivateListing(RealEstateListing $listing): void
+    public function deactivateListing(RealEstateListing $listing): JsonResponse
     {
         $listing->update(['status' => 'inactive']);
 
@@ -47,6 +55,10 @@ class RealEstateListingService
             Storage::delete(str_replace('/storage/', '', $image->image_path));
             $image->delete();
         }
+
+        return JsonResponder::send(
+            new SuccessResponse(__('listings.success.deactivated'))
+        );
     }
 
     //Shared logic for storing/updating images

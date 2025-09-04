@@ -53,7 +53,7 @@ class OfferService
 
         if ($offer->listing->seller_id !== auth()->id()) {
             return JsonResponder::send(
-                new ErrorResponse(__('global.errors.unauthorized'), [], 403)
+                new ErrorResponse(__('global.errors.unauthorized'))
             );
         }
 

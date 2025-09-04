@@ -38,7 +38,7 @@ class DealService
     {
         if (!is_null($deal->security_deposit)) {
             return JsonResponder::send(
-                new ErrorResponse(__('deals.errors.security_deposit_already_set'), [], 400)
+                new ErrorResponse(__('deals.errors.security_deposit_already_set'))
             );
         }
 
@@ -103,7 +103,7 @@ class DealService
     {
         if (!is_null($deal->condition_day)) {
             return JsonResponder::send(
-                new ErrorResponse(__('deals.errors.condition_day_already_set'), [], 400)
+                new ErrorResponse(__('deals.errors.condition_day_already_set'))
             );
         }
 
@@ -143,7 +143,7 @@ class DealService
     {
         if (!is_null($deal->possession_day)) {
             return JsonResponder::send(
-                new ErrorResponse(__('deals.errors.possession_day_already_set'), [], 400)
+                new ErrorResponse(__('deals.errors.possession_day_already_set'))
             );
         }
 
@@ -187,13 +187,13 @@ class DealService
 
         if (!$lawyer) {
             return JsonResponder::send(
-                new ErrorResponse(__('deals.errors.no_lawyer_found'), [], 404)
+                new ErrorResponse(__('deals.errors.no_lawyer_found'))
             );
         }
 
         if ($deal->users->contains($lawyer->id)) {
             return JsonResponder::send(
-                new ErrorResponse(__('deals.errors.lawyer_already_in_deal'), [], 422)
+                new ErrorResponse(__('deals.errors.lawyer_already_in_deal'))
             );
         }
 
@@ -244,13 +244,13 @@ class DealService
 
         if ($deal->is_completed) {
             return JsonResponder::send(
-                new ErrorResponse(__('deals.errors.deal_completed_cannot_break'), [], 400)
+                new ErrorResponse(__('deals.errors.deal_completed_cannot_break'))
             );
         }
 
         if ($deal->breakRequest) {
             return JsonResponder::send(
-                new ErrorResponse(__('deals.errors.break_request_exists'), [], 400)
+                new ErrorResponse(__('deals.errors.break_request_exists'))
             );
         }
 
@@ -282,13 +282,13 @@ class DealService
 
         if (!$breakRequest) {
             return JsonResponder::send(
-                new ErrorResponse(__('deals.errors.no_break_request'), [], 404)
+                new ErrorResponse(__('deals.errors.no_break_request'))
             );
         }
 
         if ($breakRequest->initiator_id === $responder->id) {
             return JsonResponder::send(
-                new ErrorResponse(__('deals.errors.cannot_respond_own_break'), [], 403)
+                new ErrorResponse(__('deals.errors.cannot_respond_own_break'))
             );
         }
 
@@ -325,7 +325,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new ErrorResponse(__('deals.errors.invalid_response_type'), [], 400)
+            new ErrorResponse(__('deals.errors.invalid_response_type'))
         );
     }
 }

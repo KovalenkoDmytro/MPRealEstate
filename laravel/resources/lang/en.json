@@ -15,6 +15,13 @@
         "too_large": "The uploaded file exceeds the maximum allowed size.",
         "missing_path": "File path is missing."
     },
+    "listings": {
+        "success": {
+            "created": "Listing created successfully.",
+            "updated": "Listing updated successfully.",
+            "deactivated": "Listing deactivated successfully."
+        }
+    },
     "deals": {
         "errors": {
             "security_deposit_already_set": "Security deposit has already been set and cannot be changed.",
