@@ -64,7 +64,6 @@ export default function CreateListing() {
     const [previewMainImage, setPreviewMainImage] = useState<string | null>(null);
     const [previewGalleryImages, setPreviewGalleryImages] = useState<GalleryImagePreview[]>([]);
     const [processing, setProcessing] = useState(false);
-    const [errors, setErrors] = useState<Record<string, string[]>>({});
 
     /** Handle form inputs */
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
