@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Notifications\MailBuilders\OfferSubmittedMailBuilder;
+use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Offer;
@@ -12,6 +13,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class OfferSubmitted extends Notification implements ShouldQueue
 {
+    use Queueable;
     public RealEstateListing $listing;
     public User $buyer;
     public Offer $offer;

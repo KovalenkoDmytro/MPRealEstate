@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Notifications\MailBuilders\PossessionDayConfirmedMailBuilder;
@@ -10,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class PossessionDayConfirmed extends Notification implements ShouldQueue
 {
+    use Queueable;
     protected PossessionDayConfirmedMailBuilder $builder;
     protected Deal $deal;
 

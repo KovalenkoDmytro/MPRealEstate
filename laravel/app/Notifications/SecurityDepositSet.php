@@ -7,10 +7,12 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
 use Illuminate\Contracts\Queue\ShouldQueue;
-
+use Illuminate\Bus\Queueable;
 
 class SecurityDepositSet extends Notification implements ShouldQueue
 {
+    use Queueable;
+
     protected Deal $deal;
     protected SecurityDepositSetMailBuilder $builder;
 

@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Notifications\MailBuilders\ConditionDaySetMailBuilder;
+use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
@@ -10,6 +11,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class ConditionDaySet extends Notification implements ShouldQueue
 {
+    use Queueable;
+
     public Deal $deal;
 
     public function __construct(Deal $deal)

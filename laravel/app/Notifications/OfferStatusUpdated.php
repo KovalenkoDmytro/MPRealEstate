@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\RealEstateListing;
@@ -10,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class OfferStatusUpdated extends Notification implements ShouldQueue
 {
+    use Queueable;
     public RealEstateListing $listing;
     public string $status;
 
