@@ -39,7 +39,7 @@ class RealEstateListingRequest extends FormRequest
             'location' => ['required', 'string', 'max:255'],
 
             // Property Specs
-            'property_type' => ['nullable', 'in:house,condo,townhouse,land,multi-family,farm'],
+            'property_type' => ['required', 'in:house,condo,townhouse,land,multi-family,farm'],
             'bedrooms' => ['required', 'integer', 'min:0'],
             'bathrooms' => ['required', 'integer', 'min:0'],
             'square_feet' => ['nullable', 'integer', 'min:0'],

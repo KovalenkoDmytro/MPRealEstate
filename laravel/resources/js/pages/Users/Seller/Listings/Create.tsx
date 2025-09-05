@@ -156,11 +156,13 @@ export default function CreateListing() {
             const formData = buildFormData(data);
             const result = await listingService.createSellerListing(formData);
 
-            if (result.success) {
-                window.location.href = "/seller/listings";
-            } else {
-                setErrors(result.errors);
-            }
+            alert('CreateListing')
+
+            // if (result.success) {
+            //     window.location.href = "/seller/listings";
+            // } else {
+            //     setErrors(result.errors);
+            // }
         } catch (error) {
             console.error("Submission failed:", error);
         } finally {

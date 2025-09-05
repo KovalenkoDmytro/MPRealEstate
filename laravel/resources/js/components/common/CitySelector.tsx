@@ -41,7 +41,7 @@ export default function CitySelector({ value, onChange }: CitySelectorProps) {
         setChosenCity(e.target.value);
         onChange({
             target: {
-                name: "city",
+                name: "location",
                 value: e.target.value,
                 type: "select-one",
                 checked: false,
@@ -63,6 +63,7 @@ export default function CitySelector({ value, onChange }: CitySelectorProps) {
                 labelId="city-label"
                 value={chosenCity}
                 onChange={handleSelectChange}
+                name="location"
             >
                 {sortedCities.map((city) => (
                     <MenuItem key={city} value={city}>
