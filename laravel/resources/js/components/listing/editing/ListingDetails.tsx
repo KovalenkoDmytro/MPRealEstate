@@ -12,6 +12,7 @@ import {
     Box,
 } from "@mui/material";
 import CitySelector from "@/components/common/CitySelector";
+import YearBuiltField from "@/components/listing/form/YearBuiltField";
 
 interface Props {
     data: any;
@@ -60,7 +61,7 @@ export default function ListingDetails({ data, handleChange }: Props) {
                     </FormControl>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField name="year_built" label="Year Built" type="number" value={data.year_built} onChange={handleChange} fullWidth />
+                    <YearBuiltField value={data.year_built} onChange={handleChange} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField name="bedrooms" label="Bedrooms" type="number" value={data.bedrooms} onChange={handleChange} fullWidth />
