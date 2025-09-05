@@ -63,12 +63,9 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         gallery_images: [],
         remove_images: [],
     });
-
     const [previewMainImage, setPreviewMainImage] = useState<string | null>(listing.main_image.image_path);
-
     const initialGalleryImages: GalleryImagePreview[] =
         listing.images?.filter((img) => !img.is_main).map((img) => ({ id: img.id, url: img.image_path })) || [];
-
     const [previewGalleryImages, setPreviewGalleryImages] = useState<GalleryImagePreview[]>(initialGalleryImages);
     const [removeMainImageFlag, setRemoveMainImageFlag] = useState(false);
     const [processing, setProcessing] = useState(false);
@@ -80,6 +77,23 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         setData((prev) => ({ ...prev, [name]: val }));
     };
 
+    const handleDeactivateListing = async () =>{
+        setProcessing(true);
+
+        try {
+            const result = await listingService.deactivateListing(listing.id);
+
+            if (result.success) {
+                alert(result.data.message);
+            } else {
+                setErrors(result.errors);
+            }
+        } catch (error) {
+            console.error("Submission failed:", error);
+        } finally {
+            setProcessing(false);
+        }
+    }
     const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -87,14 +101,12 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
             setPreviewMainImage(URL.createObjectURL(file));
         }
     };
-
     const removeMainImage = () => {
         if (previewMainImage) imageService.revokePreview(previewMainImage);
         setData((prev) => ({ ...prev, main_image: null }));
         setPreviewMainImage(null);
         setRemoveMainImageFlag(true);
     };
-
     const handleGalleryImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
 
@@ -116,7 +128,6 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         const newPreviews = imageService.createPreviews(newFiles);
         setPreviewGalleryImages((prev) => [...prev, ...newPreviews]);
     };
-
     const removeGalleryImage = (index: number) => {
         const { updatedPreviews, updatedRemoveIds } = imageService.removeGalleryImage(
             index,
@@ -127,7 +138,6 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         setPreviewGalleryImages(updatedPreviews);
         setData((prev) => ({ ...prev, remove_images: updatedRemoveIds }));
     };
-
     const buildFormData = (data: ListingFormData, removeMainImageFlag: boolean): FormData => {
         const formData = new FormData();
 
@@ -160,13 +170,12 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
 
         return formData;
     };
-
     const submit = async () => {
         setProcessing(true);
 
         try {
             const formData = buildFormData(data, removeMainImageFlag);
-            const result = await listingService.updateSellerListing(listing.id, formData);
+            const result = await listingService.updateListing(listing.id, formData);
 
             if (result.success) {
                 alert(result.data.message);
@@ -208,6 +217,14 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
                     >
                         {processing ? "Saving..." : "Save Changes"}
+                    </button>
+
+                    <button
+                        onClick={handleDeactivateListing}
+                        disabled={processing}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
+                    >
+                        {processing ? "Deleting..." : "Delete listing"}
                     </button>
                 </div>
             </div>

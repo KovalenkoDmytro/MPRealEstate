@@ -18,6 +18,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Requests\RealEstateListingRequest;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RealEstateListingController extends Controller {
     use AuthorizesRequests;
@@ -69,6 +70,10 @@ class RealEstateListingController extends Controller {
     }
 
     public function edit(RealEstateListing $listing): Response {
+
+        if ($listing->trashed()) {
+            return Inertia::render('Users/Seller/Listings/Deleted');
+        }
 
         $this->authorize('update', $listing);
 

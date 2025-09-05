@@ -15,7 +15,7 @@ Route::prefix('seller')->middleware(['auth', 'role:seller'])->name('seller.')->g
         Route::get('create', [RealEstateListingController::class, 'create'])->name('create');
         Route::put('{listing}', [RealEstateListingController::class, 'update'])->name('update');
         Route::get('{listing}', [SellerController::class, 'showListing'])->name('show');
-        Route::patch('{listing}/deactivate', [RealEstateListingController::class, 'softDelete'])->name('deactivate');
+        Route::delete('{listing}/deactivate', [RealEstateListingController::class, 'softDelete'])->name('deactivate');
         Route::get('{listing}/edit', [RealEstateListingController::class, 'edit'])->name('edit');
     });
 

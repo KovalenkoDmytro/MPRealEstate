@@ -47,6 +47,7 @@ return new class extends Migration
             $table->text('keywords')->nullable();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Http\Requests\RealEstateListingRequest;
@@ -48,13 +49,22 @@ class RealEstateListingService
 
     public function deactivateListing(RealEstateListing $listing): JsonResponse
     {
-        $listing->update(['status' => 'inactive']);
+        DB::transaction(static function () use ($listing) {
+            // 1) Mark as inactive
+            $listing->update(['status' => 'inactive']);
 
-        $galleryImages = $listing->images()->where('is_main', false)->get();
-        foreach ($galleryImages as $image) {
-            Storage::delete(str_replace('/storage/', '', $image->image_path));
-            $image->delete();
-        }
+            // 2) Soft delete (sets deleted_at)
+            $listing->delete();
+
+            // 3) Delete gallery images (not main)
+            $listing->images()
+                ->where('is_main', false)
+                ->get()
+                ->each(function ($image) {
+                    Storage::delete(str_replace('/storage/', '', $image->image_path));
+                    $image->delete(); // soft deletes if model uses SoftDeletes
+                });
+        });
 
         return JsonResponder::send(
             new SuccessResponse(__('listings.success.deactivated'))

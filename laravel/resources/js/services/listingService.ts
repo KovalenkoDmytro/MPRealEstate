@@ -4,13 +4,13 @@ export const listingService = {
     // Toggle favorite
     async toggleFavorite(listingId: number, isFavorite: boolean) {
         if (isFavorite) {
-            const r = await api.delete(route("favorites.destroy", listingId, false));
-            return r.data;
+            const response = await api.delete(route("favorites.destroy", listingId, false));
+            return response.data;
         } else {
-            const r = await api.post(route("favorites.store", [], false), {
+            const response = await api.post(route("favorites.store", [], false), {
                 listing_id: listingId,
             });
-            return r.data;
+            return response.data;
         }
     },
 
@@ -22,15 +22,15 @@ export const listingService = {
     },
 
     // Update seller listing (multipart)
-    async updateSellerListing(listingId: number, formData: FormData) {
+    async updateListing(listingId: number, formData: FormData) {
         formData.append("_method", "PUT");
         try {
-            const r = await api.post(
+            const response = await api.post(
                 route("seller.listings.update", { listing: listingId }, false),
                 formData,
                 { headers: { Accept: "application/json"} } // let Axios set multipart boundary
             );
-            return { success: true, data: r.data };
+            return { success: true, data: response.data };
         } catch (err: any) {
             if (err.response?.status === 422) {
                 return { success: false, errors: err.response.data?.errors ?? {} };
@@ -41,14 +41,14 @@ export const listingService = {
     },
 
     // Create seller listing (multipart)
-    async createSellerListing(formData: FormData) {
+    async createListing(formData: FormData) {
         try {
-            const r = await api.post(
+            const response = await api.post(
                 route("seller.listings.store", [], false),
                 formData,
                 { headers: { Accept: "application/json" } }
             );
-            return { success: true, data: r.data };
+            return { success: true, data: response.data };
         } catch (err: any) {
             if (err.response?.status === 422) {
                 return { success: false, errors: err.response.data?.errors ?? {} };
@@ -57,4 +57,13 @@ export const listingService = {
             throw new Error(err.message || "Unexpected error occurred");
         }
     },
+
+    async deactivateListing(listingId: number) {
+        try {
+            const response = await api.delete(route("seller.listings.deactivate", listingId));
+            return response.data;
+        } catch (err: any) {
+            console.error("Unexpected error", err);
+        }
+    }
 };

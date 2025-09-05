@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\RealEstateListing;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        Route::bind('listing', function ($value) {
+            return RealEstateListing::withTrashed()->findOrFail($value);
+        });
 
         $this->routes(function () {
             Route::middleware('web')

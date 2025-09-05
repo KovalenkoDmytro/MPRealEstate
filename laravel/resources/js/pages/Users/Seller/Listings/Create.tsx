@@ -154,7 +154,7 @@ export default function CreateListing() {
 
         try {
             const formData = buildFormData(data);
-            const result = await listingService.createSellerListing(formData);
+            const result = await listingService.createListing(formData);
 
             alert('CreateListing')
 
