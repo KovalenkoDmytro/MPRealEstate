@@ -11,6 +11,7 @@ import {
     Checkbox,
     Box,
 } from "@mui/material";
+import CitySelector from "@/components/common/CitySelector";
 
 interface Props {
     data: any;
@@ -31,7 +32,7 @@ export default function ListingDetails({ data, handleChange }: Props) {
                     <TextField name="title" label="Title" value={data.title} onChange={handleChange} fullWidth />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField name="location" label="Location" value={data.location} onChange={handleChange} fullWidth />
+                    <CitySelector value={data.location} onChange={handleChange} />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                     <TextField
