@@ -23,8 +23,13 @@ class RealEstateListingController extends Controller {
     use AuthorizesRequests;
 
     private RealEstateListingService $listingService;
-    private SellerService $dealService;
+    private SellerService $sellerService;
     private BuyerService $buyerService;
+
+    /**
+     * @var \App\Services\SellerService
+     */
+
 
     public function __construct(RealEstateListingService $listingService, SellerService $sellerService, BuyerService $buyerService)
     {
@@ -53,7 +58,7 @@ class RealEstateListingController extends Controller {
             $this->listingService->createListing($request);
 
             return JsonResponder::send(
-                new SuccessResponse('Listing created successfully!', [])
+                new SuccessResponse(__('listings.success.created'))
             );
         }
         catch(Exception $e){
@@ -80,7 +85,7 @@ class RealEstateListingController extends Controller {
             $this->listingService->updateListing($request, $listing);
 
             return JsonResponder::send(
-                new SuccessResponse('Listing updated successfully!', [])
+                new SuccessResponse(__('listings.success.updated'))
             );
         }
         catch (Exception $e) {
@@ -99,7 +104,7 @@ class RealEstateListingController extends Controller {
 
         if ($hasActiveDeal) {
             return JsonResponder::send(
-                new ErrorResponse('Cannot delete listing with an active/incomplete deal.')
+                new ErrorResponse(__('listings.errors.delete_failed'))
             );
         }
 
@@ -108,7 +113,7 @@ class RealEstateListingController extends Controller {
         $this->listingService->deactivateListing($listing);
 
         return JsonResponder::send(
-            new SuccessResponse('Listing deactivated and gallery images removed')
+            new SuccessResponse(__('listings.success.deactivated'))
         );
 
     }
@@ -130,7 +135,7 @@ class RealEstateListingController extends Controller {
                 'listings' => RealEstateListing::with(['seller', 'mainImage'])->get(),
                 'favoriteListings' => $this->listingService->getFavoriteListingIds($user),
             ]),
-            default => abort(403, 'Unauthorized role'),
+            default => abort(403, __('listings.errors.unauthorized')),
         };
     }
 

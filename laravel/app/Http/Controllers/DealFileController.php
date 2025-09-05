@@ -23,7 +23,7 @@ class DealFileController extends Controller
 
     public function store(StoreDealFileRequest $request, Deal $deal): RedirectResponse {
         $this->dealFileService->storeFile($request, $deal);
-        return back()->with('success', 'File uploaded successfully.');
+        return back()->with('success', __('files.upload_success'));
     }
 
     public function download(DealFile $file): StreamedResponse
@@ -34,6 +34,6 @@ class DealFileController extends Controller
     public function destroy(DealFile $file): RedirectResponse
     {
         $this->dealFileService->deleteFile($file);
-        return back()->with('success', 'File deleted successfully.');
+        return back()->with('success', __('files.delete_failed'));
     }
 }

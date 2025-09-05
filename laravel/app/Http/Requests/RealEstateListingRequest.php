@@ -62,8 +62,6 @@ class RealEstateListingRequest extends FormRequest
 
             'gallery_images' => ['array', 'max:7'],
             'gallery_images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120'],
-
-
             'keywords' => ['nullable', 'string'],
         ];
     }
@@ -79,14 +77,14 @@ class RealEstateListingRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'main_image.required' => 'Please upload a main image.',
-            'main_image.image' => 'The main image must be a valid image file.',
-            'main_image.mimes' => 'Main image must be a JPEG, PNG, JPG, or WEBP file.',
-            'main_image.max' => 'Main image must not exceed 2MB.',
-            'gallery_images.*.image' => 'Each gallery image must be a valid image file.',
-            'gallery_images.*.mimes' => 'Gallery images must be JPEG, PNG, JPG, or WEBP files.',
-            'gallery_images.*.max' => 'Each gallery image must not exceed 2MB.',
-            'gallery_images.max' => 'You can upload a maximum of 7 gallery images.',
+            'main_image.required' => __('validation.realEstateListingRequest.main_image_required'),
+            'main_image.image' => __('validation.realEstateListingRequest.main_image_image'),
+            'main_image.mimes' => __('validation.realEstateListingRequest.main_image_mimes'),
+            'main_image.max' => __('validation.realEstateListingRequest.main_image_max'),
+            'gallery_images.*.image' => __('validation.realEstateListingRequest.gallery_images_image'),
+            'gallery_images.*.mimes' => __('validation.realEstateListingRequest.gallery_images_mimes'),
+            'gallery_images.*.max' => __('validation.realEstateListingRequest.gallery_images_size_max'),
+            'gallery_images.max' => __('validation.realEstateListingRequest.gallery_images_amount_max'),
         ];
     }
 }

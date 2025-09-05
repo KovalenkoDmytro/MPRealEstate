@@ -19,7 +19,10 @@
         "success": {
             "created": "Listing created successfully.",
             "updated": "Listing updated successfully.",
-            "deactivated": "Listing deactivated successfully."
+            "deactivated": "Listing deactivated and gallery images removed"
+        },
+        "errors" : {
+            "delete_failed": "'Cannot delete listing with an active/incomplete deal.'"
         }
     },
     "deals": {
@@ -334,6 +337,18 @@
                     "Your offer status on \":listingTitle\" has been updated."
                 ]
             }
+        }
+    },
+    "validation": {
+        "realEstateListingRequest" : {
+            "main_image_required" : "Please upload a main image.",
+            "main_image_image" : "The main image must be a valid image file.",
+            "main_image_mimes" : "Main image must be a JPEG, PNG, JPG, or WEBP file.",
+            "main_image_max" : "Main image must not exceed 2MB.",
+            "gallery_images_image" : "Each gallery image must be a valid image file.",
+            "gallery_images_mimes" : "Gallery images must be JPEG, PNG, JPG, or WEBP files.",
+            "gallery_images_size_max" : "Each gallery image must not exceed 2MB.",
+            "gallery_images_amount_max" : "You can upload a maximum of 7 gallery images."
         }
     }
 }
