@@ -7,6 +7,9 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import 'react-toastify/dist/ReactToastify.css';
+import InertiaToastBridge from "@/components/InertiaToastBridge";
+import {ToastProvider} from "@/providers/ToastProvider";
 
 const theme = createTheme({
     // You can customize your theme here
@@ -36,7 +39,10 @@ createInertiaApp({
             <React.StrictMode>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
-                    <App {...props} />
+                    <ToastProvider>
+                        <InertiaToastBridge />
+                        <App {...props} />
+                    </ToastProvider>
                 </ThemeProvider>
             </React.StrictMode>
         );

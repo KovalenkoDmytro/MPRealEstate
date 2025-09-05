@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 
 type CitySelectorProps = {
-    value: "Calgary";
+    value: string;
     onChange: (
         e: React.ChangeEvent<
             HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -16,7 +16,8 @@ type CitySelectorProps = {
     ) => void;
 };
 
-export default function CitySelector({ value, onChange }: CitySelectorProps) {
+export default function CitySelector({ value = "Calgary", onChange }: CitySelectorProps) {
+
     const [chosenCity, setChosenCity] = React.useState<string>(value);
 
     const canadianCities = [
