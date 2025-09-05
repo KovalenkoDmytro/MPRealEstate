@@ -6,6 +6,7 @@ import ListingDetails from "@/components/listing/editing/ListingDetails";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import { listingService } from "@/services/listingService";
 import { imageService } from "@/services/imageService";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 type GalleryImagePreview = {
     id?: number;
@@ -70,6 +71,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
     const [removeMainImageFlag, setRemoveMainImageFlag] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string[]>>({});
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, type, checked, value } = event.target;
@@ -218,14 +220,29 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
                     >
                         {processing ? "Saving..." : "Save Changes"}
                     </button>
-
                     <button
-                        onClick={handleDeactivateListing}
+                        onClick={() => setConfirmOpen(true)}
                         disabled={processing}
                         className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
                     >
                         {processing ? "Deleting..." : "Delete listing"}
                     </button>
+
+                    <ConfirmDialog
+                        open={confirmOpen}
+                        title="Deactivate this listing?"
+                        description={
+                            <>
+                                This will <b>archive</b> the listing (soft delete) and remove non-main gallery images.
+                                You can restore it later from the admin if needed.
+                            </>
+                        }
+                        confirmLabel="Deactivate"
+                        cancelLabel="Cancel"
+                        confirmColor="error"
+                        onClose={() => setConfirmOpen(false)}
+                        onConfirm={handleDeactivateListing} // dialog will await this and close on success
+                    />
                 </div>
             </div>
         </AuthenticatedLayout>

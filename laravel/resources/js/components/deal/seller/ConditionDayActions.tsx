@@ -5,7 +5,6 @@ import { Card, CardContent, CardActions, Typography, Button, Stack } from "@mui/
 import { format } from "date-fns";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import {InfoBlock} from "@/components/InfoBlock";
 import DealStatusBanner from "@/components/deal/DealStatusBanner";
 
 export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) {
