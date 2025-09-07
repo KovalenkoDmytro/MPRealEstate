@@ -73,10 +73,8 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
     const [errors, setErrors] = useState<Record<string, string[]>>({});
     const [confirmOpen, setConfirmOpen] = useState(false);
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, type, checked, value } = event.target;
-        const val = type === "checkbox" ? checked : value;
-        setData((prev) => ({ ...prev, [name]: val }));
+    const handleChange = (name: string, value: string | number | boolean) => {
+        setData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleDeactivateListing = async () =>{

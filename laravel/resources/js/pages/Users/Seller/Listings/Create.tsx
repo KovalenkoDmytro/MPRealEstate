@@ -66,11 +66,10 @@ export default function CreateListing() {
     const [processing, setProcessing] = useState(false);
 
     /** Handle form inputs */
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, type, checked, value } = event.target;
-        const val = type === "checkbox" ? checked : value;
-        setData((prev) => ({ ...prev, [name]: val }));
+    const handleChange = (name: string, value: string | number | boolean) => {
+        setData((prev) => ({ ...prev, [name]: value }));
     };
+
 
     /** Handle main image upload */
     const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

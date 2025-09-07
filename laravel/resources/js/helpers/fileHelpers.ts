@@ -1,5 +1,4 @@
-import type { Deal } from "@/types/pageProps"; // or wherever DealProps is defined
-import type { User } from "@/types/pageProps"; // adjust if your User type is elsewhere
+import type { Deal, User } from "@/types";
 
 export function filterFilesForUser(
     allFiles: Deal['files'],
