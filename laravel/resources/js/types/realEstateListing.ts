@@ -73,5 +73,5 @@ export interface RealEstateListing extends BaseEntity {
     /** Whether the price has been reduced */
     price_reduced: boolean;
     /** Search keywords */
-    keywords: string | null;
+    keywords: string[];
 }

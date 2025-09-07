@@ -19,6 +19,7 @@ class RealEstateListing extends Model
       'has_basement' => 'boolean',
       'has_garage' => 'boolean',
       'price_reduced' => 'boolean',
+      'keywords' => 'array',
     ];
 
     // A listing can have multiple offers

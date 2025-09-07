@@ -13,6 +13,11 @@ class RealEstateListingFactory extends Factory
     public function definition(): array
     {
         $hasGarage = $this->faker->boolean(70);
+        $tags = [
+            'garage', 'finished basement', 'corner lot', 'near LRT',
+            'renovated kitchen', 'fenced yard', 'walkout', 'ensuite',
+            'hardwood floors', 'double attached garage'
+        ];
 
         return [
             'seller_id'      => User::factory()->seller(),
@@ -33,7 +38,7 @@ class RealEstateListingFactory extends Factory
             'property_taxes' => $this->faker->randomFloat(2, 1000, 10000),
             'status'         => $this->faker->randomElement(['available', 'sold', 'pending']),
             'price_reduced'  => $this->faker->boolean(10),
-            'keywords'       => $this->faker->words(10, true),
+            'keywords' => $this->faker->randomElements($tags, rand(3, 7)),
         ];
     }
 }

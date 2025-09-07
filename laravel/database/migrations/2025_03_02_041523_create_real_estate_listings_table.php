@@ -44,7 +44,7 @@ return new class extends Migration
             $table->boolean('price_reduced')->default(false);
 
             // Search
-            $table->text('keywords')->nullable();
+            $table->json('keywords')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

@@ -30,7 +30,7 @@ type ListingFormData = {
     property_taxes: number;
     status: PropertyStatus;
     price_reduced: boolean;
-    keywords: string;
+    keywords: string[];
 
     // Upload-specific fields
     main_image: File | null;
@@ -56,7 +56,7 @@ export default function CreateListing() {
         property_taxes: 0,
         status: PropertyStatus.Available,
         price_reduced: false,
-        keywords: "",
+        keywords: [],
         main_image: null,
         gallery_images: [],
     });
@@ -66,7 +66,7 @@ export default function CreateListing() {
     const [processing, setProcessing] = useState(false);
 
     /** Handle form inputs */
-    const handleChange = (name: string, value: string | number | boolean) => {
+    const handleChange = (name: string, value: string[]| string | number | boolean) => {
         setData((prev) => ({ ...prev, [name]: value }));
     };
 

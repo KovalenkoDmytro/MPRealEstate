@@ -11,16 +11,16 @@ import CitySelector from "@/components/common/CitySelector";
 import YearBuiltField from "@/components/listing/form/YearBuiltField";
 import sanitizeField from "@/helpers/validationFieldsHelper";
 import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
-
+import KeywordsInput from "@/components/listing/form/KeywordsInput";
 
 interface Props {
     data: any;
-    handleChange: (name: string, value: string | number | boolean) => void;
+    handleChange: (name: string, value: string[] | string | number | boolean) => void;
 }
 
 export default function ListingDetails({ data, handleChange }: Props) {
 
-    const processChange = (name: string, value: string | number | boolean) => {
+    const processChange = (name: string, value: string[] | string | number | boolean) => {
         let localValue = value;
 
         if (typeof localValue === "string") {
@@ -144,12 +144,10 @@ export default function ListingDetails({ data, handleChange }: Props) {
                         fullWidth />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
-                    <TextField
-                        name="keywords"
-                        label="Keywords"
-                        value={data.keywords}
-                        onChange={(e) => processChange("keywords", e.target.value)}
-                        fullWidth />
+                    <KeywordsInput
+                        value={data.keywords || []}
+                        onChange={(keywords) => processChange("keywords", keywords)}
+                    />
                 </Grid>
             </Grid>
 

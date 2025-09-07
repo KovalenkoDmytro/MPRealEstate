@@ -62,7 +62,8 @@ class RealEstateListingRequest extends FormRequest
 
             'gallery_images' => ['array', 'max:7'],
             'gallery_images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120'],
-            'keywords' => ['nullable', 'string'],
+            'keywords'      => ['nullable', 'array'],
+            'keywords.*'    => ['string', 'distinct', 'min:1', 'max:50'],
         ];
     }
 
