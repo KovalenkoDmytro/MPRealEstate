@@ -168,6 +168,14 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
             formData.append("remove_main_image", "true");
         }
 
+        if (Array.isArray(data.keywords)) {
+            data.keywords.forEach((keyword) => {
+                if (keyword.trim() !== "") {
+                    formData.append("keywords[]", keyword);
+                }
+            });
+        }
+
         return formData;
     };
     const submit = async () => {

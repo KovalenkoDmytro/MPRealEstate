@@ -143,6 +143,15 @@ export default function CreateListing() {
             }
         });
 
+
+        if (Array.isArray(data.keywords)) {
+            data.keywords.forEach((keyword) => {
+                if (keyword.trim() !== "") {
+                    formData.append("keywords[]", keyword);
+                }
+            });
+        }
+
         return formData;
     };
 

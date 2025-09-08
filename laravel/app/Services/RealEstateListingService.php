@@ -39,6 +39,7 @@ class RealEstateListingService
     public function updateListing(RealEstateListingRequest $request, RealEstateListing $listing ): JsonResponse
     {
         $data = $request->safe()->except(['main_image', 'gallery_images', 'remove_images', 'remove_main_image']);
+
         $listing->update($data);
         $this->handleListingImages($listing, $request);
 
