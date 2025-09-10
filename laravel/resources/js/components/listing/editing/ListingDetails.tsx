@@ -12,13 +12,15 @@ import YearBuiltField from "@/components/listing/form/YearBuiltField";
 import sanitizeField from "@/helpers/validationFieldsHelper";
 import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
 import KeywordsInput from "@/components/listing/form/KeywordsInput";
+import {ValidationErrors} from "@/types/validationErrors";
 
 interface Props {
     data: any;
+    errors: ValidationErrors,
     handleChange: (name: string, value: string[] | string | number | boolean) => void;
 }
 
-export default function ListingDetails({ data, handleChange }: Props) {
+export default function ListingDetails({ data, handleChange, errors }: Props) {
 
     const processChange = (name: string, value: string[] | string | number | boolean) => {
         let localValue = value;
@@ -32,12 +34,11 @@ export default function ListingDetails({ data, handleChange }: Props) {
 
     return (
         <Box sx={{ backgroundColor: "white", p: 3, borderRadius: 2, boxShadow: 1 }}>
-            {/* Section Title */}
+
             <Typography variant="h6" fontWeight="bold" gutterBottom>
                 🏠 Property & Financial Details
             </Typography>
 
-            {/* Property & Financial Fields */}
             <Grid container spacing={2} sx={{ width: "100%" }}>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
@@ -46,11 +47,15 @@ export default function ListingDetails({ data, handleChange }: Props) {
                         value={data.title ?? ""}
                         onChange={(e) => processChange("title", e.target.value)}
                         fullWidth
+                        error={errors?.title && true}
+                        helperText={errors?.title?.[0]}
                     />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <CitySelector
                         value={data.location}
+                        error={errors?.location && true}
+                        helperText={errors?.location?.[0]}
                         onChange={(value) => { processChange("location", value); }}
                     />
                 </Grid>
@@ -58,6 +63,8 @@ export default function ListingDetails({ data, handleChange }: Props) {
                     <TextField
                         name="description"
                         label="Description"
+                        error={errors?.description && true}
+                        helperText={errors?.description?.[0]}
                         value={data.description}
                         onChange={(e) => processChange("description", e.target.value)}
                         fullWidth
@@ -68,12 +75,16 @@ export default function ListingDetails({ data, handleChange }: Props) {
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <PropertyTypeSelect
                         value={data.property_type}
+                        error={errors?.property_type && true}
+                        helperText={errors?.property_type?.[0]}
                         onChange={(value) => processChange("property_type", value)}
                     />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <YearBuiltField
                         value={data.year_built}
+                        error={errors?.year_built && true}
+                        helperText={errors?.year_built?.[0]}
                         onChange={(value) => { processChange("year_built", value); }}
                     />
                 </Grid>
@@ -151,7 +162,7 @@ export default function ListingDetails({ data, handleChange }: Props) {
                 </Grid>
             </Grid>
 
-            {/* Features Section */}
+
             <Typography variant="h6" fontWeight="bold" sx={{ mt: 4 }} gutterBottom>
                 🧱 Features
             </Typography>

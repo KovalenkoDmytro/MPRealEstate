@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 
 class RealEstateListingService
 {
-    public function createListing(RealEstateListingRequest $request): JsonResponse {
+    public function createListing(RealEstateListingRequest $request): void {
         $user = auth()->user();
 
         // Exclude image fields from the data we use for main model
@@ -30,10 +30,6 @@ class RealEstateListingService
 
         // Handle images separately
         $this->handleListingImages($listing, $request);
-
-        return JsonResponder::send(
-            new SuccessResponse(__('listings.success.created'), $listing->toArray())
-        );
     }
 
     public function updateListing(RealEstateListingRequest $request, RealEstateListing $listing ): JsonResponse

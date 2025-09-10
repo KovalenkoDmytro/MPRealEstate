@@ -5,7 +5,7 @@ import {
     ImageList,
     ImageListItem,
     IconButton,
-    Button,
+    Button, Alert,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadIcon from "@mui/icons-material/CloudUpload";
@@ -33,9 +33,10 @@ interface Props {
     images: ImagesState;
     handlers: ImagesHandlers;
     disableGalleryUpload?: boolean;
+    errors?: string;
 }
 
-export default function ListingImagesSection({images, handlers, disableGalleryUpload,}: Props) {
+export default function ListingImagesSection({images, handlers, disableGalleryUpload, errors}: Props) {
     const {previewMainImage, previewGalleryImages, totalGalleryImages} = images;
     const {handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,} = handlers;
 
@@ -45,11 +46,15 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
                 📸 Images
             </Typography>
 
-            {/* Main Image */}
             <Box sx={{mb: 3}}>
                 <Typography variant="subtitle2" gutterBottom>
                     Main Image
                 </Typography>
+                {errors &&
+                    <Alert variant="outlined" severity="error">
+                        {errors}
+                    </Alert>
+                }
                 <Button
                     component="label"
                     variant="outlined"
@@ -90,7 +95,7 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
                 )}
             </Box>
 
-            {/* Gallery Images */}
+
             <Box>
                 <Typography variant="subtitle2" gutterBottom>
                     Gallery Images ({totalGalleryImages}/7)

@@ -6,6 +6,7 @@ import { PropertyStatus } from "@/types";
 import { imageService } from "@/services/imageService";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
+import {ValidationErrors} from "@/types/validationErrors";
 
 type GalleryImagePreview = {
     file?: File;
@@ -64,6 +65,8 @@ export default function CreateListing() {
     const [previewMainImage, setPreviewMainImage] = useState<string | null>(null);
     const [previewGalleryImages, setPreviewGalleryImages] = useState<GalleryImagePreview[]>([]);
     const [processing, setProcessing] = useState(false);
+    const [errors, setErrors] = useState<ValidationErrors>({});
+
 
     /** Handle form inputs */
     const handleChange = (name: string, value: string[]| string | number | boolean) => {
@@ -158,23 +161,31 @@ export default function CreateListing() {
     /** Submit handler */
     const submit = async () => {
         setProcessing(true);
+        const formData = buildFormData(data);
+        const result = await listingService.createListing(formData);
 
-        try {
-            const formData = buildFormData(data);
-            const result = await listingService.createListing(formData);
-
+        if(result.success){
             alert('CreateListing')
-
-            // if (result.success) {
-            //     window.location.href = "/seller/listings";
-            // } else {
-            //     setErrors(result.errors);
-            // }
-        } catch (error) {
-            console.error("Submission failed:", error);
-        } finally {
-            setProcessing(false);
+        }else {
+            setErrors(result.errors);
         }
+
+        // try {
+        //     const formData = buildFormData(data);
+        //     const result = await listingService.createListing(formData);
+        //
+        //     alert('CreateListing')
+        //
+        //     // if (result.success) {
+        //     //     window.location.href = "/seller/listings";
+        //     // } else {
+        //     //     setErrors(result.errors);
+        //     // }
+        // } catch (error) {
+        //     console.error("Submission failed:", error);
+        // } finally {
+        //     setProcessing(false);
+        // }
     };
 
     return (
@@ -182,13 +193,14 @@ export default function CreateListing() {
             <Head title="Create Listing" />
             <div className="container mx-auto p-4">
                 {/* Property, Financial & Features */}
-                <ListingDetails data={data} handleChange={handleChange} />
+                <ListingDetails data={data} errors={errors} handleChange={handleChange} />
 
                 {/* Images */}
                 <ImagesSection
                     images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
                     handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
                     disableGalleryUpload={data.gallery_images.length >= 7}
+                    errors={errors?.main_image?.[0]}
                 />
 
                 {/* Submit Button */}
