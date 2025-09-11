@@ -7,7 +7,7 @@ import { imageService } from "@/services/imageService";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import {ValidationErrors} from "@/types/validationErrors";
-import {toast} from "react-toastify";
+import {useNotification} from "@/context/NotificationContext";
 
 type GalleryImagePreview = {
     file?: File;
@@ -67,7 +67,7 @@ export default function CreateListing() {
     const [previewGalleryImages, setPreviewGalleryImages] = useState<GalleryImagePreview[]>([]);
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
-
+    const { showNotification } = useNotification();
 
     /** Handle form inputs */
     const handleChange = (name: string, value: string[]| string | number | boolean) => {
@@ -169,7 +169,7 @@ export default function CreateListing() {
 
         }else {
             setErrors(result.errors);
-            toast.error(result.message)
+            showNotification(result.message,'error')
         }
 
         setProcessing(false);

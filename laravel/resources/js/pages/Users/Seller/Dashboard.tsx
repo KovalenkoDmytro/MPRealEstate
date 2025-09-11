@@ -2,10 +2,7 @@ import {Head, Link} from "@inertiajs/react";
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import {Offer} from "@/types";
 import OffersGrid from "@/components/offers/OffersGrid";
-import { useToast } from '@/providers/ToastProvider';
 export default function Dashboard({ offers }: {offers: Offer[]}) {
-    const toast = useToast();
-
     return (
         <AuthenticatedLayout
             header={
@@ -30,7 +27,6 @@ export default function Dashboard({ offers }: {offers: Offer[]}) {
             </div>
         </div>
 
-            <button onClick={() => toast.success('This is a success message!')}>Show Toast</button>
         </AuthenticatedLayout>
     );
 }

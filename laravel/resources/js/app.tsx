@@ -8,8 +8,8 @@ import { createRoot } from 'react-dom/client';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import 'react-toastify/dist/ReactToastify.css';
-import InertiaToastBridge from "@/components/InertiaToastBridge";
-import {ToastProvider} from "@/providers/ToastProvider";
+import {NotificationProvider} from "@/context/NotificationContext";
+import {Notification} from "@/components/Notification";
 
 const theme = createTheme({
     // You can customize your theme here
@@ -39,10 +39,10 @@ createInertiaApp({
             <React.StrictMode>
                 <ThemeProvider theme={theme}>
                     <CssBaseline />
-                    <ToastProvider>
-                        <InertiaToastBridge />
-                        <App {...props} />
-                    </ToastProvider>
+                        <NotificationProvider>
+                            <Notification />
+                            <App {...props} />
+                        </NotificationProvider>
                 </ThemeProvider>
             </React.StrictMode>
         );
