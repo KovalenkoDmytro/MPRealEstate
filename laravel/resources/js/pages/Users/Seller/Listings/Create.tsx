@@ -7,6 +7,7 @@ import { imageService } from "@/services/imageService";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import {ValidationErrors} from "@/types/validationErrors";
+import {toast} from "react-toastify";
 
 type GalleryImagePreview = {
     file?: File;
@@ -165,27 +166,13 @@ export default function CreateListing() {
         const result = await listingService.createListing(formData);
 
         if(result.success){
-            alert('CreateListing')
+
         }else {
             setErrors(result.errors);
+            toast.error(result.message)
         }
 
-        // try {
-        //     const formData = buildFormData(data);
-        //     const result = await listingService.createListing(formData);
-        //
-        //     alert('CreateListing')
-        //
-        //     // if (result.success) {
-        //     //     window.location.href = "/seller/listings";
-        //     // } else {
-        //     //     setErrors(result.errors);
-        //     // }
-        // } catch (error) {
-        //     console.error("Submission failed:", error);
-        // } finally {
-        //     setProcessing(false);
-        // }
+        setProcessing(false);
     };
 
     return (
