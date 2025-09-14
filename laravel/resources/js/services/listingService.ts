@@ -30,10 +30,10 @@ export const listingService = {
                 formData,
                 { headers: { Accept: "application/json"} } // let Axios set multipart boundary
             );
-            return { success: true, data: response.data };
+            return { success: true, data: response.data, message: response.data.message };
         } catch (err: any) {
             if (err.response?.status === 422) {
-                return { success: false, errors: err.response.data?.errors ?? {} };
+                return { success: false, errors: err.response.data.errors ?? {}, message: err.response.data.message ?? "" };
             }
             console.error("Unexpected error", err);
             throw new Error(err.message || "Unexpected error occurred");

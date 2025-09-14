@@ -8,4 +8,6 @@ export type ValidationErrors = Partial<{
     square_feet : string[];
     price : string[];
     property_taxes : string[];
+    bedrooms : string[];
+    bathrooms : string[];
 }>;

@@ -84,7 +84,7 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <YearBuiltField
-                        value={data.year_built}
+                        value={data.year_built ?? ''}
                         error={errors?.year_built && true}
                         helperText={errors?.year_built?.[0]}
                         onChange={(value) => { processChange("year_built", value); }}
@@ -96,7 +96,9 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                         name="bedrooms"
                         label="Bedrooms"
                         type="number"
-                        value={data.bedrooms}
+                        value={data.bedrooms ?? ''}
+                        error={errors?.bedrooms && true}
+                        helperText={errors?.bedrooms?.[0]}
                         onChange={(e) => processChange("bedrooms", e.target.value)}
                         fullWidth
                     >
@@ -114,7 +116,9 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                         name="bathrooms"
                         label="Bathrooms"
                         type="number"
-                        value={data.bathrooms}
+                        value={data.bathrooms ?? ''}
+                        error={errors?.bathrooms && true}
+                        helperText={errors?.bathrooms?.[0]}
                         onChange={(e) => processChange("bathrooms", e.target.value)}
                         fullWidth
                     >

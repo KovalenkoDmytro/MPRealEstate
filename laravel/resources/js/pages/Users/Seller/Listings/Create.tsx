@@ -19,12 +19,12 @@ type ListingFormData = {
     description: string;
     price: number|null;
     location: string;
-    bedrooms: number;
-    bathrooms: number;
+    bedrooms: number | null;
+    bathrooms: number | null;
     square_feet: number|null;
     lot_size: number|null;
     property_type: string;
-    year_built: number;
+    year_built: number|null;
     has_garage: boolean;
     garage_spaces: number|null;
     has_basement: boolean;
@@ -45,12 +45,12 @@ export default function CreateListing() {
         description: "",
         price: null,
         location: "",
-        bedrooms: 1,
-        bathrooms: 1,
+        bedrooms: null,
+        bathrooms: null,
         square_feet: null,
         lot_size: null,
         property_type: "",
-        year_built: 1950,
+        year_built: null,
         has_garage: false,
         garage_spaces: null,
         has_basement: false,
