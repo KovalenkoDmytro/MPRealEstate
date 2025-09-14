@@ -33,37 +33,37 @@ class RealEstateListingRequest extends FormRequest
             // Core Info
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'price' => ['required', 'numeric', 'min:0'],
+            'price' => ['required', 'numeric', 'min:5000'],
 
             // Location
             'location' => ['required', 'string', 'max:255'],
 
             // Property Specs
             'property_type' => ['required', 'in:house,condo,townhouse,land,multi-family,farm'],
-            'bedrooms' => ['required', 'integer', 'min:0'],
-            'bathrooms' => ['required', 'integer', 'min:0'],
-            'square_feet' => ['nullable', 'integer', 'min:0'],
-            'lot_size' => ['nullable', 'integer', 'min:0'],
+            'bedrooms' => ['required', 'integer', 'min:1'],
+            'bathrooms' => ['required', 'integer', 'min:1'],
+            'square_feet' => ['required', 'integer', 'min:100'],
+            'lot_size' => ['sometimes', 'integer', 'min:5'],
 
             // Additional Details
-            'year_built' => ['nullable', 'digits:4', 'integer', 'min:1800', 'max:' . date('Y')],
-            'has_garage' => ['nullable', 'boolean'],
-            'garage_spaces' => ['nullable', 'integer', 'min:0'],
-            'has_basement' => ['nullable', 'boolean'],
+            'year_built' => ['required', 'digits:4', 'integer', 'min:1800', 'max:' . date('Y')],
+            'has_garage' => ['sometimes', 'boolean'],
+            'garage_spaces' => ['sometimes', 'integer', 'min:5'],
+            'has_basement' => ['sometimes', 'boolean'],
 
             // Financials
-            'hoa_fees' => ['nullable', 'numeric', 'min:0'],
-            'property_taxes' => ['nullable', 'numeric', 'min:0'],
+            'hoa_fees' => ['sometimes', 'numeric', 'min:5'],
+            'property_taxes' => ['required', 'numeric', 'min:500'],
 
             // Media
             'main_image' => $this->removeMainImageRequired()
                 ? ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120']
-                : ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120'],
+                : ['sometimes', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120'],
 
             'gallery_images' => ['array', 'max:7'],
-            'gallery_images.*' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120'],
+            'gallery_images.*' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120'],
             'keywords'      => ['sometimes', 'array'],
-            'keywords.*'    => ['nullable', 'string', 'distinct', 'min:1', 'max:50'],
+            'keywords.*'    => ['sometimes', 'string', 'distinct', 'min:1', 'max:50'],
         ];
     }
 

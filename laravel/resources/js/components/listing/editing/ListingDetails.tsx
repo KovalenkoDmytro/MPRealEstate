@@ -6,6 +6,7 @@ import {
     FormControlLabel,
     Checkbox,
     Box,
+    MenuItem
 } from "@mui/material";
 import CitySelector from "@/components/common/CitySelector";
 import YearBuiltField from "@/components/listing/form/YearBuiltField";
@@ -13,6 +14,7 @@ import sanitizeField from "@/helpers/validationFieldsHelper";
 import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
 import KeywordsInput from "@/components/listing/form/KeywordsInput";
 import {ValidationErrors} from "@/types/validationErrors";
+
 
 interface Props {
     data: any;
@@ -90,30 +92,48 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
+                        select
                         name="bedrooms"
                         label="Bedrooms"
                         type="number"
                         value={data.bedrooms}
                         onChange={(e) => processChange("bedrooms", e.target.value)}
                         fullWidth
-                    />
+                    >
+                        <MenuItem value="1">1</MenuItem>
+                        <MenuItem value="2">2</MenuItem>
+                        <MenuItem value="3">3</MenuItem>
+                        <MenuItem value="4">4</MenuItem>
+                        <MenuItem value="5">5</MenuItem>
+                        <MenuItem value="5+">5+</MenuItem>
+                    </TextField>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
+                        select
                         name="bathrooms"
                         label="Bathrooms"
                         type="number"
                         value={data.bathrooms}
                         onChange={(e) => processChange("bathrooms", e.target.value)}
                         fullWidth
-                    />
+                    >
+                        <MenuItem value="1">1</MenuItem>
+                        <MenuItem value="2">2</MenuItem>
+                        <MenuItem value="3">3</MenuItem>
+                        <MenuItem value="4">4</MenuItem>
+                        <MenuItem value="5">5</MenuItem>
+                        <MenuItem value="5+">5+</MenuItem>
+                    </TextField>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                         name="square_feet"
                         label="Square Feet"
                         type="number"
-                        value={data.square_feet}
+                        error={errors?.square_feet && true}
+                        helperText={errors?.square_feet?.[0]}
+                        value={data.square_feet ?? ""}
                         onChange={(e) => processChange("square_feet", e.target.value)}
                         fullWidth
                     />
@@ -123,7 +143,7 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                         name="lot_size"
                         label="Lot Size"
                         type="number"
-                        value={data.lot_size}
+                        value={data.lot_size ?? ""}
                         onChange={(e) => processChange("lot_size", e.target.value)}
                         fullWidth />
                 </Grid>
@@ -132,7 +152,9 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                         name="price"
                         label="Price"
                         type="number"
-                        value={data.price}
+                        value={data.price ?? "" }
+                        error={errors?.price && true}
+                        helperText={errors?.price?.[0]}
                         onChange={(e) => processChange("price", e.target.value)}
                         fullWidth />
                 </Grid>
@@ -141,7 +163,7 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                         name="hoa_fees"
                         label="HOA Fees"
                         type="number"
-                        value={data.hoa_fees}
+                        value={data.hoa_fees ?? ""}
                         onChange={(e) => processChange("hoa_fees", e.target.value)}
                         fullWidth />
                 </Grid>
@@ -150,7 +172,9 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                         name="property_taxes"
                         label="Property Taxes"
                         type="number"
-                        value={data.property_taxes}
+                        error={errors?.property_taxes && true}
+                        helperText={errors?.property_taxes?.[0]}
+                        value={data.property_taxes ?? ""}
                         onChange={(e) => processChange("property_taxes", e.target.value)}
                         fullWidth />
                 </Grid>
@@ -183,7 +207,7 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                         name="garage_spaces"
                         label="Garage Spaces"
                         type="number"
-                        value={data.garage_spaces}
+                        value={data.garage_spaces ?? ""}
                         onChange={(e) => processChange("garage_spaces", e.target.value)}
                         fullWidth />
                 </Grid>

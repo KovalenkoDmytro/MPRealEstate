@@ -36,7 +36,7 @@ return new class extends Migration
             $table->boolean('has_basement')->default(false);
 
             // Financials
-            $table->decimal('hoa_fees', 10, 2);        // Monthly or yearly
+            $table->decimal('hoa_fees', 10, 2)->nullable();        // Monthly or yearly
             $table->decimal('property_taxes', 10, 2);  // Annual estimate
 
             // Status

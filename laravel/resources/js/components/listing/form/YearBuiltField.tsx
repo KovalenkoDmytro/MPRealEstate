@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField } from "@mui/material";
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
 
 type YearBuiltFieldProps = {
     value: number;
@@ -10,25 +10,27 @@ type YearBuiltFieldProps = {
 
 export default function YearBuiltField({ value, onChange, error, helperText }: YearBuiltFieldProps) {
     const currentYear = new Date().getFullYear();
+    const years = React.useMemo(
+        () => Array.from({ length: currentYear - 1950 + 1 }, (_, i) => currentYear - i),
+        [currentYear]
+    );
 
     return (
-        <TextField
-            name="year_built"
-            label="Year Built"
-            type="number"
-            value={value === 0 ? "" : value}
-            error={error}
-            helperText={helperText}
-            onChange={(event) => onChange(Number(event.target.value))}
-            fullWidth
-            slotProps={{
-                htmlInput: {
-                    min: 1950,
-                    max: currentYear,
-                    inputMode: "numeric",
-                    pattern: "[0-9]*",
-                }
-            }}
-        />
+        <FormControl fullWidth error={error}>
+            <InputLabel id="year-built-label">Year Built</InputLabel>
+            <Select
+                labelId="year-built-label"
+                id="year-built"
+                value={value || ""}
+                onChange={(e) => onChange(Number(e.target.value))}
+            >
+                {years.map((year) => (
+                    <MenuItem key={year} value={year}>
+                        {year}
+                    </MenuItem>
+                ))}
+            </Select>
+            {helperText && <FormHelperText>{helperText}</FormHelperText>}
+        </FormControl>
     );
 }

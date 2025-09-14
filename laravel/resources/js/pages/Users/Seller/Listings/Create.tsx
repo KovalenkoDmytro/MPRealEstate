@@ -17,19 +17,19 @@ type GalleryImagePreview = {
 type ListingFormData = {
     title: string;
     description: string;
-    price: number;
+    price: number|null;
     location: string;
     bedrooms: number;
     bathrooms: number;
-    square_feet: number;
-    lot_size: number;
+    square_feet: number|null;
+    lot_size: number|null;
     property_type: string;
     year_built: number;
     has_garage: boolean;
-    garage_spaces: number;
+    garage_spaces: number|null;
     has_basement: boolean;
-    hoa_fees: number;
-    property_taxes: number;
+    hoa_fees: number|null;
+    property_taxes: number|null;
     status: PropertyStatus;
     price_reduced: boolean;
     keywords: string[];
@@ -43,19 +43,19 @@ export default function CreateListing() {
     const [data, setData] = useState<ListingFormData>({
         title: "",
         description: "",
-        price: 0,
+        price: null,
         location: "",
         bedrooms: 1,
         bathrooms: 1,
-        square_feet: 0,
-        lot_size: 0,
+        square_feet: null,
+        lot_size: null,
         property_type: "",
-        year_built: 0,
+        year_built: 1950,
         has_garage: false,
-        garage_spaces: 0,
+        garage_spaces: null,
         has_basement: false,
-        hoa_fees: 0,
-        property_taxes: 0,
+        hoa_fees: null,
+        property_taxes: null,
         status: PropertyStatus.Available,
         price_reduced: false,
         keywords: [],
@@ -67,7 +67,7 @@ export default function CreateListing() {
     const [previewGalleryImages, setPreviewGalleryImages] = useState<GalleryImagePreview[]>([]);
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
-    const { showNotification } = useNotification();
+    const { showNotification, setRedirectNotification } = useNotification();
 
     /** Handle form inputs */
     const handleChange = (name: string, value: string[]| string | number | boolean) => {
@@ -166,10 +166,11 @@ export default function CreateListing() {
         const result = await listingService.createListing(formData);
 
         if(result.success){
-
+            setRedirectNotification(result.message, "success");
+            window.location.href = "/listings";
         }else {
             setErrors(result.errors);
-            showNotification(result.message,'error')
+            showNotification(result.message,"error")
         }
 
         setProcessing(false);
