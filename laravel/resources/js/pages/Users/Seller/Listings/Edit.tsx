@@ -7,6 +7,7 @@ import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import { listingService } from "@/services/listingService";
 import { imageService } from "@/services/imageService";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import {useNotification} from "@/context/NotificationContext";
 
 type GalleryImagePreview = {
     id?: number;
@@ -17,19 +18,19 @@ type GalleryImagePreview = {
 type ListingFormData = {
     title: string;
     description: string;
-    price: number;
+    price: number|null;
     location: string;
     bedrooms: number;
     bathrooms: number;
-    square_feet: number;
-    lot_size: number;
+    square_feet: number|null;
+    lot_size: number|null;
     property_type: string;
     year_built: number;
     has_garage: boolean;
-    garage_spaces: number;
+    garage_spaces: number|null;
     has_basement: boolean;
-    hoa_fees: number;
-    property_taxes: number;
+    hoa_fees: number|null;
+    property_taxes: number|null;
     status: PropertyStatus;
     price_reduced: boolean;
     keywords: string[];
@@ -44,19 +45,19 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
     const [data, setData] = useState<ListingFormData>({
         title: listing.title || "",
         description: listing.description || "",
-        price: listing.price || 0,
+        price: listing.price || null,
         location: listing.location || "",
         bedrooms: listing.bedrooms || 1,
         bathrooms: listing.bathrooms || 1,
-        square_feet: listing.square_feet || 0,
-        lot_size: listing.lot_size || 0,
+        square_feet: listing.square_feet || null,
+        lot_size: listing.lot_size || null,
         property_type: listing.property_type || "",
-        year_built: listing.year_built || 0,
+        year_built: listing.year_built || 1950,
         has_garage: listing.has_garage || false,
-        garage_spaces: listing.garage_spaces || 0,
+        garage_spaces: listing.garage_spaces || null,
         has_basement: listing.has_basement || false,
-        hoa_fees: listing.hoa_fees || 0,
-        property_taxes: listing.property_taxes || 0,
+        hoa_fees: listing.hoa_fees || null,
+        property_taxes: listing.property_taxes || null,
         status: listing.status || PropertyStatus.Available,
         price_reduced: listing.price_reduced || false,
         keywords: listing.keywords || [],
@@ -72,6 +73,8 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string[]>>({});
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const { showNotification, setRedirectNotification } = useNotification();
+
 
     const handleChange = (name: string, value: string[] | string | number | boolean) => {
         setData((prev) => ({ ...prev, [name]: value }));
@@ -180,21 +183,17 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
     };
     const submit = async () => {
         setProcessing(true);
+        const formData = buildFormData(data, removeMainImageFlag);
+        const result = await listingService.updateListing(listing.id, formData);
 
-        try {
-            const formData = buildFormData(data, removeMainImageFlag);
-            const result = await listingService.updateListing(listing.id, formData);
-
-            if (result.success) {
-                alert(result.data.message);
-            } else {
-                setErrors(result.errors);
-            }
-        } catch (error) {
-            console.error("Submission failed:", error);
-        } finally {
-            setProcessing(false);
+        if (result.success) {
+            setRedirectNotification(result.message, "success");
+            window.location.href = "/listings";
+        } else {
+            setErrors(result.errors);
+            showNotification(result.message,"error");
         }
+        setProcessing(false);
     };
 
     return (
@@ -208,7 +207,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
                 </div>
 
                 {/* Property, Financial & Features */}
-                <ListingDetails data={data} handleChange={handleChange} />
+                <ListingDetails data={data} errors={errors} handleChange={handleChange} />
 
                 {/* Images */}
                 <ImagesSection
