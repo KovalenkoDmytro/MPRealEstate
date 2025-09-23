@@ -2,19 +2,36 @@ import React from 'react';
 import {
   Box,
   TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   Checkbox,
   FormControlLabel,
   Button,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
+import CitySelector from "@/components/common/CitySelector";
+import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
+import YearBuiltField from "@/components/listing/form/YearBuiltField";
 
 type FilterFormProps = {
-  form: Record<string, any>;
-  updateFilter: (key: string, value: string | boolean) => void;
+  form:  {
+      location: string;
+      min_price?: number;
+      max_price?: number;
+      bedrooms?: number;
+      bathrooms?: number;
+      property_type?: string;
+      square_feet_min?: number;
+      square_feet_max?: number;
+      lot_size_min?: number;
+      lot_size_max?: number;
+      year_built_min?: number;
+      year_built_max?: number;
+      favorites_only?: boolean;
+      has_garage?: boolean;
+      has_basement?: boolean;
+      price_reduced?: boolean;
+      keywords?: string;
+  };
+  updateFilter: (key: string, value: string | number | boolean) => void;
   onApplyFilters: (e: React.FormEvent) => void;
 };
 
@@ -28,16 +45,15 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
       }}
     >
       <Grid container spacing={2}>
-        {/* Location Field */}
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <TextField
-            fullWidth
-            label="Location"
-            value={form.location}
-            onChange={(e) => updateFilter('location', e.target.value)}
-            variant="outlined"
-          />
-        </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+              <CitySelector
+                  value={form.location}
+                  onChange={(value) => updateFilter('location', value)}
+              />
+          </Grid>
+
+
 
         {/* Price Fields */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -83,39 +99,13 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
           />
         </Grid>
 
-        {/* Status Select */}
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <FormControl fullWidth>
-            <InputLabel>Status</InputLabel>
-            <Select
-              value={form.status}
-              onChange={(e) => updateFilter('status', e.target.value)}
-            >
-              <MenuItem value="">All Statuses</MenuItem>
-              <MenuItem value="available">Available</MenuItem>
-              <MenuItem value="pending">Pending</MenuItem>
-              <MenuItem value="sold">Sold</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
 
         {/* Property Type Select */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <FormControl fullWidth>
-            <InputLabel>Property Type</InputLabel>
-            <Select
-              value={form.property_type}
-              onChange={(e) => updateFilter('property_type', e.target.value)}
-            >
-              <MenuItem value="">All Property Types</MenuItem>
-              <MenuItem value="house">House</MenuItem>
-              <MenuItem value="condo">Condo</MenuItem>
-              <MenuItem value="townhouse">Townhouse</MenuItem>
-              <MenuItem value="land">Land</MenuItem>
-              <MenuItem value="multi-family">Multi-family</MenuItem>
-              <MenuItem value="farm">Farm</MenuItem>
-            </Select>
-          </FormControl>
+            <PropertyTypeSelect
+                value={form.property_type}
+                onChange={(value) => updateFilter("property_type", value)}
+            />
         </Grid>
 
         {/* Additional Fields */}
@@ -162,24 +152,19 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
 
         {/* Year Built */}
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <TextField
-            fullWidth
-            label="Min Year Built"
-            type="number"
-            value={form.year_built_min}
-            onChange={(e) => updateFilter('year_built_min', e.target.value)}
-            variant="outlined"
-          />
+            <YearBuiltField
+                value={form.year_built_min ?? ''}
+                onChange={(value) => { updateFilter("year_built_min", value) }}
+            />
+
+
+
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <TextField
-            fullWidth
-            label="Max Year Built"
-            type="number"
-            value={form.year_built_max}
-            onChange={(e) => updateFilter('year_built_max', e.target.value)}
-            variant="outlined"
-          />
+            <YearBuiltField
+                value={form.year_built_max ?? ''}
+                onChange={(value) => { updateFilter("year_built_max", value)}}
+            />
         </Grid>
 
         {/* Checkboxes */}

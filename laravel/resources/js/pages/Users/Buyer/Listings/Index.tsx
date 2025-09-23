@@ -47,7 +47,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
         keywords: filters.keywords || "",
     });
 
-    const updateFilter = (key: string, value: string | boolean) => {
+    const updateFilter = (key: string, value: string | number | boolean) => {
         setForm((prev) => ({ ...prev, [key]: value }));
     };
 

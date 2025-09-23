@@ -2,7 +2,7 @@ import React from "react";
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
 
 type YearBuiltFieldProps = {
-    value: number;
+    value: number | string;
     onChange: (value: number) => void;
     error?: boolean;
     helperText?: string;

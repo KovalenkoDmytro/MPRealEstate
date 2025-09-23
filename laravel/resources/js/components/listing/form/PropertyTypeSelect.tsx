@@ -2,7 +2,7 @@ import React from "react";
 import { MenuItem, TextField} from "@mui/material";
 
 interface Props {
-    value: string;
+    value: string | undefined;
     onChange: (value: string) => void;
     error?: boolean;
     helperText? : string;
