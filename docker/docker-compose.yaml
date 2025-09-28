@@ -17,14 +17,7 @@ services:
       context: ../laravel
       dockerfile: ../docker/dockerfiles/php.Dockerfile
     volumes:
-      # Mount only editable folders
-      - ../laravel/app:/var/www/laravel/app:cached
-      - ../laravel/bootstrap:/var/www/laravel/bootstrap:cached
-      - ../laravel/config:/var/www/laravel/config:cached
-      - ../laravel/database:/var/www/laravel/database:cached
-      - ../laravel/resources:/var/www/laravel/resources:cached
-      - ../laravel/routes:/var/www/laravel/routes:cached
-      - ../laravel/storage:/var/www/laravel/storage:cached
+      - ../laravel:/var/www/laravel:cached
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
