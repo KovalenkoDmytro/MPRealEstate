@@ -60,6 +60,16 @@ const NavigationLinks = ({ role }: { role: string }) => {
                     Admin Dashboard
                 </NavLink>
             )}
+
+            {role === 'lawyer' && (
+                <NavLink
+                    href={route('lawyer.deals.index')}
+                    active={route().current('lawyer.deals.index')}
+                >
+                    My deals
+                </NavLink>
+            )}
+
         </>
     );
 };

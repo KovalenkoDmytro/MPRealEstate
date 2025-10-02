@@ -31,9 +31,21 @@ class DealController extends Controller
         $this->dealerService = $dealerService;
     }
 
-    /**
-     * Show a single deal with users and step details.
-     */
+    public function index(): Response{
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        $role = $user->getRoleNames()->first();
+
+        $viewPath = match ($role) {
+            'lawyer' => 'Users/Lawyer/Deals/Index',
+            default => throw new \Exception('Unexpected match value'),
+        };
+
+        return Inertia::render($viewPath, [
+            'deals' => $this->getAllDeals(),
+            ]);
+    }
+
     public function show(Deal $deal): Response
     {
         /** @var \App\Models\User $user */
