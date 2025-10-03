@@ -11,6 +11,7 @@ use Inertia\Response;
 class DashboardService
 {
     protected OfferService $offerService;
+
     protected LawyerService $lawyerService;
 
     public function __construct(OfferService $offerService, LawyerService $lawyerService)
@@ -25,16 +26,16 @@ class DashboardService
     public function getDashboard(User $user): Response
     {
         return match (true) {
-            $user->hasRole('buyer')  => Inertia::render('Users/Buyer/Dashboard', [
+            $user->hasRole('buyer') => Inertia::render('Users/Buyer/Dashboard', [
                 'offers' => $this->offerService->getBuyerOffers($user->id),
             ]),
             $user->hasRole('seller') => Inertia::render('Users/Seller/Dashboard', [
                 'offers' => $this->offerService->getAllOffersForSeller($user->id),
             ]),
             $user->hasRole('lawyer') => Inertia::render('Users/Lawyer/Dashboard', [
-                'deals' => $this->lawyerService->getAllDealsForLawyer($user),
+                'deals_detail' => $this->lawyerService->getDealsStatistics()
             ]),
-            $user->hasRole('admin')  => Inertia::render('Users/Admin/Dashboard', [
+            $user->hasRole('admin') => Inertia::render('Users/Admin/Dashboard', [
                 'stats' => $this->getAdminStats(),
             ]),
         };

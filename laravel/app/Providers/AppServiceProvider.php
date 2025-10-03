@@ -2,15 +2,16 @@
 
 namespace App\Providers;
 
-
+use App\Models\Deal;
+use App\Models\Lawyer;
 use App\Models\RealEstateListing;
+use App\Models\User;
 use App\Policies\RealEstateListingPolicy;
+use App\Services\LawyerService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Gate;
-use App\Models\Deal;
-use App\Models\User;
 use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
@@ -24,7 +25,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Bind LawyerService per-request with the authenticated user attached
+        $this->app->scoped(LawyerService::class, static function () {
+            $user = Auth::user();
+
+            return new LawyerService(
+                new Lawyer($user->getAttributes()) // re-wrap User as Lawyer
+            );
+        });
+
     }
 
     /**
@@ -40,7 +49,9 @@ class AppServiceProvider extends ServiceProvider
 
         Inertia::share([
             'notifications' => function () {
-                if (!Auth::check()) return null;
+                if (! Auth::check()) {
+                    return null;
+                }
                 $u = Auth::user();
 
                 return [
@@ -50,11 +61,11 @@ class AppServiceProvider extends ServiceProvider
                         ->take(15)
                         ->get()
                         ->map(fn ($n) => [
-                            'id'         => $n->id,
-                            'title'      => $n->data['title'] ?? '',
-                            'body'       => $n->data['body'] ?? '',
-                            'url'        => $n->data['url'] ?? null,
-                            'read_at'    => $n->read_at?->toISOString(),
+                            'id' => $n->id,
+                            'title' => $n->data['title'] ?? '',
+                            'body' => $n->data['body'] ?? '',
+                            'url' => $n->data['url'] ?? null,
+                            'read_at' => $n->read_at?->toISOString(),
                             'created_at' => $n->created_at->toISOString(),
                         ])
                         ->values()

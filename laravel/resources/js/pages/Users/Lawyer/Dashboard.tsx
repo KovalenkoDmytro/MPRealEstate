@@ -1,7 +1,6 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { PropertyDetail, User } from '@/types';
-import { DealsList } from "@/components/deals/DealsList";
+import { User } from '@/types';
 import {
     Box,
     Typography,
@@ -10,13 +9,9 @@ import {
     Paper,
     Card,
     CardContent,
-    Divider
 } from '@mui/material';
 
-export default function Dashboard({ auth, deals }: { auth: { user: User }, deals: PropertyDetail[] }) {
-    const openDeals = deals.filter(d => d.status === 'open').length;
-    const closedDeals = deals.filter(d => d.status === 'closed').length;
-    const pendingDeals = deals.filter(d => d.status === 'pending').length;
+export default function Dashboard({ auth, deals_detail }: { auth: { user: User }, deals_detail: {closed_deals : number,  pending_deals: number} }) {
 
     return (
         <AuthenticatedLayout
@@ -35,7 +30,7 @@ export default function Dashboard({ auth, deals }: { auth: { user: User }, deals
                             </Typography>
                         </Box>
                         <Avatar
-                            src={auth.user.avatar_url || "/default-lawyer.png"}
+                            src={"/default-lawyer.png"}
                             alt="Lawyer Avatar"
                             sx={{ width: 64, height: 64 }}
                         />
@@ -44,36 +39,19 @@ export default function Dashboard({ auth, deals }: { auth: { user: User }, deals
 
                 {/* Stats Section */}
                 <Grid container spacing={3} mb={4}>
-                    <Grid size={{xs: 12, md:4}} >
-                        <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="subtitle1" color="text.secondary">Open Deals</Typography>
-                            <Typography variant="h4" color="primary">{openDeals}</Typography>
-                        </Paper>
-                    </Grid>
                     <Grid  size={{xs: 12, md:4}}>
                         <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="subtitle1" color="text.secondary">Closed Deals</Typography>
-                            <Typography variant="h4" color="success.main">{closedDeals}</Typography>
+                            <Typography variant="h4" color="success.main">{deals_detail.closed_deals}</Typography>
                         </Paper>
                     </Grid>
                     <Grid  size={{xs: 12, md:4}}>
                         <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
                             <Typography variant="subtitle1" color="text.secondary">Pending</Typography>
-                            <Typography variant="h4" color="warning.main">{pendingDeals}</Typography>
+                            <Typography variant="h4" color="warning.main">{deals_detail.pending_deals}</Typography>
                         </Paper>
                     </Grid>
                 </Grid>
-
-                {/*/!* Deals Section *!/*/}
-                {/*<Card>*/}
-                {/*    <CardContent>*/}
-                {/*        <Typography variant="h6" fontWeight="bold" gutterBottom>*/}
-                {/*            Your Deals*/}
-                {/*        </Typography>*/}
-                {/*        <Divider sx={{ mb: 2 }} />*/}
-                {/*        <DealsList deals={deals} />*/}
-                {/*    </CardContent>*/}
-                {/*</Card>*/}
             </Box>
         </AuthenticatedLayout>
     );

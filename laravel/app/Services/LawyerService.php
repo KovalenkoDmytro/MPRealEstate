@@ -2,16 +2,23 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\User ;
 
 class LawyerService
 {
-    public function getAllDealsForLawyer(User $lawyer)
+    private User $lawyer;
+
+    public function __construct(User $lawyer)
     {
-        return $lawyer->deals()
-            ->with(['users', 'realEstateListing.mainImage', 'realEstateListing.images', 'files'])
-            ->get();
+        $this->lawyer = $lawyer;
     }
 
-
+    public function getDealsStatistics(): array
+    {
+        return [
+            'closed_deals'  => $this->lawyer->getClosedDeals()->count(),
+            'pending_deals' => $this->lawyer->getPendingDeals()->count(),
+        ];
+    }
 }
+

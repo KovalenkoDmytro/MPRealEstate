@@ -34,8 +34,9 @@ class User extends Authenticatable
     }
 
     // Relationship with Deals
-    public function deals(): BelongsToMany {
-        return $this->belongsToMany(Deal::class, 'deal_user');
+    public function deals(): BelongsToMany
+    {
+        return $this->belongsToMany(Deal::class, 'deal_user', 'user_id', 'deal_id');
     }
 
     // Relationship with RealEstateListing
