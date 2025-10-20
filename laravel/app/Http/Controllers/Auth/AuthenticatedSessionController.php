@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\User; // 1. Import the User model
 
 class AuthenticatedSessionController extends Controller
 {
@@ -29,8 +30,31 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        // This authenticates the email and password.
+        // It will throw an error if credentials are bad.
         $request->authenticate();
 
+        // 2. --- START: ADDED VERIFICATION LOGIC ---
+
+        // Get the user who is trying to log in.
+        $user = User::where('email', $request->email)->first();
+
+        // Check if the user's email is NOT verified.
+        if ($user && ! $user->hasVerifiedEmail()) {
+            // Log the user out immediately.
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            // Redirect back to the login page with a specific error message.
+            return redirect()->route('login')->withErrors([
+                'email' => 'You must verify your email address before you can log in.',
+            ]);
+        }
+
+        // --- END: ADDED VERIFICATION LOGIC ---
+
+        // If the email is verified, proceed with a normal login.
         $request->session()->regenerate();
 
         return redirect()->route('dashboard');

@@ -7,9 +7,10 @@ if (!function_exists('generateUniqueLawyerNumber')) {
     function generateUniqueLawyerNumber(): string
     {
         do {
-            $code = strtoupper(Str::random(9)); // 9-character random alphanumeric string
-        } while (User::where('lawyer_number', $code)->exists());
+            $randomNumber = strtoupper(Str::random(6));
+            $lawyerNumber = 'LW-' . date('Y') . '-' . $randomNumber;
+        } while (User::where('lawyer_number', $lawyerNumber)->exists());
 
-        return $code;
+        return $lawyerNumber;
     }
 }

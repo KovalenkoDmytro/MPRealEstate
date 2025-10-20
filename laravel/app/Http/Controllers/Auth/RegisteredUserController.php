@@ -3,15 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use App\Http\Requests\Auth\RegisterUserRequest;
+use App\Services\Auth\RegistrationService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\JsonResponse;
 
 class RegisteredUserController extends Controller
 {
@@ -25,40 +23,18 @@ class RegisteredUserController extends Controller
 
     /**
      * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|string|in:buyer,seller,lawyer',
-            ]);
+    public function store(RegisterUserRequest $request, RegistrationService $registrationService): RedirectResponse | JsonResponse {
 
-        $role = $request->input('role');
+        try {
+            $registrationService->registerUser($request->validated());
+            return redirect()->route('verification.notice')->with('message', 'Registration successful! Please check your email for verification.');
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $role,
-        ]);
-       //todo $user->sendEmailVerificationNotification();
-        $user->assignRole($role);
+        } catch (\Exception $e) {
+            Log::error('User registration failed: ' . $e->getMessage());
 
-        //add lawyer_number for a lawyer
-        if ($user->hasRole('lawyer') && !$user->lawyer_number) {
-            $user->lawyer_number = generateUniqueLawyerNumber();
-            $user->save();
+            return response()->json(['message' => 'Registration failed. Please try again later.'], 500);
         }
 
-
-        event(new Registered($user));
-
-
-
-        return redirect()->back();
     }
 }
