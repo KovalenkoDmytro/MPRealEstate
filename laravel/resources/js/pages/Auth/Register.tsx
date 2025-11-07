@@ -10,19 +10,18 @@ import {
     Select,
     MenuItem,
     FormHelperText,
-    SelectChangeEvent,
+    Button,
+    CircularProgress,
 } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import { Head, Link, useForm } from '@inertiajs/react';
 import GuestLayout from '@/layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react'; // 👈 Use this hook
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNotification } from '@/context/NotificationContext';
-import { RegisterData } from "@/types/auth";
+import { RegisterData } from '@/types/auth';
 
 export default function Register() {
-    // This hook from Inertia manages data, errors, processing, and the request
-    const { data, setData, post, processing, errors } = useForm<RegisterData>({
+    const { data, setData, post, processing, errors, reset } = useForm<RegisterData>({
         name: '',
         email: '',
         password: '',
@@ -32,15 +31,23 @@ export default function Register() {
 
     const { showNotification } = useNotification();
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent) => {
-        setData(e.target.name as keyof RegisterData, e.target.value);
+    const handleInputChange = (
+        e:
+            | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+            | React.ChangeEvent<{ name?: string; value: unknown }>
+    ) => {
+        const { name, value } = e.target;
+        if (name) setData(name as keyof RegisterData, value as string);
     };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        // This 'post' function will automatically follow the redirect from your backend
         post(route('register'), {
+            onSuccess: () => {
+                showNotification('Account created successfully!', 'success');
+                reset();
+            },
             onError: () => {
                 showNotification('Please check the form for errors.', 'error');
             },
@@ -50,11 +57,13 @@ export default function Register() {
     return (
         <GuestLayout>
             <Head title="Register" />
-            <ToastContainer position="top-center" autoClose={5000} theme="light" />
-            <Box component="form" onSubmit={submit}>
+            <ToastContainer position="top-center" autoClose={4000} theme="light" />
+
+            <Box component="form" onSubmit={submit} sx={{ maxWidth: 450, mx: 'auto', mt: 4 }}>
                 <Typography variant="h4" component="h1" gutterBottom align="center">
                     Create an Account
                 </Typography>
+
                 <Stack spacing={2} sx={{ mt: 3 }}>
                     <TextField
                         name="name"
@@ -65,6 +74,7 @@ export default function Register() {
                         error={!!errors.name}
                         helperText={errors.name}
                     />
+
                     <TextField
                         name="email"
                         label="Email Address"
@@ -75,6 +85,7 @@ export default function Register() {
                         error={!!errors.email}
                         helperText={errors.email}
                     />
+
                     <TextField
                         name="password"
                         label="Password"
@@ -85,6 +96,7 @@ export default function Register() {
                         error={!!errors.password}
                         helperText={errors.password}
                     />
+
                     <TextField
                         name="password_confirmation"
                         label="Confirm Password"
@@ -95,6 +107,7 @@ export default function Register() {
                         error={!!errors.password_confirmation}
                         helperText={errors.password_confirmation}
                     />
+
                     <FormControl fullWidth error={!!errors.role}>
                         <InputLabel id="role-select-label">I am a...</InputLabel>
                         <Select
@@ -111,18 +124,43 @@ export default function Register() {
                         {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
                     </FormControl>
 
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            mt: 2,
+                        }}
+                    >
                         <MuiLink component={Link} href={route('login')} underline="hover">
                             Already registered?
                         </MuiLink>
-                        <LoadingButton
-                            type="submit"
-                            variant="contained"
-                            size="large"
-                            loading={processing}
-                        >
-                            Register
-                        </LoadingButton>
+
+
+                        <Box position="relative" display="inline-flex">
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                size="large"
+                                disabled={processing}
+                                sx={{ minWidth: 120 }}
+                            >
+                                Register
+                            </Button>
+                            {processing && (
+                                <CircularProgress
+                                    size={24}
+                                    sx={{
+                                        color: 'white',
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        marginTop: '-12px',
+                                        marginLeft: '-12px',
+                                    }}
+                                />
+                            )}
+                        </Box>
                     </Box>
                 </Stack>
             </Box>

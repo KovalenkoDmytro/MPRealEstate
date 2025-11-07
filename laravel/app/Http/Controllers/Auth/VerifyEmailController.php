@@ -51,6 +51,8 @@ class VerifyEmailController extends Controller
         }
 
         // 5️⃣ Redirect success
-        return redirect()->route('login')->with('message', 'Your email has been verified. You can now log in.');
+        return Inertia::render('Auth/Login', [
+            'message' => 'Your email has been verified. You can now log in.',
+        ]);
     }
 }

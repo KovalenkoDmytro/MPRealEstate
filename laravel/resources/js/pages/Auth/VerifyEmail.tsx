@@ -2,8 +2,15 @@ import axios from 'axios';
 import { Head, Link } from '@inertiajs/react';
 import { useState, FormEvent } from 'react';
 import GuestLayout from '@/layouts/GuestLayout';
-import { Box, Typography, Alert, Link as MuiLink, TextField } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import {
+    Box,
+    Typography,
+    Alert,
+    Link as MuiLink,
+    TextField,
+    Button,
+    CircularProgress,
+} from '@mui/material';
 
 export default function VerifyEmail() {
     const [email, setEmail] = useState('');
@@ -18,12 +25,15 @@ export default function VerifyEmail() {
         setError(null);
 
         try {
-            const response = await axios.post(route('verification.resend'),
+            const response = await axios.post(
+                route('verification.resend'),
                 { email },
                 {
                     headers: {
-                        'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
-                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN':
+                            (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)
+                                ?.content || '',
+                        Accept: 'application/json',
                     },
                 }
             );
@@ -49,14 +59,15 @@ export default function VerifyEmail() {
         <GuestLayout>
             <Head title="Email Verification" />
 
-            <Box component="form" onSubmit={submit}>
+            <Box component="form" onSubmit={submit} sx={{ maxWidth: 450, mx: 'auto', mt: 4 }}>
                 <Typography variant="h5" component="h1" gutterBottom>
                     Check Your Email
                 </Typography>
 
                 <Typography color="text.secondary" sx={{ mb: 2 }}>
-                    Before continuing, please verify your email address by clicking the link we sent to your inbox.
-                    If you didn’t receive it, enter your email below and click “Resend Verification Email.”
+                    Before continuing, please verify your email address by clicking the link we sent to your
+                    inbox. If you didn’t receive it, enter your email below and click
+                    “Resend Verification Email.”
                 </Typography>
 
                 {/* Email input */}
@@ -71,18 +82,43 @@ export default function VerifyEmail() {
                 />
 
                 {/* Feedback messages */}
-                {message && <Alert severity="success" sx={{ mb: 2 }}>{message}</Alert>}
-                {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+                {message && (
+                    <Alert severity="success" sx={{ mb: 2 }}>
+                        {message}
+                    </Alert>
+                )}
+                {error && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        {error}
+                    </Alert>
+                )}
 
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <LoadingButton
-                        type="submit"
-                        loading={loading}
-                        variant="contained"
-                        disabled={!email}
-                    >
-                        Resend Verification Email
-                    </LoadingButton>
+
+                    <Box position="relative" display="inline-flex">
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            size="medium"
+                            disabled={!email || loading}
+                            sx={{ minWidth: 220 }}
+                        >
+                            Resend Verification Email
+                        </Button>
+                        {loading && (
+                            <CircularProgress
+                                size={24}
+                                sx={{
+                                    color: 'white',
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    marginTop: '-12px',
+                                    marginLeft: '-12px',
+                                }}
+                            />
+                        )}
+                    </Box>
 
                     <MuiLink
                         component={Link}
