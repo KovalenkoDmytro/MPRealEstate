@@ -7,7 +7,7 @@ import { OfferFeedback } from "@/components/listing/OfferFeedback";
 import { OfferForm } from "@/components/listing/OfferForm";
 import { Offer, RealEstateListing } from "@/types";
 import { offerService } from "@/services/offerService";
-
+import {useNotification} from "@/context/NotificationContext";
 import {Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, Typography} from "@mui/material";
 
 
@@ -21,29 +21,24 @@ export default function Show({listing, userOffer}: PageProps) {
     const [processing, setProcessing] = React.useState(false);
     const [errors, setErrors] = React.useState<Record<string, string>>({});
 
+    const { showNotification, setRedirectNotification } = useNotification();
     const handleSubmit = async (data: { amount: string; message: string }) => {
         try {
             setProcessing(true);
             setErrors({});
 
-            const { ok, status, data: json } = await offerService.makeOffer(listing.id, data);
+            const response = await offerService.makeOffer(listing.id, data);
 
-            if (ok) {
-                if (json.status === "success") {
-                    alert(json.message);
-                    setDialogOpen(false);
-                    window.location.reload();
-                } else {
-                    alert(json.message || "Something went wrong.");
-                }
-            } else if (status === 422) {
-                // Map backend validation errors into the form
-                setErrors(json.errors || { amount: json.message || "Validation error." });
+            if (response.status === "success") {
+                setRedirectNotification(response.message, response.status);
+                setDialogOpen(false);
+                window.location.reload();
             } else {
-                alert(json.message || "Unexpected error occurred.");
+                showNotification(response.message, "error");
             }
+
         } catch (error: any) {
-            alert(error.message);
+            showNotification(error.message, "error");
         } finally {
             setProcessing(false);
         }

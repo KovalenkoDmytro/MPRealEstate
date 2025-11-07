@@ -39,11 +39,7 @@ class OfferService
         $request->user()->notify(new OfferConfirmation($listing, $offer));
 
         return JsonResponder::send(
-            new SuccessResponse(__('offers.success.submitted'), [
-                'offer_id' => $offer->id,
-                'listing_id' => $listing->id,
-                'status' => $offer->status,
-            ])
+            new SuccessResponse(__('offers.success.submitted'))
         );
     }
 
