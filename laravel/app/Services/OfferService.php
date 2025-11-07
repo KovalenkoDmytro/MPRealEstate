@@ -25,12 +25,10 @@ class OfferService
     {
         $this->dealService = $dealService;
     }
-    public function submitOffer(SubmitOfferRequest $request, $listing_id): JsonResponse {
-
-        $listing = RealEstateListing::with('seller')->findOrFail($listing_id);
+    public function submitOffer(SubmitOfferRequest $request, $listing): JsonResponse {
 
         $offer = Offer::create([
-            'real_estate_listing_id' => $listing_id,
+            'real_estate_listing_id' => $listing->id,
             'buyer_id' => $request->user()->id,
             'amount' => $request->amount,
             'message' => $request->message,

@@ -18,9 +18,9 @@ class OfferController extends Controller
         $this->offerService = $offerService;
     }
 
-    public function store(SubmitOfferRequest $request, $listing_id): JsonResponse
+    public function store(SubmitOfferRequest $request, $listing): JsonResponse
     {
-        return $this->offerService->submitOffer($request, $listing_id);
+        return $this->offerService->submitOffer($request, $listing);
     }
 
     public function updateStatus(UpdateOfferStatusRequest $request, Offer $offer): JsonResponse
