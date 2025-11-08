@@ -1,5 +1,4 @@
 import {api} from "@/axios";
-import {OfferStatus} from "@/types";
 
 export type OfferPayload = {
     amount: string;
