@@ -14,6 +14,12 @@ export interface SetConditionDayResponse {
     errors?: ApiErrorDetail[]; // optional array of validation or logic errors
 }
 
+export interface SetPossessionDayResponse {
+    status: ApiStatus;       // "success" | "error"
+    message: string;         // human-readable summary
+    errors?: ApiErrorDetail[]; // optional array of validation or logic errors
+}
+
 
 
 export const DealService = {
@@ -43,7 +49,7 @@ export const DealService = {
         return r.data;
     },
 
-    async setConditionDay(dealId: number, conditionDay: string) {
+    async setConditionDay(dealId: number, conditionDay: string):Promise<SetConditionDayResponse> {
         const response = await api
             .patch(route('buyer.deals.setConditionDay', dealId, false), {
                 condition_day: conditionDay,
@@ -51,13 +57,13 @@ export const DealService = {
         return response.data;
     },
 
-    async confirmConditionDay(dealId: number): Promise<SetConditionDayResponse> {
+    async confirmConditionDay(dealId: number) {
         const r = await api
             .patch(route('seller.deals.confirmConditionDay', dealId, false), {});
         return r.data;
     },
 
-    async setPossessionDay(dealId: number, possessionDay: string) {
+    async setPossessionDay(dealId: number, possessionDay: string) :Promise<SetPossessionDayResponse> {
         const r = await api
             .patch(route('buyer.deals.setPossessionDay', dealId, false), {
                 possession_day: possessionDay,

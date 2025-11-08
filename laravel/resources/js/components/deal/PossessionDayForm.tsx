@@ -5,15 +5,18 @@ import { Box, Button, Stack, Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { format } from "date-fns";
+import {addDays, format} from "date-fns";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import DealStatusBanner from "@/components/deal/DealStatusBanner";
+import {useNotification} from "@/context/NotificationContext";
 
 export default function PossessionDayForm({ deal }: { deal: Deal }) {
     const [possessionDay, setPossessionDay] = useState<Date | null>(
         deal.possession_day ? new Date(deal.possession_day) : null
     );
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const {setRedirectNotification } = useNotification();
+    const conditionDay = new Date(deal.condition_day!);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,11 +26,11 @@ export default function PossessionDayForm({ deal }: { deal: Deal }) {
 
     const save = async () => {
         if (!possessionDay) return;
-        await DealService.setPossessionDay(
+        const response =  await DealService.setPossessionDay(
             deal.id,
             possessionDay.toISOString().split("T")[0]
         );
-        alert("Possession day set successfully!");
+        setRedirectNotification(response.message, response.status);
         window.location.reload();
     };
 
@@ -47,6 +50,7 @@ export default function PossessionDayForm({ deal }: { deal: Deal }) {
                             onChange={(d) => setPossessionDay(d)}
                             disabled={!!deal.possession_day}
                             slotProps={{ textField: { fullWidth: true } }}
+                            minDate={addDays(conditionDay,1)}
                         />
                     </LocalizationProvider>
                     <Button

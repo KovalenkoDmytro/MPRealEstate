@@ -25,11 +25,11 @@ export default function ConditionDayForm({ deal }: { deal: Deal }) {
 
     const save = async () => {
         if (!conditionDay) return;
-        const result = await DealService.setConditionDay(
+        const response = await DealService.setConditionDay(
             deal.id,
             conditionDay.toISOString().split("T")[0]
         );
-        setRedirectNotification(result.message, result.status);
+        setRedirectNotification(response.message, response.status);
         window.location.reload();
     };
 

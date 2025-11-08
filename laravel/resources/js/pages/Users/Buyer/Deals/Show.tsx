@@ -30,7 +30,7 @@ export default function DealShowPage({deal}: { deal: PropertyDetail }) {
 
             <ConditionDayForm deal={deal}/>
 
-            <PossessionDayForm deal={deal}/>
+            {deal.condition_day &&  <PossessionDayForm deal={deal}/>}
 
             <LawyerInvite deal={deal} lawyer={lawyer}/>
 
