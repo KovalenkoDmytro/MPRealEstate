@@ -35,13 +35,13 @@ class SellerController extends Controller {
     }
 
 
-//    public function showListing(RealEstateListing $listing): Response
-//    {
-//        $user = auth()->user();
-//        $listingDetails = $this->sellerService->getSellerListingDetails($user, $listing);
-//
-//        return Inertia::render('Users/Seller/Listings/Show', [
-//            'listing' => $listingDetails,
-//        ]);
-//    }
+    public function showListing(RealEstateListing $listing): Response
+    {
+        $user = auth()->user();
+        $listingDetails = $this->sellerService->getSellerListingDetails($user, $listing);
+
+        return Inertia::render('Users/Seller/Listings/Show', [
+            'listing' => $listingDetails,
+        ]);
+    }
 }

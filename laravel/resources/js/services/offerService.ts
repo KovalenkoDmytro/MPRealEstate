@@ -35,10 +35,7 @@ export const offerService = {
         return r.data as T;
     },
 
-    async updateOfferStatus(
-        offerId: number,
-        status: "accepted" | "rejected"
-    ){
+    async updateOfferStatus(offerId: number, status: "accepted" | "rejected"){
         try {
             // keep relative URL; swap to a named route if you have one
             const r = await api.patch(route('seller.offers.updateStatus', offerId),
