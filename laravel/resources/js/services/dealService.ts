@@ -1,6 +1,21 @@
 import {api} from "@/axios";
 
 
+export type ApiStatus = "success" | "error";
+
+export interface ApiErrorDetail {
+    field?: string;     // optional, e.g. "condition_day"
+    message: string;    // e.g. "The condition day must be a valid date."
+}
+
+export interface SetConditionDayResponse {
+    status: ApiStatus;       // "success" | "error"
+    message: string;         // human-readable summary
+    errors?: ApiErrorDetail[]; // optional array of validation or logic errors
+}
+
+
+
 export const DealService = {
     async setDeposit(dealId: number, securityDeposit: number) {
         const r = await api
@@ -29,14 +44,14 @@ export const DealService = {
     },
 
     async setConditionDay(dealId: number, conditionDay: string) {
-        const r = await api
+        const response = await api
             .patch(route('buyer.deals.setConditionDay', dealId, false), {
                 condition_day: conditionDay,
             });
-        return r.data;
+        return response.data;
     },
 
-    async confirmConditionDay(dealId: number) {
+    async confirmConditionDay(dealId: number): Promise<SetConditionDayResponse> {
         const r = await api
             .patch(route('seller.deals.confirmConditionDay', dealId, false), {});
         return r.data;

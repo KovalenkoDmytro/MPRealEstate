@@ -5,15 +5,17 @@ import { Box, Button, Stack, Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import DealStatusBanner from "@/components/deal/DealStatusBanner";
+import {useNotification} from "@/context/NotificationContext";
 
 export default function ConditionDayForm({ deal }: { deal: Deal }) {
     const [conditionDay, setConditionDay] = useState<Date | null>(
         deal.condition_day ? new Date(deal.condition_day) : null
     );
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const {setRedirectNotification } = useNotification();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,11 +25,11 @@ export default function ConditionDayForm({ deal }: { deal: Deal }) {
 
     const save = async () => {
         if (!conditionDay) return;
-        await DealService.setConditionDay(
+        const result = await DealService.setConditionDay(
             deal.id,
             conditionDay.toISOString().split("T")[0]
         );
-        alert("Condition day set successfully!");
+        setRedirectNotification(result.message, result.status);
         window.location.reload();
     };
 
@@ -45,6 +47,7 @@ export default function ConditionDayForm({ deal }: { deal: Deal }) {
                                 value={conditionDay}
                                 onChange={(d) => setConditionDay(d)}
                                 slotProps={{ textField: { fullWidth: true } }}
+                                minDate={addDays(new Date(), 5)}
                             />
                         </LocalizationProvider>
 

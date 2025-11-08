@@ -118,7 +118,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse(__('deals.success.condition_day_set'), $deal->toArray())
+            new SuccessResponse(__('deals.success.condition_day_set'))
         );
     }
 
