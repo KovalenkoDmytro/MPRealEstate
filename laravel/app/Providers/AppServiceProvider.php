@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Buyer;
 use App\Models\Deal;
 use App\Models\Lawyer;
 use App\Models\RealEstateListing;
+use App\Models\Seller;
 use App\Models\User;
 use App\Policies\RealEstateListingPolicy;
 use App\Services\LawyerService;
@@ -48,28 +50,41 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Inertia::share([
+            'u' => Auth::user(),
             'notifications' => function () {
                 if (! Auth::check()) {
                     return null;
                 }
-                $u = Auth::user();
+
+                $user = Auth::user();
+                $types = [
+                    get_class($user),
+                    User::class,
+                    Seller::class,
+                    Buyer::class,
+                    Lawyer::class,
+                ];
 
                 return [
-                    'unread_count' => $u->unreadNotifications()->count(),
-                    'items' => $u->unreadNotifications()
+                    'unread_count' => \DB::table('notifications')
+                        ->whereIn('notifiable_type', $types)
+                        ->where('notifiable_id', $user->id)
+                        ->whereNull('read_at')
+                        ->count(),
+                    'items' => \DB::table('notifications')
+                        ->whereIn('notifiable_type', $types)
+                        ->where('notifiable_id', $user->id)
                         ->latest()
                         ->take(15)
                         ->get()
                         ->map(fn ($n) => [
                             'id' => $n->id,
-                            'title' => $n->data['title'] ?? '',
-                            'body' => $n->data['body'] ?? '',
-                            'url' => $n->data['url'] ?? null,
-                            'read_at' => $n->read_at?->toISOString(),
-                            'created_at' => $n->created_at->toISOString(),
-                        ])
-                        ->values()
-                        ->all(),
+                            'title' => json_decode($n->data, true)['title'] ?? '',
+                            'body' => json_decode($n->data, true)['body'] ?? '',
+                            'url' => json_decode($n->data, true)['url'] ?? null,
+                            'read_at' => $n->read_at,
+                            'created_at' => $n->created_at,
+                        ]),
                 ];
             },
         ]);
