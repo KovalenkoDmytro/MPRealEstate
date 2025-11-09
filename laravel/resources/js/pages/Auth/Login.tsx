@@ -55,7 +55,13 @@ export default function Login({status, canResetPassword,}: { status?: string; ca
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
                     />
-                    <InputError message={errors.email} className="mt-2" />
+                    {errors.email && (
+                        <div
+                            className="text-red-600 text-sm"
+                            dangerouslySetInnerHTML={{ __html: errors.email }}
+                        />
+                    )}
+
                 </div>
 
                 <div className="mt-4">
