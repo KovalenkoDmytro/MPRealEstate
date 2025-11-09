@@ -3,13 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use Inertia\Inertia;
-use App\Http\Controllers\{
+use App\Http\Controllers\{NotificationController,
     ProfileController,
     DashboardController,
     DealFileController,
     DealController,
-    RealEstateListingController
-};
+    RealEstateListingController};
 
 // Public Home Route
 Route::get('/', static fn () =>
@@ -58,35 +57,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
 
-    // Notifications (read + window)
-    Route::post('/notifications/{id}/read', function (string $id) {
-        $n = auth()->user()->notifications()->where('id', $id)->firstOrFail();
-        if (is_null($n->read_at)) $n->markAsRead();
-        return back();
-    })->name('notifications.readOne');
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::post('/notifications/{id}/read', [NotificationController::class, 'read'])
+            ->name('notifications.readOne');
 
-    Route::post('/notifications/read-all', function () {
-        auth()->user()->unreadNotifications->markAsRead();
-        return back();
-    })->name('notifications.readAll');
+        Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])
+            ->name('notifications.readAll');
+    });
 
-// Optional dedicated window/page (Inertia + React)
-    Route::get('/notifications/window', function () {
-        $u = auth()->user();
-        return Inertia::render('Notifications/Window', [
-            'notifications' => [
-                'unread_count' => $u->unreadNotifications()->count(),
-                'items' => $u->notifications()->latest()->take(100)->get()->map(fn($n) => [
-                    'id'         => $n->id,
-                    'title'      => $n->data['title'] ?? 'Notification',
-                    'body'       => $n->data['body'] ?? '',
-                    'url'        => $n->data['url'] ?? null,
-                    'read_at'    => optional($n->read_at)?->toISOString(),
-                    'created_at' => $n->created_at->toISOString(),
-                ]),
-            ],
-        ]);
-    })->name('notifications.window');
 });
 
 // Laravel Breeze Auth Routes

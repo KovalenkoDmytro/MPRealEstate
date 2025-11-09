@@ -45,4 +45,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(RealEstateListing::class, 'favorite_listings')->withTimestamps();
     }
 
+    public function getMorphClass(): string {
+        return self::class;
+    }
+
 }
