@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { useState, FormEvent, useEffect } from "react";
 import GuestLayout from "@/layouts/GuestLayout";
 import {
