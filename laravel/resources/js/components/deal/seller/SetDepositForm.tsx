@@ -3,6 +3,7 @@ import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import {useNotification} from "@/context/NotificationContext";
 
 export default function SetDepositForm({ deal }: { deal: Deal }) {
     const [depositAmount, setDepositAmount] = useState<number | ''>('');
@@ -10,6 +11,7 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
 
     const amountNumber = typeof depositAmount === "number" ? depositAmount : parseFloat(depositAmount || "0");
     const canSubmit = useMemo(() => !Number.isNaN(amountNumber) && amountNumber > 0, [amountNumber]);
+    const {setRedirectNotification } = useNotification();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -21,9 +23,8 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
     };
 
     const save = async () => {
-        const res = await DealService.setDeposit(deal.id, Number(amountNumber.toFixed(2)));
-        if (res.status !== "success") throw new Error("Failed to set deposit");
-        alert("Deposit saved successfully!");
+        const response = await DealService.setDeposit(deal.id, Number(amountNumber.toFixed(2)));
+        setRedirectNotification(response.message, response.status);
         window.location.reload();
     };
 

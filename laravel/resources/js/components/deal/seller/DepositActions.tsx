@@ -16,6 +16,7 @@ import DealStatusBanner from "@/components/deal/DealStatusBanner";
 import { DealService } from "@/services/dealService";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import SetDepositForm from "@/components/deal/seller/SetDepositForm";
+import {useNotification} from "@/context/NotificationContext";
 
 
 export default function DepositActions({ deal }: { deal: PropertyDetail }) {
@@ -23,7 +24,7 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [depositDateTime, setDepositDateTime] = useState<Date | null>(new Date());
-
+    const {setRedirectNotification } = useNotification();
 
     const handleConfirm = useCallback(async () => {
         if (!depositDateTime) return;
@@ -31,11 +32,8 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
             setError(null);
             setSubmitting(true);
 
-            const res = await DealService.confirmDeposit(deal.id, depositDateTime);
-            if (res?.status !== "success") {
-                throw new Error(res?.message || "Failed to confirm deposit.");
-            }
-
+            const response = await DealService.confirmDeposit(deal.id, depositDateTime);
+            setRedirectNotification(response.message, response.status);
             window.location.reload();
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : "Something went wrong.";

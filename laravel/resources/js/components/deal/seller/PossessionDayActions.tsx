@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import DealStatusBanner from "@/components/deal/DealStatusBanner";
+import {useNotification} from "@/context/NotificationContext";
 
 export default function PossessionDayActions({ deal }: { deal: PropertyDetail }) {
 
@@ -16,19 +17,12 @@ export default function PossessionDayActions({ deal }: { deal: PropertyDetail })
         () => new Date(possessionDayStr),
         [possessionDayStr]
     );
+    const {setRedirectNotification } = useNotification();
 
     const doConfirm = async () => {
-        const res = await DealService.confirmPossessionDay(deal.id);
-
-        // Adjust success check to your service shape
-        if (res?.status === "success") {
-            alert(res?.message || "Possession day confirmed.");
-            window.location.reload();
-            return;
-        }
-
-        if (res?.message) throw new Error(res.message);
-        throw new Error("Failed to confirm possession day.");
+        const response = await DealService.confirmPossessionDay(deal.id);
+        setRedirectNotification(response.message, response.status);
+        window.location.reload();
     };
 
     return (

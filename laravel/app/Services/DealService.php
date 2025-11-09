@@ -53,7 +53,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse(__('deals.success.security_deposit_set'), $deal->toArray())
+            new SuccessResponse(__('deals.success.security_deposit_set'))
         );
     }
 
@@ -78,7 +78,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse(__('deals.success.deposit_marked_made'), $deal->toArray())
+            new SuccessResponse(__('deals.success.deposit_marked_made'))
         );
     }
 
@@ -135,7 +135,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse(__('deals.success.condition_day_confirmed'), $deal->toArray())
+            new SuccessResponse(__('deals.success.condition_day_confirmed'))
         );
     }
 
@@ -175,7 +175,7 @@ class DealService
         }
 
         return JsonResponder::send(
-            new SuccessResponse(__('deals.success.possession_day_confirmed'), $deal->toArray())
+            new SuccessResponse(__('deals.success.possession_day_confirmed'))
         );
     }
 
@@ -208,7 +208,7 @@ class DealService
         $lawyer->notify(new LawyerInvitedToDeal($deal));
 
         return JsonResponder::send(
-            new SuccessResponse(__('deals.success.lawyer_invited'), $lawyer->toArray())
+            new SuccessResponse(__('deals.success.lawyer_invited'))
         );
     }
 

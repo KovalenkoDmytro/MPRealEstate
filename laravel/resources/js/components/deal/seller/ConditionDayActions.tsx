@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import DealStatusBanner from "@/components/deal/DealStatusBanner";
+import {useNotification} from "@/context/NotificationContext";
 
 export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) {
 
@@ -15,14 +16,11 @@ export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) 
         () => new Date(conditionDayStr),
         [conditionDayStr]
     );
+    const {setRedirectNotification } = useNotification();
 
     const doConfirm = async () => {
-        // If your service returns {status:'success'}:
-        const res = await DealService.confirmConditionDay(deal.id);
-        if (res?.status !== "success") {
-            throw new Error(res?.message || "Failed to confirm condition day.");
-        }
-        alert("Condition day confirmed.");
+        const response = await DealService.confirmConditionDay(deal.id);
+        setRedirectNotification(response.message, response.status);
         window.location.reload();
     };
 

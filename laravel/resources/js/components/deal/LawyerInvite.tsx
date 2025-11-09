@@ -4,6 +4,7 @@ import { DealService } from "@/services/dealService";
 import { Box, Typography, TextField, Button, Stack } from "@mui/material";
 import { useAuth } from "@/hooks/useAuth";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import {useNotification} from "@/context/NotificationContext";
 
 export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: User }) {
     const [lawyerCode, setLawyerCode] = useState("");
@@ -28,6 +29,7 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
 
     const code = lawyerCode.trim().toUpperCase();
     const isValid = useMemo(() => /^[A-Z0-9]{9}$/.test(code), [code]);
+    const {setRedirectNotification } = useNotification();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,8 +38,8 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
     };
 
     const sendInvite = async () => {
-        await DealService.inviteLawyer(deal.id, code);
-        alert("Lawyer invited successfully!");
+        const response = await DealService.inviteLawyer(deal.id, code);
+        setRedirectNotification(response.message, response.status);
         window.location.reload();
     };
 
