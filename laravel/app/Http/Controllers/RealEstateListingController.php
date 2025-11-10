@@ -140,7 +140,6 @@ class RealEstateListingController extends Controller {
                 'listings' => RealEstateListing::with(['seller', 'mainImage'])->get(),
                 'favoriteListings' => $this->listingService->getFavoriteListingIds($user),
             ]),
-            default => abort(403, __('listings.errors.unauthorized')),
         };
     }
 

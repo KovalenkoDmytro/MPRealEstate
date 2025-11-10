@@ -79,9 +79,9 @@ class AppServiceProvider extends ServiceProvider
                         ->get()
                         ->map(fn ($n) => [
                             'id' => $n->id,
-                            'title' => json_decode($n->data, true)['title'] ?? '',
-                            'body' => json_decode($n->data, true)['body'] ?? '',
-                            'url' => json_decode($n->data, true)['url'] ?? null,
+                            'title' => json_decode($n->data, true, 512, JSON_THROW_ON_ERROR)['title'] ?? '',
+                            'body' => json_decode($n->data, true, 512, JSON_THROW_ON_ERROR)['body'] ?? '',
+                            'url' => json_decode($n->data, true, 512, JSON_THROW_ON_ERROR)['url'] ?? null,
                             'read_at' => $n->read_at,
                             'created_at' => $n->created_at,
                         ]),

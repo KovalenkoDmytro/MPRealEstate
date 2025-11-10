@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function read(string $id)
-    {
+    public function read(string $id): RedirectResponse {
         $user = Auth::user();
 
         if (! $user) {
@@ -26,8 +26,7 @@ class NotificationController extends Controller
         return back();
     }
 
-    public function readAll()
-    {
+    public function readAll(): RedirectResponse {
         $user = Auth::user();
 
         if (! $user) {

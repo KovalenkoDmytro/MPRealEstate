@@ -38,7 +38,7 @@ class RealEstateListingFactory extends Factory
             'property_taxes' => $this->faker->randomFloat(2, 1000, 10000),
             'status'         => $this->faker->randomElement(['available', 'sold', 'pending']),
             'price_reduced'  => $this->faker->boolean(10),
-            'keywords' => $this->faker->randomElements($tags, rand(3, 7)),
+            'keywords' => $this->faker->randomElements($tags, random_int(3, 7)),
         ];
     }
 }

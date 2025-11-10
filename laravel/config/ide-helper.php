@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Session\Store;
+use Illuminate\Database\Query\Builder;
+
 return [
 
     /*
@@ -183,8 +186,8 @@ return [
     */
 
     'extra' => [
-        'Eloquent' => ['Illuminate\Database\Eloquent\Builder', 'Illuminate\Database\Query\Builder'],
-        'Session' => ['Illuminate\Session\Store'],
+        'Eloquent' => ['Illuminate\Database\Eloquent\Builder', Builder::class],
+        'Session' => [Store::class],
     ],
 
     'magic' => [],

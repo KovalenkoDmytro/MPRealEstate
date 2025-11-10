@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class EmailVerificationNotificationController extends Controller
 {
-    public function store(Request $request)
-    {
+    public function store(Request $request): JsonResponse {
         // Logged-in user case
         if ($request->user()) {
             if ($request->user()->hasVerifiedEmail()) {
