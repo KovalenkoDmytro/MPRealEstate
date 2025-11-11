@@ -1,57 +1,36 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { usePage, router } from "@inertiajs/react"
+import {PageProps} from "@/types";
 
-interface NotificationItem {
-    id: string
-    title: string
-    body: string,
-    url?: string | null
-    read_at?: string | null
-    created_at: string
-}
-
-interface NotificationsProp {
-    unread_count: number
-    items: NotificationItem[]
-}
-
-interface PageProps {
-    notifications?: NotificationsProp
-    [key: string]: any
-}
 
 const NotificationBell: React.FC = () => {
     const { props } = usePage<PageProps>()
     const [open, setOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement | null>(null)
 
-    const notif = useMemo<NotificationsProp>(
-        () =>
-            props.notifications ?? {
-                unread_count: 0,
-                items: [],
-            },
-        [props.notifications]
-    )
 
-    const items = notif.items ?? []
-    const unreadCount = notif.unread_count ?? 0
+    const notif = useMemo(() => {
+        return props.notifications ?? { unread_count: 0, items: [] }
+    }, [props.notifications])
 
-    function refresh() {
-        router.reload({ only: ["notifications"], preserveScroll: true })
+    const items = notif.items || []
+    const unreadCount = notif.unread_count || 0
+
+    const refresh = () => {
+        router.reload({ only: ["notifications"], preserveUrl: true })
     }
 
-    function markOne(id: string) {
+    const markOne = (id: string) => {
         router.post(route("notifications.readOne", id), {}, { onSuccess: refresh })
     }
 
-    function markAll() {
+    const markAll = () => {
         router.post(route("notifications.readAll"), {}, { onSuccess: refresh })
     }
 
     // Close on outside click
     useEffect(() => {
-        function onClickOutside(e: MouseEvent) {
+        const onClickOutside = (e: MouseEvent) => {
             if (open && dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
                 setOpen(false)
             }
@@ -70,17 +49,17 @@ const NotificationBell: React.FC = () => {
                         strokeLinejoin="round"
                         strokeWidth={1.5}
                         d="M14.857 17.082A23.848 23.848 0 0112 17.25c-2.486
-            0-4.865-.362-6.857-1.018A2.25 2.25
-            0 013 14.107V13.5a6.75 6.75 0
-            0113.5 0v.607a2.25 2.25 0
-            01-1.643 2.975zM9 20.25h6"
+                        0-4.865-.362-6.857-1.018A2.25 2.25
+                        0 013 14.107V13.5a6.75 6.75 0
+                        0113.5 0v.607a2.25 2.25 0
+                        01-1.643 2.975zM9 20.25h6"
                     />
                 </svg>
 
                 {unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1.5">
-            {unreadCount}
-          </span>
+                        {unreadCount}
+                    </span>
                 )}
             </button>
 
