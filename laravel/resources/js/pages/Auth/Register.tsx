@@ -1,4 +1,4 @@
-import React, { FormEventHandler } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 import {
     Box,
     TextField,
@@ -11,17 +11,19 @@ import {
     MenuItem,
     FormHelperText,
     Button,
-    CircularProgress,
+    CircularProgress, SelectChangeEvent,
 } from '@mui/material';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import GuestLayout from '@/layouts/GuestLayout';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNotification } from '@/context/NotificationContext';
-import { RegisterData } from '@/types/auth';
+import {authService} from "@/services/authService";
+import {RegisterData, RegisterDataErrors} from "@/types/auth";
+
 
 export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm<RegisterData>({
+    const [data, setData] = useState<RegisterData>({
         name: '',
         email: '',
         password: '',
@@ -29,29 +31,30 @@ export default function Register() {
         role: 'buyer',
     });
 
-    const { showNotification } = useNotification();
+    const [errors, setErrors] = useState<RegisterDataErrors>({});
+    const [loading, setLoading] = useState(false);
+    const { showNotification, setRedirectNotification } = useNotification();
 
     const handleInputChange = (
-        e:
-            | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-            | React.ChangeEvent<{ name?: string; value: unknown }>
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
     ) => {
         const { name, value } = e.target;
-        if (name) setData(name as keyof RegisterData, value as string);
+        setData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const submit: FormEventHandler = (e) => {
+    const submit = async (e: FormEvent) => {
         e.preventDefault();
+        setLoading(true);
+        setErrors({});
 
-        post(route('register'), {
-            onSuccess: () => {
-                showNotification('Account created successfully!', 'success');
-                reset();
-            },
-            onError: () => {
-                showNotification('Please check the form for errors.', 'error');
-            },
-        });
+        const response = await authService.register(data);
+
+        if (response.status === 'success') {
+            setRedirectNotification(response.message, response.status);
+            window.location.href = route('verification.notice');
+        }else {
+            showNotification(response.message, response.status);
+        }
     };
 
     return (
@@ -90,7 +93,7 @@ export default function Register() {
                         name="password"
                         label="Password"
                         type="password"
-                        value={data.password}
+                        value={data.password || ''}
                         onChange={handleInputChange}
                         required
                         error={!!errors.password}
@@ -101,7 +104,7 @@ export default function Register() {
                         name="password_confirmation"
                         label="Confirm Password"
                         type="password"
-                        value={data.password_confirmation}
+                        value={data.password_confirmation || ''}
                         onChange={handleInputChange}
                         required
                         error={!!errors.password_confirmation}
@@ -136,18 +139,17 @@ export default function Register() {
                             Already registered?
                         </MuiLink>
 
-
                         <Box position="relative" display="inline-flex">
                             <Button
                                 type="submit"
                                 variant="contained"
                                 size="large"
-                                disabled={processing}
+                                disabled={loading}
                                 sx={{ minWidth: 120 }}
                             >
                                 Register
                             </Button>
-                            {processing && (
+                            {loading && (
                                 <CircularProgress
                                     size={24}
                                     sx={{
@@ -155,8 +157,8 @@ export default function Register() {
                                         position: 'absolute',
                                         top: '50%',
                                         left: '50%',
-                                        marginTop: '-12px',
-                                        marginLeft: '-12px',
+                                        mt: '-12px',
+                                        ml: '-12px',
                                     }}
                                 />
                             )}
@@ -167,3 +169,4 @@ export default function Register() {
         </GuestLayout>
     );
 }
+

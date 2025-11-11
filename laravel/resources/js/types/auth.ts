@@ -7,6 +7,13 @@ export interface RegisterData {
     role: 'buyer' | 'seller' | 'lawyer';
 }
 
+export interface RegisterDataErrors {
+    name?: string;
+    email?: string;
+    password?: string;
+    password_confirmation?: string;
+    role?: string;
+}
 
 export interface ForgotPasswordData {
     email: string;
