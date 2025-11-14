@@ -1,5 +1,4 @@
 import { api } from "@/axios";
-import {File} from "@/types";
 
 export const fileService = {
 

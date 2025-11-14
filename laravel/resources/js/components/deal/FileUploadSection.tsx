@@ -25,15 +25,18 @@ import { PropertyDetail, DealFile } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotification } from "@/context/NotificationContext";
 
+// Important: rename browser File to avoid type collisions
+type UploadFile = globalThis.File;
+
 export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
     const user = useAuth();
     const { showNotification } = useNotification();
 
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [selectedFile, setSelectedFile] = useState<UploadFile | null>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-    const [uploadedFiles, setUploadedFiles] = useState<File[]>(
+    const [uploadedFiles, setUploadedFiles] = useState<DealFile[]>(
         filterFilesForUser(deal.files || [], user, deal.users)
     );
 
@@ -41,10 +44,10 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
 
     // DELETE dialog state
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [selectedForDeletion, setSelectedForDeletion] = useState<File | null>(null);
+    const [selectedForDeletion, setSelectedForDeletion] = useState<DealFile | null>(null);
 
     // Normalize backend response
-    const extractUploadedFile = (response: any): File | null => {
+    const extractUploadedFile = (response: any): DealFile | null => {
         return response?.file || response?.data?.file || null;
     };
 
@@ -90,7 +93,7 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
     };
 
     // DELETE
-    const requestDelete = (file: File) => {
+    const requestDelete = (file: DealFile) => {
         setSelectedForDeletion(file);
         setDeleteDialogOpen(true);
     };
