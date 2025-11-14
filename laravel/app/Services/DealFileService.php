@@ -10,14 +10,14 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DealFileService
 {
-    public function storeFile(StoreDealFileRequest $request, Deal $deal): void
+    public function storeFile(StoreDealFileRequest $request, Deal $deal): DealFile
     {
         $file = $request->file('file');
         $filePath = $file->store('deal_files', 'public');
         $fileType = $file->getClientOriginalExtension();
         $author = $request->user();
 
-        DealFile::create([
+        $dealFile = DealFile::create([
             'deal_id' => $deal->id,
             'file_name' => $file->getClientOriginalName(),
             'file_path' => $filePath,
@@ -25,6 +25,10 @@ class DealFileService
             'author_name' => $author->name,
             'author_email' => $author->email,
         ]);
+
+        return $dealFile->fresh();
+
+
     }
 
     public function downloadFile(DealFile $file): StreamedResponse

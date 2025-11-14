@@ -61,7 +61,7 @@ class OfferService
 
         return JsonResponder::send(
             new SuccessResponse(__('offers.success.status_updated'), [
-                'offerStatus' => $offer->status,
+                'status' => $offer->status,
             ])
         );
     }

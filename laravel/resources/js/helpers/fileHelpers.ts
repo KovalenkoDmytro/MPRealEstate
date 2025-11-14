@@ -1,7 +1,7 @@
-import type { Deal, User } from "@/types";
+import {DealFile, User} from "@/types";
 
 export function filterFilesForUser(
-    allFiles: Deal['files'],
+    allFiles: DealFile[],
     currentUser: User,
     allUsers: User[]
 ) {

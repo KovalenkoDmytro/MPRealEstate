@@ -1,4 +1,4 @@
-import {User, BaseEntity, RealEstateListing, File} from '@/types';
+import {User, BaseEntity, RealEstateListing, DealFile} from '@/types';
 /**
  * Represents a real estate deal between buyers and sellers
  */
@@ -96,5 +96,5 @@ export interface Deal extends BaseEntity {
 
 export interface PropertyDetail extends Deal {
     real_estate_listing: RealEstateListing;
-    files: File[];
+    files: DealFile[];
 }

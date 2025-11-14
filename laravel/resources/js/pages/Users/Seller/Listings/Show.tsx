@@ -17,6 +17,7 @@ import {
 import {ImageGallery} from "@/components/listing/ImageGallery";
 import {ListingDetails} from "@/components/listing/ListingDetails";
 import {ReceivedOffers} from "@/components/listing/ReceivedOffers";
+import {useNotification} from "@/context/NotificationContext";
 
 interface PageProps {
     listing: RealEstateListing & {
@@ -26,28 +27,28 @@ interface PageProps {
 
 export default function Show({ listing }: PageProps) {
     const [offers, setOffers] = useState<Offer[]>(listing.offers || []);
-
+    const { showNotification } = useNotification();
     const handleUpdateStatus = async (offerId: number, status: "accepted" | "rejected") => {
-        try {
+
             const response = await offerService.updateOfferStatus(offerId, status);
 
-            if (response.ok && response.data.offerStatus) {
-                const updatedStatus = response.data.offerStatus;
+            if (response.status === "success") {
+                showNotification(response.message, response.status );
+                const updatedStatus = response.data.status;
 
-                setOffers((prev) =>
-                    prev.map((offer) =>
-                        offer.id === offerId ? { ...offer, status: updatedStatus } : offer
+                setOffers(prev =>
+                    prev.map(offer =>
+                        offer.id === offerId
+                            ? ({ ...offer, status: updatedStatus } as Offer)
+                            : offer
                     )
                 );
+            }else {
+                showNotification(response.message, "error");}
 
-                alert(`Offer ${updatedStatus} successfully!`);
-            } else {
-                alert("Failed to update offer status.");
-            }
-        } catch (error) {
-            console.error("Error updating offer status:", error);
-            alert("Network error. Please try again.");
-        }
+
+
+
     };
 
     return (

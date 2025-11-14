@@ -1,7 +1,4 @@
-import React, { useState } from "react";
-import { useForm } from "@inertiajs/react";
-import { filterFilesForUser } from "@/helpers/fileHelpers";
-import { File, PropertyDetail } from "@/types";
+import React, { useState, useRef } from "react";
 import {
     Box,
     Typography,
@@ -10,138 +7,211 @@ import {
     List,
     ListItem,
     ListItemText,
-    ListItemSecondaryAction,
     IconButton,
     Divider,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
 } from "@mui/material";
+
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
-import {useAuth} from "@/hooks/useAuth";
 
-export default function FileUploadSection({ deal }: { deal: PropertyDetail;}) {
-    // Initialize file upload form
+import { fileService } from "@/services/fileService";
+import { filterFilesForUser } from "@/helpers/fileHelpers";
+import { PropertyDetail, DealFile } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
+import { useNotification } from "@/context/NotificationContext";
+
+export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
     const user = useAuth();
-    const { data, setData, post, progress } = useForm({ file: null as File | null });
+    const { showNotification } = useNotification();
 
-    // Filter files based on user permissions
-    const [uploadedFiles, setUploadedFiles] = useState(filterFilesForUser(deal.files || [], user, deal.users));
-    const [isFileSelected, setIsFileSelected] = useState(false);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState<number>(0);
 
-    /** Handle selecting file */
+    const [uploadedFiles, setUploadedFiles] = useState<File[]>(
+        filterFilesForUser(deal.files || [], user, deal.users)
+    );
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // DELETE dialog state
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [selectedForDeletion, setSelectedForDeletion] = useState<File | null>(null);
+
+    // Normalize backend response
+    const extractUploadedFile = (response: any): File | null => {
+        return response?.file || response?.data?.file || null;
+    };
+
+    const resetFileInput = () => {
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+
+    // File selection
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setData("file", e.target.files[0]);
-            setIsFileSelected(true);
-        } else {
-            setIsFileSelected(false);
+        setSelectedFile(e.target.files?.[0] || null);
+    };
+
+    // Upload file
+    const handleUpload = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedFile) return;
+
+        setUploading(true);
+        setUploadProgress(0);
+
+        try {
+            const response = await fileService.upload(deal.id, selectedFile);
+
+            const uploadedFile = extractUploadedFile(response);
+            if (uploadedFile) {
+                setUploadedFiles((prev) => [...prev, uploadedFile]);
+            }
+
+            showNotification(response.message, response.status);
+
+        } catch (err: any) {
+            const message =
+                err?.response?.data?.errors?.file?.[0] ||
+                err?.response?.data?.message ||
+                "Upload failed. Please try again.";
+
+            showNotification(message, "error");
+        } finally {
+            resetFileInput();
+            setSelectedFile(null);
+            setUploading(false);
         }
     };
 
-    /** Handle upload submit */
-    const handleUpload = (e: React.FormEvent) => {
-        e.preventDefault();
-        post(`/deals/${deal.id}/files`, {
-            onSuccess: (res) => {
-                if (res.props.flash.success) {
-                    setUploadedFiles([...uploadedFiles, res.props.flash.file]); // append new file
-                    setIsFileSelected(false);
-                }
-            },
-        });
+    // DELETE
+    const requestDelete = (file: File) => {
+        setSelectedForDeletion(file);
+        setDeleteDialogOpen(true);
     };
 
-    /** Handle file delete */
-    const handleDelete = async (fileId: number) => {
-        await fetch(`/files/${fileId}`, {
-            method: "DELETE",
-            headers: {
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
-                "Content-Type": "application/json",
-            },
-        });
+    const confirmDelete = async () => {
+        if (!selectedForDeletion) return;
 
-        // Remove file from UI state
-        setUploadedFiles(uploadedFiles.filter((file) => file.id !== fileId));
-    };
-
-    /** Handle file download */
-    const downloadFile = async (fileId: number) => {
         try {
-            const response = await fetch(`/files/${fileId}/download`, { method: "GET" });
-            if (!response.ok) throw new Error("Failed to download file.");
+            await fileService.delete(selectedForDeletion.id);
 
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = fileId.toString(); // You could replace with actual file name if available
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            setUploadedFiles(prev => prev.filter(f => f.id !== selectedForDeletion.id));
+
+            showNotification("File deleted successfully.", "success");
+        } catch {
+            showNotification("Delete failed. Try again.", "error");
+        }
+
+        setDeleteDialogOpen(false);
+        setSelectedForDeletion(null);
+    };
+
+    // Download file
+    const handleDownload = async (id: number, name: string) => {
+        try {
+            const blob = await fileService.download(id);
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = name;
+            link.click();
+
+            URL.revokeObjectURL(url);
         } catch (error) {
-            console.error("Download error:", error);
+            console.error("Download failed:", error);
+            showNotification("Download failed. Try again.", "error");
         }
     };
 
     return (
-        <Box mt={4} p={3} border="1px solid #e0e0e0" borderRadius={2}>
-            {/* Section Title */}
+        <Box mt={4} p={3} border="1px solid #E0E0E0" borderRadius={2}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
-                📂 Upload Deal Files
+                Upload Deal Files
             </Typography>
 
             {/* Upload Form */}
-            <Box component="form" onSubmit={handleUpload} display="flex" flexDirection="column" gap={2}>
-                <input type="file" onChange={handleFileChange} />
+            <Box component="form" onSubmit={handleUpload} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} />
 
-                {progress && <LinearProgress variant="determinate" value={progress.percentage || 0} />}
+                {uploading && (
+                    <LinearProgress variant="determinate" value={uploadProgress} />
+                )}
 
                 <Button
                     type="submit"
                     variant="contained"
-                    color="primary"
-                    disabled={!isFileSelected}
+                    disabled={!selectedFile || uploading}
                 >
-                    Upload File
+                    {uploading ? "Uploading..." : "Upload File"}
                 </Button>
             </Box>
 
-            {/* Uploaded Files List */}
+            {/* File List */}
             {uploadedFiles.length > 0 && (
                 <Box mt={3}>
-                    <Typography variant="h6">📄 Deal Files</Typography>
+                    <Typography variant="h6" gutterBottom>
+                        Deal Files
+                    </Typography>
+
                     <List>
-                        {uploadedFiles.map((file: File, index) => (
+                        {uploadedFiles.map((file, index) => (
                             <React.Fragment key={file.id}>
-                                <ListItem>
+                                <ListItem
+                                    secondaryAction={
+                                        <IconButton color="error" onClick={() => requestDelete(file)}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    }
+                                >
                                     <ListItemText
                                         primary={
                                             <Button
-                                                onClick={() => downloadFile(file.id)}
+                                                onClick={() => handleDownload(file.id, file.file_name)}
                                                 startIcon={<DownloadIcon />}
-                                                sx={{ textTransform: "none" }}
                                             >
                                                 {file.file_name}
                                             </Button>
                                         }
                                         secondary={
-                                            file.created_at
-                                                ? `Uploaded on: ${new Date(file.created_at).toLocaleString()} by ${file.author_name} (${file.author_email})`
-                                                : undefined
+                                            file.created_at &&
+                                            `Uploaded: ${new Date(file.created_at).toLocaleString()} by ${file.author_name}`
                                         }
                                     />
-                                    <ListItemSecondaryAction>
-                                        <IconButton edge="end" color="error" onClick={() => handleDelete(file.id)}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </ListItemSecondaryAction>
                                 </ListItem>
+
                                 {index < uploadedFiles.length - 1 && <Divider />}
                             </React.Fragment>
                         ))}
                     </List>
                 </Box>
             )}
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+                <DialogTitle>Delete File</DialogTitle>
+
+                <DialogContent>
+                    <DialogContentText>
+                        Are you sure you want to delete{" "}
+                        <strong>{selectedForDeletion?.file_name}</strong>? This action cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+
+                    <Button onClick={confirmDelete} color="error" variant="contained">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

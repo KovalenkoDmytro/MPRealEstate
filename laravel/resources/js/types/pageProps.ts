@@ -15,6 +15,8 @@ export interface PageProps {
     auth: {
         user: User
     }
+    mustVerifyEmail? : boolean,
+    status? : string|null,
     errors: {}
     flash: {
         success: string | null

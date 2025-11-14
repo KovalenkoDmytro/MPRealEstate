@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Responses\JsonResponder;
+use App\Helpers\Responses\SuccessResponse;
 use App\Http\Requests\StoreDealFileRequest;
 use App\Services\DealFileService;
 
 use App\Models\Deal;
 use App\Models\DealFile;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DealFileController extends Controller
@@ -21,9 +22,15 @@ class DealFileController extends Controller
         $this->dealFileService = $dealFileService;
     }
 
-    public function store(StoreDealFileRequest $request, Deal $deal): RedirectResponse {
-        $this->dealFileService->storeFile($request, $deal);
-        return back()->with('success', __('files.upload_success'));
+    public function store(StoreDealFileRequest $request, Deal $deal): JsonResponse {
+
+        $file = $this->dealFileService->storeFile($request, $deal);
+
+        return JsonResponder::send(
+            new SuccessResponse(__('files.upload_success'), [
+                'file'    => $file
+            ])
+        );
     }
 
     public function download(DealFile $file): StreamedResponse
@@ -31,9 +38,12 @@ class DealFileController extends Controller
         return $this->dealFileService->downloadFile($file);
     }
 
-    public function destroy(DealFile $file): RedirectResponse
+    public function destroy(DealFile $file): JsonResponse
     {
         $this->dealFileService->deleteFile($file);
-        return back()->with('success', __('files.delete_failed'));
+
+        return JsonResponder::send(
+            new SuccessResponse(__('files.delete_failed'))
+        );
     }
 }
