@@ -20,6 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNotification } from '@/context/NotificationContext';
 import {authService} from "@/services/authService";
 import {RegisterData, RegisterDataErrors} from "@/types/auth";
+import {extractErrorMessage} from "@/helpers/errorHelpers";
 
 
 export default function Register() {
@@ -47,13 +48,22 @@ export default function Register() {
         setLoading(true);
         setErrors({});
 
-        const response = await authService.register(data);
+        try {
+            const response = await authService.register(data);
 
-        if (response.status === 'success') {
-            setRedirectNotification(response.message, response.status);
-            window.location.href = route('verification.notice');
-        }else {
-            showNotification(response.message, response.status);
+            if (response.status === "success") {
+                setRedirectNotification(response.message, response.status);
+                window.location.href = route("verification.notice");
+            } else {
+                showNotification(response.message, "error");
+            }
+
+        } catch (err: any) {
+            const errorMsg = extractErrorMessage(err.response);
+            console.log(errorMsg)
+            showNotification(errorMsg, "error");
+        } finally {
+            setLoading(false);
         }
     };
 
