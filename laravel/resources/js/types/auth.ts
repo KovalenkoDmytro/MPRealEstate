@@ -4,7 +4,7 @@ export interface RegisterData {
     email: string;
     password?: string;
     password_confirmation?: string;
-    role: 'buyer' | 'seller' | 'lawyer';
+    role: 'buyer' | 'seller' | 'lawyer' | '';
 }
 
 export interface RegisterDataErrors {

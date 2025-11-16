@@ -23,13 +23,13 @@ import {RegisterData, RegisterDataErrors} from "@/types/auth";
 import {extractErrorMessage} from "@/helpers/errorHelpers";
 
 
-export default function Register() {
+export default function Register({ roles }: { roles: string[] }) {
     const [data, setData] = useState<RegisterData>({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
-        role: 'buyer',
+        role: '',
     });
 
     const [errors, setErrors] = useState<RegisterDataErrors>({});
@@ -130,9 +130,13 @@ export default function Register() {
                             label="I am a..."
                             onChange={handleInputChange}
                         >
-                            <MenuItem value="buyer">Buyer</MenuItem>
-                            <MenuItem value="seller">Seller</MenuItem>
-                            <MenuItem value="lawyer">Lawyer</MenuItem>
+                            {roles
+                                .filter((role) => role !== "admin")
+                                .map((role) => (
+                                    <MenuItem key={role} value={role}>
+                                        {role.charAt(0).toUpperCase() + role.slice(1)}
+                                    </MenuItem>
+                                ))}
                         </Select>
                         {errors.role && <FormHelperText>{errors.role}</FormHelperText>}
                     </FormControl>
