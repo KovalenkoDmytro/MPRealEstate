@@ -43,8 +43,7 @@ class RealEstateListing extends Model
     }
 
     // Get the main image
-    public function mainImage()
-    {
+    public function mainImage(): HasOne|RealEstateListing {
         return $this->hasOne(ListingImage::class)->where('is_main', true);
     }
 

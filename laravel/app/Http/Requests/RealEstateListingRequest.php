@@ -53,7 +53,7 @@ class RealEstateListingRequest extends FormRequest
 
             // Financials
             'hoa_fees' => ['sometimes', 'numeric', 'min:5'],
-            'property_taxes' => ['required', 'numeric', 'min:500'],
+            'property_taxes' => ['required', 'numeric', 'min:50'],
 
             // Media
             'main_image' => $this->removeMainImageRequired()
