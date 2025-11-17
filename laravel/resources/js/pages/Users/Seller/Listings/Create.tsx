@@ -99,7 +99,7 @@ export default function CreateListing() {
 
         // Validate count
         if (!imageService.canAddImages(previewGalleryImages.length, newFiles.length)) {
-            alert("You can only upload up to 7 images total.");
+            alert("You can only upload up to 5 images total.");
             return;
         }
 
@@ -187,7 +187,7 @@ export default function CreateListing() {
                 <ImagesSection
                     images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
                     handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
-                    disableGalleryUpload={data.gallery_images.length >= 7}
+                    disableGalleryUpload={data.gallery_images.length >= 5}
                     errors={errors?.main_image?.[0]}
                 />
 

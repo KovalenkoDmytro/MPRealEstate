@@ -51,7 +51,7 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
                     Main Image
                 </Typography>
                 {errors &&
-                    <Alert variant="outlined" severity="error">
+                    <Alert variant="outlined" severity="error" sx={{mb: 2}}>
                         {errors}
                     </Alert>
                 }
@@ -59,14 +59,24 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
                     component="label"
                     variant="outlined"
                     startIcon={<UploadIcon/>}
-                    sx={{mb: 2}}
                 >
                     Upload Main Image
-                    <input type="file" hidden accept="image/*" onChange={handleMainImageChange}/>
+                    <input
+                        type="file"
+                        hidden
+                        accept="image/jpeg,image/png,image/jpg,image/webp"
+                        onChange={handleMainImageChange}
+                    />
                 </Button>
 
+                {/* --- ADDED HELPER TEXT FOR MAIN IMAGE --- */}
+                <Typography variant="caption" color="textSecondary" sx={{display: "block", mt: 1}}>
+                    Must be a JPG, PNG, or WEBP file. Max size: 4MB.
+                </Typography>
+                {/* --- END HELPER TEXT --- */}
+
                 {previewMainImage && (
-                    <Box sx={{position: "relative", display: "inline-block", mt: 1}}>
+                    <Box sx={{position: "relative", display: "inline-block", mt: 2}}> {/* Added mt: 2 */}
                         <img
                             src={previewMainImage}
                             alt="Main Preview"
@@ -98,23 +108,30 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
 
             <Box>
                 <Typography variant="subtitle2" gutterBottom>
-                    Gallery Images ({totalGalleryImages}/7)
+                    Gallery Images ({totalGalleryImages}/5)
                 </Typography>
                 <Button
                     component="label"
                     variant="outlined"
                     startIcon={<UploadIcon/>}
-                    disabled={disableGalleryUpload || previewGalleryImages.length >= 7}
+                    disabled={disableGalleryUpload || previewGalleryImages.length >= 5}
                 >
                     Upload Gallery Images
                     <input
                         type="file"
                         hidden
-                        accept="image/*"
+                        accept="image/jpeg,image/png,image/jpg,image/webp"
                         multiple
                         onChange={handleGalleryImagesChange}
                     />
                 </Button>
+
+                <Typography variant="caption" color="textSecondary" sx={{display: "block", mt: 1}}>
+                    You can upload a maximum of 5 images.
+                    <br/>
+                    Each file must be a JPG, PNG, or WEBP, and no larger than 4MB.
+                </Typography>
+
 
                 {/* Gallery Preview */}
                 <ImageList cols={4} gap={8} sx={{mt: 2}}>

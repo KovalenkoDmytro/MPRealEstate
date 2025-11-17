@@ -57,11 +57,11 @@ class RealEstateListingRequest extends FormRequest
 
             // Media
             'main_image' => $this->removeMainImageRequired()
-                ? ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120']
-                : ['sometimes', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120'],
+                ? ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096']
+                : ['sometimes', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096'],
 
-            'gallery_images' => ['array', 'max:7'],
-            'gallery_images.*' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2120'],
+            'gallery_images' => ['sometimes', 'array', 'max:5'],
+            'gallery_images.*' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096'],
             'keywords'      => ['sometimes', 'array'],
             'keywords.*'    => ['sometimes', 'string', 'distinct', 'min:1', 'max:50'],
         ];
