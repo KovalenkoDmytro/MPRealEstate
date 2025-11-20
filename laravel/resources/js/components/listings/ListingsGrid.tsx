@@ -13,14 +13,9 @@ type ComponentProps = {
         last_page: number;
     };
     isFavorite?: (listingId: number) => boolean;
-    toggleFavorite?: (
-        e: React.FormEvent,
-        listingId: number,
-        isCurrentlyFavorite: boolean
-    ) => void;
 };
 
-export default function ListingsGrid({listings, isFavorite, toggleFavorite,}: ComponentProps) {
+export default function ListingsGrid({listings, isFavorite,}: ComponentProps) {
     const user = useAuth();
     const role = user.role;
 
@@ -30,11 +25,10 @@ export default function ListingsGrid({listings, isFavorite, toggleFavorite,}: Co
                 <Grid container spacing={3}>
                     {listings.data.map((listing) => (
                         <Grid size={{ xs: 12, sm: 6, md: 3 }} key={listing.id}>
-                            {role === "buyer" && isFavorite && toggleFavorite &&  (
+                            {role === "buyer" && isFavorite &&  (
                                 <BuyerListingCard
                                     listing={listing}
                                     isFavorite={isFavorite}
-                                    toggleFavorite={toggleFavorite}
                                 />
                             )}
                             {role === "seller" && <SellerListingCard listing={listing} />}

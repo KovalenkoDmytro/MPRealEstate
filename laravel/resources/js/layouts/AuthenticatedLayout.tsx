@@ -27,6 +27,12 @@ const NavigationLinks = ({ role }: { role: string }) => {
                         Listings
                     </NavLink>
                     <NavLink
+                        href={route('buyer.listings.favorites.index')}
+                        active={route().current('buyer.listings.favorites.index')}
+                    >
+                        Favorite Listings
+                    </NavLink>
+                    <NavLink
                         href={route('buyer.deals.index')}
                         active={route().current('buyer.deals.index')}
                     >
@@ -93,6 +99,12 @@ const MobileNavigationLinks = ({ role }: { role: string }) => {
                     >
                         Listings
                     </ResponsiveNavLink>
+                    <NavLink
+                        href={route('buyer.listings.favorites.index')}
+                        active={route().current('buyer.listings.favorites.index')}
+                    >
+                        Favorite Listings
+                    </NavLink>
                     <ResponsiveNavLink
                         href={route('buyer.deals.index')}
                         active={route().current('buyer.deals.index')}

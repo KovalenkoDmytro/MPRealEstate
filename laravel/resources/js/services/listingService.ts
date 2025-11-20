@@ -4,10 +4,10 @@ export const listingService = {
     // Toggle favorite
     async toggleFavorite(listingId: number, isFavorite: boolean) {
         if (isFavorite) {
-            const response = await api.delete(route("favorites.destroy", listingId, false));
+            const response = await api.delete(`/buyer/listings/favorites/${listingId}`);
             return response.data;
         } else {
-            const response = await api.post(route("favorites.store", [], false), {
+            const response = await api.post("/buyer/listings/favorites", {
                 listing_id: listingId,
             });
             return response.data;

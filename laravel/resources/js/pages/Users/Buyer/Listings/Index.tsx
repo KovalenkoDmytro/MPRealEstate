@@ -64,18 +64,6 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
     }, [form]);
 
 
-    const toggleFavorite = async (e: React.FormEvent, listingId: number, isFav: boolean) => {
-        e.preventDefault();
-        try {
-            await listingService.toggleFavorite(listingId, isFav);
-            router.reload({ only: ["favoriteListings"] });
-            alert(isFav ? "Removed from favorites" : "Added to favorites");
-        } catch (error) {
-            console.error("Error toggling favorite:", error);
-            alert("Something went wrong while updating favorites.");
-        }
-    };
-
     return (
         <AuthenticatedLayout
             header={<h1 className="text-xl font-semibold leading-tight text-gray-800">🏡 My Real Estate Listings</h1>}
@@ -84,7 +72,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
 
             <FilterForm form={form} updateFilter={updateFilter} onApplyFilters={applyFilters} />
 
-            <ListingsGrid listings={listings} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
+            <ListingsGrid listings={listings} isFavorite={isFavorite} />
         </AuthenticatedLayout>
     );
 }

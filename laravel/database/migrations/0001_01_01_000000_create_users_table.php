@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('role');
-            $table->string('lawyer_number', 9)->unique()->nullable();
+            $table->string('lawyer_number', 20)->unique()->nullable();
             $table->boolean('is_buyer_lawyer')->default(false);
             $table->boolean('is_seller_lawyer')->default(false);
             $table->rememberToken();

@@ -1,21 +1,24 @@
 import { RealEstateListing } from "@/types";
 import {Box, Button, Card, CardContent, CardMedia, Link, Typography } from "@mui/material";
 import React from "react";
+import {listingService} from "@/services/listingService";
+import {router} from "@inertiajs/react";
+import {useNotification} from "@/context/NotificationContext";
 
 type ListingCardProps = {
     listing: RealEstateListing;
     isFavorite: (listingId: number) => boolean;
-    toggleFavorite: (
-        e: React.FormEvent,
-        listingId: number,
-        isCurrentlyFavorite: boolean
-    ) => void;
 };
 
-
-
-export default  function BuyerListingCard ({listing, isFavorite, toggleFavorite,} : ListingCardProps){
+export default  function BuyerListingCard ({listing, isFavorite,} : ListingCardProps){
     const favorite = isFavorite(listing.id);
+    const { showNotification } = useNotification();
+
+    const toggleFavorite = async (e: React.FormEvent, listingId: number, isFav: boolean) => {
+        e.preventDefault();
+        const response = await listingService.toggleFavorite(listingId, isFav);
+        showNotification(response.message, response.status);
+    };
 
     return (
         <Card elevation={3} sx={{borderRadius: 2}}>
