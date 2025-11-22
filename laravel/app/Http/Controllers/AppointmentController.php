@@ -65,4 +65,16 @@ class AppointmentController extends Controller
             'appointments' => $appointments,
         ]);
     }
+
+    public function showAllBuyerAppointments(): Response
+    {
+        $appointments = Appointment::where('buyer_id', auth()->id())
+            ->with(['seller', 'listing'])
+            ->orderBy('scheduled_at', 'desc')
+            ->get();
+
+        return inertia('Users/Buyer/Appointments/Index', [
+            'appointments' => $appointments,
+        ]);
+    }
 }

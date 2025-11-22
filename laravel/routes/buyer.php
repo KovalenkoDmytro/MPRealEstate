@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\FavoriteListingController;
 use Illuminate\Support\Facades\Route;
@@ -26,5 +27,9 @@ Route::prefix('buyer')->middleware(['auth', 'role:buyer'])->name('buyer.')->grou
         Route::patch('/{deal}/make-deposit', [DealController::class, 'markDepositMade'])->name('markDepositMade');
         Route::patch('/{deal}/set-condition-day', [DealController::class, 'setConditionDay'])->name('setConditionDay');
         Route::patch('/{deal}/set-possession-day', [DealController::class, 'setPossessionDay'])->name('setPossessionDay');
+    });
+
+    Route::prefix('appointments')->name('appointments.')->group(function () {
+        Route::get('/', [AppointmentController::class, 'showAllBuyerAppointments'])->name('index');
     });
 });
