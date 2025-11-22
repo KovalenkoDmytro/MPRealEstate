@@ -27,10 +27,6 @@ class RealEstateListingController extends Controller {
     private SellerService $sellerService;
     private BuyerService $buyerService;
 
-    /**
-     * @var \App\Services\SellerService
-     */
-
 
     public function __construct(RealEstateListingService $listingService, SellerService $sellerService, BuyerService $buyerService)
     {

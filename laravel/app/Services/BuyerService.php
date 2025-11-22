@@ -21,7 +21,7 @@ class BuyerService
     }
 
     public function getListingWithUserOffer(int $listingId, User $user): array {
-        $listing = RealEstateListing::with('seller', 'images', 'mainImage', 'deal:id,real_estate_listing_id')
+        $listing = RealEstateListing::with('seller', 'images', 'mainImage', 'deal:id,real_estate_listing_id', 'appointments')
             ->findOrFail($listingId);
 
         $userOffer = $listing->offers()

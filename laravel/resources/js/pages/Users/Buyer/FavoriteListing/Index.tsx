@@ -118,7 +118,7 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
                         <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center text-gray-500">
                             <p className="text-lg mb-4">You haven't added any favorites yet.</p>
                             <Link
-                                href={route('buyer.listings.index')}
+                                href={route('buyer.listings.favorites.index')}
                                 className="text-indigo-600 hover:underline"
                             >
                                 Browse Listings

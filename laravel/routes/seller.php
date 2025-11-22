@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\RealEstateListingController;
@@ -28,5 +29,10 @@ Route::prefix('seller')->middleware(['auth', 'role:seller'])->name('seller.')->g
         Route::patch('{deal}/confirm-deposit', [DealController::class, 'confirmDeposit'])->name('confirmDeposit');
         Route::patch('{deal}/confirm-possession-day', [DealController::class, 'confirmPossessionDay'])->name('confirmPossessionDay');
         Route::patch('{deal}/set-deposit', [DealController::class, 'setDeposit'])->name('setDeposit');
+    });
+
+    Route::prefix('appointments')->name('appointments.')->group(function () {
+        Route::get('/', [AppointmentController::class, 'showAllSellerAppointments'])->name('index');
+        Route::post('/', [AppointmentController::class, 'handle'])->name('handle');
     });
 });

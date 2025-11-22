@@ -47,4 +47,8 @@ class RealEstateListing extends Model
         return $this->hasOne(ListingImage::class)->where('is_main', true);
     }
 
+    public function appointments(): HasMany|RealEstateListing {
+        return $this->hasMany(Appointment::class, 'real_estate_listing_id');
+    }
+
 }

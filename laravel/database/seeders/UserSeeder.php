@@ -31,6 +31,7 @@ class UserSeeder extends Seeder
             $user = User::updateOrCreate(
                 ['email' => $userData['email']], // Ensure uniqueness
                 [
+                    'email_verified_at'=> now(),
                     'name' => $userData['name'],
                     'password' => Hash::make('password'),
                     'role' => $userData['role'],

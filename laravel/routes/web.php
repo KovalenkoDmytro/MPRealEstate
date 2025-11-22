@@ -9,6 +9,7 @@ use App\Http\Controllers\{NotificationController,
     DealFileController,
     DealController,
     RealEstateListingController};
+use App\Http\Controllers\AppointmentController;
 
 // Public Home Route
 Route::get('/', static fn () =>
@@ -56,6 +57,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/', [RealEstateListingController::class, 'index'])->name('index');
         });
 
+
+    //Appointment confirmation
+    Route::middleware(['role:buyer|seller'])->group(function () {
+        // Buyer schedules
+        Route::post('/appointments/create', [AppointmentController::class, 'store'])->name('appointments.store');
+
+    });
 
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/notifications/{id}/read', [NotificationController::class, 'read'])

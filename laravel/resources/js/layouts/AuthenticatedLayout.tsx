@@ -55,6 +55,12 @@ const NavigationLinks = ({ role }: { role: string }) => {
                     >
                         My Deals
                     </NavLink>
+                    <NavLink
+                        href={route('seller.appointments.index')}
+                        active={route().current('seller.appointments.index')}
+                    >
+                        Appointments
+                    </NavLink>
                 </>
             )}
 
@@ -127,6 +133,13 @@ const MobileNavigationLinks = ({ role }: { role: string }) => {
                         active={route().current('deals.index')}
                     >
                         My Deals
+                    </ResponsiveNavLink>
+
+                    <ResponsiveNavLink
+                        href={route('seller.appointments.index')}
+                        active={route().current('seller.appointments.index')}
+                    >
+                        Appointments
                     </ResponsiveNavLink>
                 </>
             )}

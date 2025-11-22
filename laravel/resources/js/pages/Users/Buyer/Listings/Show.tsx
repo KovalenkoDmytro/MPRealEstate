@@ -9,6 +9,7 @@ import { Offer, RealEstateListing } from "@/types";
 import { offerService } from "@/services/offerService";
 import {useNotification} from "@/context/NotificationContext";
 import {Button, Dialog, DialogTitle, DialogContent, DialogActions, Stack, Typography} from "@mui/material";
+import SetAppointmentForm from "@/components/listing/appointments/SetAppointmentForm";
 
 
 type PageProps = {
@@ -16,7 +17,8 @@ type PageProps = {
     userOffer: Offer;
 };
 
-export default function Show({listing, userOffer}: PageProps) {
+export default function ShowListing({listing, userOffer}: PageProps) {
+
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [processing, setProcessing] = React.useState(false);
     const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -81,6 +83,8 @@ export default function Show({listing, userOffer}: PageProps) {
                     </div>
                 )}
             </div>
+
+            <SetAppointmentForm listing={listing}/>
 
             {/* Offer Form in MUI Dialog */}
             <Dialog

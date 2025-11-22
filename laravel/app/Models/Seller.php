@@ -21,6 +21,9 @@ class Seller extends User
         return $this->hasMany(RealEstateListing::class, 'seller_id');
     }
 
+    public function appointments(): Seller|HasMany {
+        return $this->hasMany(Appointment::class, 'seller_id');
+    }
 }
 
 
