@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Box,
     Card,
@@ -10,10 +10,15 @@ import {
     TableHead,
     TableRow,
     Chip,
+    Button
 } from "@mui/material";
+
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { RealEstateListing, User } from "@/types";
 import { format } from "date-fns";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import { appointmentService } from "@/services/appointmentService";
+import { useNotification } from "@/context/NotificationContext";
 
 export interface BuyerAppointment {
     id: number;
@@ -22,16 +27,44 @@ export interface BuyerAppointment {
     real_estate_listing_id: number;
 
     scheduled_at: string;
-    status: "pending" | "accepted" | "rejected";
+    status: "pending" | "accepted" | "rejected" | "cancelled by buyer";
 
     rejection_reason?: string | null;
     access_code?: string | null;
+    buyer_cancelled_at?: string | null;
 
     seller: User;
     listing: RealEstateListing;
 }
 
 export default function BuyerAppointmentsPage({ appointments }: { appointments: BuyerAppointment[] }) {
+    const { showNotification } = useNotification();
+
+    // Dialog state
+    const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+    const [selectedApptId, setSelectedApptId] = useState<number | null>(null);
+
+    const openCancelDialog = (id: number) => {
+        setSelectedApptId(id);
+        setCancelDialogOpen(true);
+    };
+
+    // Confirm cancellation
+    const cancelAppointment = async () => {
+        if (!selectedApptId) return;
+
+        try {
+            const response = await appointmentService.buyerCancel({
+                appointment_id: selectedApptId,
+            });
+
+            showNotification(response.message, response.status);
+            location.reload();
+        } catch (err) {
+            showNotification("Something went wrong.", "error");
+        }
+    };
+
     return (
         <AuthenticatedLayout
             header={<h2 className="text-xl font-semibold text-gray-800">📅 My Viewing Requests</h2>}
@@ -51,6 +84,7 @@ export default function BuyerAppointmentsPage({ appointments }: { appointments: 
                                     <TableCell>Date</TableCell>
                                     <TableCell>Status</TableCell>
                                     <TableCell>Details</TableCell>
+                                    <TableCell align="right">Actions</TableCell>
                                 </TableRow>
                             </TableHead>
 
@@ -76,7 +110,9 @@ export default function BuyerAppointmentsPage({ appointments }: { appointments: 
                                                         ? "warning"
                                                         : appt.status === "accepted"
                                                             ? "success"
-                                                            : "error"
+                                                            : appt.status === "rejected"
+                                                                ? "error"
+                                                                : "default"
                                                 }
                                             />
                                         </TableCell>
@@ -93,6 +129,25 @@ export default function BuyerAppointmentsPage({ appointments }: { appointments: 
                                                     Reason: {appt.rejection_reason}
                                                 </Typography>
                                             )}
+
+                                            {appt.status === "cancelled by buyer" && (
+                                                <Typography color="gray">
+                                                    You cancelled this appointment.
+                                                </Typography>
+                                            )}
+                                        </TableCell>
+
+                                        <TableCell align="right">
+                                            {(appt.status === "pending" || appt.status === "accepted") && (
+                                                <Button
+                                                    variant="outlined"
+                                                    color="error"
+                                                    size="small"
+                                                    onClick={() => openCancelDialog(appt.id)}
+                                                >
+                                                    Cancel
+                                                </Button>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -101,6 +156,17 @@ export default function BuyerAppointmentsPage({ appointments }: { appointments: 
                     </CardContent>
                 </Card>
             </Box>
+
+            {/* Cancel Confirmation Dialog */}
+            <ConfirmDialog
+                open={cancelDialogOpen}
+                title="Cancel Appointment?"
+                description="Are you sure you want to cancel this appointment?"
+                confirmLabel="Cancel Appointment"
+                confirmColor="error"
+                onClose={() => setCancelDialogOpen(false)}
+                onConfirm={cancelAppointment}
+            />
         </AuthenticatedLayout>
     );
 }

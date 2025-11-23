@@ -57,6 +57,11 @@
     "notifications.appointments.rejected.reason_title": "Rejection Reason",
     "notifications.appointments.rejected.reason_body": "Reason: :reason",
 
+    "notifications.appointments.cancelled_by_buyer.type": "appointment_cancelled_by_buyer",
+    "notifications.appointments.cancelled_by_buyer.title": "Appointment Cancelled by Buyer",
+    "notifications.appointments.cancelled_by_buyer.body": "The buyer has cancelled the appointment for Listing #:listing.",
+    "notifications.appointments.cancelled_by_buyer.success": "Your appointment has been cancelled.",
+
     "notifications.conditionDaySet.type": "condition_day_set",
     "notifications.conditionDaySet.title": "Condition Day Set",
     "notifications.conditionDaySet.body": "A condition day has been set for Deal #:deal.",

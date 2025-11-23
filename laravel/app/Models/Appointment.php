@@ -18,6 +18,7 @@ class Appointment extends Model
         'access_code',
         'real_estate_listing_id',
         'rejection_reason',
+        'buyer_cancelled_at',
     ];
 
     protected array $dates = ['scheduled_at'];

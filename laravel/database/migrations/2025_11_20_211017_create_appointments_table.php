@@ -13,7 +13,8 @@ class CreateAppointmentsTable extends Migration
             $table->foreignId('seller_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('real_estate_listing_id')->constrained('real_estate_listings')->onDelete('cascade');
             $table->timestamp('scheduled_at');
-            $table->string('status')->default('pending'); // pending | accepted | rejected
+            $table->timestamp('buyer_cancelled_at')->nullable();
+            $table->string('status')->default('pending'); // pending | accepted | rejected | canceled by buyer
             $table->string('access_code')->nullable();     // only for accepted
             $table->text('rejection_reason')->nullable();   // only for rejected
             $table->timestamps();

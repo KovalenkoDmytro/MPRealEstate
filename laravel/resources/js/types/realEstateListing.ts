@@ -50,7 +50,7 @@ export interface Appointment {
      * - accepted: seller approved the appointment
      * - rejected: seller denied the appointment
      */
-    status: "pending" | "accepted" | "rejected";
+    status: "pending" | "accepted" | "rejected" | "cancelled by buyer";
 
     /** Lockbox code provided by the seller when accepting (optional) */
     access_code: string | null;

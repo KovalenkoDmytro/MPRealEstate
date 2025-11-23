@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Appointment;
 use App\Models\RealEstateListing;
 use App\Notifications\Appointments\AppointmentAcceptedNotification;
+use App\Notifications\Appointments\AppointmentCancelledByBuyerNotification;
 use App\Notifications\Appointments\AppointmentRejectedNotification;
 use App\Notifications\Appointments\AppointmentRequestNotification;
 use Carbon\Carbon;
@@ -59,5 +60,32 @@ class AppointmentService
         ]);
 
         $appointment->buyer->notify(new AppointmentRejectedNotification($appointment));
+    }
+
+    public function buyerCancel(Appointment $appointment): void
+    {
+
+        // Make sure buyer owns this appointment
+        if (auth()->id() !== $appointment->buyer_id) {
+            abort(403, __('global.errors.unauthorized'));
+        }
+
+        // Prevent canceling already finished appointments
+        if (in_array($appointment->status, ['rejected', 'cancelled by buyer'])) {
+            return;
+        }
+
+        $appointment->update([
+            'buyer_cancelled_at' => now(),
+            'status'             => 'cancelled by buyer',
+        ]);
+
+        // Load seller relation
+        $appointment->load('seller');
+
+        // Notify seller
+        $appointment->seller->notify(
+            new AppointmentCancelledByBuyerNotification($appointment)
+        );
     }
 }

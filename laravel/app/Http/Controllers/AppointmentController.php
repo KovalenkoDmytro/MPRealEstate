@@ -10,6 +10,7 @@ use App\Http\Requests\Appointments\AppointmentActionRequest;
 use App\Models\Appointment;
 use App\Services\AppointmentService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Inertia\Response;
 
 class AppointmentController extends Controller
@@ -76,5 +77,15 @@ class AppointmentController extends Controller
         return inertia('Users/Buyer/Appointments/Index', [
             'appointments' => $appointments,
         ]);
+    }
+
+    public function buyerCancel(Request $request): JsonResponse {
+
+        $appointment = resolve(Appointment::class)->findOrFail($request->appointment_id);
+        $this->service->buyerCancel($appointment);
+
+        return JsonResponder::send(
+            new SuccessResponse(__('notifications.appointments.cancelled_by_buyer.success'))
+        );
     }
 }
