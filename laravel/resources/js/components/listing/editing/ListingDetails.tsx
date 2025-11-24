@@ -8,23 +8,22 @@ import {
     Box,
     MenuItem
 } from "@mui/material";
-import CitySelector from "@/components/common/CitySelector";
 import YearBuiltField from "@/components/listing/form/YearBuiltField";
 import sanitizeField from "@/helpers/validationFieldsHelper";
 import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
 import KeywordsInput from "@/components/listing/form/KeywordsInput";
-import {ValidationErrors} from "@/types/validationErrors";
-
+import { ValidationErrors } from "@/types/validationErrors";
+import AddressAutocomplete from "@/components/listing/form/AddressAutocomplete";
 
 interface Props {
     data: any;
-    errors: ValidationErrors,
-    handleChange: (name: string, value: string[] | string | number | boolean) => void;
+    errors: ValidationErrors;
+    handleChange: (name: string, value: any) => void;
 }
 
 export default function ListingDetails({ data, handleChange, errors }: Props) {
 
-    const processChange = (name: string, value: string[] | string | number | boolean) => {
+    const processChange = (name: string, value: any) => {
         let localValue = value;
 
         if (typeof localValue === "string") {
@@ -42,6 +41,7 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
             </Typography>
 
             <Grid container spacing={2} sx={{ width: "100%" }}>
+                {/* Title */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                         name="title"
@@ -49,139 +49,174 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                         value={data.title ?? ""}
                         onChange={(e) => processChange("title", e.target.value)}
                         fullWidth
-                        error={errors?.title && true}
+                        error={!!errors?.title}
                         helperText={errors?.title?.[0]}
                     />
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                    <CitySelector
-                        value={data.location}
-                        error={errors?.location && true}
-                        helperText={errors?.location?.[0]}
-                        onChange={(value) => { processChange("location", value); }}
+
+                {/* Address Autocomplete */}
+                <Grid size={{ xs: 12 }}>
+                    <p> Address Autocomplete</p>
+                    <AddressAutocomplete
+                        onSelect={(place) => {
+                            const comps = place.addressComponents || [];
+
+                            const get = (type: string) =>
+                                comps.find((c) => c.types.includes(type))?.longText ?? "";
+
+                            handleChange("street_number", get("street_number"));
+                            handleChange("street_name", get("route"));
+                            handleChange("city", get("locality"));
+                            handleChange("province", get("administrative_area_level_1"));
+                            handleChange("postal_code", get("postal_code"));
+                            handleChange("country", get("country"));
+
+                            handleChange("latitude", place.location?.lat ?? null);
+                            handleChange("longitude", place.location?.lng ?? null);
+                        }}
                     />
                 </Grid>
+
+                {/* Description */}
                 <Grid size={{ xs: 12 }}>
                     <TextField
                         name="description"
                         label="Description"
-                        error={errors?.description && true}
-                        helperText={errors?.description?.[0]}
                         value={data.description}
                         onChange={(e) => processChange("description", e.target.value)}
                         fullWidth
                         multiline
                         rows={4}
+                        error={!!errors?.description}
+                        helperText={errors?.description?.[0]}
                     />
                 </Grid>
+
+                {/* Property Type */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <PropertyTypeSelect
                         value={data.property_type}
-                        error={errors?.property_type && true}
+                        error={!!errors?.property_type}
                         helperText={errors?.property_type?.[0]}
                         onChange={(value) => processChange("property_type", value)}
                     />
                 </Grid>
+
+                {/* Year Built */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <YearBuiltField
-                        value={data.year_built ?? ''}
-                        error={errors?.year_built && true}
+                        value={data.year_built ?? ""}
+                        error={!!errors?.year_built}
                         helperText={errors?.year_built?.[0]}
-                        onChange={(value) => { processChange("year_built", value); }}
+                        onChange={(value) => processChange("year_built", value)}
                     />
                 </Grid>
+
+                {/* Bedrooms */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                         select
                         name="bedrooms"
                         label="Bedrooms"
-                        type="number"
-                        value={data.bedrooms ?? ''}
-                        error={errors?.bedrooms && true}
+                        value={data.bedrooms ?? ""}
+                        fullWidth
+                        error={!!errors?.bedrooms}
                         helperText={errors?.bedrooms?.[0]}
                         onChange={(e) => processChange("bedrooms", e.target.value)}
-                        fullWidth
                     >
-                        <MenuItem value="1">1</MenuItem>
-                        <MenuItem value="2">2</MenuItem>
-                        <MenuItem value="3">3</MenuItem>
-                        <MenuItem value="4">4</MenuItem>
-                        <MenuItem value="5">5</MenuItem>
+                        {[1, 2, 3, 4, 5].map((n) => (
+                            <MenuItem key={n} value={n}>{n}</MenuItem>
+                        ))}
                         <MenuItem value="5+">5+</MenuItem>
                     </TextField>
                 </Grid>
+
+                {/* Bathrooms */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                         select
                         name="bathrooms"
                         label="Bathrooms"
-                        type="number"
-                        value={data.bathrooms ?? ''}
-                        error={errors?.bathrooms && true}
+                        value={data.bathrooms ?? ""}
+                        fullWidth
+                        error={!!errors?.bathrooms}
                         helperText={errors?.bathrooms?.[0]}
                         onChange={(e) => processChange("bathrooms", e.target.value)}
-                        fullWidth
                     >
-                        <MenuItem value="1">1</MenuItem>
-                        <MenuItem value="2">2</MenuItem>
-                        <MenuItem value="3">3</MenuItem>
-                        <MenuItem value="4">4</MenuItem>
-                        <MenuItem value="5">5</MenuItem>
+                        {[1, 2, 3, 4, 5].map((n) => (
+                            <MenuItem key={n} value={n}>{n}</MenuItem>
+                        ))}
                         <MenuItem value="5+">5+</MenuItem>
                     </TextField>
                 </Grid>
+
+                {/* Square Feet */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                         name="square_feet"
                         label="Square Feet"
                         type="number"
-                        error={errors?.square_feet && true}
-                        helperText={errors?.square_feet?.[0]}
                         value={data.square_feet ?? ""}
-                        onChange={(e) => processChange("square_feet", e.target.value)}
                         fullWidth
+                        error={!!errors?.square_feet}
+                        helperText={errors?.square_feet?.[0]}
+                        onChange={(e) => processChange("square_feet", e.target.value)}
                     />
                 </Grid>
+
+                {/* Lot Size */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                         name="lot_size"
                         label="Lot Size"
                         type="number"
                         value={data.lot_size ?? ""}
+                        fullWidth
                         onChange={(e) => processChange("lot_size", e.target.value)}
-                        fullWidth />
+                    />
                 </Grid>
+
+                {/* Price */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                         name="price"
                         label="Price"
                         type="number"
-                        value={data.price ?? "" }
-                        error={errors?.price && true}
+                        value={data.price ?? ""}
+                        fullWidth
+                        error={!!errors?.price}
                         helperText={errors?.price?.[0]}
                         onChange={(e) => processChange("price", e.target.value)}
-                        fullWidth />
+                    />
                 </Grid>
+
+                {/* HOA Fees */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                         name="hoa_fees"
                         label="HOA Fees"
                         type="number"
                         value={data.hoa_fees ?? ""}
+                        fullWidth
                         onChange={(e) => processChange("hoa_fees", e.target.value)}
-                        fullWidth />
+                    />
                 </Grid>
+
+                {/* Property Taxes */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                         name="property_taxes"
                         label="Property Taxes"
                         type="number"
-                        error={errors?.property_taxes && true}
-                        helperText={errors?.property_taxes?.[0]}
                         value={data.property_taxes ?? ""}
+                        fullWidth
+                        error={!!errors?.property_taxes}
+                        helperText={errors?.property_taxes?.[0]}
                         onChange={(e) => processChange("property_taxes", e.target.value)}
-                        fullWidth />
+                    />
                 </Grid>
+
+                {/* Keywords */}
                 <Grid size={{ xs: 12 }}>
                     <KeywordsInput
                         value={data.keywords || []}
@@ -190,43 +225,48 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                 </Grid>
             </Grid>
 
-
+            {/* 🔹 FEATURES SECTION */}
             <Typography variant="h6" fontWeight="bold" sx={{ mt: 4 }} gutterBottom>
                 🧱 Features
             </Typography>
-            <Grid container spacing={2} sx={{ width: "100%" }}>
+
+            <Grid container spacing={2}>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControlLabel
                         control={
                             <Checkbox
-                                name="has_garage"
                                 checked={data.has_garage}
                                 onChange={(e) => processChange("has_garage", e.target.checked)}
-                            />}
+                            />
+                        }
                         label="Has Garage"
                     />
                 </Grid>
+
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
                         name="garage_spaces"
                         label="Garage Spaces"
                         type="number"
                         value={data.garage_spaces ?? ""}
+                        fullWidth
                         onChange={(e) => processChange("garage_spaces", e.target.value)}
-                        fullWidth />
+                    />
                 </Grid>
+
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControlLabel
                         control={
                             <Checkbox
-                                name="has_basement"
                                 checked={data.has_basement}
                                 onChange={(e) => processChange("has_basement", e.target.checked)}
-                            />}
+                            />
+                        }
                         label="Has Basement"
                     />
                 </Grid>
             </Grid>
+
         </Box>
     );
 }

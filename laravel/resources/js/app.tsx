@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import {NotificationProvider} from "@/context/NotificationContext";
 import {Notification} from "@/components/Notification";
 
+
 const theme = createTheme({
     // You can customize your theme here
     palette: {
@@ -41,7 +42,7 @@ createInertiaApp({
                     <CssBaseline />
                         <NotificationProvider>
                             <Notification />
-                            <App {...props} />
+                                <App {...props} />
                         </NotificationProvider>
                 </ThemeProvider>
             </React.StrictMode>

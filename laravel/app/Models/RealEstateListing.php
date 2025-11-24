@@ -13,13 +13,16 @@ class RealEstateListing extends Model
 {
     use HasFactory;
     use SoftDeletes;
+
     protected $guarded = [];
 
     protected $casts = [
-      'has_basement' => 'boolean',
-      'has_garage' => 'boolean',
-      'price_reduced' => 'boolean',
-      'keywords' => 'array',
+        'has_basement' => 'boolean',
+        'has_garage' => 'boolean',
+        'price_reduced' => 'boolean',
+        'keywords' => 'array',
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
 
     // A listing can have multiple offers
@@ -50,5 +53,4 @@ class RealEstateListing extends Model
     public function appointments(): HasMany|RealEstateListing {
         return $this->hasMany(Appointment::class, 'real_estate_listing_id');
     }
-
 }
