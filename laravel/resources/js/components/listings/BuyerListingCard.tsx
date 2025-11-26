@@ -1,28 +1,63 @@
 import { RealEstateListing } from "@/types";
-import {Box, Button, Card, CardContent, CardMedia, Link, Typography } from "@mui/material";
-import React from "react";
-import {listingService} from "@/services/listingService";
-import {router} from "@inertiajs/react";
-import {useNotification} from "@/context/NotificationContext";
+import { Box, Button, Card, CardContent, CardMedia, Link, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { listingService } from "@/services/listingService";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+// Make sure you have this context available, or replace with your alert logic
+import { useNotification } from "@/context/NotificationContext";
 
 type ListingCardProps = {
     listing: RealEstateListing;
     isFavorite: (listingId: number) => boolean;
 };
 
-export default  function BuyerListingCard ({listing, isFavorite,} : ListingCardProps){
-    const favorite = isFavorite(listing.id);
+export function BuyerListingCard({ listing, isFavorite }: ListingCardProps) {
+
+    const [isFav, setIsFav] = useState(isFavorite(listing.id));
+    const [loadingFavorite, setLoadingFavorite] = useState(false);
+
+    // 1. Get notification hook
     const { showNotification } = useNotification();
 
-    const toggleFavorite = async (e: React.FormEvent, listingId: number, isFav: boolean) => {
+    const toggleFavorite = async (e: React.FormEvent) => {
         e.preventDefault();
-        const response = await listingService.toggleFavorite(listingId, isFav);
-        showNotification(response.message, response.status);
+
+        // 2. Snapshot the current state (in case we need to revert)
+        const previousState = isFav;
+
+        // 3. OPTIMISTIC UPDATE: Switch immediately
+        setIsFav(!previousState);
+        setLoadingFavorite(true);
+
+        try {
+            // Pass the ID and the PREVIOUS state (so the backend knows what to toggle)
+            const response = await listingService.toggleFavorite(listing.id, previousState);
+
+            // Optional: Ensure state matches server response exactly
+            // (Usually unnecessary if optimistic update worked, but good for data integrity)
+            if (response.data && typeof response.data.favorite === 'boolean') {
+                setIsFav(response.data.favorite);
+            } else if (typeof response.favorite === 'boolean') {
+                setIsFav(response.favorite);
+            }
+
+        } catch (error) {
+            console.error("Failed to toggle favorite", error);
+
+            // 4. ROLLBACK: Revert to previous state on error
+            setIsFav(previousState);
+
+            // 5. Show Error Notification
+            showNotification("Failed to update favorite. Please try again.", "error");
+        } finally {
+            setLoadingFavorite(false);
+        }
     };
 
     return (
-        <Card elevation={3} sx={{borderRadius: 2}}>
-            {/* RealEstateListing Image */}
+        <Card elevation={3} sx={{ borderRadius: 2 }}>
+            {/* Image Section */}
             {listing.main_image ? (
                 <CardMedia
                     component="img"
@@ -34,42 +69,38 @@ export default  function BuyerListingCard ({listing, isFavorite,} : ListingCardP
                 <Box
                     sx={{
                         height: 180,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        backgroundColor: 'grey.300',
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: "grey.300",
                     }}
                 >
                     ❌ No Image Available
                 </Box>
             )}
 
-            {/* RealEstateListing Info */}
             <CardContent>
-                {/* Title */}
-                <Typography variant="h6" component="h2" fontWeight="bold" noWrap>
+                <Typography variant="h6" fontWeight="bold" noWrap>
                     {listing.title}
                 </Typography>
+
                 <Typography
                     variant="body2"
                     color="text.secondary"
-                    sx={{
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                    }}
+                    sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
                 >
                     📍 {listing.location}
                 </Typography>
-                <Typography color="primary" fontWeight="bold" sx={{mt: 1}}>
+
+                <Typography color="primary" fontWeight="bold" sx={{ mt: 1 }}>
                     💰 ${listing.price.toLocaleString()}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{mt: 1}}>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                     👤 Seller: {listing.seller?.name || 'N/A'}
                 </Typography>
 
                 {/* Additional Details */}
-                <Box sx={{mt: 2}}>
+                <Box>
                     <Typography variant="body2" color="text.secondary">
                         🛏️ Bedrooms: {listing.bedrooms}
                     </Typography>
@@ -79,55 +110,26 @@ export default  function BuyerListingCard ({listing, isFavorite,} : ListingCardP
                     <Typography variant="body2" color="text.secondary">
                         📐 Size: {listing.square_feet.toLocaleString()} sqft
                     </Typography>
-                    {listing.lot_size && (
-                        <Typography variant="body2" color="text.secondary">
-                            🏡 Lot Size: {listing.lot_size.toLocaleString()} sqft
-                        </Typography>
-                    )}
-                    {listing.year_built && (
-                        <Typography variant="body2" color="text.secondary">
-                            🏗️ Year Built: {listing.year_built}
-                        </Typography>
-                    )}
-                    <Typography variant="body2" color="text.secondary">
-                        🏷️ Status: {listing.status}
-                    </Typography>
-                    {listing.hoa_fees && (
-                        <Typography variant="body2" color="text.secondary">
-                            💸 HOA Fees: ${listing.hoa_fees.toLocaleString()}
-                        </Typography>
-                    )}
-                    {listing.property_taxes && (
-                        <Typography variant="body2" color="text.secondary">
-                            📊 Property Taxes: ${listing.property_taxes.toLocaleString()}
-                        </Typography>
-                    )}
                 </Box>
 
-                {/* Favorite & View Details */}
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        mt: 2,
-                    }}
-                >
-                    <form
-                        onSubmit={(e) => toggleFavorite(e, listing.id, favorite)}
-                    >
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2 }}>
+
+                    <form onSubmit={toggleFavorite}>
                         <Button
                             type="submit"
                             variant="text"
-                            sx={{fontSize: 24, color: favorite ? 'red' : 'grey.500'}}
+                            disabled={loadingFavorite}
+                            sx={{ fontSize: 24, color: isFav ? "red" : "grey.500", minWidth: 0 }}
                         >
-                            {favorite ? '💔' : '❤️'}
+                            {isFav ? (
+                                <FavoriteIcon color="error" />
+                            ) : (
+                                <FavoriteBorderIcon />
+                            )}
                         </Button>
                     </form>
-                    <Link
-                        href={`/buyer/listings/${listing.id}`}
-                        style={{textDecoration: 'none'}}
-                    >
+
+                    <Link href={`/buyer/listings/${listing.id}`} style={{ textDecoration: "none" }}>
                         <Button variant="contained" size="small" color="primary">
                             🔍 View Details
                         </Button>
@@ -136,4 +138,4 @@ export default  function BuyerListingCard ({listing, isFavorite,} : ListingCardP
             </CardContent>
         </Card>
     );
-};
+}

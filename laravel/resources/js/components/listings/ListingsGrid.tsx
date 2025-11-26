@@ -3,7 +3,7 @@ import { Grid, Typography, Box } from "@mui/material";
 import { RealEstateListing } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 import SellerListingCard from "@/components/listings/SellerListingCard";
-import BuyerListingCard from "@/components/listings/BuyerListingCard";
+import {BuyerListingCard} from "@/components/listings/BuyerListingCard";
 
 type ComponentProps = {
     listings: {
