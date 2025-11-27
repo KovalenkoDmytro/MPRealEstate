@@ -53,6 +53,8 @@ return new class extends Migration
             $table->string('status')->default('available');
             $table->boolean('price_reduced')->default(false);
 
+            $table->unsignedBigInteger('views_count')->default(0);
+            $table->unsignedBigInteger('unique_viewers_count')->default(0);
             // Search
             $table->json('keywords')->nullable();
 

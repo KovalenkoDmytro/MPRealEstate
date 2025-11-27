@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RealEstateListing;
 use App\Services\BuyerService;
+use App\Services\ListingViewService;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,11 +19,14 @@ class BuyerController extends Controller
 
     private BuyerService $buyerService;
 
-    public function __construct(BuyerService $buyerService ,OfferController $offerController,  DealController $dealController)
+    private ListingViewService $listingViewService;
+
+    public function __construct(BuyerService $buyerService ,OfferController $offerController,  DealController $dealController, ListingViewService $listingViewService)
     {
         $this->buyerService = $buyerService;
         $this->offerController = $offerController;
         $this->dealController = $dealController;
+        $this->listingViewService = $listingViewService;
     }
 
     public function showAllDeals(): Response {
@@ -37,6 +41,9 @@ class BuyerController extends Controller
         /** @var \App\Models\User $user */
 
         $user = auth()->user();
+
+        // Record that this authenticated buyer viewed the listing
+        $this->listingViewService->recordView($user, $listing);
 
         ['listing' => $listing, 'userOffer' => $userOffer] = $this->buyerService->getListingWithUserOffer($listing->id, $user);
 

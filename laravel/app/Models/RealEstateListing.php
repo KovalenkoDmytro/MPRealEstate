@@ -40,6 +40,12 @@ class RealEstateListing extends Model
         return $this->hasMany(ListingImage::class, 'real_estate_listing_id');
     }
 
+    // Relationship with Listing Views
+    public function views(): HasMany
+    {
+        return $this->hasMany(ListingView::class, 'real_estate_listing_id');
+    }
+
     // Relationship with a deal
     public function deal(): HasOne {
         return $this->hasOne(Deal::class, 'real_estate_listing_id');

@@ -91,7 +91,7 @@ export default function SellerListingCard ({ listing } : { listing: RealEstateLi
 
                 {/* View Details (Edit) Link */}
                 <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-                    <Link href={route("seller.listings.edit", listing.id)} style={{ textDecoration: "none" }}>
+                    <Link href={route("seller.listings.show", listing.id)} style={{ textDecoration: "none" }}>
                         <Button variant="contained" size="small" color="primary">
                             🔍 View Details
                         </Button>

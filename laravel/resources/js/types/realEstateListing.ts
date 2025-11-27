@@ -105,6 +105,10 @@ export interface RealEstateListing extends BaseEntity {
     property_taxes: number;
     /** Whether the price has been reduced */
     price_reduced: boolean;
+    /** Total number of times this listing page has been viewed (all users) */
+    views_count?: number;
+    /** Number of unique users who have viewed this listing */
+    unique_viewers_count?: number;
     /** Search keywords */
     keywords: string[];
     /** Appointments */

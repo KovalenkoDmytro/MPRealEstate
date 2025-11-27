@@ -24,7 +24,6 @@ class RealEstateListingFactory extends Factory
             'title'          => ucfirst($this->faker->word()) . ' ' . ucfirst($this->faker->word()),
             'description'    => $this->faker->realText(300),
             'price'          => $this->faker->randomFloat(2, 100000, 2500000),
-            'location'       => $this->faker->city() . ', ' . $this->faker->stateAbbr(),
             'property_type'  => $this->faker->randomElement(['house', 'condo', 'townhouse', 'land', 'multi-family', 'farm']),
             'bedrooms'       => $this->faker->numberBetween(1, 6),
             'bathrooms'      => $this->faker->numberBetween(1, 4),

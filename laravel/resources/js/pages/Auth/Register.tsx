@@ -60,7 +60,6 @@ export default function Register({ roles }: { roles: string[] }) {
 
         } catch (err: any) {
             const errorMsg = extractErrorMessage(err.response);
-            console.log(errorMsg)
             showNotification(errorMsg, "error");
         } finally {
             setLoading(false);

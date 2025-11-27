@@ -10,6 +10,7 @@ use App\Notifications\Appointments\AppointmentRejectedNotification;
 use App\Notifications\Appointments\AppointmentRequestNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AppointmentService
 {
@@ -87,5 +88,61 @@ class AppointmentService
         $appointment->seller->notify(
             new AppointmentCancelledByBuyerNotification($appointment)
         );
+    }
+
+    /**
+     * Get Appointment Statistics specifically for a Seller.
+     * * @param int $sellerId The user ID of the seller
+     * @return array
+     */
+    // App\Services\AppointmentService.php
+
+    public function getSellerStatistics(int $sellerId): array
+    {
+        $thirtyDaysAgo = now()->subDays(30)->startOfDay();
+        $sevenDaysAgo  = now()->subDays(6)->startOfDay();
+
+        // --- 1. Summary (Cards) ---
+        $statusCounts = Appointment::where('seller_id', $sellerId)
+            ->where('scheduled_at', '>=', $thirtyDaysAgo)
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        // Create the breakdown with specific UI keys
+        $breakdown = [
+            'pending'   => $statusCounts['pending'] ?? 0,
+            'completed' => $statusCounts['accepted'] ?? 0,
+            'cancelled' => ($statusCounts['rejected'] ?? 0) + ($statusCounts['cancelled by buyer'] ?? 0),
+        ];
+
+        // Calculate the Total based on the breakdown
+        $totalLast30Days = array_sum($breakdown);
+
+        // --- 2. Daily Chart Data (Total Only) ---
+        $dailyRecords = Appointment::where('seller_id', $sellerId)
+            ->where('scheduled_at', '>=', $sevenDaysAgo)
+            ->selectRaw('DATE(scheduled_at) as date, count(*) as total')
+            ->groupBy('date')
+            ->pluck('total', 'date');
+
+        $dailyTrend = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $dailyTrend[] = [
+                'date'  => $date,
+                'total' => $dailyRecords[$date] ?? 0,
+            ];
+        }
+
+        return [
+            'summary' => [
+                'total_last_30_days' => $totalLast30Days, // <--- Added back
+                'breakdown'          => $breakdown
+            ],
+            'chart_data' => [
+                'last_7_days' => $dailyTrend
+            ]
+        ];
     }
 }

@@ -2,7 +2,17 @@ import {Head, Link} from "@inertiajs/react";
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import {Offer} from "@/types";
 import OffersGrid from "@/components/offers/OffersGrid";
-export default function Dashboard({ offers }: {offers: Offer[]}) {
+import {SellerStats} from "@/types/sellerAppointmentsStat";
+import AppointmentStats from "@/components/dashbord/seller/appointments/AppointmentStats";
+
+
+interface DashboardProps {
+    offers: Offer[];
+    appointments_stats: SellerStats;
+}
+
+export default function Dashboard({ offers, appointments_stats }: DashboardProps) {
+
     return (
         <AuthenticatedLayout
             header={
@@ -15,6 +25,8 @@ export default function Dashboard({ offers }: {offers: Offer[]}) {
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold">Seller Dashboard</h1>
             <h2 className="text-xl mt-4 font-semibold">Pending Offers</h2>
+
+            <AppointmentStats stats={appointments_stats}/>
 
             <OffersGrid
                 offers={offers}

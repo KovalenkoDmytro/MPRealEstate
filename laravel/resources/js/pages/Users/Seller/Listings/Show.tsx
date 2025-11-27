@@ -25,7 +25,7 @@ interface PageProps {
     };
 }
 
-export default function Show({ listing }: PageProps) {
+export default function ListingShowPage({ listing }: PageProps) {
     const [offers, setOffers] = useState<Offer[]>(listing.offers || []);
     const { showNotification } = useNotification();
     const handleUpdateStatus = async (offerId: number, status: "accepted" | "rejected") => {
@@ -61,6 +61,11 @@ export default function Show({ listing }: PageProps) {
                 {/* Title */}
                 <Typography variant="h4" fontWeight="bold" gutterBottom>
                     {listing.title}
+                </Typography>
+
+                <Typography variant="body2" color="text.secondary" sx={{ mt: -1, mb: 2 }}>
+                    👁️ Total Views: <strong>{listing.views_count ?? 0}</strong> •
+                    🧑 Unique Viewers: <strong>{listing.unique_viewers_count ?? 0}</strong>
                 </Typography>
 
                 <ImageGallery mainImage={listing.main_image} images={listing.images} />
