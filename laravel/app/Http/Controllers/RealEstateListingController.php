@@ -129,6 +129,7 @@ class RealEstateListingController extends Controller {
             ]),
             'buyer' => Inertia::render('Users/Buyer/Listings/Index', [
                 'listings' => $this->buyerService->getFilteredListings($user, $request),
+                'listingsRecentlyViewed' => $this->listingService->getRecentlyViewed($user, 4),
                 'favoriteListings' => $this->listingService->getFavoriteListingIds($user),
                 'filters' => $request->validatedFilters(),
             ]),

@@ -118,4 +118,35 @@ class RealEstateListingService
         return collect(); // empty collection for others
     }
 
+
+
+    public function getRecentlyViewed(User $user, int $limit = 6): array
+    {
+        $userId = $user->id;
+
+        $viewedIds = DB::table('listing_views')
+            ->where('user_id', $userId)
+            ->orderBy('viewed_at', 'desc')
+            ->pluck('real_estate_listing_id');
+
+        $uniqueIds = $viewedIds->unique()->take($limit);
+
+        if ($uniqueIds->isEmpty()) {
+            return [];
+        }
+
+        $listings = RealEstateListing::whereIn('id', $uniqueIds)
+            ->with(['mainImage'])
+            ->get();
+
+        return $uniqueIds->map(function ($id) use ($listings) {
+            return $listings->firstWhere('id', $id);
+        })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+
+
 }

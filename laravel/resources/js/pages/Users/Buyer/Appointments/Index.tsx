@@ -10,7 +10,8 @@ import {
     TableHead,
     TableRow,
     Chip,
-    Button
+    Button,
+    Link
 } from "@mui/material";
 
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
@@ -92,7 +93,7 @@ export default function BuyerAppointmentsPage({ appointments }: { appointments: 
                                 {appointments.map((appt) => (
                                     <TableRow key={appt.id}>
                                         <TableCell>
-                                            <Typography fontWeight="bold">{appt.listing.title}</Typography>
+                                            <Link href={route('buyer.listings.show', appt.listing.id)}>{appt.listing.title}</Link>
                                             <Typography variant="body2">${appt.listing.price}</Typography>
                                         </TableCell>
 

@@ -5,6 +5,7 @@ import type { RealEstateListing } from "@/types";
 import { FilterForm } from "@/components/listings/FilterForm";
 import ListingsGrid from "@/components/listings/ListingsGrid";
 import { listingService } from "@/services/listingService";
+import RecentlyViewed from "@/components/listings/recentlyViewed/buyer/RecentlyViewed";
 
 type Props = {
     listings: {
@@ -13,11 +14,12 @@ type Props = {
         current_page: number;
         last_page: number;
     };
+    listingsRecentlyViewed: RealEstateListing[];
     favoriteListings: number[];
     filters: Record<string, any>;
 };
 
-export default function Index({ listings, favoriteListings, filters }: Props) {
+export default function Index({ listings, listingsRecentlyViewed, favoriteListings, filters }: Props) {
     const [form, setForm] = useState({
         location: filters.location || "",
         min_price: filters.min_price || "",
@@ -71,6 +73,8 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
             <Head title="My Listings" />
 
             <FilterForm form={form} updateFilter={updateFilter} onApplyFilters={applyFilters} />
+
+            <RecentlyViewed listings={listingsRecentlyViewed}/>
 
             <ListingsGrid listings={listings} isFavorite={isFavorite} />
         </AuthenticatedLayout>
