@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Buyer;
+use App\Models\ListingView;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
@@ -152,5 +153,58 @@ class RealEstateListingService
     }
 
 
+    /**
+     * HELPER: Calculate total favorites across all seller's listings.
+     */
+    private function calculateTotalFavorites(int $sellerId): int
+    {
+        // We use the RealEstateListing model to start the query
+        return RealEstateListing::query()
+            ->where('seller_id', $sellerId)
+            ->join('favorite_listings', 'real_estate_listings.id', '=', 'favorite_listings.real_estate_listing_id')
+            ->count();
+    }
+
+    /**
+     * Helper: Calculate view stats using pure Eloquent (4 queries).
+     */
+    private function calculateTotalViews(int $sellerId): array
+    {
+        $now = now();
+        $startOfToday = $now->copy()->startOfDay();
+        $sevenDaysAgo = $now->copy()->subDays(7)->startOfDay();
+
+
+        $baseQuery = ListingView::whereHas('listing', function ($query) use ($sellerId) {
+            $query->where('seller_id', $sellerId);
+        });
+
+        return [
+            'today'       => (clone $baseQuery)->where('viewed_at', '>=', $startOfToday)->count(),
+            'last_7_days' => (clone $baseQuery)->where('viewed_at', '>=', $sevenDaysAgo)->count(),
+            'total'       => (clone $baseQuery)->count(),
+            'unique'      => (clone $baseQuery)->distinct('user_id')->count('user_id'),
+        ];
+    }
+
+
+
+    public function getSellerListingPerformanceStats(int $sellerId): array {
+
+        $totalFavorites = $this->calculateTotalFavorites($sellerId);
+        $viewStats = $this->calculateTotalViews($sellerId);
+
+        return [
+            'favorites' => [
+                'total' => $totalFavorites
+            ],
+            'views' => [
+                'total'       => $viewStats['total'],
+                'unique'      => $viewStats['unique'],
+                'today'       => $viewStats['today'],
+                'last_7_days' => $viewStats['last_7_days'],
+            ],
+        ];
+    }
 
 }

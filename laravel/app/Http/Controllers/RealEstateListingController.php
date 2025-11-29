@@ -6,10 +6,8 @@ use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Http\Requests\ListingFilterRequest;
-use App\Models\Buyer;
 use App\Models\User;
 use App\Services\BuyerService;
-use App\Services\DealService;
 use App\Services\RealEstateListingService;
 use App\Models\RealEstateListing;
 use App\Services\SellerService;
@@ -19,7 +17,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Requests\RealEstateListingRequest;
 use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 class RealEstateListingController extends Controller {
     use AuthorizesRequests;

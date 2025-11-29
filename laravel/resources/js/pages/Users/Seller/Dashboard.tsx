@@ -4,14 +4,17 @@ import {Offer} from "@/types";
 import OffersGrid from "@/components/offers/OffersGrid";
 import {SellerStats} from "@/types/sellerAppointmentsStat";
 import AppointmentStats from "@/components/dashbord/seller/appointments/AppointmentStats";
+import {PerformanceStats} from "@/components/dashbord/seller/propertyPerformance/types";
+import PropertyPerformance from "@/components/dashbord/seller/propertyPerformance/PropertyPerformance";
 
 
 interface DashboardProps {
     offers: Offer[];
     appointments_stats: SellerStats;
+    listingsPerformance_stats: PerformanceStats
 }
 
-export default function Dashboard({ offers, appointments_stats }: DashboardProps) {
+export default function Dashboard({ offers, appointments_stats, listingsPerformance_stats }: DashboardProps) {
 
     return (
         <AuthenticatedLayout
@@ -28,11 +31,12 @@ export default function Dashboard({ offers, appointments_stats }: DashboardProps
 
             <AppointmentStats stats={appointments_stats}/>
 
+            <PropertyPerformance stats={listingsPerformance_stats} />
+
             <OffersGrid
                 offers={offers}
                 filterStatus="pending"
             />
-
 
             <div className="mt-6">
                 <Link href={route('listings.index')} className="text-blue-500">View My Listings</Link>
