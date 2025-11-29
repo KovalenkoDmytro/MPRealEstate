@@ -18,16 +18,20 @@ class DashboardService
 
     protected RealEstateListingService $listingService;
 
+    protected DealService $dealService;
+
     public function __construct(OfferService $offerService,
         LawyerService $lawyerService,
         AppointmentService $appointmentService,
-        RealEstateListingService $listingService
+        RealEstateListingService $listingService,
+        DealService $dealService
     )
     {
         $this->offerService = $offerService;
         $this->lawyerService = $lawyerService;
         $this->appointmentService = $appointmentService;
         $this->listingService = $listingService;
+        $this->dealService = $dealService;
     }
 
     /**
@@ -43,7 +47,8 @@ class DashboardService
             $user->hasRole('seller') => Inertia::render('Users/Seller/Dashboard', [
                 'offers' => $this->offerService->getAllOffersForSeller($user->id),
                 'appointments_stats' => $this->appointmentService->getSellerStatistics($user->id),
-                'listingsPerformance_stats' => $this->listingService->getSellerListingPerformanceStats($user->id)
+                'listingsPerformance_stats' => $this->listingService->getSellerListingPerformanceStats($user->id),
+                'deals_stats' => $this->dealService->getUserDealStats($user),
             ]),
             $user->hasRole('lawyer') => Inertia::render('Users/Lawyer/Dashboard', [
                 'deals_detail' => $this->lawyerService->getDealsStatistics()

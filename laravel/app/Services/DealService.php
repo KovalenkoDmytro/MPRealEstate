@@ -328,4 +328,31 @@ class DealService
             new ErrorResponse(__('deals.errors.invalid_response_type'))
         );
     }
+
+    /**
+     * Get aggregated deal statistics
+     */
+    public function getUserDealStats(User $user): array
+    {
+
+        $deals= $user->deals();
+
+        return [
+
+            'total' => (clone $deals)->count(),
+
+            'broken' => (clone $deals)
+                ->where('is_broken', true)
+                ->count(),
+
+            'completed' => (clone $deals)
+                ->where('is_completed', true)
+                ->count(),
+
+            'pending' => (clone $deals)
+                ->where('is_broken', false)
+                ->where('is_completed', false)
+                ->count(),
+        ];
+    }
 }
