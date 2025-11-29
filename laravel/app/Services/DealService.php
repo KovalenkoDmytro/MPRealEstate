@@ -330,7 +330,7 @@ class DealService
     }
 
     /**
-     * Get aggregated deal statistics
+     * Get aggregated deals statistics
      */
     public function getUserDealStats(User $user): array
     {

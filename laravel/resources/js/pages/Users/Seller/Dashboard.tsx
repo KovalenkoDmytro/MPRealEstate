@@ -1,23 +1,23 @@
 import {Head, Link} from "@inertiajs/react";
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
-import {Offer} from "@/types";
-import OffersGrid from "@/components/offers/OffersGrid";
 import {SellerStats} from "@/types/sellerAppointmentsStat";
 import AppointmentStats from "@/components/dashbord/seller/appointments/AppointmentStats";
 import {PerformanceStats} from "@/components/dashbord/seller/propertyPerformance/types";
 import PropertyPerformance from "@/components/dashbord/seller/propertyPerformance/PropertyPerformance";
 import DealPerformance from "@/components/dashbord/seller/deals/DealPerformance";
 import {DealStats} from "@/components/dashbord/seller/deals/types";
+import {OfferStats} from "@/components/dashbord/seller/offers/type";
+import OfferPerformance from "@/components/dashbord/seller/offers/OfferPerformance";
 
 
 interface DashboardProps {
-    offers: Offer[];
+    offers_stats: OfferStats;
     appointments_stats: SellerStats;
     listingsPerformance_stats: PerformanceStats;
     deals_stats: DealStats;
 }
 
-export default function Dashboard({ offers, appointments_stats, listingsPerformance_stats ,deals_stats}: DashboardProps) {
+export default function Dashboard({ offers_stats, appointments_stats, listingsPerformance_stats ,deals_stats}: DashboardProps) {
 
     return (
         <AuthenticatedLayout
@@ -38,10 +38,7 @@ export default function Dashboard({ offers, appointments_stats, listingsPerforma
 
             <DealPerformance stats={deals_stats}/>
 
-            <OffersGrid
-                offers={offers}
-                filterStatus="pending"
-            />
+            <OfferPerformance stats={offers_stats} />
 
             <div className="mt-6">
                 <Link href={route('listings.index')} className="text-blue-500">View My Listings</Link>

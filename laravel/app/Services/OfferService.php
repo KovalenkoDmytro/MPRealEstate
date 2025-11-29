@@ -5,13 +5,13 @@ namespace App\Services;
 use App\Http\Requests\SubmitOfferRequest;
 use App\Http\Requests\UpdateOfferStatusRequest;
 use App\Models\Offer;
-use App\Models\RealEstateListing;
+use Illuminate\Database\Eloquent\Builder;
+use App\Models\User;
 use App\Notifications\OfferConfirmation;
 use App\Notifications\OfferStatusUpdated;
 use App\Notifications\OfferSubmitted;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Helpers\Responses\ErrorResponse;
@@ -78,5 +78,53 @@ class OfferService
             ->where('buyer_id', $buyerId)
             ->latest()
             ->get();
+    }
+
+    /**
+     * Get aggregated deals statistics
+     */
+    /**
+     * Get aggregated Offer statistics (Efficient Query Builder Approach).
+     */
+    public function getUserOfferStats(User $user): array
+    {
+
+        $query = Offer::query();
+
+        if ($user->hasRole('seller')) {
+
+            $query->whereHas('listing', function ($q) use ($user) {
+                $q->where('seller_id', $user->id);
+            });
+        } elseif ($user->hasRole('buyer')) {
+
+            $query->where('buyer_id', $user->id);
+        } else {
+            return ['total' => 0, 'pending' => 0, 'accepted' => 0, 'rejected' => 0];
+        }
+
+        return $this->calculateStats($query);
+    }
+
+    /**
+     * Helper to count statuses without loading objects into memory.
+     */
+    private function calculateStats(Builder $baseQuery): array
+    {
+        return [
+            'total' => (clone $baseQuery)->count(),
+
+            'pending' => (clone $baseQuery)
+                ->where('status', 'pending')
+                ->count(),
+
+            'accepted' => (clone $baseQuery)
+                ->where('status', 'accepted')
+                ->count(),
+
+            'rejected' => (clone $baseQuery)
+                ->where('status', 'rejected')
+                ->count(),
+        ];
     }
 }

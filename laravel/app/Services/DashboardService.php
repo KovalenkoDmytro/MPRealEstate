@@ -45,7 +45,7 @@ class DashboardService
                 'offers' => $this->offerService->getBuyerOffers($user->id),
             ]),
             $user->hasRole('seller') => Inertia::render('Users/Seller/Dashboard', [
-                'offers' => $this->offerService->getAllOffersForSeller($user->id),
+                'offers_stats' => $this->offerService->getUserOfferStats($user),
                 'appointments_stats' => $this->appointmentService->getSellerStatistics($user->id),
                 'listingsPerformance_stats' => $this->listingService->getSellerListingPerformanceStats($user->id),
                 'deals_stats' => $this->dealService->getUserDealStats($user),
