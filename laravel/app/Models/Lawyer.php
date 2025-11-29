@@ -9,7 +9,7 @@ class Lawyer extends User
 {
     use HasRoles;
 
-
+    protected $table = 'users';
     public function getClosedDeals(): Collection
     {
         return $this->deals()

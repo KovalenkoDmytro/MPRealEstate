@@ -40,11 +40,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Deal::class, 'deal_user', 'user_id', 'deal_id');
     }
 
-    // Relationship with RealEstateListing
-    public function favoriteListings(): BelongsToMany {
-        return $this->belongsToMany(RealEstateListing::class, 'favorite_listings')->withTimestamps();
-    }
-
     public function getMorphClass(): string {
         return self::class;
     }

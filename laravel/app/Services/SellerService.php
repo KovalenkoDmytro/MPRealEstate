@@ -33,6 +33,9 @@ class SellerService
             'offers' => fn($query) => $query->with(['buyer:id,name,email']),
             'images',
             'mainImage',
-        ])->findOrFail($listing->id);
+        ])
+            ->withCount('favoriteByBuyer')
+            ->findOrFail($listing->id);
     }
+
 }

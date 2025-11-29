@@ -6,6 +6,7 @@ use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Http\Requests\ListingFilterRequest;
+use App\Models\Buyer;
 use App\Models\User;
 use App\Services\BuyerService;
 use App\Services\DealService;

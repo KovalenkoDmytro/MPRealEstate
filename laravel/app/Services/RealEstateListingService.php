@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Buyer;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
@@ -110,12 +111,15 @@ class RealEstateListingService
     }
 
     public function getFavoriteListingIds(User $user): Collection {
-        // Only return favorites for roles that support it
-        if ($user->hasAnyRole(['buyer', 'admin'])) {
-            return $user->favoriteListings()->pluck('real_estate_listing_id');
+
+        $buyer = Buyer::find($user->id);
+
+        if (!$buyer) {
+            return collect();
         }
 
-        return collect(); // empty collection for others
+        return $buyer->favoriteListings()->pluck('real_estate_listing_id');
+
     }
 
 
