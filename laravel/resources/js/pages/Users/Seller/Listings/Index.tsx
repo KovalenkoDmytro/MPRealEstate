@@ -16,17 +16,13 @@ type ComponentProps = {
 export default function Index({ listings }: ComponentProps) {
     return (
         <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    My Listings
-                </h2>
-            }
+            header="My Listings"
         >
             <Head title="My Listings"/>
 
             <div className="container mx-auto p-4">
                 <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-2xl font-bold">🏡 My Real Estate Listings</h1>
+                    <h2 className="text-2xl font-bold">🏡 My Real Estate Listings</h2>
                     <Link
                         href={route('seller.listings.create')}
                         className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"

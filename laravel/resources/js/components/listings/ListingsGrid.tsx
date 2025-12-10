@@ -19,21 +19,34 @@ export default function ListingsGrid({listings, isFavorite,}: ComponentProps) {
     const user = useAuth();
     const role = user.role;
 
+    const isBuyer = role === "buyer" && isFavorite;
+    const isSeller = role === "seller";
+
     return (
         <Box>
             {listings.data.length > 0 ? (
                 <Grid container spacing={3}>
-                    {listings.data.map((listing) => (
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }} key={listing.id}>
-                            {role === "buyer" && isFavorite &&  (
+
+                    {isBuyer &&  (
+                        <Grid  size={{ xs: 12, sm: 6, md: 3 }} container spacing={4}>
+                            {listings.data.map((listing, index) => (
                                 <BuyerListingCard
+                                    key={index}
                                     listing={listing}
                                     isFavorite={isFavorite}
                                 />
-                            )}
-                            {role === "seller" && <SellerListingCard listing={listing} />}
+                            ))}
                         </Grid>
-                    ))}
+                    )}
+
+                    {isSeller &&  (
+                        <Grid size={{ xs: 12}} container spacing={5}>
+                            {listings.data.map((listing,index) => (
+                                <SellerListingCard listing={listing} key={index}/>
+                            ))}
+                        </Grid>
+                    )}
+
                 </Grid>
             ) : (
                 <Box sx={{ mt: 4, textAlign: "center" }}>
