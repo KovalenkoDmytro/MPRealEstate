@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, Grid, Typography, ThemeProvider } from '@mui/material';
+import { Box, Grid, Typography, ThemeProvider } from '@mui/material'; // Note: Grid2 is the new standard in MUI v6
 import { AccessTime } from '@mui/icons-material';
 import { appointmentTheme } from './theme';
 import StatCard from './StatCard';
@@ -11,53 +11,92 @@ interface AppointmentStatsProps {
 }
 
 export default function AppointmentStats({ stats }: AppointmentStatsProps) {
-    // 1. Data Prep
     const { pending, completed, cancelled } = stats.summary.breakdown;
-    const totalCount = stats.summary.total_last_30_days;
+    const totalCountLast30Days = stats.summary.total_last_30_days;
+    const totalCountLast7Days = stats.summary.total_last_30_days;
     const chartData = stats.chart_data.last_7_days || [];
 
-    // 2. Date Range Logic
+    // Formats dates. Safe to keep inside useMemo.
     const dateRange = useMemo(() => {
         if (!chartData.length) return '';
-        const fmt = (d: string) => new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' }).format(new Date(d));
-        return `${fmt(chartData[0].date)} - ${fmt(chartData[chartData.length - 1].date)}`;
+
+        const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
+        return `${fmt.format(new Date(chartData[0].date))} - ${fmt.format(new Date(chartData[chartData.length - 1].date))}`;
     }, [chartData]);
+
+    const getPercentage = (part: number) => {
+        if (!totalCountLast7Days || totalCountLast7Days === 0) return 0;
+        return Math.round((part / totalCountLast7Days) * 100);
+    };
+
+    console.log(stats)
 
     return (
         <ThemeProvider theme={appointmentTheme}>
-            <Box sx={{ mb: 6 }}>
-                {/* Header - Now simplified without the Pill */}
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-                    <Box>
-                        <Typography variant="h5" color="text.primary">Appointments</Typography>
-                        {dateRange && (
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                <AccessTime fontSize="inherit" /> Period: {dateRange}
+            <Box
+                sx={{
+                    mb: 6,
+                    p: { xs: 3, md: 4 },
+                    backgroundColor: 'background.paper',
+                    borderRadius: 4,
+                    boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.05)',
+                }}
+
+            >
+
+                <Box mb={3}>
+                    <Typography variant="h6" fontWeight={500} color="text.primary">
+                        Appointments
+                    </Typography>
+                    {dateRange && (
+                        <Box display="flex" alignItems="center" gap={0.5} mt={0.5}>
+                            <AccessTime sx={{ fontSize: '0.875rem', color: 'text.secondary' }} />
+                            <Typography variant="body2" color="text.secondary">
+                                Period: {dateRange}
                             </Typography>
-                        )}
-                    </Box>
+                        </Box>
+                    )}
                 </Box>
 
-                {/* Cards Grid - Updated to 4 columns */}
-                <Grid container spacing={3} mb={4}>
+
+                <Grid container spacing={3} mb={6} alignItems="stretch">
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <StatCard title="Pending" count={pending || 0} type="pending" />
+                        <StatCard
+                            title="Pending"
+                            count={pending || 0}
+                            type="pending"
+                            progressValue={getPercentage(pending || 0)}
+                        />
                     </Grid>
 
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <StatCard title="Completed" count={completed || 0} type="completed" />
+                        <StatCard
+                            title="Completed"
+                            count={completed || 0}
+                            type="completed"
+                            progressValue={getPercentage(completed || 0)}
+                        />
                     </Grid>
 
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <StatCard title="Cancelled" count={cancelled || 0} type="cancelled" />
+                        <StatCard
+                            title="Cancelled"
+                            count={cancelled || 0}
+                            type="cancelled"
+                            progressValue={getPercentage(cancelled || 0)}
+                        />
                     </Grid>
 
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <StatCard title="Total (30 Days)" count={totalCount || 0} type="total" />
+                        <StatCard
+                            title="Total (30 Days)"
+                            count={totalCountLast30Days || 0}
+                            type="total"
+                            progressValue={100}
+                        />
                     </Grid>
                 </Grid>
 
-                {/* Chart */}
                 <DailyActivityChart data={chartData} />
             </Box>
         </ThemeProvider>

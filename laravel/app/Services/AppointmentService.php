@@ -99,27 +99,58 @@ class AppointmentService
 
     public function getSellerStatistics(int $sellerId): array
     {
+        // Define time windows
         $thirtyDaysAgo = now()->subDays(30)->startOfDay();
-        $sevenDaysAgo  = now()->subDays(6)->startOfDay();
+        $sevenDaysAgo  = now()->subDays(6)->startOfDay(); // Today + past 6 days
 
-        // --- 1. Summary (Cards) ---
-        $statusCounts = Appointment::where('seller_id', $sellerId)
+        // --- 1. Summary Stats (Single Query Optimization) ---
+        // We query the widest range (30 days) to get the Total.
+        // We use "SUM(CASE...)" to filter specific counts for the 7-day Breakdown.
+        $stats = Appointment::where('seller_id', $sellerId)
             ->where('scheduled_at', '>=', $thirtyDaysAgo)
-            ->selectRaw('status, count(*) as total')
+            ->selectRaw("
+            status,
+            count(*) as count_30,
+            sum(case when scheduled_at >= ? then 1 else 0 end) as count_7
+        ", [$sevenDaysAgo])
             ->groupBy('status')
-            ->pluck('total', 'status');
+            ->get();
 
-        // Create the breakdown with specific UI keys
-        $breakdown = [
-            'pending'   => $statusCounts['pending'] ?? 0,
-            'completed' => $statusCounts['accepted'] ?? 0,
-            'cancelled' => ($statusCounts['rejected'] ?? 0) + ($statusCounts['cancelled by buyer'] ?? 0),
+        // Initialize Breakdown for 7 Days
+        $breakdown7Days = [
+            'pending'   => 0,
+            'completed' => 0,
+            'cancelled' => 0
         ];
 
-        // Calculate the Total based on the breakdown
-        $totalLast30Days = array_sum($breakdown);
+        $totalLast30Days = 0;
 
-        // --- 2. Daily Chart Data (Total Only) ---
+        foreach ($stats as $row) {
+            $count30 = (int) $row->count_30;
+            $count7  = (int) $row->count_7;
+
+            // Requirement 1: Total Last 30 Days (Sum of all statuses over 30 days)
+            $totalLast30Days += $count30;
+
+            // Requirement 2: Breakdown for Last 7 Days ONLY
+            switch ($row->status) {
+                case 'pending':
+                    $breakdown7Days['pending'] += $count7;
+                    break;
+                case 'accepted':
+                    $breakdown7Days['completed'] += $count7;
+                    break;
+                case 'rejected':
+                case 'cancelled by buyer':
+                    $breakdown7Days['cancelled'] += $count7;
+                    break;
+            }
+        }
+
+        // Calculate Total for 7 Days (useful for UI percentages if needed)
+        $totalLast7Days = array_sum($breakdown7Days);
+
+        // --- 2. Daily Chart Data (Last 7 Days) ---
         $dailyRecords = Appointment::where('seller_id', $sellerId)
             ->where('scheduled_at', '>=', $sevenDaysAgo)
             ->selectRaw('DATE(scheduled_at) as date, count(*) as total')
@@ -137,8 +168,9 @@ class AppointmentService
 
         return [
             'summary' => [
-                'total_last_30_days' => $totalLast30Days, // <--- Added back
-                'breakdown'          => $breakdown
+                'total_last_30_days' => $totalLast30Days, // 30 Day Total
+                'total_last_7_days'  => $totalLast7Days,  // 7 Day Total
+                'breakdown'          => $breakdown7Days   // 7 Day Breakdown
             ],
             'chart_data' => [
                 'last_7_days' => $dailyTrend
