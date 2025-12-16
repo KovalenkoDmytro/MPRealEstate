@@ -19,7 +19,15 @@ interface PropertyPerformanceProps {
 
 export default function PropertyPerformance({ stats }: PropertyPerformanceProps) {
     return (
-        <Box sx={{ mb: 6 }}>
+        <Box
+             sx={{
+                 mb: 6,
+                 p: { xs: 3, md: 4 },
+                 backgroundColor: 'background.paper',
+                 borderRadius: 4,
+                 boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.05)',
+             }}
+        >
             <Box display="flex" alignItems="center" gap={1.5} mb={4}>
                 <Box sx={{ p: 1, bgcolor: '#EEF2FF', borderRadius: 2, color: '#4F46E5', display: 'flex' }}>
                     <TrendingUpRounded fontSize="small" />

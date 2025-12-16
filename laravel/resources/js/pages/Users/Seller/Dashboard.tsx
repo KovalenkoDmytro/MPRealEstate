@@ -34,16 +34,14 @@ export default function Dashboard({
         >
             <Head title="Dashbord"/>
             <div className="container mx-auto p-4">
-                <h1 className="text-2xl font-bold">Seller Dashboard</h1>
-                <h2 className="text-xl mt-4 font-semibold">Pending Offers</h2>
 
-                <AppointmentStats stats={appointments_stats}/>
+                    <AppointmentStats stats={appointments_stats}/>
 
-                <PropertyPerformance stats={listingsPerformance_stats}/>
+                    <PropertyPerformance stats={listingsPerformance_stats}/>
 
-                <DealPerformance stats={deals_stats}/>
+                    <DealPerformance stats={deals_stats}/>
 
-                <OfferPerformance stats={offers_stats}/>
+                    <OfferPerformance stats={offers_stats}/>
 
             </div>
 

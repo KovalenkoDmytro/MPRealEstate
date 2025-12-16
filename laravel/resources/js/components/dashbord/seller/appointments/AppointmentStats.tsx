@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Box, Grid, Typography, ThemeProvider } from '@mui/material'; // Note: Grid2 is the new standard in MUI v6
-import { AccessTime } from '@mui/icons-material';
+import {AccessTime, TodayRounded} from '@mui/icons-material';
 import { appointmentTheme } from './theme';
 import StatCard from './StatCard';
 import DailyActivityChart from './DailyActivityChart';
@@ -37,10 +37,14 @@ export default function AppointmentStats({ stats }: AppointmentStatsProps) {
 
             >
 
-                <Box mb={3}>
-                    <Typography variant="h6" fontWeight={500} color="text.primary">
+                <Box display="flex" alignItems="center" gap={1.5} mb={4}>
+                    <Box sx={{ p: 1, bgcolor: '#EEF2FF', borderRadius: 2, color: '#4F46E5', display: 'flex' }}>
+                        <TodayRounded fontSize="small" />
+                    </Box>
+                    <Typography variant="h5" fontWeight={700} color="text.primary">
                         Appointments
                     </Typography>
+
                     {dateRange && (
                         <Box display="flex" alignItems="center" gap={0.5} mt={0.5}>
                             <AccessTime sx={{ fontSize: '0.875rem', color: 'text.secondary' }} />
