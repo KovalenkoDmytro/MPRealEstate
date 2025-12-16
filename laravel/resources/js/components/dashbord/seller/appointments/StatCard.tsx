@@ -1,32 +1,30 @@
 import React from 'react';
-import { Paper, Box, Typography, LinearProgress, alpha } from '@mui/material';
-import { AccessTime, CheckCircleOutline, HighlightOff, Timeline } from '@mui/icons-material';
+import { Paper, Box, Typography, alpha } from '@mui/material';
+import { AccessTimeRounded, CheckCircleOutlineRounded, HighlightOffRounded, TimelineRounded } from '@mui/icons-material';
 
 interface StatCardProps {
     title: string;
     count: number;
     type: 'pending' | 'completed' | 'cancelled' | 'total';
-    progressValue: number;
 }
 
-export default function StatCard({ title, count, type, progressValue }: StatCardProps) {
-    // Your existing config is great, keeping it as is.
+export default function StatCard({ title, count, type }: StatCardProps) {
     const config = {
         pending: {
-            color: '#059669', bgColor: '#ECFDF5', barColor: '#10B981',
-            icon: <AccessTime fontSize="small" />
+            color: '#F97316', // Orange
+            icon: <AccessTimeRounded fontSize="large" />
         },
         completed: {
-            color: '#2563EB', bgColor: '#EFF6FF', barColor: '#3B82F6',
-            icon: <CheckCircleOutline fontSize="small" />
+            color: '#10B981', // Green
+            icon: <CheckCircleOutlineRounded fontSize="large" />
         },
         cancelled: {
-            color: '#DC2626', bgColor: '#FEF2F2', barColor: '#EF4444',
-            icon: <HighlightOff fontSize="small" />
+            color: '#EF4444', // Red
+            icon: <HighlightOffRounded fontSize="large" />
         },
         total: {
-            color: '#4F46E5', bgColor: '#EEF2FF', barColor: '#6366F1',
-            icon: <Timeline fontSize="small" />
+            color: '#8B5CF6', // Purple
+            icon: <TimelineRounded fontSize="large" />
         }
     };
 
@@ -34,44 +32,52 @@ export default function StatCard({ title, count, type, progressValue }: StatCard
 
     return (
         <Paper
-            elevation={0}
+            elevation={2}
             sx={{
                 p: 3,
                 borderRadius: 4,
-                border: '1px solid',
-                borderColor: style.color,
                 height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transition: 'box-shadow 0.3s ease',
-                '&:hover': { boxShadow: `0 8px 24px ${alpha(style.color, 0.15)}` }
+                bgcolor: '#fff',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                // The colored top border effect
+                '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '6px',
+                    bgcolor: style.color,
+                },
             }}
         >
-            <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
-                <Typography variant="subtitle2" color="text.secondary" fontWeight={600}>
-                    {title}
-                </Typography>
-                <Box sx={{ bgcolor: style.bgColor, color: style.color, p: 1, borderRadius: '50%', display: 'flex' }}>
+            <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+
+                <Box>
+                    <Typography variant="h4" fontWeight={800} color="text.primary" sx={{ mb: 0.5 }}>
+                        {new Intl.NumberFormat('en-US').format(count)}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" fontWeight={700} sx={{ textTransform: 'uppercase', letterSpacing: 0.5, fontSize: '0.75rem' }}>
+                        {title}
+                    </Typography>
+                </Box>
+
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: 56,
+                        height: 56,
+                        borderRadius: 4,
+                        bgcolor: alpha(style.color, 0.15),
+                        color: style.color,
+                    }}
+                >
                     {style.icon}
                 </Box>
-            </Box>
-
-            <Typography variant="h4" color="text.primary" fontWeight={700} mb={3}>
-                {count}
-            </Typography>
-
-            <Box sx={{ width: '100%' }}>
-                <LinearProgress
-                    variant="determinate"
-                    value={progressValue}
-                    sx={{
-                        height: 8,
-                        borderRadius: 5,
-                        bgcolor: alpha(style.barColor, 0.15),
-                        '& .MuiLinearProgress-bar': { bgcolor: style.barColor, borderRadius: 5 }
-                    }}
-                />
             </Box>
         </Paper>
     );

@@ -13,7 +13,6 @@ interface AppointmentStatsProps {
 export default function AppointmentStats({ stats }: AppointmentStatsProps) {
     const { pending, completed, cancelled } = stats.summary.breakdown;
     const totalCountLast30Days = stats.summary.total_last_30_days;
-    const totalCountLast7Days = stats.summary.total_last_30_days;
     const chartData = stats.chart_data.last_7_days || [];
 
     // Formats dates. Safe to keep inside useMemo.
@@ -23,11 +22,6 @@ export default function AppointmentStats({ stats }: AppointmentStatsProps) {
         const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
         return `${fmt.format(new Date(chartData[0].date))} - ${fmt.format(new Date(chartData[chartData.length - 1].date))}`;
     }, [chartData]);
-
-    const getPercentage = (part: number) => {
-        if (!totalCountLast7Days || totalCountLast7Days === 0) return 0;
-        return Math.round((part / totalCountLast7Days) * 100);
-    };
 
 
     return (
@@ -64,7 +58,6 @@ export default function AppointmentStats({ stats }: AppointmentStatsProps) {
                             title="Pending"
                             count={pending || 0}
                             type="pending"
-                            progressValue={getPercentage(pending || 0)}
                         />
                     </Grid>
 
@@ -73,7 +66,6 @@ export default function AppointmentStats({ stats }: AppointmentStatsProps) {
                             title="Completed"
                             count={completed || 0}
                             type="completed"
-                            progressValue={getPercentage(completed || 0)}
                         />
                     </Grid>
 
@@ -82,7 +74,6 @@ export default function AppointmentStats({ stats }: AppointmentStatsProps) {
                             title="Cancelled"
                             count={cancelled || 0}
                             type="cancelled"
-                            progressValue={getPercentage(cancelled || 0)}
                         />
                     </Grid>
 
@@ -91,7 +82,6 @@ export default function AppointmentStats({ stats }: AppointmentStatsProps) {
                             title="Total (30 Days)"
                             count={totalCountLast30Days || 0}
                             type="total"
-                            progressValue={100}
                         />
                     </Grid>
                 </Grid>

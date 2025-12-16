@@ -1,4 +1,4 @@
-import {Head, Link} from "@inertiajs/react";
+import {Head} from "@inertiajs/react";
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import {SellerStats} from "@/types/sellerAppointmentsStat";
 import AppointmentStats from "@/components/dashbord/seller/appointments/AppointmentStats";
