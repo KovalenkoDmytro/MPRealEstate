@@ -29,7 +29,6 @@ export default function AppointmentStats({ stats }: AppointmentStatsProps) {
         return Math.round((part / totalCountLast7Days) * 100);
     };
 
-    console.log(stats)
 
     return (
         <ThemeProvider theme={appointmentTheme}>
