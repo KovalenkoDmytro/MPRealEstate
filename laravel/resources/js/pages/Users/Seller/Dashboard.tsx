@@ -17,7 +17,12 @@ interface DashboardProps {
     deals_stats: DealStats;
 }
 
-export default function Dashboard({ offers_stats, appointments_stats, listingsPerformance_stats ,deals_stats}: DashboardProps) {
+export default function Dashboard({
+                                      offers_stats,
+                                      appointments_stats,
+                                      listingsPerformance_stats,
+                                      deals_stats
+                                  }: DashboardProps) {
 
     return (
         <AuthenticatedLayout
@@ -27,23 +32,20 @@ export default function Dashboard({ offers_stats, appointments_stats, listingsPe
                 </h2>
             }
         >
-            <Head title="Dashbord" />
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold">Seller Dashboard</h1>
-            <h2 className="text-xl mt-4 font-semibold">Pending Offers</h2>
+            <Head title="Dashbord"/>
+            <div className="container mx-auto p-4">
+                <h1 className="text-2xl font-bold">Seller Dashboard</h1>
+                <h2 className="text-xl mt-4 font-semibold">Pending Offers</h2>
 
-            <AppointmentStats stats={appointments_stats}/>
+                <AppointmentStats stats={appointments_stats}/>
 
-            <PropertyPerformance stats={listingsPerformance_stats} />
+                <PropertyPerformance stats={listingsPerformance_stats}/>
 
-            <DealPerformance stats={deals_stats}/>
+                <DealPerformance stats={deals_stats}/>
 
-            <OfferPerformance stats={offers_stats} />
+                <OfferPerformance stats={offers_stats}/>
 
-            <div className="mt-6">
-                <Link href={route('listings.index')} className="text-blue-500">View My Listings</Link>
             </div>
-        </div>
 
         </AuthenticatedLayout>
     );
