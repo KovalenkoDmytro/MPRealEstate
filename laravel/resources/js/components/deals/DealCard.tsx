@@ -1,9 +1,23 @@
 import React from "react";
 import { PropertyDetail } from "@/types";
 import { Link } from "@inertiajs/react";
-
-// MUI imports
-import { Card, CardContent, Typography, Box } from "@mui/material";
+import {
+    Paper,
+    Typography,
+    Box,
+    Stack,
+    Button,
+    alpha,
+    Chip
+} from "@mui/material";
+import {
+    MonetizationOnRounded,
+    HomeRounded,
+    EventNoteRounded,
+    ArrowForwardRounded,
+    HandshakeRounded,
+    ErrorOutlineRounded
+} from '@mui/icons-material';
 
 interface DealCardProps {
     deal: PropertyDetail;
@@ -11,66 +25,136 @@ interface DealCardProps {
 
 export const DealCard: React.FC<DealCardProps> = ({ deal }) => {
 
-    const formattedDate = new Date(deal.created_at).toLocaleDateString(undefined, {
+    // Format date specifically as shown in the design (e.g., "Nov 28, 2025")
+    const formattedDate = new Date(deal.created_at).toLocaleDateString('en-US', {
         year: "numeric",
         month: "short",
         day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
     });
+
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'CAD',
+            minimumFractionDigits: 2
+        }).format(amount);
+    }
 
 
     return (
-        <Card
-            variant="outlined"
+        <Paper
+            elevation={2}
             sx={{
-                transition: "box-shadow 0.2s",
-                "&:hover": { boxShadow: 3 },
-                borderRadius: 2,
+                p: 3,
+                borderRadius: 4,
+                height: '100%',
+                bgcolor: '#fff',
+                transition: 'transform 0.2s, box-shadow 0.2s',
+                display: 'flex',
+                flexDirection: 'column'
             }}
         >
-            <CardContent>
-                {/* Broken Deal Status */}
+            {/* Header: Broken Status & Title */}
+            <Stack spacing={1} mb={3}>
                 {deal.is_broken && (
-                    <Typography color="error" fontWeight="bold" variant="subtitle1">
-                        ❌ Deal has been broken
-                    </Typography>
+                    <Chip
+                        icon={<ErrorOutlineRounded />}
+                        label="Deal Broken"
+                        color="error"
+                        variant="outlined"
+                        size="small"
+                        sx={{ alignSelf: 'flex-start', fontWeight: 600 }}
+                    />
                 )}
+                <Stack direction="row" alignItems="center" spacing={1}>
+                    <HandshakeRounded sx={{ color: '#D97706' }} />
+                    <Typography variant="h6" fontWeight={800} color="text.primary">
+                        {deal.name}
+                    </Typography>
+                </Stack>
+            </Stack>
 
-                {/* Deal Title */}
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {deal.name}
+
+            <Box
+                sx={{
+                    bgcolor: alpha('#3B82F6', 0.12), // Light blue background
+                    color: '#3B82F6', // Blue text color
+                    p: 2,
+                    borderRadius: 3,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 3
+                }}
+            >
+                <Typography variant="h6" fontWeight={800}>
+                    {formatCurrency(deal.amount)}
                 </Typography>
+                <MonetizationOnRounded fontSize="small" />
+            </Box>
 
-                {/* Deal Amount */}
-                <Typography variant="body1">
-                    💰 <strong>Amount:</strong> ${deal.amount.toLocaleString()}
-                </Typography>
+            <Stack spacing={2} sx={{ mb: 4, flexGrow: 1 }}>
+                <Paper
+                    variant="outlined"
+                    sx={{
+                        p: 1.5,
+                        borderRadius: 3,
+                        display: 'flex',
+                        alignItems: 'center',
+                        borderColor: 'grey.200',
+                        bgcolor: 'grey.50'
+                    }}
+                >
+                    <Box sx={{ bgcolor: '#E2E8F0', p: 1, borderRadius: 2, mr: 2, color: '#64748B', display: 'flex' }}>
+                        <HomeRounded />
+                    </Box>
+                    <Typography variant="body2" fontWeight={600} color="text.secondary">
+                        <span style={{ fontWeight: 400 }}>Listing: </span>
+                        {deal.real_estate_listing.title ?? "N/A"}
+                    </Typography>
+                </Paper>
 
-                {/* Listing Title */}
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                    🏡 <strong>Listing:</strong> {deal.real_estate_listing.title ?? "N/A"}
-                </Typography>
+                <Paper
+                    variant="outlined"
+                    sx={{
+                        p: 1.5,
+                        borderRadius: 3,
+                        display: 'flex',
+                        alignItems: 'center',
+                        borderColor: 'grey.200',
+                        bgcolor: '#FFF7ED'
+                    }}
+                >
+                    <Box sx={{ bgcolor: '#FFEDD5', p: 1, borderRadius: 2, mr: 2, color: '#F97316', display: 'flex' }}>
+                        <EventNoteRounded />
+                    </Box>
+                    <Typography variant="body2" fontWeight={600} color="text.secondary">
+                        <span style={{ fontWeight: 400 }}>Created: </span>
+                        {formattedDate}
+                    </Typography>
+                </Paper>
+            </Stack>
 
-                {/* Deal Date */}
-                <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
-                    📅 Created: {formattedDate}
-                </Typography>
-
-                {/* View Deal Link */}
-                <Box mt={2}>
-                    <Link
-                        href={route("deals.show", deal.id)}
-                        style={{
-                            color: "#1976d2",
-                            textDecoration: "none",
-                            fontWeight: 500,
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Link href={route("deals.show", deal.id)} style={{ textDecoration: 'none' }}>
+                    <Button
+                        variant="contained"
+                        endIcon={<ArrowForwardRounded />}
+                        sx={{
+                            borderRadius: 5,
+                            textTransform: 'none',
+                            fontWeight: 700,
+                            bgcolor: '#3B82F6',
+                            px: 3,
+                            '&:hover': {
+                                bgcolor: '#2563EB'
+                            }
                         }}
                     >
-                        View Deal →
-                    </Link>
-                </Box>
-            </CardContent>
-        </Card>
+                        View Deal
+                    </Button>
+                </Link>
+            </Box>
+        </Paper>
     );
 };

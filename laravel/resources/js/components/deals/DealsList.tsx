@@ -11,7 +11,7 @@ export const DealsList = ({ deals } : DealsListProps) => {
     }
 
     return (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-3 gap-6">
             {deals.map((deal) => (
                 <DealCard key={deal.id} deal={deal} />
             ))}
