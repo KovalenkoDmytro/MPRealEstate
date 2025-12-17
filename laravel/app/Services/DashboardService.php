@@ -11,20 +11,20 @@ use Inertia\Response;
 class DashboardService
 {
     protected OfferService $offerService;
-
     protected LawyerService $lawyerService;
-
     protected AppointmentService $appointmentService;
-
     protected RealEstateListingService $listingService;
 
     protected DealService $dealService;
+
+    protected FavoriteListingService $favoriteListingService;
 
     public function __construct(OfferService $offerService,
         LawyerService $lawyerService,
         AppointmentService $appointmentService,
         RealEstateListingService $listingService,
-        DealService $dealService
+        DealService $dealService,
+        FavoriteListingService $favoriteListingService
     )
     {
         $this->offerService = $offerService;
@@ -32,6 +32,7 @@ class DashboardService
         $this->appointmentService = $appointmentService;
         $this->listingService = $listingService;
         $this->dealService = $dealService;
+        $this->favoriteListingService = $favoriteListingService;
     }
 
     /**
@@ -44,7 +45,8 @@ class DashboardService
             $user->hasRole('buyer') => Inertia::render('Users/Buyer/Dashboard', [
 //                'offers' => $this->offerService->getBuyerOffers($user->id),
                     'offers_stats' => $this->offerService->getUserOfferStats($user),
-                    'appointments_stats' => $this->appointmentService->getBayerStatistics($user)
+                    'appointments_stats' => $this->appointmentService->getBayerStatistics($user),
+                    'favorite_listings'=>  $this->favoriteListingService->getFavorites($user),
             ]),
             $user->hasRole('seller') => Inertia::render('Users/Seller/Dashboard', [
                 'offers_stats' => $this->offerService->getUserOfferStats($user),
