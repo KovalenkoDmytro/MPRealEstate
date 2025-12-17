@@ -10,11 +10,11 @@ use App\Models\User;
 use App\Notifications\OfferConfirmation;
 use App\Notifications\OfferStatusUpdated;
 use App\Notifications\OfferSubmitted;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Helpers\Responses\ErrorResponse;
+use Illuminate\Support\Collection;
 
 class OfferService
 {
@@ -66,23 +66,30 @@ class OfferService
         );
     }
 
-    public function getAllOffersForSeller(int $sellerId): Collection|array {
-        return Offer::with(['buyer:id,name,email', 'listing:id,title'])
-            ->whereHas('listing', fn($q) => $q->where('seller_id', $sellerId))
-            ->latest()
-            ->get();
+
+    public function getAllUserOffers(User $user): Collection {
+
+        $userId = $user->id;
+        $role = $user->getRoleNames()->first();
+        $query = Offer::query()->latest();
+
+        if ($role === 'seller') {
+
+            $query->whereHas('listing', fn($q) => $q->where('seller_id', $userId))
+                ->with(['buyer:id,name,email', 'listing:id,title']);
+
+        } elseif ($role === 'buyer') {
+            $query->where('buyer_id', $userId)
+                ->with(['listing:id,title,price,seller_id', 'listing.seller:id,name']);
+
+        } else {
+            return collect();
+        }
+
+        return $query->get();
     }
 
-    public function getBuyerOffers(int $buyerId): Collection|array {
-        return Offer::with(['listing:id,title,price,seller_id', 'listing.seller:id,name'])
-            ->where('buyer_id', $buyerId)
-            ->latest()
-            ->get();
-    }
 
-    /**
-     * Get aggregated deals statistics
-     */
     /**
      * Get aggregated Offer statistics (Efficient Query Builder Approach).
      */

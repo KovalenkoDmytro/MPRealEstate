@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SubmitOfferRequest;
 use App\Http\Requests\UpdateOfferStatusRequest;
 use App\Models\Offer;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use App\Services\OfferService;
 use Illuminate\Http\JsonResponse;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class OfferController extends Controller
 {
@@ -16,6 +19,27 @@ class OfferController extends Controller
     public function __construct(OfferService $offerService)
     {
         $this->offerService = $offerService;
+    }
+
+
+    public function index(): Response
+    {
+
+        $user = auth()->user();
+        $offers = $this->offerService->getAllUserOffers($user);
+
+        $role = $user->getRoleNames()->first();
+
+        $viewPath = match ($role) {
+            'seller' => 'Users/Seller/Offers/Index',
+            'buyer'  => 'Users/Buyer/Offers/Index',
+            default => throw new \Exception('Unexpected match value'),
+        };
+
+        return Inertia::render($viewPath, [
+            'offers' => $offers,
+        ]);
+
     }
 
     public function store(SubmitOfferRequest $request, $listing): JsonResponse
@@ -28,11 +52,4 @@ class OfferController extends Controller
         return $this->offerService->updateStatus($request, $offer);
     }
 
-    public function showAllOffers(int $sellerId): Collection|array {
-        return $this->offerService->getAllOffersForSeller($sellerId);
-    }
-
-    public function showBuyerOffers(int $buyerId): Collection|array {
-        return $this->offerService->getBuyerOffers($buyerId);
-    }
 }

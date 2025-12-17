@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use Inertia\Inertia;
 use App\Http\Controllers\{NotificationController,
+    OfferController,
     ProfileController,
     DashboardController,
     DealFileController,
@@ -63,6 +64,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Buyer schedules
         Route::post('/appointments/create', [AppointmentController::class, 'store'])->name('appointments.store');
 
+        //my all offers
+        Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');
     });
 
     Route::middleware(['auth', 'verified'])->group(function () {
