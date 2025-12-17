@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Appointment;
 use App\Models\RealEstateListing;
+use App\Models\User;
 use App\Notifications\Appointments\AppointmentAcceptedNotification;
 use App\Notifications\Appointments\AppointmentCancelledByBuyerNotification;
 use App\Notifications\Appointments\AppointmentRejectedNotification;
@@ -120,7 +121,7 @@ class AppointmentService
         $breakdown7Days = [
             'pending'   => 0,
             'completed' => 0,
-            'cancelled' => 0
+            'cancelled' => 0,
         ];
 
         $totalLast30Days = 0;
@@ -170,11 +171,33 @@ class AppointmentService
             'summary' => [
                 'total_last_30_days' => $totalLast30Days, // 30 Day Total
                 'total_last_7_days'  => $totalLast7Days,  // 7 Day Total
-                'breakdown'          => $breakdown7Days   // 7 Day Breakdown
+                'breakdown'          => $breakdown7Days,   // 7 Day Breakdown
             ],
             'chart_data' => [
-                'last_7_days' => $dailyTrend
-            ]
+                'last_7_days' => $dailyTrend,
+            ],
+        ];
+    }
+
+    public function getBayerStatistics(User $user): array {
+
+        $now = now();
+
+        $upcomingQuery = Appointment::where('buyer_id', $user->id)
+            ->where('scheduled_at', '>', $now)
+            ->whereIn('status', ['pending', 'accepted']);
+
+        $totalCount = $upcomingQuery->count();
+
+        $nearestAppointment = $upcomingQuery->orderBy('scheduled_at', 'asc')->first();
+
+        $nextAppointmentDate = $nearestAppointment
+            ? $nearestAppointment->scheduled_at->toIso8601String()
+            : null;
+
+        return [
+            'totalCount'          => $totalCount,
+            'nextAppointmentDate' => $nextAppointmentDate,
         ];
     }
 }

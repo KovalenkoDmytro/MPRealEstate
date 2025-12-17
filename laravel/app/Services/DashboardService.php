@@ -42,7 +42,9 @@ class DashboardService
 
         return match (true) {
             $user->hasRole('buyer') => Inertia::render('Users/Buyer/Dashboard', [
-                'offers' => $this->offerService->getBuyerOffers($user->id),
+//                'offers' => $this->offerService->getBuyerOffers($user->id),
+                    'offers_stats' => $this->offerService->getUserOfferStats($user),
+                    'appointments_stats' => $this->appointmentService->getBayerStatistics($user)
             ]),
             $user->hasRole('seller') => Inertia::render('Users/Seller/Dashboard', [
                 'offers_stats' => $this->offerService->getUserOfferStats($user),
