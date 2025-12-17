@@ -9,7 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class FavoriteListingService {
 
-    public function getFavorites(User $user, int $perPage = 12): LengthAwarePaginator {
+    public function getFavorites(User $user,  int $perPage = 12): LengthAwarePaginator {
         $buyer = Buyer::findOrFail($user->id);
 
         return $buyer->favoriteListings()

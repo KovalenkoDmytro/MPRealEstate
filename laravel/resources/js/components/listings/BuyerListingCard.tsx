@@ -129,7 +129,9 @@ export function BuyerListingCard({ listing, isFavorite }: ListingCardProps) {
                         </Button>
                     </form>
 
-                    <Link href={`/buyer/listings/${listing.id}`} style={{ textDecoration: "none" }}>
+                    <Link
+                        href={route("buyer.listings.show", listing.id)}
+                        style={{ textDecoration: "none" }}>
                         <Button variant="contained" size="small" color="primary">
                             🔍 View Details
                         </Button>

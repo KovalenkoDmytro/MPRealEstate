@@ -6,22 +6,19 @@ import BuyerOffersCard from "@/components/dashbord/buyer/offers/BuyerOffersCard"
 import {AppointmentsStats} from "@/components/dashbord/seller/appointments/type";
 import BuyerAppointmentsCard from "@/components/dashbord/buyer/appointments/BuyerAppointmentsCard";
 import SavedPropertyCard from "@/components/dashbord/buyer/favorites/SavedPropertyCard";
-import type {RealEstateListing} from "@/types";
+import SavedPropertiesPreviewSection
+    from "@/components/dashbord/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertiesPreviewSection";
+import {FavoriteListings} from "@/types/favoriteListings";
 
 type PageProps = {
     offers_stats: OfferStats;
     appointments_stats: AppointmentsStats;
-    favorite_listings: {
-        data: RealEstateListing[];
-        links: { url: string | null; label: string; active: boolean }[];
-        current_page: number;
-        last_page: number;
-        total: number
-    };
+    favorite_listings: FavoriteListings;
 };
 
 export default function Dashboard({ offers_stats, appointments_stats, favorite_listings }: PageProps) {
 
+    console.log(favorite_listings)
 
     return (
         <AuthenticatedLayout
@@ -39,6 +36,7 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
 
             <SavedPropertyCard favoritesTotal={favorite_listings.total}/>
 
+            <SavedPropertiesPreviewSection favoriteListing={favorite_listings}/>
 
         </AuthenticatedLayout>
     );
