@@ -9,14 +9,17 @@ import SavedPropertyCard from "@/components/dashbord/buyer/favorites/SavedProper
 import SavedPropertiesPreviewSection
     from "@/components/dashbord/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertiesPreviewSection";
 import {FavoriteListings} from "@/types/favoriteListings";
+import {Offer} from "@/types";
+import RecentOffersList from "@/components/dashbord/buyer/offers/RecentOffersList";
 
 type PageProps = {
+    offers: Offer[];
     offers_stats: OfferStats;
     appointments_stats: AppointmentsStats;
     favorite_listings: FavoriteListings;
 };
 
-export default function Dashboard({ offers_stats, appointments_stats, favorite_listings }: PageProps) {
+export default function Dashboard({ offers_stats, appointments_stats, favorite_listings, offers }: PageProps) {
 
     console.log(favorite_listings)
 
@@ -37,6 +40,8 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
             <SavedPropertyCard favoritesTotal={favorite_listings.total}/>
 
             <SavedPropertiesPreviewSection favoriteListing={favorite_listings}/>
+
+            <RecentOffersList offers={offers} />
 
         </AuthenticatedLayout>
     );

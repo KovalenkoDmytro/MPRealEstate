@@ -44,6 +44,7 @@ class DashboardService {
     public function getDashboard(User $user): Response {
         return match (true) {
             $user->hasRole('buyer') => Inertia::render('Users/Buyer/Dashboard', [
+                'offers' => $this->offerService->getBuyerOffers($user->id),
                 'offers_stats'       => $this->offerService->getUserOfferStats($user),
                 'appointments_stats' => $this->appointmentService->getBayerStatistics($user),
                 'favorite_listings'  => $this->favoriteListingService->getFavorites($user),
