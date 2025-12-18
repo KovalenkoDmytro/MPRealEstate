@@ -9,7 +9,7 @@ import SeeMoreGridCard from "@/components/dashbord/buyer/favorites/SavedProperti
 export default function SavedPropertiesPreviewSection({favoriteListing} : { favoriteListing: FavoriteListings }) {
 
     return (
-        <Paper elevation={0} sx={{ p: 3, borderRadius: 4, bgcolor: '#f8fafc' /* Light gray bg like image_25 */ }}>
+        <Paper elevation={0} sx={{ p: 3, borderRadius: 4, bgcolor: '#fff',  boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)',}}>
             <Typography variant="h6" fontWeight={700} gutterBottom sx={{ mb: 3 }}>
                 Saved Properties
             </Typography>

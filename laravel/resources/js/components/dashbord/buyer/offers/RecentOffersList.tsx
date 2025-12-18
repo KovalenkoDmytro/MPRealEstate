@@ -48,10 +48,11 @@ export default function RecentOffersList({ offers }: RecentOffersListProps) {
             elevation={0}
             sx={{
                 borderRadius: 4,
-                bgcolor: '#F8FAFC',
+                bgcolor: '#ffffff',
                 height: '100%',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)',
             }}
         >
             <Box sx={{ p: 3, pb: 1 }}>
