@@ -2,18 +2,17 @@ import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { Box, Typography, Grid } from "@mui/material";
 
-import { OfferStats } from "@/components/dashbord/seller/offers/type";
-import { AppointmentsStats } from "@/components/dashbord/seller/appointments/type";
+import { OfferStats, AppointmentsStats } from "@/types/models";
 import { FavoriteListings } from "@/types/favoriteListings";
 import { Offer } from "@/types";
 
 
-import BuyerOffersCard from "@/components/dashbord/buyer/offers/BuyerOffersCard";
-import BuyerAppointmentsCard from "@/components/dashbord/buyer/appointments/BuyerAppointmentsCard";
-import SavedPropertyCard from "@/components/dashbord/buyer/favorites/SavedPropertyCard";
+import BuyerOffersCard from "@/components/dashboard/buyer/offers/BuyerOffersCard";
+import BuyerAppointmentsCard from "@/components/dashboard/buyer/appointments/BuyerAppointmentsCard";
+import SavedPropertyCard from "@/components/dashboard/buyer/favorites/SavedPropertyCard";
 import SavedPropertiesPreviewSection
-    from "@/components/dashbord/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertiesPreviewSection";
-import RecentOffersList from "@/components/dashbord/buyer/offers/RecentOffersList";
+    from "@/components/dashboard/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertiesPreviewSection";
+import RecentOffersList from "@/components/dashboard/buyer/offers/RecentOffersList";
 
 type PageProps = {
     offers: Offer[];
@@ -43,11 +42,11 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <SavedPropertyCard favoritesTotal={favorite_listings.total}/>
+                        <SavedPropertyCard favoritesTotal={favorite_listings.total} />
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <BuyerAppointmentsCard data={appointments_stats}/>
+                        <BuyerAppointmentsCard data={appointments_stats} />
                     </Grid>
                 </Grid>
 
@@ -59,7 +58,7 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
 
                     <Grid size={{ xs: 12, md: 4 }}>
                         <Box height="100%">
-                            <SavedPropertiesPreviewSection favoriteListing={favorite_listings}/>
+                            <SavedPropertiesPreviewSection favoriteListing={favorite_listings} />
                         </Box>
                     </Grid>
                 </Grid>

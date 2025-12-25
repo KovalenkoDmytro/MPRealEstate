@@ -1,7 +1,7 @@
 import React from 'react';
 import { Paper, Box, Typography, Stack, alpha } from '@mui/material';
 import { BusinessCenterRounded } from '@mui/icons-material';
-import {OfferStats} from "@/components/dashbord/seller/offers/type";
+import { OfferStats } from "@/types/models";
 
 interface BuyerOffersCardProps {
     data: OfferStats;

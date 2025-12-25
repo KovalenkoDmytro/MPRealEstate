@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
         ->name('verification.send');
 
     // As you said, logout must be protected.
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     // Optional but recommended: Password confirmation for logged-in users.
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])->name('password.confirm');

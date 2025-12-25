@@ -1,23 +1,61 @@
 import { InertiaLinkProps, Link } from '@inertiajs/react';
+import { ListItemButton, ListItemText, ListItemIcon, Box, styled } from '@mui/material';
+import React, { ReactNode } from 'react';
+
+// Specialized Link for our Sidebar
+// We expect children to contain an SVG and a span usually, 
+// but identifying them automatically is hard without context.
+// We'll style it as a flexible button.
+
+interface NavLinkProps extends InertiaLinkProps {
+    active?: boolean;
+    children: ReactNode;
+}
 
 export default function NavLink({
     active = false,
     className = '',
     children,
     ...props
-}: InertiaLinkProps & { active: boolean }) {
+}: NavLinkProps) {
+    // Destructure action to avoid conflict with MUI ButtonBase action
+    const { action, ...inertiaProps } = props as any;
+
     return (
-        <Link
-            {...props}
-            className={
-                'inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none ' +
-                (active
-                    ? 'border-indigo-400 text-gray-900 focus:border-indigo-700'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 focus:border-gray-300 focus:text-gray-700') +
-                className
-            }
+        <ListItemButton
+            component={Link as any}
+            href={props.href} // Inertia Link uses href
+            {...inertiaProps}
+            selected={active}
+            sx={{
+                my: 0.5,
+                mx: 1,
+                borderRadius: 2,
+                color: active ? 'primary.main' : 'text.secondary',
+                bgcolor: active ? (theme) => theme.palette.action.selected : 'transparent',
+                '&:hover': {
+                    bgcolor: (theme) => theme.palette.action.hover,
+                    color: active ? 'primary.dark' : 'text.primary',
+                },
+                '& .MuiSvgIcon-root, & svg': {
+                    color: active ? 'primary.main' : 'inherit',
+                    mr: 2, // Spacing for icon
+                    width: 20,
+                    height: 20,
+                },
+            }}
         >
-            {children}
-        </Link>
+            {/* 
+               We render children directly. 
+               The consumer (Layout) puts <svg> and <span>. 
+               We added usage of `& svg` in sx to handle the icon.
+               We wrap children in a Box to ensure alignment if needed, 
+               but ListItemButton is flex-row by default? 
+               ListItemButton is a ButtonBase. It behaves like a div with flex usually.
+            */}
+            <Box display="flex" alignItems="center" width="100%">
+                {children}
+            </Box>
+        </ListItemButton>
     );
 }

@@ -1,15 +1,15 @@
 import React from 'react';
 import { Grid, Typography, Paper } from '@mui/material';
-import {FavoriteListings} from "@/types/favoriteListings";
+import { FavoriteListings } from "@/types/favoriteListings";
 import SavedPropertyMiniCard
-    from "@/components/dashbord/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertyMiniCard";
-import SeeMoreGridCard from "@/components/dashbord/buyer/favorites/SavedPropertiesPreviewSection/SeeMoreGridCard";
+    from "@/components/dashboard/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertyMiniCard";
+import SeeMoreGridCard from "@/components/dashboard/buyer/favorites/SavedPropertiesPreviewSection/SeeMoreGridCard";
 
 
-export default function SavedPropertiesPreviewSection({favoriteListing} : { favoriteListing: FavoriteListings }) {
+export default function SavedPropertiesPreviewSection({ favoriteListing }: { favoriteListing: FavoriteListings }) {
 
     return (
-        <Paper elevation={0} sx={{ p: 3, borderRadius: 4, bgcolor: '#fff',  boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)',}}>
+        <Paper elevation={0} sx={{ p: 3, borderRadius: 4, bgcolor: '#fff', boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)', }}>
             <Typography variant="h6" fontWeight={700} gutterBottom sx={{ mb: 3 }}>
                 Saved Properties
             </Typography>

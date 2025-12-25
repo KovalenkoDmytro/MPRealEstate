@@ -1,120 +1,191 @@
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useMemo, useState } from "react"
 import { usePage, router } from "@inertiajs/react"
-import {PageProps} from "@/types";
-
+import { PageProps } from "@/types";
+import {
+    IconButton,
+    Badge,
+    Menu,
+    MenuItem,
+    Typography,
+    Box,
+    Button,
+    List,
+    ListItem,
+    ListItemText,
+    Divider,
+    Link as MuiLink
+} from "@mui/material";
+import {
+    Notifications as NotificationsIcon,
+    Circle as CircleIcon
+} from "@mui/icons-material";
 
 const NotificationBell: React.FC = () => {
     const { props } = usePage<PageProps>()
-    const [open, setOpen] = useState(false)
-    const dropdownRef = useRef<HTMLDivElement | null>(null)
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-
-    const notif = useMemo(() => {
+    // Initial state from props
+    // We keep local state for optimistic updates
+    const initialNotif = useMemo(() => {
         return props.notifications ?? { unread_count: 0, items: [] }
     }, [props.notifications])
 
-    const items = notif.items || []
-    const unreadCount = notif.unread_count || 0
+    // In a real optimistic scenario, we'd need a robust way to merge props + local state.
+    // For now, simpler: we blindly trust props but avoid full reloads (preserveScroll).
+    // The issue with router.reload is it might be slow.
+    // Ideally we update the UI *then* call the server.
+    // Since props are immutable, we can't "edit" initialNotif.
+    // We'll stick to router calls for now but with preserveState/preserveScroll.
+
+    const items = initialNotif.items || []
+    const unreadCount = initialNotif.unread_count || 0
+
+    const open = Boolean(anchorEl);
+
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     const refresh = () => {
         router.reload({ only: ["notifications"], preserveUrl: true })
     }
 
     const markOne = (id: string) => {
-        router.post(route("notifications.readOne", id), {}, { onSuccess: refresh })
+        // Optimistic update could go here if we had local state for items
+        router.post(route("notifications.readOne", id), {}, {
+            preserveUrl: true,
+            onSuccess: refresh
+        })
     }
 
     const markAll = () => {
-        router.post(route("notifications.readAll"), {}, { onSuccess: refresh })
+        router.post(route("notifications.readAll"), {}, {
+            preserveUrl: true,
+            onSuccess: refresh
+        })
     }
 
-    // Close on outside click
-    useEffect(() => {
-        const onClickOutside = (e: MouseEvent) => {
-            if (open && dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-                setOpen(false)
-            }
-        }
-        document.addEventListener("click", onClickOutside)
-        return () => document.removeEventListener("click", onClickOutside)
-    }, [open])
-
     return (
-        <div className="relative" ref={dropdownRef}>
-            <button onClick={() => setOpen(!open)} className="relative inline-flex items-center">
-                {/* Bell icon */}
-                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M14.857 17.082A23.848 23.848 0 0112 17.25c-2.486
-                        0-4.865-.362-6.857-1.018A2.25 2.25
-                        0 013 14.107V13.5a6.75 6.75 0
-                        0113.5 0v.607a2.25 2.25 0
-                        01-1.643 2.975zM9 20.25h6"
-                    />
-                </svg>
+        <>
+            <IconButton
+                onClick={handleClick}
+                size="large"
+                aria-controls={open ? 'notification-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                color="inherit"
+            >
+                <Badge badgeContent={unreadCount} color="error">
+                    <NotificationsIcon />
+                </Badge>
+            </IconButton>
 
-                {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1.5">
-                        {unreadCount}
-                    </span>
-                )}
-            </button>
+            <Menu
+                anchorEl={anchorEl}
+                id="notification-menu"
+                open={open}
+                onClose={handleClose}
+                PaperProps={{
+                    elevation: 4,
+                    sx: {
+                        width: 400,
+                        maxHeight: 500,
+                        overflow: 'visible',
+                        mt: 1.5,
+                        '&:before': {
+                            content: '""',
+                            display: 'block',
+                            position: 'absolute',
+                            top: 0,
+                            right: 28, // Center-ish above bell
+                            width: 10,
+                            height: 10,
+                            bgcolor: 'background.paper',
+                            transform: 'translateY(-50%) rotate(45deg)',
+                            zIndex: 0,
+                        },
+                    },
+                }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+                <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: 1, borderColor: 'divider' }}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                        Notifications
+                    </Typography>
+                    {unreadCount > 0 && (
+                        <Button size="small" onClick={markAll}>
+                            Mark all read
+                        </Button>
+                    )}
+                </Box>
 
-            {open && (
-                <div className="absolute right-0 mt-2 w-96 bg-white shadow-lg rounded-lg overflow-hidden z-50">
-                    <div className="px-3 py-2 flex items-center justify-between border-b">
-                        <span className="font-semibold">Notifications</span>
-                        {unreadCount > 0 && (
-                            <button onClick={markAll} className="text-sm text-blue-600 hover:underline">
-                                Mark all as read
-                            </button>
-                        )}
-                    </div>
+                <List sx={{ p: 0, maxHeight: 400, overflow: 'auto' }}>
+                    {items.length === 0 && (
+                        <Box p={3} textAlign="center">
+                            <Typography variant="body2" color="text.secondary">
+                                No notifications yet
+                            </Typography>
+                        </Box>
+                    )}
 
-                    <ul className="max-h-96 overflow-y-auto divide-y">
-                        {items.length === 0 && (
-                            <li className="p-4 text-sm text-gray-500">No notifications yet.</li>
-                        )}
-
-                        {items.map((n) => (
-                            <li key={n.id} className={`p-3 ${!n.read_at ? "bg-blue-50" : ""}`}>
-                                <div className="flex justify-between gap-3">
-                                    <div className="min-w-0">
-                                        <div className="font-medium truncate">{n.title}</div>
-                                        <div className="text-sm text-gray-700">{n.body}</div>
-                                        {n.url && (
-                                            <a
-                                                href={n.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-sm text-blue-600 hover:underline"
-                                            >
-                                                Open
-                                            </a>
-                                        )}
-                                        <div className="text-xs text-gray-500 mt-1">
-                                            {new Date(n.created_at).toLocaleString()}
-                                        </div>
-                                    </div>
-
+                    {items.map((n) => (
+                        <React.Fragment key={n.id}>
+                            <ListItem
+                                alignItems="flex-start"
+                                sx={{
+                                    bgcolor: !n.read_at ? 'action.hover' : 'inherit',
+                                    flexDirection: 'column',
+                                    alignItems: 'stretch'
+                                }}
+                            >
+                                <Box display="flex" justifyContent="space-between" width="100%">
+                                    <Box flex={1}>
+                                        <Typography variant="subtitle2" component="div">
+                                            {n.title}
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                                            {n.body}
+                                        </Typography>
+                                    </Box>
                                     {!n.read_at && (
-                                        <button
-                                            onClick={() => markOne(n.id)}
-                                            className="text-xs text-blue-600 hover:underline shrink-0"
-                                        >
-                                            Mark read
-                                        </button>
+                                        <CircleIcon color="primary" sx={{ width: 10, height: 10, mt: 1, ml: 1 }} />
                                     )}
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </div>
+                                </Box>
+
+                                <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
+                                    <Typography variant="caption" color="text.disabled">
+                                        {new Date(n.created_at).toLocaleString()}
+                                    </Typography>
+                                    <Box>
+                                        {n.url && (
+                                            <MuiLink href={n.url} target="_blank" underline="hover" variant="caption" sx={{ mr: 1 }}>
+                                                Open
+                                            </MuiLink>
+                                        )}
+                                        {!n.read_at && (
+                                            <MuiLink
+                                                component="button"
+                                                variant="caption"
+                                                onClick={() => markOne(n.id)}
+                                                underline="hover"
+                                            >
+                                                Mark read
+                                            </MuiLink>
+                                        )}
+                                    </Box>
+                                </Box>
+                            </ListItem>
+                            <Divider component="li" />
+                        </React.Fragment>
+                    ))}
+                </List>
+            </Menu>
+        </>
     )
 }
 

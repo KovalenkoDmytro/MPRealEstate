@@ -2,7 +2,7 @@ import React from 'react';
 import { Paper, Box, Typography, Stack, alpha } from '@mui/material';
 import { EventRounded } from '@mui/icons-material';
 import { format, isValid } from 'date-fns';
-import {AppointmentsStats} from "@/components/dashbord/seller/appointments/type";
+import { AppointmentsStats } from "@/types/models";
 
 interface BuyerAppointmentsCardProps {
     data: AppointmentsStats;
