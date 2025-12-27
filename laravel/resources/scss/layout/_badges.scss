@@ -1,0 +1,42 @@
+@use '../abstracts/variables' as *;
+
+.badge{
+    color: $white-color;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 1.4;
+    padding: 8px 16px;
+
+    &.badge-primary {
+        background-color: $color-maroon;
+    }
+
+    &.badge-notification {
+        background-color: $color-tan;
+    }
+
+    &.badge-accent {
+        background-color: $color-rosewater;
+    }
+
+    &.badge-neutral {
+        background-color: #F3F4F6;
+        color: #364153;
+    }
+
+    &.badge-success {
+        background-color: $success-color;
+        color: #008236;
+    }
+
+    &.badge-error {
+        background-color: $error-color;
+        color: #C10007;
+    }
+
+    &.badge-warning {
+        background-color: $warning-color;
+        color: #A65F00;
+    }
+}

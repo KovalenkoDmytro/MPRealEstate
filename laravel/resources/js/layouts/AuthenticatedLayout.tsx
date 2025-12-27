@@ -6,7 +6,6 @@ import {
     CssBaseline,
     Drawer,
     IconButton,
-    List,
     Toolbar,
     Typography,
     useMediaQuery,
@@ -31,12 +30,6 @@ import {
 import ApplicationLogo from '@/components/ApplicationLogo';
 import NotificationBell from "@/components/NotificationBell";
 import NavLink from '@/components/NavLink';
-
-// We are reusing the existing SVG icons from the codebase inside NavLink calls in the original code? 
-// The original code passed <svg>...</svg>. 
-// To make it fully MUI, we should replace those SVGs with MUI Icons, 
-// BUT the NavLink refactor above supports SVGs.
-// However, to clean up, I will use MUI Icons in the Layout where possible.
 
 const drawerWidth = 280;
 

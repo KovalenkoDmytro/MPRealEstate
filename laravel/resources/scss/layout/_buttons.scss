@@ -1,0 +1,22 @@
+@use '../abstracts/mixins' as *;
+
+.btn{
+    border-radius: 14px;
+    text-align: center;
+    font-family: Inter, serif;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 15px 25px;
+
+    &.btn-primary {
+        @include primary-btn;
+    }
+
+    &.btn-secondary {
+        @include secondary-btn;
+    }
+
+    &.btn-outline{
+        @include btn-outline
+    }
+}

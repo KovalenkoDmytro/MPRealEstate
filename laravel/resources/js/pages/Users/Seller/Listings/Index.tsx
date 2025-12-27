@@ -1,8 +1,9 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import type { RealEstateListing } from "@/types";
 import SellerListingsGrid from "@/components/listings/ListingsGrid";
 import React from "react";
+import Button from "@/components/common/Button";
 
 type ComponentProps = {
     listings: {
@@ -22,12 +23,7 @@ export default function Index({ listings }: ComponentProps) {
 
             <div className="container mx-auto p-4">
                 <div className="flex justify-end items-center mb-4">
-                    <Link
-                        href={route('seller.listings.create')}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
-                    >
-                        ➕ Add New Listing
-                    </Link>
+                    <Button version={"primary"} link={true} text={"Add New Listing"} href={route('seller.listings.create')}/>
                 </div>
                 <SellerListingsGrid listings={listings}/>
 

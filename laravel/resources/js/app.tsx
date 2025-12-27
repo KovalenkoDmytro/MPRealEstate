@@ -5,11 +5,12 @@ import React from 'react';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import 'react-toastify/dist/ReactToastify.css';
 import { NotificationProvider } from "@/context/NotificationContext";
 import { Notification } from "@/components/Notification";
+import "@/../scss/main.scss"
 
 
 import theme from './theme';

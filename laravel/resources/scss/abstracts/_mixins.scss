@@ -1,0 +1,33 @@
+@use '../abstracts/variables' as *;
+
+@mixin primary-btn {
+    background: $color-maroon;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.10);
+    color: $white-color;
+
+    &:hover {
+        background: $color-charcoal;
+    }
+}
+
+@mixin secondary-btn {
+    background: $color-charcoal;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.10);
+    color: $white-color;
+
+    &:hover {
+        background: $color-maroon;
+    }
+}
+
+@mixin btn-outline {
+    border: 2px solid $color-maroon;
+    color: $color-maroon;
+    background-color: $white-color;
+
+
+    &:hover {
+        border-color: $border-color;
+        color: $text-color;
+    }
+}
