@@ -13,15 +13,14 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class AppointmentService
-{
+class AppointmentService {
+
     /**
      * Buyer creates an appointment
      */
-    public function create(array $data): Appointment
-    {
+    public function create(array $data): Appointment {
         $listing = RealEstateListing::findOrFail($data['listing_id']);
-        $seller  = $listing->seller;
+        $seller = $listing->seller;
 
         $appointment = Appointment::create([
             'buyer_id'               => Auth::id(),
@@ -40,10 +39,9 @@ class AppointmentService
     /**
      * Seller approves appointment
      */
-    public function approve(Appointment $appointment, string|null $accessCode): void
-    {
+    public function approve(Appointment $appointment, string|null $accessCode): void {
         $appointment->update([
-            'status'       => 'accepted',
+            'status'      => 'accepted',
             'access_code' => $accessCode,
         ]);
 
@@ -53,27 +51,23 @@ class AppointmentService
     /**
      * Seller rejects appointment
      */
-    public function reject(Appointment $appointment, string $reason): void
-    {
-
+    public function reject(Appointment $appointment, string $reason): void {
         $appointment->update([
-            'status'            => 'rejected',
-            'rejection_reason'  => $reason,
+            'status'           => 'rejected',
+            'rejection_reason' => $reason,
         ]);
 
         $appointment->buyer->notify(new AppointmentRejectedNotification($appointment));
     }
 
-    public function buyerCancel(Appointment $appointment): void
-    {
-
+    public function buyerCancel(Appointment $appointment): void {
         // Make sure buyer owns this appointment
-        if (auth()->id() !== $appointment->buyer_id) {
+        if ( auth()->id() !== $appointment->buyer_id ) {
             abort(403, __('global.errors.unauthorized'));
         }
 
         // Prevent canceling already finished appointments
-        if (in_array($appointment->status, ['rejected', 'cancelled by buyer'])) {
+        if ( in_array($appointment->status, ['rejected', 'cancelled by buyer']) ) {
             return;
         }
 
@@ -94,26 +88,29 @@ class AppointmentService
     /**
      * Get Appointment Statistics specifically for a Seller.
      * * @param int $sellerId The user ID of the seller
+     *
      * @return array
      */
     // App\Services\AppointmentService.php
 
-    public function getSellerStatistics(int $sellerId): array
-    {
+    public function getSellerStatistics(int $sellerId): array {
         // Define time windows
         $thirtyDaysAgo = now()->subDays(30)->startOfDay();
-        $sevenDaysAgo  = now()->subDays(6)->startOfDay(); // Today + past 6 days
+        $sevenDaysAgo = now()->subDays(6)->startOfDay(); // Today + past 6 days
 
         // --- 1. Summary Stats (Single Query Optimization) ---
         // We query the widest range (30 days) to get the Total.
         // We use "SUM(CASE...)" to filter specific counts for the 7-day Breakdown.
         $stats = Appointment::where('seller_id', $sellerId)
             ->where('scheduled_at', '>=', $thirtyDaysAgo)
-            ->selectRaw("
+            ->selectRaw(
+                "
             status,
             count(*) as count_30,
             sum(case when scheduled_at >= ? then 1 else 0 end) as count_7
-        ", [$sevenDaysAgo])
+        ",
+                [$sevenDaysAgo]
+            )
             ->groupBy('status')
             ->get();
 
@@ -126,15 +123,15 @@ class AppointmentService
 
         $totalLast30Days = 0;
 
-        foreach ($stats as $row) {
+        foreach ( $stats as $row ) {
             $count30 = (int) $row->count_30;
-            $count7  = (int) $row->count_7;
+            $count7 = (int) $row->count_7;
 
             // Requirement 1: Total Last 30 Days (Sum of all statuses over 30 days)
             $totalLast30Days += $count30;
 
             // Requirement 2: Breakdown for Last 7 Days ONLY
-            switch ($row->status) {
+            switch ( $row->status ) {
                 case 'pending':
                     $breakdown7Days['pending'] += $count7;
                     break;
@@ -159,7 +156,7 @@ class AppointmentService
             ->pluck('total', 'date');
 
         $dailyTrend = [];
-        for ($i = 6; $i >= 0; $i--) {
+        for ( $i = 6; $i >= 0; $i-- ) {
             $date = now()->subDays($i)->format('Y-m-d');
             $dailyTrend[] = [
                 'date'  => $date,
@@ -168,7 +165,7 @@ class AppointmentService
         }
 
         return [
-            'summary' => [
+            'summary'    => [
                 'total_last_30_days' => $totalLast30Days, // 30 Day Total
                 'total_last_7_days'  => $totalLast7Days,  // 7 Day Total
                 'breakdown'          => $breakdown7Days,   // 7 Day Breakdown
@@ -180,24 +177,29 @@ class AppointmentService
     }
 
     public function getBayerStatistics(User $user): array {
-
         $now = now();
 
         $upcomingQuery = Appointment::where('buyer_id', $user->id)
             ->where('scheduled_at', '>', $now)
             ->whereIn('status', ['pending', 'accepted']);
 
-        $totalCount = $upcomingQuery->count();
-
-        $nearestAppointment = $upcomingQuery->orderBy('scheduled_at', 'asc')->first();
+        $nearestAppointment = $upcomingQuery
+            ->where('status', 'accepted')
+            ->orderBy('scheduled_at', 'asc')
+            ->first();
 
         $nextAppointmentDate = $nearestAppointment
-            ? $nearestAppointment->scheduled_at->toIso8601String()
-            : null;
+            ? $nearestAppointment->scheduled_at->format('Y-m-d h:i:A')
+            : NULL;
+
+        $acceptedCount = $upcomingQuery->where('status', 'accepted')->count();
+        $pendingCount = $upcomingQuery->where('status', 'pending')->count();
 
         return [
-            'totalCount'          => $totalCount,
+            'pendingCount'        => $pendingCount,
+            'acceptedCount'       => $acceptedCount,
             'nextAppointmentDate' => $nextAppointmentDate,
         ];
     }
+
 }

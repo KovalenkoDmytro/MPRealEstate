@@ -6,8 +6,10 @@ export interface OfferStats {
 }
 
 export interface AppointmentsStats {
-    totalCount: number;
+    // totalCount: number;
     nextAppointmentDate: string | null;
+    pendingCount: number;
+    acceptedCount: number;
 }
 
 export interface DealStats {

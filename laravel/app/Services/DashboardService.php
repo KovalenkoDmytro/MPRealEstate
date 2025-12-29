@@ -47,7 +47,10 @@ class DashboardService {
                 'offers' => $this->offerService->getAllUserOffers($user),
                 'offers_stats'       => $this->offerService->getUserOfferStats($user),
                 'appointments_stats' => $this->appointmentService->getBayerStatistics($user),
-                'favorite_listings'  => $this->favoriteListingService->getFavorites($user),
+                'favorite_listings'  => [
+                    'listings' => $this->favoriteListingService->getFavorites($user),
+                    'last_week_total' => $this->favoriteListingService->getFavoritesLatestWeek($user)
+                ],
             ]),
             $user->hasRole('seller') => Inertia::render('Users/Seller/Dashboard', [
                 'offers_stats'              => $this->offerService->getUserOfferStats($user),

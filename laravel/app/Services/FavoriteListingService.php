@@ -18,6 +18,15 @@ class FavoriteListingService {
             ->paginate($perPage);
     }
 
+    public function getFavoritesLatestWeek(User $user): int {
+        $buyer = Buyer::findOrFail($user->id);
+
+        return $buyer->favoriteListings()
+            ->wherePivot('created_at', '>=', now()->startOfWeek())
+            ->count();
+    }
+
+
     public function addToFavorites(User $user, int $listingId): void
     {
         $buyer = Buyer::findOrFail($user->id);

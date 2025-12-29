@@ -21,7 +21,12 @@ class Appointment extends Model
         'buyer_cancelled_at',
     ];
 
-    protected array $dates = ['scheduled_at'];
+//    protected array $dates = ['scheduled_at'];
+
+    protected $casts = [
+        'scheduled_at' => 'datetime',
+        'buyer_cancelled_at' => 'datetime',
+    ];
 
     public function buyer(): BelongsTo {
         return $this->belongsTo(User::class, 'buyer_id');
