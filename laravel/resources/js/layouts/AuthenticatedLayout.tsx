@@ -8,7 +8,6 @@ import {
     IconButton,
     Toolbar,
     Typography,
-    useMediaQuery,
     useTheme,
     Avatar,
     Menu,
@@ -143,7 +142,6 @@ export default function AuthenticatedLayout({ header, children }: PropsWithChild
     // Mobile Drawer State
     const [mobileOpen, setMobileOpen] = useState(false);
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);

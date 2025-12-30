@@ -6,10 +6,6 @@ import { OfferStats, AppointmentsStats } from "@/types/models";
 import { FavoriteListings } from "@/types/favoriteListings";
 import { Offer } from "@/types";
 
-
-import BuyerOffersCard from "@/components/dashboard/buyer/offers/BuyerOffersCard";
-import BuyerAppointmentsCard from "@/components/dashboard/buyer/appointments/BuyerAppointmentsCard";
-
 import SavedPropertiesPreviewSection
     from "@/components/dashboard/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertiesPreviewSection";
 import RecentOffersList from "@/components/dashboard/buyer/offers/RecentOffersList";
@@ -92,7 +88,6 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
                             iconColor="#D07669"
                         />
 
-                        {/*<BuyerAppointmentsCard data={appointments_stats} />*/}
                     </Grid>
                 </Grid>
 

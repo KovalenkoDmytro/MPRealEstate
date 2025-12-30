@@ -3,7 +3,7 @@ import { Grid, Typography, Box } from "@mui/material";
 import { RealEstateListing } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 import SellerListingCard from "@/components/listings/SellerListingCard";
-import {BuyerListingCard} from "@/components/listings/BuyerListingCard";
+import ListingCard from "@/components/listing_new/ListingCard";
 
 type ComponentProps = {
     listings: {
@@ -28,19 +28,21 @@ export default function ListingsGrid({listings, isFavorite,}: ComponentProps) {
                 <Grid container spacing={3}>
 
                     {isBuyer &&  (
-                        <Grid  size={{ xs: 12, sm: 6, md: 3 }} container spacing={4}>
+                        <Grid  container spacing={4}>
                             {listings.data.map((listing, index) => (
-                                <BuyerListingCard
+
+                                <ListingCard
                                     key={index}
                                     listing={listing}
-                                    isFavorite={isFavorite}
+                                    onToggleFavorite={isFavorite}
                                 />
+
                             ))}
                         </Grid>
                     )}
 
                     {isSeller &&  (
-                        <Grid size={{ xs: 12}} container spacing={5}>
+                        <Grid container spacing={5}>
                             {listings.data.map((listing,index) => (
                                 <SellerListingCard listing={listing} key={index}/>
                             ))}

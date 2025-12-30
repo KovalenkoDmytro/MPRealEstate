@@ -7,6 +7,13 @@
     font-weight: 600;
     line-height: 1.4;
     padding: 8px 16px;
+    z-index: 9;
+    position: relative;
+    max-width: max-content;
+    border-radius: 10px;
+    &:first-letter{
+        text-transform: uppercase;
+    }
 
     &.badge-primary {
         background-color: $color-maroon;
