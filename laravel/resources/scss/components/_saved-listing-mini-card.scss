@@ -1,0 +1,164 @@
+@use '../abstracts/variables' as *;
+
+.saved-listing-mini-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+
+    &.--pending {
+        .mini-card-image-wrapper{
+            &:before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: rgba(255, 255, 255, 0.5);
+                z-index: 3;
+                backdrop-filter: blur(2px);
+
+            }
+
+            .badge{
+                z-index: 4;
+            }
+        }
+
+
+    }
+
+
+    &.--sold {
+
+        .mini-card-image-wrapper:before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba($color-charcoal, 0.85);
+            z-index: 3;
+            backdrop-filter: blur(3px);
+        }
+
+        .mini-card-image-wrapper:after {
+            content: "SOLD \A No longer available";
+            white-space: pre;
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 6;
+            text-align: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 18px;
+            line-height: 1.5;
+            letter-spacing: 0.1em;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+    }
+
+    .mini-card-image-wrapper {
+        position: relative;
+        width: 100%;
+        padding-top: 60%;
+        background-color: $color-maroon;
+
+        img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .mini-card-badges {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            z-index: 2;
+        }
+    }
+
+    .mini-card-content {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .mini-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: $color-charcoal;
+            margin-bottom: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mini-card-address {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.25rem;
+            color: $color-tan;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+
+            svg {
+                flex-shrink: 0;
+                margin-top: 2px;
+            }
+        }
+
+        .mini-card-features {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            padding-bottom: 0.75rem;
+
+            .feature-item {
+                font-size: 0.8rem;
+                font-weight: 500;
+                color: $color-charcoal;
+
+                span {
+                    font-weight: 700;
+                }
+            }
+        }
+
+        .mini-card-footer {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .price-label {
+                font-size: 0.7rem;
+                color: $color-tan;
+                display: block;
+                margin-bottom: 1px;
+            }
+
+            .price-value {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: $color-charcoal;
+            }
+        }
+    }
+}

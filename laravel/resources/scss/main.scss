@@ -13,12 +13,13 @@
 // 4. Layout
 @use 'layout/buttons';
 @use "layout/badges";
-//@use 'layout/footer';
+@use 'layout/saved-properties-preview-section';
 //@use 'layout/sidebar';
 
 // 5. Components
 @use 'components/stat-card';
 @use "components/listing-card";
+@use "components/saved-listing-mini-card";
 //@use 'components/card';
 
 

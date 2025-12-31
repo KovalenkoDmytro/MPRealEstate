@@ -7,6 +7,8 @@ export type ButtonProps = {
     onClick?: () => void;
     link?: boolean;
     href?: string;
+    icon?: React.ReactNode;
+    className?: string;
 };
 
 export default function Button({
@@ -14,14 +16,17 @@ export default function Button({
                                    text,
                                    onClick,
                                    link = false,
-                                   href = '#'
+                                   href = '#',
+                                   icon,
+                                   className,
                                }: ButtonProps) {
 
-    const classes = `btn btn-${version}`;
+    const classes = `btn btn-${version} ${className ? className : ''}`;
 
     if (link && href) {
         return (
             <Link href={href} className={classes}>
+                {icon && <span className="btn-icon">{icon}</span>}
                 {text}
             </Link>
         );
@@ -33,6 +38,7 @@ export default function Button({
             onClick={onClick}
             className={classes}
         >
+            {icon && <span className="btn-icon">{icon}</span>}
             {text}
         </button>
     );
