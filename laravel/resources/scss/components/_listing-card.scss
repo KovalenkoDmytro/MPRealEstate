@@ -1,6 +1,7 @@
 @use '../abstracts/variables' as *;
 
 .listing-card {
+    position: relative;
     background: $white-color;
     border-radius: 12px;
     overflow: hidden;
@@ -8,6 +9,58 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
+
+
+    &.--pending {
+        .card-image-wrapper{
+            &:before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: rgba(255, 255, 255, 0.5);
+                z-index: 3;
+                backdrop-filter: blur(2px);
+
+            }
+
+            .badge{
+                z-index: 4;
+            }
+        }
+
+
+    }
+
+
+    &.--sold {
+
+        .card-image-wrapper:before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba($color-charcoal, 0.85);
+            z-index: 3;
+            backdrop-filter: blur(3px);
+        }
+
+        .card-image-wrapper:after {
+            content: "SOLD \A No longer available";
+            white-space: pre;
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 6;
+            text-align: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 18px;
+            line-height: 1.5;
+            letter-spacing: 0.1em;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+    }
 
     .card-image-wrapper {
         position: relative;
@@ -40,7 +93,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            z-index: 2;
+            z-index: 4;
         }
 
         .action-btn {
@@ -134,7 +187,7 @@
             }
 
             .price-value {
-                font-size: 1.25rem;
+                font-size: 17px;
                 font-weight: 700;
                 color: $color-charcoal;
             }

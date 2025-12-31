@@ -53,7 +53,6 @@ export default function Index({ listings, listingsRecentlyViewed, favoriteListin
         setForm((prev) => ({ ...prev, [key]: value }));
     };
 
-    const isFavorite = (id: number) => favoriteListings.includes(id);
 
     const applyFilters = useCallback((e: React.FormEvent) => {
         e.preventDefault();
@@ -76,7 +75,7 @@ export default function Index({ listings, listingsRecentlyViewed, favoriteListin
 
             <RecentlyViewed listings={listingsRecentlyViewed}/>
 
-            <ListingsGrid listings={listings} isFavorite={isFavorite} />
+            <ListingsGrid listings={listings} favoriteListings={favoriteListings} />
         </AuthenticatedLayout>
     );
 }

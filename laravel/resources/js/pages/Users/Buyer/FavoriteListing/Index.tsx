@@ -1,88 +1,11 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
-import { Grid, Card, CardMedia, Box, CardContent, Typography, Button } from "@mui/material";
 import { PageProps, type RealEstateListing } from '@/types';
 import React, { useState } from "react";
-import { listingService } from "@/services/listingService";
+import ListingCard from "@/components/listing_new/ListingCard";
 
 // ----------------------------------------------------------------------
-// 1. Local "Analog" Card Component
-// ----------------------------------------------------------------------
-// This looks like BuyerListingCard but is customized for this page to
-// handle the "Remove" action properly.
-type SimpleCardProps = {
-    listing: RealEstateListing;
-    onRemove: (id: number) => void;
-};
-
-const SimpleFavoriteCard = ({ listing, onRemove }: SimpleCardProps) => {
-
-    const handleRemoveClick = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // 1. Optimistic UI: Tell parent to remove it immediately
-        onRemove(listing.id);
-
-        try {
-            // 2. Send request to server (isFavorite is true, so this will DELETE)
-            await listingService.toggleFavorite(listing.id, true);
-        } catch (error) {
-            console.error("Failed to remove favorite", error);
-            // Ideally, show an error notification here.
-            // Since the item is already gone from the UI, handling rollback is tricky
-            // without a global store, but for 99% of cases, this is fine.
-        }
-    };
-
-    return (
-        <Card elevation={3} sx={{ borderRadius: 2 }}>
-            {/* Image */}
-            {listing.main_image ? (
-                <CardMedia
-                    component="img"
-                    height="180"
-                    image={listing.main_image.image_path}
-                    alt={listing.title}
-                />
-            ) : (
-                <Box sx={{ height: 180, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'grey.300' }}>
-                    ❌ No Image
-                </Box>
-            )}
-
-            {/* Content */}
-            <CardContent>
-                <Typography variant="h6" fontWeight="bold" noWrap>{listing.title}</Typography>
-                <Typography variant="body2" color="text.secondary" noWrap>📍 {listing.location}</Typography>
-                <Typography color="primary" fontWeight="bold" sx={{ mt: 1 }}>${listing.price.toLocaleString()}</Typography>
-
-                {/* Actions */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-                    <form onSubmit={handleRemoveClick}>
-                        <Button
-                            type="submit"
-                            variant="text"
-                            sx={{ fontSize: 24, color: 'red', '&:hover': { transform: 'scale(1.1)' } }}
-                            title="Remove from favorites"
-                        >
-                            ❤️
-                        </Button>
-                    </form>
-
-                    <Link href={route('buyer.listings.show', listing.id)}>
-                        <Button variant="contained" size="small" color="primary">
-                            View Details
-                        </Button>
-                    </Link>
-                </Box>
-            </CardContent>
-        </Card>
-    );
-};
-
-
-// ----------------------------------------------------------------------
-// 2. Main Page Component
+//  Main Page Component
 // ----------------------------------------------------------------------
 
 interface Props extends PageProps {
@@ -95,11 +18,8 @@ interface Props extends PageProps {
 }
 
 export default function ListingFavoritesPage({ favoriteListings }: Props) {
-
-    // Initialize local state so we can remove items without refreshing
     const [localListings, setLocalListings] = useState<RealEstateListing[]>(favoriteListings.data);
 
-    // Handler to remove item from state
     const handleRemoveItem = (id: number) => {
         setLocalListings((current) => current.filter(item => item.id !== id));
     };
@@ -125,21 +45,20 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
                             </Link>
                         </div>
                     ) : (
-                        /* Grid */
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {localListings.map((listing) => (
-                                <Grid size={{xs:12, sm:6, md:3}} key={listing.id}>
-                                    {/* Use our Local Simple Card */}
-                                    <SimpleFavoriteCard
-                                        listing={listing}
-                                        onRemove={handleRemoveItem}
-                                    />
-                                </Grid>
+                                <ListingCard
+                                    key={listing.id}
+                                    listing={listing}
+                                    isFavorite={true}
+                                    isDisplayStatus={true}
+                                    onRemove={handleRemoveItem}
+                                />
                             ))}
                         </div>
                     )}
 
-                    {/* Pagination (Based on server props) */}
+                    {/* Pagination */}
                     {favoriteListings.data.length > 0 && (
                         <div className="mt-6 flex justify-center">
                             {favoriteListings.links.map((link, key) => (

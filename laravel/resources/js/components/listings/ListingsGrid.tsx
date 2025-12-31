@@ -12,15 +12,16 @@ type ComponentProps = {
         current_page: number;
         last_page: number;
     };
-    isFavorite?: (listingId: number) => boolean;
+    favoriteListings: number[];
 };
 
-export default function ListingsGrid({listings, isFavorite,}: ComponentProps) {
+export default function ListingsGrid({listings, favoriteListings}: ComponentProps) {
     const user = useAuth();
     const role = user.role;
 
-    const isBuyer = role === "buyer" && isFavorite;
+    const isBuyer = role === "buyer";
     const isSeller = role === "seller";
+
 
     return (
         <Box>
@@ -29,14 +30,12 @@ export default function ListingsGrid({listings, isFavorite,}: ComponentProps) {
 
                     {isBuyer &&  (
                         <Grid  container spacing={4}>
-                            {listings.data.map((listing, index) => (
-
+                            {listings.data.map((listing) => (
                                 <ListingCard
-                                    key={index}
+                                    key={listing.id}
                                     listing={listing}
-                                    onToggleFavorite={isFavorite}
+                                    isFavorite={favoriteListings.includes(listing.id)}
                                 />
-
                             ))}
                         </Grid>
                     )}
