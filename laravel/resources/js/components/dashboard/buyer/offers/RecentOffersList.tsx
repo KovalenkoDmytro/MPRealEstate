@@ -14,6 +14,7 @@ import {
 import { ArrowForwardRounded } from '@mui/icons-material';
 import { Link } from '@inertiajs/react';
 import { Offer, OfferStatus } from '@/types/offer';
+import {formatCurrency} from "@/helpers/priceHelper";
 
 interface RecentOffersListProps {
     offers: Offer[];
@@ -23,13 +24,7 @@ interface RecentOffersListProps {
 const DISPLAY_LIMIT = 5;
 
 export default function RecentOffersList({ offers }: RecentOffersListProps) {
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-        }).format(amount);
-    };
+
 
     const getStatusChip = (status: OfferStatus) => {
         let color: 'default' | 'success' | 'warning' | 'error' = 'default';

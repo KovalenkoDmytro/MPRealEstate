@@ -14,6 +14,7 @@ import Grid from '@mui/material/Grid';
 import CitySelector from "@/components/common/CitySelector";
 import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
 import YearBuiltField from "@/components/listing/form/YearBuiltField";
+import {formatCurrency, formatNumber} from "@/helpers/priceHelper";
 
 // Define SqFt options for the dropdowns
 const SQFT_OPTIONS = [
@@ -61,19 +62,6 @@ type FilterFormProps = {
 
 export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onApplyFilters }) => {
 
-    // Helper to format numbers (e.g. 1,500)
-    const formatNumber = (value: number) => {
-        return new Intl.NumberFormat('en-US').format(value);
-    };
-
-    // Helper to format currency
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            maximumFractionDigits: 0,
-        }).format(value);
-    };
 
     return (
         <Box component="form" onSubmit={onApplyFilters} sx={{ mb: 6 }}>

@@ -18,6 +18,7 @@ import {
     HandshakeRounded,
     ErrorOutlineRounded
 } from '@mui/icons-material';
+import {formatCurrency} from "@/helpers/priceHelper";
 
 interface DealCardProps {
     deal: PropertyDetail;
@@ -32,13 +33,7 @@ export const DealCard: React.FC<DealCardProps> = ({ deal }) => {
         day: "numeric",
     });
 
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'CAD',
-            minimumFractionDigits: 2
-        }).format(amount);
-    }
+
 
 
     return (
