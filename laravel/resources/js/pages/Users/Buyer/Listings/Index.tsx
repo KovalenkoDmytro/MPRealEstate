@@ -5,7 +5,6 @@ import type { RealEstateListing } from "@/types";
 import { FilterForm } from "@/components/listings/FilterForm";
 import ListingsGrid from "@/components/listings/ListingsGrid";
 import { listingService } from "@/services/listingService";
-import RecentlyViewed from "@/components/listings/recentlyViewed/buyer/RecentlyViewed";
 import { Collapse, IconButton, Typography, Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -22,12 +21,11 @@ type Props = {
         last_page: number;
         total: number;
     };
-    listingsRecentlyViewed: RealEstateListing[];
     favoriteListings: number[];
     filters: Record<string, any>;
 };
 
-export default function Index({ listings, listingsRecentlyViewed, favoriteListings, filters }: Props) {
+export default function Index({ listings, favoriteListings, filters }: Props) {
     // State to toggle filter visibility
     const [showFilters, setShowFilters] = useState(false);
     // State for view mode
@@ -184,9 +182,6 @@ export default function Index({ listings, listingsRecentlyViewed, favoriteListin
                     />
                 </Box>
             </Collapse>
-
-            <RecentlyViewed listings={listingsRecentlyViewed}/>
-
 
             <ListingsGrid listings={listings}
                           favoriteListings={favoriteListings}

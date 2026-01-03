@@ -99,7 +99,7 @@ class RealEstateListingController extends Controller {
         $this->authorize('delete', $listing);
 
 
-        // 2. ❌ Check if any deal exists and is not completed
+        // 2. Check if any deal exists and is not completed
         $hasActiveDeal = $listing->deal()->where('is_completed', false)->exists();
 
         if ($hasActiveDeal) {
@@ -108,7 +108,7 @@ class RealEstateListingController extends Controller {
             );
         }
 
-        // 3. 🔄 Soft-delete logic: set status to inactive and 📦 Clean up: delete all gallery images (keep only main)
+        // 3. Soft-delete
 
         $this->listingService->deactivateListing($listing);
 
@@ -128,7 +128,6 @@ class RealEstateListingController extends Controller {
             ]),
             'buyer' => Inertia::render('Users/Buyer/Listings/Index', [
                 'listings' => $this->buyerService->getFilteredListings($user, $request),
-                'listingsRecentlyViewed' => $this->listingService->getRecentlyViewed($user, 4),
                 'favoriteListings' => $this->listingService->getFavoriteListingIds($user),
                 'filters' => $request->validatedFilters(),
             ]),

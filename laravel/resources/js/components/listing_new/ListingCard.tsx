@@ -4,6 +4,7 @@ import { listingService } from "@/services/listingService";
 import { useNotification } from "@/context/NotificationContext";
 import Button from '@/components/common/Button';
 import Badge from "@/components/common/Badge";
+import {formatCurrency} from "@/helpers/priceHelper";
 
 type ListingCardProps = {
     listing: RealEstateListing;
@@ -29,7 +30,6 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
 
         const previousState = isFav;
         const newState = !previousState;
-
 
         setIsFav(newState);
         setLoadingFavorite(true);
@@ -62,10 +62,6 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
         }
     };
 
-
-    const formattedPrice = new Intl.NumberFormat('en-US', {
-        style: 'currency', currency: 'CAD', maximumFractionDigits: 0,
-    }).format(listing.price);
     const formattedSqft = new Intl.NumberFormat('en-US').format(listing.square_feet);
     const detailUrl = typeof route === 'function' ? route("buyer.listings.show", listing.id) : `/listings/${listing.id}`;
     const mainImage = listing.main_image?.image_path || '/images/placeholder-house.jpg';
@@ -130,7 +126,7 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
                 <div className="card-footer">
                     <div>
                         <span className="price-label">Price</span>
-                        <div className="price-value">{formattedPrice}</div>
+                        <div className="price-value">{formatCurrency(listing.price)}</div>
                     </div>
                     <Button version="primary" text="View Details" link={true} href={detailUrl} />
                 </div>

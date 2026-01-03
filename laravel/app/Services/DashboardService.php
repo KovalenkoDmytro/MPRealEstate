@@ -51,6 +51,7 @@ class DashboardService {
                     'listings' => $this->favoriteListingService->getFavorites($user),
                     'last_week_total' => $this->favoriteListingService->getFavoritesLatestWeek($user)
                 ],
+                'listings_recently_viewed' => $this->listingService->getRecentlyViewed($user, 4),
             ]),
             $user->hasRole('seller') => Inertia::render('Users/Seller/Dashboard', [
                 'offers_stats'              => $this->offerService->getUserOfferStats($user),

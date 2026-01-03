@@ -1,12 +1,15 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import { Box, Typography, Grid } from "@mui/material";
+import {Box, Typography, Grid, Stack} from "@mui/material";
 import { OfferStats, AppointmentsStats } from "@/types/models";
 import { FavoriteListings } from "@/types/favoriteListings";
-import { Offer } from "@/types";
+import {Offer, type RealEstateListing} from "@/types";
 import SavedPropertiesPreviewSection from "@/components/dashboard/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertiesPreviewSection";
 import RecentOffersList from "@/components/dashboard/buyer/offers/RecentOffersList";
 import StatCard from "@/components/common/StatCard";
+import {
+    RecentlyViewedPreviewSection
+} from "@/components/dashboard/buyer/recentlyViewed/RecentlyViewedPreviewSection";
 
 type PageProps = {
     offers: Offer[];
@@ -16,8 +19,9 @@ type PageProps = {
         listings: FavoriteListings;
         last_week_total: number;
     };
+    listings_recently_viewed : RealEstateListing[];
 };
-export default function Dashboard({ offers_stats, appointments_stats, favorite_listings, offers }: PageProps) {
+export default function Dashboard({ offers_stats, appointments_stats, favorite_listings, offers, listings_recently_viewed }: PageProps) {
 
     return (
         <AuthenticatedLayout
@@ -89,18 +93,34 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
 
 
                 <Grid container spacing={3} sx={{ mt: 3 }}>
-                    <Grid size={{ xs: 12, md: 8 }} sx={{ p: 3, borderRadius: 4, bgcolor: '#fff', boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)', }}>
+                    <Grid
+                        size={{ xs: 12, md: 8 }}
+                        sx={{ p: 3, borderRadius: 4, bgcolor: '#fff', boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)', }}
+                    >
                         <RecentOffersList offers={offers} />
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Box height="100%">
-                            <SavedPropertiesPreviewSection
-                                favoriteListing={favorite_listings.listings}
-                                itemsToDisplay={2}
-                            />
-                        </Box>
+                        <Stack spacing={3}>
+
+                            {favorite_listings.listings.total > 0 && (
+                                <SavedPropertiesPreviewSection
+                                    favoriteListing={favorite_listings.listings}
+                                    itemsToDisplay={2}
+                                />
+                            )}
+
+
+                            {listings_recently_viewed.length > 0 && (
+                                <RecentlyViewedPreviewSection
+                                    recentlyViewedListings={listings_recently_viewed}
+                                    itemsToDisplay={2}
+                                />
+                            )}
+                        </Stack>
                     </Grid>
+
+
                 </Grid>
 
             </Box>
