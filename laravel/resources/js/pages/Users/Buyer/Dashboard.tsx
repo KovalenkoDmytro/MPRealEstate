@@ -95,7 +95,10 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
 
                     <Grid size={{ xs: 12, md: 4 }}>
                         <Box height="100%">
-                            <SavedPropertiesPreviewSection favoriteListing={favorite_listings.listings} />
+                            <SavedPropertiesPreviewSection
+                                favoriteListing={favorite_listings.listings}
+                                itemsToDisplay={2}
+                            />
                         </Box>
                     </Grid>
                 </Grid>

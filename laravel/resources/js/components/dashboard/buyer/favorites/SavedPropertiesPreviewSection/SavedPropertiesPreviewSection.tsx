@@ -6,7 +6,7 @@ import SavedPropertyMiniCard
 import Button from "@/components/common/Button";
 
 
-export default function SavedPropertiesPreviewSection({ favoriteListing }: { favoriteListing: FavoriteListings }) {
+export default function SavedPropertiesPreviewSection({ favoriteListing, itemsToDisplay}: { favoriteListing: FavoriteListings, itemsToDisplay : number }) {
 
     return (
         <Paper className="saved-properties-preview-section"
@@ -24,7 +24,7 @@ export default function SavedPropertiesPreviewSection({ favoriteListing }: { fav
                 spacing={2}
             >
 
-                {favoriteListing.data.slice(0, 3).map((listing) => (
+                {favoriteListing.data.slice(0, itemsToDisplay).map((listing) => (
                     <SavedPropertyMiniCard  key={listing.id} listing={listing} />
                 ))}
 
