@@ -1,45 +1,119 @@
 import { createTheme } from '@mui/material/styles';
 
+// Your Project Colors
+const colors = {
+    maroon: '#572a4d',
+    charcoal: '#2c233e',
+    slate: '#6A7282',
+    tan: '#d07669',
+    white: '#ffffff',
+    cloud: '#F9FAFB',
+    border: '#E5E7EB', // Light grey for inputs
+};
+
 const theme = createTheme({
+    // 1. Palette: Hooks up "primary" and "secondary" to your variables
     palette: {
         primary: {
-            main: '#4F46E5', // Indigo 600 - matching the existing Tailwind vibe
+            main: colors.maroon,
         },
         secondary: {
-            main: '#F97316', // Orange 500 - matching accents
-        },
-        background: {
-            default: '#F9FAFB', // gray-50
-            paper: '#FFFFFF',
+            main: colors.charcoal,
         },
         text: {
-            primary: '#111827', // gray-900
-            secondary: '#6B7280', // gray-500
-        }
-    },
-    typography: {
-        fontFamily: '"Figtree", "Helvetica", "Arial", sans-serif',
-        h5: {
-            fontWeight: 600,
+            primary: colors.charcoal,
+            secondary: colors.slate,
         },
-        h6: {
-            fontWeight: 600,
+        background: {
+            default: colors.cloud,
+            paper: colors.white,
         },
     },
+
+    // 2. Shape: Global border radius
+    shape: {
+        borderRadius: 8, // Matches your buttons and cards
+    },
+
+    // 3. Components: The Global Overrides
     components: {
-        MuiButton: {
+
+        // --- INPUTS (TextField) ---
+        MuiOutlinedInput: {
             styleOverrides: {
                 root: {
-                    textTransform: 'none',
-                    borderRadius: '0.5rem',
+                    backgroundColor: colors.white,
+                    transition: 'all 0.2s ease',
+
+                    // Default Border
+                    '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: colors.border,
+                        borderWidth: '1px',
+                    },
+
+                    // Hover State
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: colors.slate,
+                    },
+
+                    // Focused State
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: colors.maroon,
+                        borderWidth: '2px',
+                    },
+                },
+                input: {
+                    padding: '12px 14px', // Comfortable padding
+                    color: colors.charcoal,
+                    fontWeight: 500,
                 },
             },
         },
-        MuiPaper: {
+
+        // --- LABELS ---
+        MuiInputLabel: {
             styleOverrides: {
-                rounded: {
-                    borderRadius: '1rem',
+                root: {
+                    color: colors.slate,
+                    lineHeight: 1,
+                    '&.Mui-focused': {
+                        color: colors.maroon,
+                        fontWeight: 600,
+                        backgroundColor: colors.cloud,
+                    },
+                    '&.Mui-active': {
+                        borderColor: colors.maroon,
+                    },
                 },
+            },
+        },
+
+        // --- CHECKBOXES ---
+        MuiCheckbox: {
+            styleOverrides: {
+                root: {
+                    color: colors.slate,
+                    '&.Mui-checked': {
+                        color: colors.maroon,
+                    },
+                },
+            },
+        },
+
+        // --- BUTTONS ---
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    textTransform: 'none', // Removes the default ALL CAPS
+                    fontWeight: 600,
+                    fontSize: '0.95rem',
+                    boxShadow: 'none',
+                    padding: '10px 24px',
+                    '&:hover': {
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                    },
+                },
+
             },
         },
     },

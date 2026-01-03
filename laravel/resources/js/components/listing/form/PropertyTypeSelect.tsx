@@ -20,7 +20,7 @@ export default function PropertyTypeSelect({ value, onChange, error, helperText 
             fullWidth
             onChange={(e) => onChange(e.target.value as string)}
         >
-            <MenuItem value="">Select Type</MenuItem>
+            <MenuItem value="">Any</MenuItem>
             <MenuItem value="house">House</MenuItem>
             <MenuItem value="condo">Condo</MenuItem>
             <MenuItem value="townhouse">Townhouse</MenuItem>
