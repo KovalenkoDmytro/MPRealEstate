@@ -24,7 +24,7 @@ export default function ListingsGrid({listings, favoriteListings}: ComponentProp
 
 
     return (
-        <Box>
+        <Box className="listings-grid">
             {listings.data.length > 0 ? (
                 <Grid container spacing={3}>
 
