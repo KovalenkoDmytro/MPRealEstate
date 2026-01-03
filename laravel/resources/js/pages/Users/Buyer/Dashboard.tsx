@@ -1,13 +1,10 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { Box, Typography, Grid } from "@mui/material";
-
 import { OfferStats, AppointmentsStats } from "@/types/models";
 import { FavoriteListings } from "@/types/favoriteListings";
 import { Offer } from "@/types";
-
-import SavedPropertiesPreviewSection
-    from "@/components/dashboard/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertiesPreviewSection";
+import SavedPropertiesPreviewSection from "@/components/dashboard/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertiesPreviewSection";
 import RecentOffersList from "@/components/dashboard/buyer/offers/RecentOffersList";
 import StatCard from "@/components/common/StatCard";
 
@@ -22,7 +19,6 @@ type PageProps = {
 };
 export default function Dashboard({ offers_stats, appointments_stats, favorite_listings, offers }: PageProps) {
 
-    console.log(appointments_stats);
     return (
         <AuthenticatedLayout
             header={
@@ -93,7 +89,7 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
 
 
                 <Grid container spacing={3} sx={{ mt: 3 }}>
-                    <Grid size={{ xs: 12, md: 8 }}>
+                    <Grid size={{ xs: 12, md: 8 }} sx={{ p: 3, borderRadius: 4, bgcolor: '#fff', boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)', }}>
                         <RecentOffersList offers={offers} />
                     </Grid>
 
