@@ -36,7 +36,15 @@ class RealEstateListingRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:5000'],
 
             // Location
-            'location' => ['required', 'string', 'max:255'],
+            'street_number' => ['required', 'string', 'max:255'],
+            'unit_number' => ['sometimes', 'string', 'max:50'],
+            'street_name' => ['required', 'string', 'max:255'],
+            'city' => ['required', 'string', 'max:255'],
+            'province' => ['required', 'string', 'max:255'],
+            'postal_code' => ['required', 'string', 'max:20'],
+            'country' => ['required', 'string', 'max:255'],
+            'latitude' => ['required', 'numeric', 'between:-90,90'],
+            'longitude' => ['required', 'numeric', 'between:-180,180'],
 
             // Property Specs
             'property_type' => ['required', 'in:house,condo,townhouse,land,multi-family,farm'],

@@ -2,37 +2,47 @@
 
 namespace Database\Seeders;
 
-use App\Models\ListingImage;
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\RealEstateListing;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 
 class RealEstateListingSeeder extends Seeder
 {
     public function run(): void
     {
+        // 1. Get ALL sellers as a collection
         $sellers = User::role('seller')->get();
 
-        foreach ($sellers as $seller) {
-            RealEstateListing::factory()
-                ->count(random_int(2, 5))
-                ->for($seller, 'seller')  // sets seller_id
-                ->create()
-                ->each(function ($listing) {
-                    // Add images for each listing:
-                    $imageLinks = [
-                        'https://images.unsplash.com/photo-1568605114967-8130f3a36994',
-                        'https://images.unsplash.com/photo-1572120360610-d971b9b63928',
-                        'https://images.unsplash.com/photo-1599423300746-b62533397364',
-                    ];
+        // Safety check: ensure we actually have sellers
+        if ($sellers->isEmpty()) {
+            $this->command->warn('No sellers found. Skipping Listing Seeder.');
+            return;
+        }
 
-                    foreach ($imageLinks as $index => $url) {
-                        $listing->images()->create([
-                            'image_path' => $url,
-                            'is_main' => $index === 0,
-                        ]);
-                    }
-                });
+        // 2. Load the JSON data
+        $json = File::get(database_path('data/properties.json'));
+        $properties = json_decode($json, true);
+
+        // 3. Loop through and create
+        foreach ($properties as $data) {
+            // Extract image_url so it doesn't try to save to the listing table
+            $imageUrl = $data['image_url'];
+            unset($data['image_url']);
+
+            // Pick a RANDOM seller for this specific property
+            $randomSeller = $sellers->random();
+
+            // Create Listing
+            $listing = RealEstateListing::factory()
+                ->for($randomSeller, 'seller') // Use the single random seller here
+                ->create($data);
+
+            // Create Image
+            $listing->images()->create([
+                'image_path' => $imageUrl,
+                'is_main'    => true,
+            ]);
         }
     }
 }

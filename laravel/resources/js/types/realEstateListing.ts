@@ -69,8 +69,29 @@ export interface RealEstateListing extends BaseEntity {
     description: string;
     /** Listing price in dollars */
     price: number;
-    /** Property location/address */
-    location: string;
+
+    // --- Location / Address Fields ---
+    /** Street number (e.g., "2715") */
+    street_number: string;
+    /** Unit/Apartment number (optional) */
+    unit_number: string | null;
+    /** Street name (e.g., "12 Avenue Southeast") */
+    street_name: string;
+    /** City (e.g., "Calgary") */
+    city: string;
+    /** Province or State (e.g., "Alberta") */
+    province: string;
+    /** Postal or Zip code */
+    postal_code: string;
+    /** Country name */
+    country: string;
+
+    // --- Coordinates ---
+    /** Geographic latitude */
+    latitude: number;
+    /** Geographic longitude */
+    longitude: number;
+
     /** Number of bedrooms */
     bedrooms: number;
     /** Number of bathrooms */
@@ -87,7 +108,7 @@ export interface RealEstateListing extends BaseEntity {
     main_image: Image;
     /** Additional property images */
     images: Image[];
-    /** Size of the lot in acres */
+    /** Size of the lot in acres/sqft */
     lot_size: number | null;
     /** Type of property (e.g., single-family, condo) */
     property_type: string;

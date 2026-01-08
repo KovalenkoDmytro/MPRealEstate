@@ -20,18 +20,16 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
 
             //Google Places Address Fields
-            $table->string('address')->nullable();          // Full formatted address
-            $table->string('street_number')->nullable();
-            $table->string('street_name')->nullable();
-            $table->string('city')->nullable();
-            $table->string('province')->nullable();
-            $table->string('postal_code')->nullable();
-            $table->string('country')->nullable();
-
+            $table->string('street_number');
+            $table->string('unit_number')->nullable();
+            $table->string('street_name');
+            $table->string('city');
+            $table->string('province');
+            $table->string('postal_code');
+            $table->string('country');
             //Coordinates for map
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
-
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
             // Property Specs
             $table->enum('property_type', ['house', 'condo', 'townhouse', 'land', 'multi-family', 'farm']);
             $table->integer('bedrooms');
