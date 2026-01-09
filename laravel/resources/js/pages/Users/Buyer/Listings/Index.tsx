@@ -38,26 +38,19 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
         bedrooms: filters.bedrooms || "",
         bathrooms: filters.bathrooms || "",
         status: filters.status || "",
-        // Removed favorites_only based on previous context, but keeping if you need it
         favorites_only: filters.favorites_only === "true" || filters.favorites_only === true,
-
-        // Extended fields
         property_type: filters.property_type || "",
         square_feet_min: filters.square_feet_min || "",
         square_feet_max: filters.square_feet_max || "",
-        // Removed lot_size based on previous context
         year_built_min: filters.year_built_min || "",
         year_built_max: filters.year_built_max || "",
-        // garage_spaces_min: filters.garage_spaces_min || "", // Ensure this matches FilterForm props if used
         has_garage: filters.has_garage === "true" || filters.has_garage === true,
         has_basement: filters.has_basement === "true" || filters.has_basement === true,
-        // Map these correctly to FilterForm props
         min_maintenance_fee: filters.min_maintenance_fee || "",
         max_maintenance_fee: filters.max_maintenance_fee || "",
         min_property_tax: filters.min_property_tax || "",
         max_property_tax: filters.max_property_tax || "",
-        // price_reduced: filters.price_reduced === "true" || filters.price_reduced === true, // Removed from FilterForm
-        days_on_market: filters.days_on_market || "", // "Listed Since" mapped to days_on_market
+        days_on_market: filters.days_on_market || "",
         keywords: filters.keywords || "",
     });
 

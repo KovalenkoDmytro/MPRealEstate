@@ -1,0 +1,5 @@
+@use '../abstracts/variables' as *;
+
+.guest-layout {
+    background: $guest-background-layout-color;
+}

@@ -15,6 +15,7 @@
 @use "layout/badges";
 @use 'layout/saved-properties-preview-section';
 @use 'layout/authenticated-layout';
+@use 'layout/guest-layout';
 
 // 5. Components
 @use 'components/stat-card';

@@ -1,113 +1,174 @@
-import Checkbox from '@/components/Checkbox';
-import InputError from '@/components/InputError';
-import InputLabel from '@/components/InputLabel';
-import PrimaryButton from '@/components/PrimaryButton';
-import TextInput from '@/components/TextInput';
+import React, { FormEventHandler, useEffect, useState } from 'react';
+import {
+    Box,
+    Button,
+    Checkbox,
+    FormControlLabel,
+    IconButton,
+    InputAdornment,
+    TextField,
+    Typography,
+    Divider,
+    Link as MuiLink,
+    Stack,
+} from '@mui/material';
+import {
+    Visibility,
+    VisibilityOff,
+    ArrowForward,
+    Google,
+    GitHub,
+} from '@mui/icons-material';
+import { Link, useForm, usePage } from '@inertiajs/react';
+import { useNotification } from "@/context/NotificationContext";
 import GuestLayout from '@/layouts/GuestLayout';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import {FormEventHandler, useEffect} from 'react';
-import {useNotification} from "@/context/NotificationContext";
+import IconLock from "@/icons/IconLock";
+import IconEnvelope from "@/icons/IconEnvelope";
 
-export default function Login({status, canResetPassword,}: { status?: string; canResetPassword: boolean; }) {
+export default function Login({ canResetPassword }: { canResetPassword: boolean; }) {
+    const [showPassword, setShowPassword] = useState(false);
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
-        remember: false as boolean,
+        remember: false,
     });
+
     const { showNotification } = useNotification();
     const { message }: any = usePage().props;
 
     useEffect(() => {
-        if (message) {
-            showNotification(message, "success");
-        }
+        if (message) showNotification(message, "success");
     }, [message]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post(route('login'), {
-            onFinish: () => reset('password'),
-        });
+        post(route('login'), { onFinish: () => reset('password') });
     };
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
-
-
-
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+        <GuestLayout
+            title="Welcome Back"
+            subtitle="Sign in to your EstateHub account"
+            headTitle='Log in'
+        >
 
             <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-                    {errors.email && (
-                        <div
-                            className="text-red-600 text-sm"
-                            dangerouslySetInnerHTML={{ __html: errors.email }}
+                <Stack spacing={3}>
+                    {/* Email */}
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: '#374151' }}>
+                            Email Address
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            placeholder="john.doe@example.com"
+                            value={data.email}
+                            onChange={(e) => setData('email', e.target.value)}
+                            error={!!errors.email}
+                            helperText={errors.email}
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <IconEnvelope />
+                                        </InputAdornment>
+                                    ),
+                                }
+                            }}
+                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3, bgcolor: '#fff' } }}
                         />
-                    )}
+                    </Box>
 
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
+                    {/* Password */}
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: '#374151' }}>
+                            Password
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Enter your password"
+                            value={data.password}
+                            onChange={(e) => setData('password', e.target.value)}
+                            error={!!errors.password}
+                            helperText={errors.password}
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <IconLock />
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                edge="end"
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                },
+                            }}
+                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3, bgcolor: '#fff' } }}
                         />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
+                    </Box>
 
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
+                    {/* Options */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <FormControlLabel
+                            control={<Checkbox size="small" checked={data.remember} onChange={(e) => setData('remember', e.target.checked)} sx={{ color: '#9CA3AF', '&.Mui-checked': { color: '#522B47' } }} />}
+                            label={<Typography variant="body2" sx={{ color: '#6B7280' }}>Remember me</Typography>}
+                        />
+                        {canResetPassword && (
+                            <MuiLink component={Link} href={route('password.request')} variant="body2" sx={{ color: '#522B47', fontWeight: 600, textDecoration: 'none' }}>
+                                Forgot Password?
+                            </MuiLink>
+                        )}
+                    </Box>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
+                    {/* Submit Button */}
+                    <Button
+                        fullWidth
+                        type="submit"
+                        variant="contained"
+                        disabled={processing}
+                        endIcon={<ArrowForward />}
+                        sx={{
+                            py: 1.5,
+                            borderRadius: 3,
+                            bgcolor: '#522B47',
+                            fontWeight: 600,
+                            textTransform: 'none',
+                            '&:hover': { bgcolor: '#3d1f35' }
+                        }}
+                    >
+                        Sign In
+                    </Button>
+
+                    <Divider sx={{ my: 1 }}><Typography variant="caption" color="text.secondary">Or continue with</Typography></Divider>
+
+                    {/* Social Buttons */}
+                    <Stack direction="row" spacing={2}>
+                        <Button fullWidth variant="outlined" startIcon={<Google />} sx={{ borderRadius: 3, color: '#374151', borderColor: '#E5E7EB', textTransform: 'none' }}>
+                            Google
+                        </Button>
+                        <Button fullWidth variant="outlined" startIcon={<GitHub />} sx={{ borderRadius: 3, color: '#374151', borderColor: '#E5E7EB', textTransform: 'none' }}>
+                            GitHub
+                        </Button>
+                    </Stack>
+
+                    {/* Footer Link */}
+                    <Typography variant="body2" align="center" sx={{ color: '#6B7280' }}>
+                        Don't have an account?{' '}
+                        <MuiLink component={Link} href={route('register')} sx={{ color: '#522B47', fontWeight: 700, textDecoration: 'none' }}>
+                            Sign up for free
+                        </MuiLink>
+                    </Typography>
+                </Stack>
             </form>
+
         </GuestLayout>
     );
 }

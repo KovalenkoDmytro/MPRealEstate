@@ -1,41 +1,60 @@
 import ApplicationLogo from '@/components/ApplicationLogo';
-import { Link } from '@inertiajs/react';
-import { PropsWithChildren } from 'react';
-import { Box, Paper, Stack } from '@mui/material';
+import {Head} from '@inertiajs/react';
+import React from 'react';
+import {Avatar, Box, Paper, Typography} from '@mui/material';
+import theme from "@/theme";
 
-export default function Guest({ children }: PropsWithChildren) {
+
+type GuestLayout = {
+    headTitle: string;
+    title: string;
+    subtitle: string;
+    children: React.ReactNode;
+}
+
+export default function GuestLayout({ children, title, subtitle, headTitle}: GuestLayout) {
     return (
-        // Use Box for the main container, handling background and centering
+
         <Box
+            className='guest-layout'
             sx={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                minHeight: '100vh',
-                bgcolor: 'grey.100', // Equivalent to bg-gray-100
+                minHeight: '100dvh',
+                bgcolor: 'grey.100',
             }}
         >
-            <Stack spacing={2} alignItems="center" sx={{ width: '100%', p: 2 }}>
-                <div>
-                    <Link href="/">
-                        {/* The logo can keep its Tailwind classes, as they are self-contained */}
-                        <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                    </Link>
-                </div>
+            <Head title={headTitle} />
 
-                {/* Use Paper for the card effect (background, shadow, rounded corners) */}
-                <Paper
-                    elevation={3} // Controls the shadow depth, similar to shadow-md
-                    sx={{
-                        p: 4, // Sets padding on all sides
-                        width: '100%',
-                        maxWidth: 450, // Matches the max-width of your form
-                        borderRadius: 2, // Equivalent to rounded-lg
-                    }}
-                >
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
+                <Avatar variant="rounded" sx={{ width: 56, height: 56, bgcolor: '#522B47', mb: 2 }}>
+                    <ApplicationLogo/>
+                </Avatar>
+
+                <Typography variant="h4" sx={{ fontWeight: 700, color: '#fff', mb: 1 }}>
+                    {title}
+                </Typography>
+
+                <Typography sx={{ color: theme.palette.text.rosyPink, mb: 4 }}>
+                    {subtitle}
+                </Typography>
+
+                <Paper sx={{
+                    p: 4,
+                    width: '100%',
+                    maxWidth: 440,
+                    borderRadius: "24px",
+                    backgroundColor: theme.palette.background.white,
+                    boxShadow: '0px 10px 40px rgba(0,0,0,0.1)'
+                }}>
                     {children}
                 </Paper>
-            </Stack>
+
+                <Typography variant="caption" sx={{ mt: 4, color:theme.palette.text.rosyPink }}>
+                    © 2026 EstateHub. All rights reserved.
+                </Typography>
+            </Box>
         </Box>
     );
 }

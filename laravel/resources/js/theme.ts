@@ -1,6 +1,5 @@
 import { createTheme } from '@mui/material/styles';
 
-// Your Project Colors
 const colors = {
     maroon: '#572a4d',
     charcoal: '#2c233e',
@@ -15,6 +14,7 @@ const colors = {
 declare module '@mui/material/styles' {
     interface TypeBackground {
         sidebar?: string;
+        white?: string;
     }
     interface TypeText {
         tan?: string;
@@ -23,7 +23,6 @@ declare module '@mui/material/styles' {
 }
 
 const theme = createTheme({
-    // 1. Palette: Hooks up "primary" and "secondary" to your variables
     palette: {
         primary: {
             main: colors.maroon,
@@ -41,93 +40,80 @@ const theme = createTheme({
             default: colors.cloud,
             paper: colors.white,
             sidebar: colors.charcoal,
+            white: colors.white,
         },
     },
-
-    // 2. Shape: Global border radius
     shape: {
-        borderRadius: 8, // Matches your buttons and cards
+        borderRadius: 12, // Increased to match the "EstateHub" rounded UI
     },
-
-    // 3. Components: The Global Overrides
     components: {
-
-        // --- INPUTS (TextField) ---
+        // --- GLOBAL TEXTFIELD / INPUT OVERRIDES ---
+        MuiTextField: {
+            defaultProps: {
+                // This ensures all TextFields use the outlined variant by default
+                variant: 'outlined',
+            },
+        },
         MuiOutlinedInput: {
             styleOverrides: {
                 root: {
                     backgroundColor: colors.white,
-                    transition: 'all 0.2s ease',
+                    borderRadius: '14px', // Matches your logo and card radius
+                    transition: 'all 0.2s ease-in-out',
 
-                    // Default Border
+                    // Border styling
                     '& .MuiOutlinedInput-notchedOutline': {
                         borderColor: colors.border,
-                        borderWidth: '1px',
+                        borderWidth: '1.5px', // Slightly thicker for a premium feel
                     },
-
-                    // Hover State
                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: colors.slate,
+                        borderColor: colors.rosyPink, // Subtle brand color on hover
                     },
-
-                    // Focused State
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                         borderColor: colors.maroon,
                         borderWidth: '2px',
                     },
+                    // Error state
+                    '&.Mui-error .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#ef4444',
+                    }
                 },
                 input: {
-                    padding: '12px 14px', // Comfortable padding
-                    color: colors.charcoal,
-                    fontWeight: 500,
+                    padding: '14px 16px', // Matches your "john.doe" screenshot padding
+                    fontWeight: 400,
+                    fontSize: '16px',
+                    color: colors.slate,
+                    '&::placeholder': {
+                        color: colors.slate,
+                        opacity: 0.8,
+                        fontWeight: 400,
+                    },
                 },
             },
         },
-
-        // --- LABELS ---
-        MuiInputLabel: {
+        // --- INPUT ADORNMENTS (Icons inside inputs) ---
+        MuiInputAdornment: {
             styleOverrides: {
                 root: {
-                    color: colors.slate,
-                    lineHeight: 1,
-                    '&.Mui-focused': {
-                        color: colors.maroon,
-                        fontWeight: 600,
-                        backgroundColor: colors.cloud,
-                    },
-                    '&.Mui-active': {
-                        borderColor: colors.maroon,
-                    },
+                    color: colors.slate, // Standardizes icon color inside inputs
                 },
             },
         },
-
-        // --- CHECKBOXES ---
-        MuiCheckbox: {
-            styleOverrides: {
-                root: {
-                    color: colors.slate,
-                    '&.Mui-checked': {
-                        color: colors.maroon,
-                    },
-                },
-            },
-        },
-
         // --- BUTTONS ---
         MuiButton: {
             styleOverrides: {
                 root: {
-                    textTransform: 'none', // Removes the default ALL CAPS
+                    textTransform: 'none',
+                    borderRadius: '12px',
+                    padding: '12px 24px',
                     fontWeight: 600,
-                    fontSize: '0.95rem',
-                    boxShadow: 'none',
-                    padding: '10px 24px',
-                    '&:hover': {
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                    },
                 },
-
+                containedPrimary: {
+                    backgroundColor: colors.maroon,
+                    '&:hover': {
+                        backgroundColor: '#43203b', // Darker shade of maroon
+                    }
+                }
             },
         },
     },
