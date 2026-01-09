@@ -1,7 +1,6 @@
 import React, { FormEventHandler, useEffect, useState } from 'react';
 import {
     Box,
-    Button,
     Checkbox,
     FormControlLabel,
     IconButton,
@@ -20,10 +19,12 @@ import {
     GitHub,
 } from '@mui/icons-material';
 import { Link, useForm, usePage } from '@inertiajs/react';
+import Button from "@/components/common/Button";
 import { useNotification } from "@/context/NotificationContext";
 import GuestLayout from '@/layouts/GuestLayout';
 import IconLock from "@/icons/IconLock";
 import IconEnvelope from "@/icons/IconEnvelope";
+import theme from "@/theme";
 
 export default function Login({ canResetPassword }: { canResetPassword: boolean; }) {
     const [showPassword, setShowPassword] = useState(false);
@@ -56,7 +57,7 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                 <Stack spacing={3}>
                     {/* Email */}
                     <Box>
-                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: '#374151' }}>
+                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: theme.palette.text.primary }}>
                             Email Address
                         </Typography>
                         <TextField
@@ -75,13 +76,12 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                                     ),
                                 }
                             }}
-                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3, bgcolor: '#fff' } }}
                         />
                     </Box>
 
                     {/* Password */}
                     <Box>
-                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, color: '#374151' }}>
+                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: theme.palette.text.primary }}>
                             Password
                         </Typography>
                         <TextField
@@ -111,7 +111,7 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                                     ),
                                 },
                             }}
-                            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 3, bgcolor: '#fff' } }}
+
                         />
                     </Box>
 
@@ -128,35 +128,32 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                         )}
                     </Box>
 
-                    {/* Submit Button */}
                     <Button
-                        fullWidth
                         type="submit"
-                        variant="contained"
+                        version="primary"
+                        text="Sign In"
                         disabled={processing}
-                        endIcon={<ArrowForward />}
-                        sx={{
-                            py: 1.5,
-                            borderRadius: 3,
-                            bgcolor: '#522B47',
-                            fontWeight: 600,
-                            textTransform: 'none',
-                            '&:hover': { bgcolor: '#3d1f35' }
-                        }}
-                    >
-                        Sign In
-                    </Button>
+                        icon={<ArrowForward style={{ fontSize: '18px' }} />}
+                    />
 
                     <Divider sx={{ my: 1 }}><Typography variant="caption" color="text.secondary">Or continue with</Typography></Divider>
 
                     {/* Social Buttons */}
                     <Stack direction="row" spacing={2}>
-                        <Button fullWidth variant="outlined" startIcon={<Google />} sx={{ borderRadius: 3, color: '#374151', borderColor: '#E5E7EB', textTransform: 'none' }}>
-                            Google
-                        </Button>
-                        <Button fullWidth variant="outlined" startIcon={<GitHub />} sx={{ borderRadius: 3, color: '#374151', borderColor: '#E5E7EB', textTransform: 'none' }}>
-                            GitHub
-                        </Button>
+                        <Button
+                            version="outline"
+                            text="Google"
+                            className="w-full"
+                            icon={<Google style={{ fontSize: '18px' }} />}
+                            onClick={() => { /* Handle Google Auth */ }}
+                        />
+                        <Button
+                            version="outline"
+                            text="GitHub"
+                            className="w-full"
+                            icon={<GitHub style={{ fontSize: '18px' }} />}
+                            onClick={() => { /* Handle GitHub Auth */ }}
+                        />
                     </Stack>
 
                     {/* Footer Link */}

@@ -40,14 +40,7 @@ export default function GuestLayout({ children, title, subtitle, headTitle}: Gue
                     {subtitle}
                 </Typography>
 
-                <Paper sx={{
-                    p: 4,
-                    width: '100%',
-                    maxWidth: 440,
-                    borderRadius: "24px",
-                    backgroundColor: theme.palette.background.white,
-                    boxShadow: '0px 10px 40px rgba(0,0,0,0.1)'
-                }}>
+                <Paper className='guest-layout-content'>
                     {children}
                 </Paper>
 

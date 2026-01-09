@@ -108,12 +108,30 @@ const theme = createTheme({
                     padding: '12px 24px',
                     fontWeight: 600,
                 },
-                containedPrimary: {
-                    backgroundColor: colors.maroon,
+                // containedPrimary: {
+                //     backgroundColor: colors.maroon,
+                //     '&:hover': {
+                //         backgroundColor: '#43203b', // Darker shade of maroon
+                //     }
+                // }
+            },
+        },
+        // --- GLOBAL LINK STYLING ---
+        MuiLink: {
+            defaultProps: {
+                underline: 'none', // Removes the underline globally
+            },
+            styleOverrides: {
+                root: {
+                    color: colors.maroon, // Uses your brand maroon
+                    fontWeight: 600,
+                    transition: 'color 0.2s ease-in-out',
+                    cursor: 'pointer',
                     '&:hover': {
-                        backgroundColor: '#43203b', // Darker shade of maroon
-                    }
-                }
+                        color: colors.rosyPink, // Changes color on hover
+                        textDecoration: 'none',
+                    },
+                },
             },
         },
     },

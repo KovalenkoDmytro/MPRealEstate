@@ -1,5 +1,4 @@
-import { Link } from "@inertiajs/react";
-import React from "react";
+import {Link} from "@mui/material";
 
 export type ButtonProps = {
     version: 'primary' | 'secondary' | 'outline';
@@ -9,6 +8,8 @@ export type ButtonProps = {
     href?: string;
     icon?: React.ReactNode;
     className?: string;
+    type?: 'button' | 'submit' | 'reset';
+    disabled?: boolean;
 };
 
 export default function Button({
@@ -19,8 +20,9 @@ export default function Button({
                                    href = '#',
                                    icon,
                                    className,
+                                   type = 'button',
+                                   disabled = false,
                                }: ButtonProps) {
-
     const classes = `btn btn-${version} ${className ? className : ''}`;
 
     if (link && href) {
@@ -34,12 +36,13 @@ export default function Button({
 
     return (
         <button
-            type="button"
+            type={type}
             onClick={onClick}
             className={classes}
+            disabled={disabled}
         >
-            {icon && <span className="btn-icon">{icon}</span>}
             {text}
+            {icon && <span className="btn-icon" style={{ marginLeft: '8px' }}>{icon}</span>}
         </button>
     );
 }
