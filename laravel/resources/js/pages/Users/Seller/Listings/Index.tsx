@@ -1,5 +1,5 @@
 import { Head } from "@inertiajs/react";
-import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import type { RealEstateListing } from "@/types";
 import SellerListingsGrid from "@/components/listings/ListingsGrid";
 import React from "react";

@@ -13,7 +13,7 @@ import {
     TextField,
     alpha
 } from "@mui/material";
-import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { RealEstateListing, User } from "@/types";
 import { appointmentService } from "@/services/appointmentService";
 import { useNotification } from "@/context/NotificationContext";

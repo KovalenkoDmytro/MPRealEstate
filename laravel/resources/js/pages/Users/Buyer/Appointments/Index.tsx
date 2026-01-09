@@ -14,7 +14,7 @@ import {
     Link
 } from "@mui/material";
 
-import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { RealEstateListing, User } from "@/types";
 import { format } from "date-fns";
 import ConfirmDialog from "@/components/ConfirmDialog";

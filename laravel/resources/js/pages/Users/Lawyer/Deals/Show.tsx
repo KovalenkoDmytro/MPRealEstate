@@ -1,5 +1,5 @@
 import {Head} from "@inertiajs/react";
-import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import {PropertyDetail} from "@/types";
 import DealHeader from "@/components/deal/DealHeader";
 import PropertyDetails from "@/components/deal/PropertyDetails";

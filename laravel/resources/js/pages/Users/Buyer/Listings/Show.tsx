@@ -1,6 +1,6 @@
 import React from "react";
 import { Head } from "@inertiajs/react";
-import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { ImageGallery } from "@/components/listing/ImageGallery";
 import { ListingDetails } from "@/components/listing/ListingDetails";
 import { OfferFeedback } from "@/components/listing/OfferFeedback";

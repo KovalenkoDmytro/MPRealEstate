@@ -19,6 +19,7 @@ import {
     Notifications as NotificationsIcon,
     Circle as CircleIcon
 } from "@mui/icons-material";
+import IconNotificationBell from "@/icons/IconNotificationBell";
 
 const NotificationBell: React.FC = () => {
     const { props } = usePage<PageProps>()
@@ -80,7 +81,7 @@ const NotificationBell: React.FC = () => {
                 color="inherit"
             >
                 <Badge badgeContent={unreadCount} color="error">
-                    <NotificationsIcon />
+                    <IconNotificationBell />
                 </Badge>
             </IconButton>
 

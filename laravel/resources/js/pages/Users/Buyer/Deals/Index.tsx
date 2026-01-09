@@ -1,6 +1,6 @@
 import React from 'react';
 import {Head} from '@inertiajs/react';
-import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import {PropertyDetail} from '@/types';
 import {DealsList} from '@/components/deals/DealsList';
 

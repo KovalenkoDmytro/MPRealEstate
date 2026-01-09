@@ -8,8 +8,19 @@ const colors = {
     tan: '#d07669',
     white: '#ffffff',
     cloud: '#F9FAFB',
-    border: '#E5E7EB', // Light grey for inputs
+    border: '#E5E7EB',
+    rosyPink: '#CB9A9F',
 };
+
+declare module '@mui/material/styles' {
+    interface TypeBackground {
+        sidebar?: string;
+    }
+    interface TypeText {
+        tan?: string;
+        rosyPink?: string;
+    }
+}
 
 const theme = createTheme({
     // 1. Palette: Hooks up "primary" and "secondary" to your variables
@@ -23,10 +34,13 @@ const theme = createTheme({
         text: {
             primary: colors.charcoal,
             secondary: colors.slate,
+            tan: colors.tan,
+            rosyPink: colors.rosyPink
         },
         background: {
             default: colors.cloud,
             paper: colors.white,
+            sidebar: colors.charcoal,
         },
     },
 

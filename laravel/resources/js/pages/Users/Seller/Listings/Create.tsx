@@ -1,4 +1,4 @@
-import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import React, { useState } from "react";
 import { listingService } from "@/services/listingService";

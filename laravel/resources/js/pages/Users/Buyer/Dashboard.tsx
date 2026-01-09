@@ -1,4 +1,4 @@
-import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import {Box, Typography, Grid, Stack} from "@mui/material";
 import { OfferStats, AppointmentsStats } from "@/types/models";

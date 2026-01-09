@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Head, Link } from "@inertiajs/react";
 import { RealEstateListing, Offer } from "@/types";
-import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { offerService } from "@/services/offerService";
 import {
     Box,

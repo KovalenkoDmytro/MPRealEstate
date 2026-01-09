@@ -1,4 +1,4 @@
-import AuthenticatedLayout from "@/layouts/AuthenticatedLayout";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
 import React, { useState } from "react";
 import { RealEstateListing, PropertyStatus } from "@/types";

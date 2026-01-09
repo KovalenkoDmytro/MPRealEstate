@@ -1,0 +1,9 @@
+import path from "path";
+
+export default function IconFavorite(){
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M15.8333 11.6667C17.075 10.45 18.3333 8.99167 18.3333 7.08333C18.3333 5.86776 17.8504 4.70197 16.9909 3.84243C16.1314 2.98289 14.9656 2.5 13.75 2.5C12.2833 2.5 11.25 2.91667 10 4.16667C8.75 2.91667 7.71667 2.5 6.25 2.5C5.03443 2.5 3.86864 2.98289 3.0091 3.84243C2.14955 4.70197 1.66667 5.86776 1.66667 7.08333C1.66667 9 2.91667 10.4583 4.16667 11.6667L10 17.5L15.8333 11.6667Z" stroke="#CB9A9F" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    );
+}
