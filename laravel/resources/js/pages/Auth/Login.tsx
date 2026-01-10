@@ -7,17 +7,10 @@ import {
     InputAdornment,
     TextField,
     Typography,
-    Divider,
     Link as MuiLink,
     Stack,
 } from '@mui/material';
-import {
-    Visibility,
-    VisibilityOff,
-    ArrowForward,
-    Google,
-    GitHub,
-} from '@mui/icons-material';
+import {Visibility, VisibilityOff, ArrowForward,} from '@mui/icons-material';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import Button from "@/components/common/Button";
 import { useNotification } from "@/context/NotificationContext";
@@ -135,26 +128,6 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                         disabled={processing}
                         icon={<ArrowForward style={{ fontSize: '18px' }} />}
                     />
-
-                    <Divider sx={{ my: 1 }}><Typography variant="caption" color="text.secondary">Or continue with</Typography></Divider>
-
-                    {/* Social Buttons */}
-                    <Stack direction="row" spacing={2}>
-                        <Button
-                            version="outline"
-                            text="Google"
-                            className="w-full"
-                            icon={<Google style={{ fontSize: '18px' }} />}
-                            onClick={() => { /* Handle Google Auth */ }}
-                        />
-                        <Button
-                            version="outline"
-                            text="GitHub"
-                            className="w-full"
-                            icon={<GitHub style={{ fontSize: '18px' }} />}
-                            onClick={() => { /* Handle GitHub Auth */ }}
-                        />
-                    </Stack>
 
                     {/* Footer Link */}
                     <Typography variant="body2" align="center" sx={{ color: '#6B7280' }}>
