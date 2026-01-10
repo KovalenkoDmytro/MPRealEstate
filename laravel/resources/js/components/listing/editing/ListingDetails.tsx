@@ -59,6 +59,7 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                     <p> Address Autocomplete</p>
                     <AddressAutocomplete
                         onSelect={(place) => {
+
                             const comps = place.addressComponents || [];
 
                             const get = (type: string) =>
@@ -71,8 +72,8 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                             handleChange("postal_code", get("postal_code"));
                             handleChange("country", get("country"));
 
-                            handleChange("latitude", place.location?.lat ?? null);
-                            handleChange("longitude", place.location?.lng ?? null);
+                            handleChange("latitude", place.location?.lat() ?? null);
+                            handleChange("longitude", place.location?.lng() ?? null);
                         }}
                     />
                 </Grid>

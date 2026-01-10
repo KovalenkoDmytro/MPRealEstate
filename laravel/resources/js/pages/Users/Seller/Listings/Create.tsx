@@ -81,11 +81,11 @@ export default function CreateListing() {
     const [previewGalleryImages, setPreviewGalleryImages] = useState<GalleryImagePreview[]>([]);
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
-    const { showNotification, setRedirectNotification } = useNotification();
+    const {showNotification, setRedirectNotification} = useNotification();
 
     /** Handle form inputs */
-    const handleChange = (name: string, value: string[]| string | number | boolean) => {
-        setData((prev) => ({ ...prev, [name]: value }));
+    const handleChange = (name: string, value: string[] | string | number | boolean) => {
+        setData((prev) => ({...prev, [name]: value}));
     };
 
 
@@ -93,7 +93,7 @@ export default function CreateListing() {
     const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setData((prev) => ({ ...prev, main_image: file }));
+            setData((prev) => ({...prev, main_image: file}));
             setPreviewMainImage(URL.createObjectURL(file));
         }
     };
@@ -101,7 +101,7 @@ export default function CreateListing() {
     /** Remove main image preview */
     const removeMainImage = () => {
         if (previewMainImage) imageService.revokePreview(previewMainImage);
-        setData((prev) => ({ ...prev, main_image: null }));
+        setData((prev) => ({...prev, main_image: null}));
         setPreviewMainImage(null);
     };
 
@@ -137,7 +137,7 @@ export default function CreateListing() {
         updatedFiles.splice(index, 1);
 
         setPreviewGalleryImages(updatedPreviews);
-        setData((prev) => ({ ...prev, gallery_images: updatedFiles }));
+        setData((prev) => ({...prev, gallery_images: updatedFiles}));
     };
 
     /** Build FormData for submission */
@@ -179,12 +179,12 @@ export default function CreateListing() {
         const formData = buildFormData(data);
         const result = await listingService.createListing(formData);
 
-        if(result.success){
+        if (result.success) {
             setRedirectNotification(result.message, "success");
             window.location.href = "/listings";
-        }else {
+        } else {
             setErrors(result.errors);
-            showNotification(result.message,"error")
+            showNotification(result.message, "error")
         }
 
         setProcessing(false);
@@ -192,8 +192,9 @@ export default function CreateListing() {
 
     return (
         <AuthenticatedLayout header={<h2 className="text-xl font-semibold text-gray-800">Create Listing</h2>}>
-            <Head title="Create Listing" />
+            <Head title="Create Listing"/>
             <div className="container mx-auto p-4">
+
                 {/* Property, Financial & Features */}
                 <ListingDetails data={data} errors={errors} handleChange={handleChange} />
 
