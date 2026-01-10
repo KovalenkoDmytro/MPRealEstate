@@ -18,14 +18,13 @@ import {
     VisibilityOff,
     ArrowForward,
 } from '@mui/icons-material';
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import GuestLayout from '@/layouts/GuestLayout';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNotification } from '@/context/NotificationContext';
 import { authService } from "@/services/authService";
 import { RegisterData, RegisterDataErrors } from "@/types/auth";
-import { extractErrorMessage } from "@/helpers/errorHelpers";
 import Button from "@/components/common/Button";
 import IconEnvelope from "@/icons/IconEnvelope";
 import theme from "@/theme";
@@ -73,12 +72,11 @@ export default function Register({ roles }: { roles: string[] }) {
                 setRedirectNotification(response.message, response.status);
                 window.location.href = route("verification.notice");
             } else {
+                console.log("Registration failed:", response);
                 showNotification(response.message, "error");
             }
         } catch (err: any) {
-            const errorMsg = extractErrorMessage(err.response);
-            showNotification(errorMsg, "error");
-            // If the server returns field-specific errors, map them here if your extractErrorMessage helper supports it
+            setErrors(err.response.data.errors);
         } finally {
             setLoading(false);
         }
