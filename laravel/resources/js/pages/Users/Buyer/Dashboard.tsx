@@ -10,6 +10,7 @@ import StatCard from "@/components/common/StatCard";
 import {
     RecentlyViewedPreviewSection
 } from "@/components/dashboard/buyer/recentlyViewed/RecentlyViewedPreviewSection";
+import theme from "@/theme";
 
 type PageProps = {
     offers: Offer[];
@@ -64,9 +65,6 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
-
-
-
                         <StatCard
                             label="Appointments"
                             value={appointments_stats.acceptedCount}
@@ -87,7 +85,6 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
                             </svg>}
                             iconColor="#D07669"
                         />
-
                     </Grid>
                 </Grid>
 
@@ -95,7 +92,12 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
                 <Grid container spacing={3} sx={{ mt: 3 }}>
                     <Grid
                         size={{ xs: 12, md: 8 }}
-                        sx={{ p: 3, borderRadius: 4, bgcolor: '#fff', boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)', }}
+                        sx={{
+                            p: theme.shape.padding,
+                            borderRadius: theme.shape.borderRadius,
+                            bgcolor: theme.palette.background.white,
+                            boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)'
+                    }}
                     >
                         <RecentOffersList offers={offers} />
                     </Grid>
@@ -109,7 +111,6 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
                                     itemsToDisplay={2}
                                 />
                             )}
-
 
                             {listings_recently_viewed.length > 0 && (
                                 <RecentlyViewedPreviewSection

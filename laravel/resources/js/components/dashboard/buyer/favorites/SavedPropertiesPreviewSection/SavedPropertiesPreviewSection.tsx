@@ -4,6 +4,7 @@ import { FavoriteListings } from "@/types/favoriteListings";
 import SavedPropertyMiniCard
     from "@/components/dashboard/buyer/favorites/SavedPropertiesPreviewSection/SavedPropertyMiniCard";
 import Button from "@/components/common/Button";
+import theme from "@/theme";
 
 
 export default function SavedPropertiesPreviewSection({ favoriteListing, itemsToDisplay}: { favoriteListing: FavoriteListings, itemsToDisplay : number }) {
@@ -11,7 +12,12 @@ export default function SavedPropertiesPreviewSection({ favoriteListing, itemsTo
     return (
         <Paper className="saved-properties-preview-section"
                elevation={0}
-               sx={{ p: 3, borderRadius: 4, bgcolor: '#fff', boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)', }}
+               sx={{
+                   p: theme.shape.padding,
+                   borderRadius: theme.shape.borderRadius,
+                   bgcolor: theme.palette.background.white,
+                   boxShadow: theme.shape.boxShadow,
+               }}
         >
             <Typography variant="h6" fontWeight={700} gutterBottom sx={{ mb: 3 }}>
                 Saved Properties

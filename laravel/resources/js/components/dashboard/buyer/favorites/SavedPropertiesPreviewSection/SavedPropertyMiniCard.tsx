@@ -2,6 +2,7 @@ import React from 'react';
 import { RealEstateListing } from '@/types';
 import Button from '@/components/common/Button';
 import Badge from '@/components/common/Badge';
+import IconLocationMark from "@/icons/IconLocationMark";
 
 type SavedListingMiniCardProps = {
     listing: RealEstateListing;
@@ -35,11 +36,8 @@ export default function SavedListingMiniCard({ listing }: SavedListingMiniCardPr
                 <h3 className="mini-card-title">{listing.title}</h3>
 
                 <div className="mini-card-address">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    {listing.location}
+                    <IconLocationMark/>
+                    {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}, {listing.postal_code}
                 </div>
 
                 <div className="mini-card-features">

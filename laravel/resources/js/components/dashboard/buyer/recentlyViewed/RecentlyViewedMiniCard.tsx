@@ -11,9 +11,11 @@ type ListingCardProps = {
 
 export default function RecentlyViewedMiniCard({listing}: ListingCardProps) {
     const isMounted = useRef(true);
+
     useEffect(() => {
         return () => { isMounted.current = false; };
     }, []);
+
     const formattedSqft = new Intl.NumberFormat('en-US').format(listing.square_feet);
     const detailUrl = typeof route === 'function' ? route("buyer.listings.show", listing.id) : `/listings/${listing.id}`;
     const mainImage = listing.main_image?.image_path || '/images/placeholder-house.jpg';
