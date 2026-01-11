@@ -29,7 +29,7 @@ class DealSeeder extends Seeder
             $deal = Deal::factory()->create([
                 'real_estate_listing_id' => $sellerListing->id,
                 'amount'                 => random_int(5000, 50000),
-                'seller_message'         => "Sample deal $i",
+                'deal_message'         => "Sample deal $i",
             ]);
 
             // Attach participants

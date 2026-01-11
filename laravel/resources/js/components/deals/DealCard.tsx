@@ -1,154 +1,217 @@
 import React from "react";
-import { PropertyDetail } from "@/types";
-import { Link } from "@inertiajs/react";
+import {PropertyDetail, User} from "@/types";
 import {
     Paper,
     Typography,
     Box,
     Stack,
-    Button,
-    alpha,
-    Chip
+    Divider,
+    LinearProgress,
+    Avatar,
 } from "@mui/material";
-import {
-    MonetizationOnRounded,
-    HomeRounded,
-    EventNoteRounded,
-    ArrowForwardRounded,
-    HandshakeRounded,
-    ErrorOutlineRounded
-} from '@mui/icons-material';
-import {formatCurrency} from "@/helpers/priceHelper";
+import {AssignmentOutlined} from '@mui/icons-material';
+import { formatCurrency } from "@/helpers/priceHelper";
+import IconLocationMark from "@/icons/IconLocationMark";
+import IconBed from "@/icons/IconBed";
+import IconBath from "@/icons/IconBath";
+import IconSqft from "@/icons/IconSqft";
+import Button from "@/components/common/Button";
+import theme from "@/theme";
+import Badge from "@/components/common/Badge";
+import IconAppointments from "@/icons/IconAppointments";
+import { format, parseISO } from 'date-fns';
+import {useAuth} from "@/hooks/useAuth";
 
 interface DealCardProps {
     deal: PropertyDetail;
 }
 
-export const DealCard: React.FC<DealCardProps> = ({ deal }) => {
+export const DealCard: React.FC<DealCardProps> = ({deal }) => {
+    const user = useAuth();
+    const listing = deal.real_estate_listing;
+    const counterparty: User = user.role === 'buyer'
+        ? deal.users.find(u => u.role === 'seller')!
+        : deal.users.find(u => u.role === 'buyer')!;
 
-    // Format date specifically as shown in the design (e.g., "Nov 28, 2025")
-    const formattedDate = new Date(deal.created_at).toLocaleDateString('en-US', {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-    });
+    const getStatusBadge = () => {
+        if (deal.is_broken) return { label: "Deal Broken", color: "#B91C1C", bg: "#FEE2E2" };
+        if (deal.is_completed) return { label: "Closed", color: "#047857", bg: "#D1FAE5" };
+        return { label: "Pending", color: "#925b77", bg: "#f5ebf0" };
+    };
 
-
-
+    const status = getStatusBadge();
 
     return (
         <Paper
-            elevation={2}
+            elevation={0}
             sx={{
-                p: 3,
-                borderRadius: 4,
-                height: '100%',
-                bgcolor: '#fff',
-                transition: 'transform 0.2s, box-shadow 0.2s',
+                borderRadius: theme.shape.borderRadius,
+                overflow: 'hidden',
+                border: '1px solid',
+                borderColor: '#e2e8f0',
                 display: 'flex',
-                flexDirection: 'column'
+                padding: theme.shape.padding,
+                flexDirection: { xs: 'column', md: 'row' },
+                bgcolor: theme.palette.background.white,
+                color: theme.palette.primary.main,
             }}
         >
-            {/* Header: Broken Status & Title */}
-            <Stack spacing={1} mb={3}>
-                {deal.is_broken && (
-                    <Chip
-                        icon={<ErrorOutlineRounded />}
-                        label="Deal Broken"
-                        color="error"
-                        variant="outlined"
-                        size="small"
-                        sx={{ alignSelf: 'flex-start', fontWeight: 600 }}
-                    />
-                )}
-                <Stack direction="row" alignItems="center" spacing={1}>
-                    <HandshakeRounded sx={{ color: '#D97706' }} />
-                    <Typography variant="h6" fontWeight={800} color="text.primary">
-                        {deal.name}
-                    </Typography>
+            {/* 1. Left Section: Images */}
+            <Stack spacing={2} >
+                <Box
+                    component="img"
+                    src={listing.main_image?.image_path ?? "/api/placeholder/400/320"}
+                    sx={{
+                        width: 225,
+                        height: 225,
+                        borderRadius: theme.shape.borderRadius,
+                        boxShadow: theme.shape.boxShadow,
+                        objectFit: 'cover', mb: 1
+                    }}
+                />
+                <Stack direction="row" spacing={1}>
+                    {listing.images?.slice(0, 3).map((img, i) => (
+                        <Box
+                            key={i}
+                            component="img"
+                            src={img.image_path}
+                            sx={{
+                                width: 70,
+                                height: 70,
+                                borderRadius: theme.shape.borderRadius,
+                                boxShadow: theme.shape.boxShadow,
+                                objectFit: 'cover'
+                            }}
+                        />
+                    ))}
                 </Stack>
             </Stack>
 
-
+            {/* 2. Middle Section: Details */}
             <Box
                 sx={{
-                    bgcolor: alpha('#3B82F6', 0.12), // Light blue background
-                    color: '#3B82F6', // Blue text color
-                    p: 2,
-                    borderRadius: 3,
+                    p: 3,
+                    flexGrow: 1,
                     display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    mb: 3
+                    flexDirection: 'column',
+                    borderRight: { md: '1px solid #e2e8f0' },
+                    pt: 0,
                 }}
             >
-                <Typography variant="h6" fontWeight={800}>
-                    {formatCurrency(deal.amount)}
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="flex-start" mb={1}
+
+                >
+                    <Typography variant="h5" fontWeight={600} sx={{ color: theme.palette.text.primary }}>
+                        {listing.title}
+                    </Typography>
+                    <Badge text={status.label} version={"notification"}/>
+
+                </Stack>
+
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <IconLocationMark />
+                    {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}
                 </Typography>
-                <MonetizationOnRounded fontSize="small" />
+
+                <Typography variant="body2" sx={{ color: theme.palette.primary.main,  mb: 3, lineClamp: 2, display: '-webkit-box', overflow: 'hidden', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2 }}>
+                    {listing.description}
+                </Typography>
+
+                <Stack direction="row" spacing={3} mb={3}>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                        <IconBed />
+                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>{listing.bedrooms} Beds</Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                        <IconBath />
+                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}> {listing.bathrooms} Baths</Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                        <IconSqft />
+                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>{listing.square_feet.toLocaleString()} sq ft</Typography>
+                    </Stack>
+                </Stack>
+
+                <Divider sx={{ mb: 2 }} />
+
+                <Stack direction="row" spacing={4}>
+                    <Box>
+                        <Typography variant="caption" sx={{ letterSpacing: 0.5 , color: theme.palette.primary.main, }}>OFFER AMOUNT</Typography>
+                        <Typography variant="h5" fontWeight={800} sx={{  color: theme.palette.text.primary  }}>{formatCurrency(deal.amount)}</Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" sx={{ letterSpacing: 0.5,  color: theme.palette.primary.main, }}>ORIGINAL PRICE</Typography>
+                        <Typography variant="h5" fontWeight={800} sx={{  color: theme.palette.text.primary  }}>{formatCurrency(listing.price)}</Typography>
+                    </Box>
+                </Stack>
             </Box>
 
-            <Stack spacing={2} sx={{ mb: 4, flexGrow: 1 }}>
-                <Paper
-                    variant="outlined"
-                    sx={{
-                        p: 1.5,
-                        borderRadius: 3,
-                        display: 'flex',
-                        alignItems: 'center',
-                        borderColor: 'grey.200',
-                        bgcolor: 'grey.50'
-                    }}
-                >
-                    <Box sx={{ bgcolor: '#E2E8F0', p: 1, borderRadius: 2, mr: 2, color: '#64748B', display: 'flex' }}>
-                        <HomeRounded />
-                    </Box>
-                    <Typography variant="body2" fontWeight={600} color="text.secondary">
-                        <span style={{ fontWeight: 400 }}>Listing: </span>
-                        {deal.real_estate_listing.title ?? "N/A"}
-                    </Typography>
-                </Paper>
+            {/* 3. Right Section: Counterparty & Progress */}
+            <Box sx={{ p: 3, pt: 0, width: { md: 350 }, display: 'flex', flexDirection: 'column' }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+                    <Typography variant="caption">{counterparty.role}</Typography>
+                </Stack>
 
-                <Paper
-                    variant="outlined"
-                    sx={{
-                        p: 1.5,
-                        borderRadius: 3,
-                        display: 'flex',
-                        alignItems: 'center',
-                        borderColor: 'grey.200',
-                        bgcolor: '#FFF7ED'
-                    }}
-                >
-                    <Box sx={{ bgcolor: '#FFEDD5', p: 1, borderRadius: 2, mr: 2, color: '#F97316', display: 'flex' }}>
-                        <EventNoteRounded />
-                    </Box>
-                    <Typography variant="body2" fontWeight={600} color="text.secondary">
-                        <span style={{ fontWeight: 400 }}>Created: </span>
-                        {formattedDate}
-                    </Typography>
-                </Paper>
-            </Stack>
+                <Stack direction="row" spacing={1.5} alignItems="center" mb={2}>
+                    <Avatar sx={{ bgcolor: '#572A4D1A', color: '#718096', width: 40, height: 40 }}>
+                        {counterparty?.name.charAt(0)}
+                    </Avatar>
+                    <Typography variant="subtitle1" fontWeight={700} sx={{ color: theme.palette.text.primary }}>{counterparty?.name}</Typography>
+                </Stack>
 
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Link href={route("deals.show", deal.id)} style={{ textDecoration: 'none' }}>
+                <Box sx={{ mb: 3 }}>
+                    <Stack direction="row" justifyContent="space-between" mb={0.5}>
+                        <Typography variant="caption" color="#4a5568" >Progress</Typography>
+                        <Typography variant="caption" color="#4a5568" >45%</Typography>
+                    </Stack>
+                    <LinearProgress
+                        variant="determinate"
+                        value={45}
+                        sx={{ height: 10, borderRadius: 5, bgcolor: '#edf2f7', '& .MuiLinearProgress-bar': { bgcolor: theme.palette.primary.main } }}
+                    />
+                </Box>
+
+                <Stack direction="row" spacing={4} mb={3}>
+                    <Box>
+                        <Typography variant="caption">
+                            Submitted
+                        </Typography>
+                        <Typography variant="body2" color="#2d3748" fontWeight={700} sx={{ display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 500 }}>
+                            <IconAppointments/>
+                            {format(parseISO(deal.created_at), 'MMM d, yyyy') }
+                        </Typography>
+                    </Box>
+
+                    <Box>
+                        <Typography variant="caption">
+                            Possession day
+                        </Typography>
+                        <Typography variant="body2" color="#2d3748" fontWeight={700} sx={{ display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 500 }}>
+                            <IconAppointments/>
+                            {deal.possession_day ? format(parseISO(deal.possession_day), 'MMM d, yyyy') : 'Not set yet' }
+                        </Typography>
+                    </Box>
+
+                </Stack>
+
+                <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: 1, mb: 2 }}>
+                    <Typography variant="caption" color="text.secondary" fontWeight={700}>Notification</Typography>
+                    <Typography variant="body2" fontWeight={700} color="#2d3748">{deal.deal_message}</Typography>
+                </Box>
+
+                <Box sx={{ mt: 'auto' }}>
                     <Button
-                        variant="contained"
-                        endIcon={<ArrowForwardRounded />}
-                        sx={{
-                            borderRadius: 5,
-                            textTransform: 'none',
-                            fontWeight: 700,
-                            bgcolor: '#3B82F6',
-                            px: 3,
-                            '&:hover': {
-                                bgcolor: '#2563EB'
-                            }
-                        }}
-                    >
-                        View Deal
-                    </Button>
-                </Link>
+                        version="primary"
+                        text="View Details"
+                        link={true}
+                        href={route("deals.show", deal.id)}
+                        icon={<AssignmentOutlined fontSize="small" />}
+                        className="w-full justify-center py-3"
+                    />
+                </Box>
             </Box>
         </Paper>
     );

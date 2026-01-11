@@ -20,6 +20,17 @@ declare module '@mui/material/styles' {
         tan?: string;
         rosyPink?: string;
     }
+    interface Shape {
+        borderRadius: number | string;
+        padding: string | number;
+        boxShadow: string;
+    }
+
+    interface ShapeOptions {
+        borderRadius?: number | string;
+        padding?: string | number;
+        boxShadow?: string;
+    }
 }
 
 const theme = createTheme({
@@ -44,7 +55,9 @@ const theme = createTheme({
         },
     },
     shape: {
-        borderRadius: 12, // Increased to match the "EstateHub" rounded UI
+        borderRadius: '16px',
+        padding: '25px',
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.10)',
     },
     components: {
         // --- GLOBAL TEXTFIELD / INPUT OVERRIDES ---

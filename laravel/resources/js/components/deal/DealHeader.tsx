@@ -15,7 +15,7 @@ export default function DealHeader({ deal }: { deal: Deal }) {
                     💰 <strong>Amount:</strong> ${deal.amount.toLocaleString()}
                 </Typography>
                 <Typography variant="body1">
-                    📝 <strong>Description:</strong> {deal.seller_message}
+                    📝 <strong>Description:</strong> {deal.deal_message}
                 </Typography>
             </Stack>
         </Box>

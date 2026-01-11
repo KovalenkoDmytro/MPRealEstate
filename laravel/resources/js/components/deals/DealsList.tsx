@@ -1,5 +1,6 @@
 import {PropertyDetail} from '@/types';
 import { DealCard } from './DealCard';
+import {Stack} from "@mui/material";
 
 interface DealsListProps {
     deals: PropertyDetail[];
@@ -11,10 +12,10 @@ export const DealsList = ({ deals } : DealsListProps) => {
     }
 
     return (
-        <div className="grid grid-cols-3 gap-6">
+        <Stack spacing={2}>
             {deals.map((deal) => (
                 <DealCard key={deal.id} deal={deal} />
             ))}
-        </div>
+        </Stack>
     );
 };

@@ -11,9 +11,15 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     freetype-dev \
     oniguruma-dev \
-    libxml2-dev\
+    libxml2-dev \
     icu-dev \
     postgresql-dev
+
+# Install Redis extension (Added temporary build deps, then cleaned up)
+RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del .build-deps
 
 # Configure and install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -35,15 +41,15 @@ RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.
 # Set working directory
 WORKDIR /var/www/laravel
 
-# Copy composer files first (for caching if deps don’t change)
+# Copy composer files first
 COPY composer.json composer.lock ./
 
 # Copy application source code
 COPY . .
 
-# Install dependencies after copying code (so helpers.php exists)
+# Install dependencies
 RUN composer install --optimize-autoloader
 
-# Fix permissions for Laravel
+# Fix permissions
 RUN mkdir -p storage/framework/{cache,sessions,views} bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache

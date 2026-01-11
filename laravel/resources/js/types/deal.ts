@@ -23,7 +23,7 @@ export interface Deal extends BaseEntity {
     amount: number;
 
     /** Optional message from the seller */
-    seller_message: string | null;
+    deal_message: string | null;
 
     /** Security deposit amount */
     security_deposit: string | null;

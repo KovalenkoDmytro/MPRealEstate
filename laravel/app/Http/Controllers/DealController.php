@@ -82,7 +82,7 @@ class DealController extends Controller
         $user = auth()->user();
 
         return $user->deals()
-            ->with(['users', 'realEstateListing.mainImage', 'realEstateListing.images']) // eager load related data
+            ->with(['users', 'realEstateListing.mainImage', 'realEstateListing.images'])
             ->get();
     }
 

@@ -39,7 +39,7 @@ return new class extends Migration
             // Deal status
             $table->boolean('is_broken')->default(false);
             $table->timestamp('broken_at')->nullable();
-            $table->mediumText('seller_message')->nullable();
+            $table->mediumText('deal_message')->nullable();
             $table->boolean('is_completed')->default(false);
             $table->timestamp('completed_at')->nullable();
 

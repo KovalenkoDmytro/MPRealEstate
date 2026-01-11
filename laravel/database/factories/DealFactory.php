@@ -19,7 +19,7 @@ class DealFactory extends Factory
         return [
             'name' => 'Deal ' . $this->faker->unique()->word(),
             'amount' => $this->faker->randomFloat(2, 5000, 50000),
-            'seller_message' => $this->faker->sentence(),
+            'deal_message' => $this->faker->sentence(),
         ];
     }
 }

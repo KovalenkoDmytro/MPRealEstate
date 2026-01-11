@@ -9,6 +9,8 @@ interface DealsIndexProps {
 }
 
 export default function DealsIndex({ deals }: DealsIndexProps)  {
+
+    console.log(deals)
     return (
         <AuthenticatedLayout
             header={<h1 className="text-xl font-semibold text-gray-800">📄 My Deals</h1>}

@@ -5,6 +5,10 @@ import { useNotification } from "@/context/NotificationContext";
 import Button from '@/components/common/Button';
 import Badge from "@/components/common/Badge";
 import {formatCurrency} from "@/helpers/priceHelper";
+import IconLocationMark from "@/icons/IconLocationMark";
+import IconBed from "@/icons/IconBed";
+import IconBath from "@/icons/IconBath";
+import IconSqft from "@/icons/IconSqft";
 
 type ListingCardProps = {
     listing: RealEstateListing;
@@ -103,23 +107,20 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
             <div className="card-content">
                 <h3 className="card-title">{listing.title}</h3>
                 <div className="card-address">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
+                    <IconLocationMark/>
                     {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}, {listing.postal_code}
                 </div>
                 <div className="card-features">
                     <div className="feature-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 4v16M22 4v16M2 8h20M2 10h20M6 14v4M18 14v4"/></svg>
+                       <IconBed/>
                         <span>{listing.bedrooms}</span> Beds
                     </div>
                     <div className="feature-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 20v-6h6v6M4 20h16M2 8h20v12H2z"/></svg>
+                        <IconBath/>
                         <span>{listing.bathrooms}</span> Baths
                     </div>
                     <div className="feature-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h18v18H3zM9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+                        <IconSqft/>
                         <span>{formattedSqft}</span> sqft
                     </div>
                 </div>
