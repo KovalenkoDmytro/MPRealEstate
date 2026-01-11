@@ -23,7 +23,3 @@ export default function DealsIndex({ deals }: DealsIndexProps)  {
         </AuthenticatedLayout>
     );
 };
-
-const NoDealsMessage: React.FC = () => (
-    <p className="text-gray-600">You don't have any deals yet.</p>
-);

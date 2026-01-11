@@ -15,14 +15,3 @@ export interface RegisterDataErrors {
     role?: string;
 }
 
-export interface ForgotPasswordData {
-    email: string;
-}
-
-
-export interface ResetPasswordData {
-    token: string;
-    email: string;
-    password?: string;
-    password_confirmation?: string;
-}

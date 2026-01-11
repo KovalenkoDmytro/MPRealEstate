@@ -1,10 +1,10 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import { PropertyDetail, User } from '@/types';
+import { PropertyDetail } from '@/types';
 import { DealsList } from "@/components/deals/DealsList";
 import { Typography, Box, Card, CardContent, Divider } from '@mui/material';
 
-export default function DealsPage({ auth, deals }: { auth: { user: User }, deals: PropertyDetail[] }) {
+export default function DealsPage({ deals }: { deals: PropertyDetail[] }) {
     return (
         <AuthenticatedLayout
             header={<Typography variant="h5" fontWeight="bold">📑 Deals</Typography>}

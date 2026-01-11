@@ -1,8 +1,8 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
-import { PageProps } from '@/types/pageProps';
+
 import { Head } from '@inertiajs/react';
 
-export default function Edit(props:PageProps) {
+export default function Edit() {
     return (
         <AuthenticatedLayout
             header={

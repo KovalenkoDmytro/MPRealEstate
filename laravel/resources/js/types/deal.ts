@@ -9,10 +9,6 @@ import {User, BaseEntity, RealEstateListing, DealFile} from '@/types';
 export enum BreakStatus {
     /** Break is awaiting response */
     Pending = 'pending',
-    /** The seller/bayer has accepted break */
-    Accepted = 'accepted',
-    /** The seller/bayer has rejected break */
-    Rejected = 'rejected',
 }
 
 export interface Deal extends BaseEntity {

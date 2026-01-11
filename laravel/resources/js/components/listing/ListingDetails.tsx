@@ -8,7 +8,7 @@ type ListingDetailsProps = {
     role : 'seller' | 'buyer'
 }
 
-export const ListingDetails = ({ listing, role }: ListingDetailsProps) => (
+export const ListingDetails = ({ listing }: ListingDetailsProps) => (
     <Box mt={4}>
         {/* Title */}
         <Typography variant="h4" fontWeight="bold" gutterBottom>
@@ -23,7 +23,7 @@ export const ListingDetails = ({ listing, role }: ListingDetailsProps) => (
                 <strong>Price:</strong> ${listing.price.toLocaleString()}
             </Typography>
             <Typography variant="body1">
-                <strong>Location:</strong> {listing.location}
+                <strong>Address:</strong>  {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}, {listing.postal_code}
             </Typography>
             <Typography variant="body1">
                 <strong>Type:</strong> {listing.property_type}
