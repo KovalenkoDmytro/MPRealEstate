@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Head } from "@inertiajs/react";
 import { useState, FormEvent, useEffect } from "react";
 import GuestLayout from "@/layouts/GuestLayout";
 import {
@@ -7,9 +6,9 @@ import {
     Typography,
     Alert,
     TextField,
-    Button,
     CircularProgress,
 } from "@mui/material";
+import Button from "@/components/common/Button";
 
 export default function VerifyEmail() {
     const [email, setEmail] = useState("");
@@ -67,9 +66,11 @@ export default function VerifyEmail() {
     };
 
     return (
-        <GuestLayout>
-            <Head title="Email Verification" />
-
+        <GuestLayout
+            headTitle="Email Verification"
+            title="Verify Your Email Address"
+            subtitle="Please verify your email to continue"
+        >
             <Box component="form" onSubmit={submit} sx={{ maxWidth: 450, mx: "auto", mt: 4 }}>
                 {!prefilledEmail && (
                     <>
@@ -94,6 +95,7 @@ export default function VerifyEmail() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     sx={{ mb: 3 }}
+                    disabled={loading}
                 />
 
                 {/* Feedback messages */}
@@ -110,21 +112,20 @@ export default function VerifyEmail() {
 
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Box position="relative" display="inline-flex">
+
                         <Button
                             type="submit"
-                            variant="contained"
-                            size="medium"
+                            version="primary"
+                            text={loading ? "Sending..." : "Resend Verification Email"}
                             disabled={!email || loading}
-                            sx={{ minWidth: 220 }}
-                        >
-                            Resend Verification Email
-                        </Button>
+                        />
 
+                        {/* Loading Overlay */}
                         {loading && (
                             <CircularProgress
                                 size={24}
                                 sx={{
-                                    color: "white",
+                                    color: "white", // Ensure this contrasts with your primary button color
                                     position: "absolute",
                                     top: "50%",
                                     left: "50%",

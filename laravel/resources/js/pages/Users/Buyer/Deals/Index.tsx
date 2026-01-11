@@ -16,10 +16,7 @@ export default function DealsIndex({ deals }: DealsIndexProps)  {
             header={<h1 className="text-xl font-semibold text-gray-800">📄 My Deals</h1>}
         >
             <Head title="My Deals"/>
-
             <DealsList deals={deals} />
-
-
         </AuthenticatedLayout>
     );
 };
