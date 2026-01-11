@@ -3,15 +3,17 @@ import { AppBar, Toolbar, IconButton, Box, Typography, Stack } from '@mui/materi
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationBell from "@/layouts/AuthenticatedLayout/TopBar/NotificationBell";
 import UserMenu from './UserMenu';
+import theme from "@/theme";
 
 interface TopBarProps {
     drawerWidth: number;
     handleDrawerToggle: () => void;
     header: string;
+    subHeader?: string;
     user: any;
 }
 
-export default function TopBar({ drawerWidth, handleDrawerToggle, header, user }: TopBarProps) {
+export default function TopBar({ drawerWidth, handleDrawerToggle, header, subHeader, user }: TopBarProps) {
     return (
         <AppBar
             position="fixed"
@@ -22,10 +24,11 @@ export default function TopBar({ drawerWidth, handleDrawerToggle, header, user }
                 bgcolor: 'background.default',
                 borderBottom: '1px solid',
                 borderColor: 'divider',
-                color: 'text.primary',
+                color: theme.palette.text.primary,
+                boxShadow: theme.shape.boxShadow,
             }}
         >
-            <Toolbar sx={{ height: 70 }}>
+            <Toolbar sx={{ padding: '20px 35px'}}>
                 {/* Mobile Hamburger Menu */}
                 <IconButton
                     color="inherit"
@@ -42,6 +45,11 @@ export default function TopBar({ drawerWidth, handleDrawerToggle, header, user }
                     <Typography variant="h6" noWrap component="div" fontWeight={600}>
                         {header}
                     </Typography>
+                    {subHeader && (
+                        <Typography variant="body2" color="text.secondary">
+                            {subHeader}
+                        </Typography>
+                    )}
                 </Box>
 
                 {/* Right Side Actions */}

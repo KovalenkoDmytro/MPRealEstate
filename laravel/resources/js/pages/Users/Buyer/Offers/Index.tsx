@@ -7,10 +7,8 @@ import OffersGrid from "@/components/offers/OffersGrid/OffersGrid";
 export default function DealIndexPage({ offers }: { offers: Offer[]}) {
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold text-gray-800">📄 My Offers</h2>}
+            header="My Offers"
         >
-            <Head title="My Offers" />
-
             <OffersGrid offers={offers} />
         </AuthenticatedLayout>
     );

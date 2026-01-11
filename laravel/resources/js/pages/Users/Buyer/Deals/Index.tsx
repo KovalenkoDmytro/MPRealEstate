@@ -1,5 +1,4 @@
 import React from 'react';
-import {Head} from '@inertiajs/react';
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import {PropertyDetail} from '@/types';
 import {DealsList} from '@/components/deals/DealsList';
@@ -13,9 +12,8 @@ export default function DealsIndex({ deals }: DealsIndexProps)  {
     console.log(deals)
     return (
         <AuthenticatedLayout
-            header={<h1 className="text-xl font-semibold text-gray-800">📄 My Deals</h1>}
+            header="My Deals"
         >
-            <Head title="My Deals"/>
             <DealsList deals={deals} />
         </AuthenticatedLayout>
     );

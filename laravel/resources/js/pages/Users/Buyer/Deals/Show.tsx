@@ -1,4 +1,4 @@
-import {Head} from "@inertiajs/react";
+
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import {PropertyDetail} from "@/types";
 import DealHeader from "@/components/deal/DealHeader";
@@ -17,8 +17,7 @@ export default function DealShowPage({deal}: { deal: PropertyDetail }) {
     const lawyer = deal.users.find((user) => user.role === "lawyer" && user.is_buyer_lawyer);
 
     return (
-        <AuthenticatedLayout header={<h2 className="text-xl font-semibold">Deal Details</h2>}>
-            <Head title="Deal Details"/>
+        <AuthenticatedLayout header="Deal Details">
 
             <DealHeader deal={deal}/>
 

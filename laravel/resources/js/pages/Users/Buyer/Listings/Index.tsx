@@ -84,15 +84,8 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
 
     return (
         <AuthenticatedLayout
-            header={
-                <h1 className="text-xl font-semibold leading-tight text-gray-800">
-                    🏡 My Real Estate Listings
-                </h1>
-            }
+            header="My Listings"
         >
-            <Head title="My Listings" />
-
-            {/* Control Bar: Total Listings (Left) + Actions (Right) */}
             <Box
                 sx={{
                     display: 'flex',

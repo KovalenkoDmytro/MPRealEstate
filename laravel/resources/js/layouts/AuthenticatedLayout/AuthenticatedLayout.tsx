@@ -9,9 +9,10 @@ const DRAWER_WIDTH = 280;
 
 type AuthenticatedLayoutProps = PropsWithChildren<{
     header: string;
+    subHeader? : string;
 }>;
 
-export default function AuthenticatedLayout({ header, children }: AuthenticatedLayoutProps) {
+export default function AuthenticatedLayout({ header, subHeader ,children }: AuthenticatedLayoutProps) {
     const user = usePage().props.auth.user;
     const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -31,6 +32,7 @@ export default function AuthenticatedLayout({ header, children }: AuthenticatedL
                 handleDrawerToggle={handleDrawerToggle}
                 header={header}
                 user={user}
+                subHeader={subHeader}
             />
 
             {/* 2. Sidebar Navigation */}

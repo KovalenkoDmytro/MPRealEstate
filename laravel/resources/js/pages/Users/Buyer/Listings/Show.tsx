@@ -58,10 +58,8 @@ export default function ShowListing({listing, userOffer}: PageProps) {
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">My Listings</h2>}
+            header="My Listings"
         >
-            <Head title="My Listings" />
-
             <div className="container mx-auto p-6">
                 <ImageGallery mainImage={listing.main_image} images={listing.images || []} />
                 <ListingDetails listing={listing} role={"buyer"} />

@@ -12,8 +12,8 @@ import {
 } from '@mui/material';
 import { Person, Logout, Settings } from '@mui/icons-material';
 import { Link } from '@inertiajs/react';
+import theme from "@/theme";
 
-// Define the User interface for better type safety
 interface User {
     name: string;
     role?: string;
@@ -77,6 +77,7 @@ export default function UserMenu({ user }: UserMenuProps) {
                             filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
                             mt: 1.5,
                             minWidth: 180,
+                            borderRadius: theme.shape.borderRadius,
                             '& .MuiAvatar-root': {
                                 width: 32,
                                 height: 32,

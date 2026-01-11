@@ -26,10 +26,8 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">My Favorites</h2>}
+            header="My Favorites"
         >
-            <Head title="My Favorites" />
-
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
 

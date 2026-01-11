@@ -1,6 +1,5 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
-import {Box, Typography, Grid, Stack} from "@mui/material";
+import {Box, Grid, Stack} from "@mui/material";
 import { OfferStats, AppointmentsStats } from "@/types/models";
 import { FavoriteListings } from "@/types/favoriteListings";
 import {Offer, type RealEstateListing} from "@/types";
@@ -26,14 +25,9 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
 
     return (
         <AuthenticatedLayout
-            header={
-                <Typography variant="h5" fontWeight="bold" color="text.primary">
-                    Dashboard
-                </Typography>
-            }
+            header="Dashboard"
+            subHeader="Welcome back, manage your properties"
         >
-            <Head title="Dashboard" />
-
             <Box sx={{ p: { xs: 2, md: 3 } }}>
 
                 <Grid container spacing={3}>

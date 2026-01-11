@@ -68,12 +68,10 @@ export default function BuyerAppointmentsPage({ appointments }: { appointments: 
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold text-gray-800">📅 My Viewing Requests</h2>}
+            header="My Appointments"
         >
             <Box maxWidth="900px" mx="auto" mt={4}>
-                <Typography variant="h4" gutterBottom>
-                    My Appointments
-                </Typography>
+
 
                 <Card>
                     <CardContent>
