@@ -3,6 +3,7 @@ import { RealEstateListing } from '@/types';
 import Button from '@/components/common/Button';
 import Badge from "@/components/common/Badge";
 import {formatCurrency} from "@/helpers/priceHelper";
+import IconLocationMark from "@/icons/IconLocationMark";
 
 type ListingCardProps = {
     listing: RealEstateListing;
@@ -31,11 +32,8 @@ export default function RecentlyViewedMiniCard({listing}: ListingCardProps) {
             <div className="card-content">
                 <h3 className="card-title">{listing.title}</h3>
                 <div className="card-address">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    {listing.location}
+                    <IconLocationMark/>
+                    {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}, {listing.postal_code}
                 </div>
                 <div className="card-features">
                     <div className="feature-item">
