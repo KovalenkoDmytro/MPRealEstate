@@ -1,4 +1,3 @@
-// components/common/InfoBlock.tsx
 import React from "react";
 import { Alert, AlertTitle, Stack } from "@mui/material";
 
