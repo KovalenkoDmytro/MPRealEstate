@@ -197,9 +197,9 @@ export const DealCard: React.FC<DealCardProps> = ({deal }) => {
 
                 </Stack>
 
-                <Box sx={{ p: 2, bgcolor: '#f8fafc', borderRadius: 1, mb: 2 }}>
-                    <Typography variant="caption" color="text.secondary" fontWeight={700}>Notification</Typography>
-                    <Typography variant="body2" fontWeight={700} color="#2d3748">{deal.deal_message}</Typography>
+                <Box sx={{ p: 2, bgcolor: '#CB9A9F1A', borderRadius: 1, mb: 2 }}>
+                    <Typography variant="caption" color={theme.palette.primary.main} fontWeight={700}>Notification</Typography>
+                    <Typography variant="body2"  color={theme.palette.secondary.main}>{deal.deal_message}</Typography>
                 </Box>
 
                 <Box sx={{ mt: 'auto' }}>
