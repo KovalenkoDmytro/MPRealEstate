@@ -5,10 +5,10 @@ type StatCardProps = {
     value: string | number;
     detail?: string;
     icon?: ReactNode;
-    iconColor?: string;
+    iconBgColor?: string;
 };
 
-export default function StatCard({label, value, detail, icon, iconColor}: StatCardProps) {
+export default function StatCard({label, value, detail, icon, iconBgColor}: StatCardProps) {
     return (
         <div className="stat-card">
             <div className="stat-container">
@@ -16,7 +16,7 @@ export default function StatCard({label, value, detail, icon, iconColor}: StatCa
                     <span className="stat-label">{label}</span>
                     <span className="stat-value">{value}</span>
                 </div>
-                {icon && <div className="stat-icon-box" style={{backgroundColor: iconColor}}>
+                {icon && <div className="stat-icon-box" style={{backgroundColor: iconBgColor}}>
                     {icon}
                 </div>}
 

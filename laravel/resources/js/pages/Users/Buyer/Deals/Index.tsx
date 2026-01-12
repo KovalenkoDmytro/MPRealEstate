@@ -8,11 +8,10 @@ interface DealsIndexProps {
 }
 
 export default function DealsIndex({ deals }: DealsIndexProps)  {
-
-    console.log(deals)
     return (
         <AuthenticatedLayout
             header="My Deals"
+            subHeader="Track and manage your property negotiations"
         >
             <DealsList deals={deals} />
         </AuthenticatedLayout>
