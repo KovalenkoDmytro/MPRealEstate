@@ -18,7 +18,7 @@ type PageProps = {
 };
 
 export default function ShowListing({listing, userOffer}: PageProps) {
-
+    console.log("Listing Data:", listing);
     const [dialogOpen, setDialogOpen] = React.useState(false);
     const [processing, setProcessing] = React.useState(false);
     const [errors, setErrors] = React.useState<Record<string, string>>({});

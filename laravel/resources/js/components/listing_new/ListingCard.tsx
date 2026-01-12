@@ -18,7 +18,7 @@ type ListingCardProps = {
 };
 
 export default function ListingCard({listing, isFavorite, isDisplayStatus = false, onRemove}: ListingCardProps) {
-    console.log(listing)
+
     const { showNotification } = useNotification();
     const [isFav, setIsFav] = useState(isFavorite);
     const [loadingFavorite, setLoadingFavorite] = useState(false);

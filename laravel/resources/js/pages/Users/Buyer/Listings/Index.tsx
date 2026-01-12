@@ -3,7 +3,7 @@ import React, {useCallback, useState} from "react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import type { RealEstateListing } from "@/types";
 import { FilterForm } from "@/components/listings/FilterForm";
-import ListingsGrid from "@/components/listings/ListingsGrid";
+import Listings from "@/components/listings/Listings";
 import { listingService } from "@/services/listingService";
 import { Collapse, IconButton, Typography, Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -54,13 +54,14 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
         keywords: filters.keywords || "",
     });
 
+    console.log(viewMode)
+
     const updateFilter = (key: string, value: string | number | boolean) => {
         setForm((prev) => ({ ...prev, [key]: value }));
     };
 
     const applyFilters = useCallback((e: React.FormEvent) => {
         e.preventDefault();
-        // Ensure listingService.applyFilters handles your form structure correctly
         const query = listingService.applyFilters(form);
 
         router.get(route("listings.index"), query, {
@@ -169,9 +170,9 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                 </Box>
             </Collapse>
 
-            <ListingsGrid listings={listings}
+            <Listings listings={listings}
                           favoriteListings={favoriteListings}
-                          // viewMode={viewMode}
+                          viewMode={viewMode}
             />
         </AuthenticatedLayout>
     );

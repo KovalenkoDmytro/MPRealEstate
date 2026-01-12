@@ -19,7 +19,11 @@
         "country": "Canada",
         "latitude": 51.0417435,
         "longitude": -113.9972737,
-        "image_url": "https://media.istockphoto.com/id/1361546459/photo/new-aprtment-building-in-a-housing-deveopment-on-a-sunny-autumn-day.jpg?s=2048x2048&w=is&k=20&c=cPZJ0ypZk5GnbNALGT5evhBuP5xbdPMYFKCRYEqHCng=",
+        "image_url": [
+            "https://media.istockphoto.com/id/1361546459/photo/new-aprtment-building-in-a-housing-deveopment-on-a-sunny-autumn-day.jpg?s=2048x2048&w=is&k=20&c=cPZJ0ypZk5GnbNALGT5evhBuP5xbdPMYFKCRYEqHCng=",
+            "https://media.istockphoto.com/id/1361546459/photo/new-aprtment-building-in-a-housing-deveopment-on-a-sunny-autumn-day.jpg?s=2048x2048&w=is&k=20&c=cPZJ0ypZk5GnbNALGT5evhBuP5xbdPMYFKCRYEqHCng=",
+            "https://media.istockphoto.com/id/1361546459/photo/new-aprtment-building-in-a-housing-deveopment-on-a-sunny-autumn-day.jpg?s=2048x2048&w=is&k=20&c=cPZJ0ypZk5GnbNALGT5evhBuP5xbdPMYFKCRYEqHCng="
+        ],
         "property_taxes": 1850.00,
         "hoa_fees": 350.00,
         "has_garage": true
@@ -44,7 +48,10 @@
         "country": "Canada",
         "latitude": 51.0417435,
         "longitude": -113.9972737,
-        "image_url": "https://media.istockphoto.com/id/1361546459/photo/new-aprtment-building-in-a-housing-deveopment-on-a-sunny-autumn-day.jpg?s=2048x2048&w=is&k=20&c=cPZJ0ypZk5GnbNALGT5evhBuP5xbdPMYFKCRYEqHCng=",
+        "image_url":[
+            "https://media.istockphoto.com/id/1361546459/photo/new-aprtment-building-in-a-housing-deveopment-on-a-sunny-autumn-day.jpg?s=2048x2048&w=is&k=20&c=cPZJ0ypZk5GnbNALGT5evhBuP5xbdPMYFKCRYEqHCng=",
+            "https://media.istockphoto.com/id/1361546459/photo/new-aprtment-building-in-a-housing-deveopment-on-a-sunny-autumn-day.jpg?s=2048x2048&w=is&k=20&c=cPZJ0ypZk5GnbNALGT5evhBuP5xbdPMYFKCRYEqHCng="
+        ],
         "property_taxes": 2100.00,
         "hoa_fees": 410.00,
         "has_garage": true
@@ -69,7 +76,10 @@
         "country": "Canada",
         "latitude": 51.035340899999994,
         "longitude": -114.12118179999999,
-        "image_url": "https://media.istockphoto.com/id/2027568389/photo/a-grey-and-white-modern-farmhouse.webp?s=2048x2048&w=is&k=20&c=POhbetPfPAfJ3LOY5aSbp5mDqC4xKD3W5NDS-1iRFhE=",
+        "image_url": [
+            "https://media.istockphoto.com/id/2027568389/photo/a-grey-and-white-modern-farmhouse.webp?s=2048x2048&w=is&k=20&c=POhbetPfPAfJ3LOY5aSbp5mDqC4xKD3W5NDS-1iRFhE=",
+            "https://media.istockphoto.com/id/2027568389/photo/a-grey-and-white-modern-farmhouse.webp?s=2048x2048&w=is&k=20&c=POhbetPfPAfJ3LOY5aSbp5mDqC4xKD3W5NDS-1iRFhE="
+        ],
         "property_taxes": 5200.00,
         "hoa_fees": 0.00,
         "has_garage": true
@@ -94,7 +104,10 @@
         "country": "Canada",
         "latitude": 50.920162399999995,
         "longitude": -114.07871069999999,
-        "image_url": "https://media.istockphoto.com/id/640183848/photo/luxurious-new-construction-home-in-bellevue-wa.webp?s=2048x2048&w=is&k=20&c=2NPmpgh-7Ep1SnmpPhnQ_9c6hXQSm9Y1tV_TVHI0xlI=",
+        "image_url": [
+            "https://media.istockphoto.com/id/640183848/photo/luxurious-new-construction-home-in-bellevue-wa.webp?s=2048x2048&w=is&k=20&c=2NPmpgh-7Ep1SnmpPhnQ_9c6hXQSm9Y1tV_TVHI0xlI=",
+            "https://media.istockphoto.com/id/640183848/photo/luxurious-new-construction-home-in-bellevue-wa.webp?s=2048x2048&w=is&k=20&c=2NPmpgh-7Ep1SnmpPhnQ_9c6hXQSm9Y1tV_TVHI0xlI="
+        ],
         "property_taxes": 3400.00,
         "hoa_fees": 150.00,
         "has_garage": true
@@ -119,7 +132,11 @@
         "country": "Canada",
         "latitude": 51.0416807,
         "longitude": -114.0348985,
-        "image_url": "https://media.istockphoto.com/id/874376880/photo/luxurious-blue-home-with-three-attached-garage-spaces.webp?s=2048x2048&w=is&k=20&c=cfD4MsTk8zi0RBd6es6zcltommD3O4wepNTQEJjl7H4=",
+        "image_url": [
+            "https://media.istockphoto.com/id/874376880/photo/luxurious-blue-home-with-three-attached-garage-spaces.webp?s=2048x2048&w=is&k=20&c=cfD4MsTk8zi0RBd6es6zcltommD3O4wepNTQEJjl7H4=",
+            "https://media.istockphoto.com/id/874376880/photo/luxurious-blue-home-with-three-attached-garage-spaces.webp?s=2048x2048&w=is&k=20&c=cfD4MsTk8zi0RBd6es6zcltommD3O4wepNTQEJjl7H4=",
+            "https://media.istockphoto.com/id/874376880/photo/luxurious-blue-home-with-three-attached-garage-spaces.webp?s=2048x2048&w=is&k=20&c=cfD4MsTk8zi0RBd6es6zcltommD3O4wepNTQEJjl7H4="
+        ],
         "property_taxes": 2900.00,
         "hoa_fees": 275.00,
         "has_garage": false
@@ -144,7 +161,10 @@
         "country": "Canada",
         "latitude": 51.0433422,
         "longitude": -114.0020777,
-        "image_url": "https://media.istockphoto.com/id/1147230723/photo/modern-suburban-house-exterior.webp?s=2048x2048&w=is&k=20&c=dLmf0pwILuZjvzVei3zzoq8lel6QGPnkTbL48ZdUYAY=",
+        "image_url": [
+            "https://media.istockphoto.com/id/1147230723/photo/modern-suburban-house-exterior.webp?s=2048x2048&w=is&k=20&c=dLmf0pwILuZjvzVei3zzoq8lel6QGPnkTbL48ZdUYAY=",
+            "https://media.istockphoto.com/id/1147230723/photo/modern-suburban-house-exterior.webp?s=2048x2048&w=is&k=20&c=dLmf0pwILuZjvzVei3zzoq8lel6QGPnkTbL48ZdUYAY="
+        ],
         "property_taxes": 2500.00,
         "hoa_fees": 300.00,
         "has_garage": true

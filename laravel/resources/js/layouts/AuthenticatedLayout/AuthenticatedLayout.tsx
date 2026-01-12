@@ -1,6 +1,6 @@
 import { useState, PropsWithChildren } from 'react';
 import { usePage } from '@inertiajs/react';
-import { Box, CssBaseline } from '@mui/material';
+import { Box, CssBaseline, Container } from '@mui/material';
 import Sidebar from "@/layouts/AuthenticatedLayout/Sidebar";
 import TopBar from "@/layouts/AuthenticatedLayout/TopBar";
 
@@ -54,7 +54,15 @@ export default function AuthenticatedLayout({ header, subHeader ,children }: Aut
                     transition: 'width 0.2s ease',
                 }}
             >
-                {children}
+                <Container
+                    maxWidth="xl"
+                    sx={{
+                        py: { xs: 2, md: 4 },
+                        flexGrow: 1
+                    }}
+                >
+                    {children}
+                </Container>
             </Box>
         </Box>
     );

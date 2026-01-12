@@ -14,7 +14,7 @@ class BuyerService
     public function getFilteredListings(User $user, ListingFilterRequest $request): LengthAwarePaginator|AbstractPaginator {
         $query = RealEstateListing::query()
             ->where('status', 'available')
-            ->with(['seller', 'mainImage']);
+            ->with(['seller', 'mainImage', 'images']);
         $query = ListingFilter::apply($query, $request->validated(), $user);
 
         return $query->latest()->paginate(9)->withQueryString();

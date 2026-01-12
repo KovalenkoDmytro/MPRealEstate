@@ -11,38 +11,43 @@ class RealEstateListingSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Get ALL sellers as a collection
+        // 1. Get ALL sellers
         $sellers = User::role('seller')->get();
 
-        // Safety check: ensure we actually have sellers
         if ($sellers->isEmpty()) {
             $this->command->warn('No sellers found. Skipping Listing Seeder.');
             return;
         }
 
-        // 2. Load the JSON data
+        // 2. Load JSON
         $json = File::get(database_path('data/properties.json'));
         $properties = json_decode($json, true);
 
-        // 3. Loop through and create
+        // 3. Loop and Create
         foreach ($properties as $data) {
-            // Extract image_url so it doesn't try to save to the listing table
-            $imageUrl = $data['image_url'];
+
+            // Extract the ARRAY of images
+            // We use specific variable name $imageUrls to be clear it's an array
+            $imageUrls = $data['image_url'] ?? [];
+
+            // Remove it from $data so we can pass the rest directly to the listing create method
             unset($data['image_url']);
 
-            // Pick a RANDOM seller for this specific property
             $randomSeller = $sellers->random();
 
             // Create Listing
+            // (Make sure your RealEstateListing model casts 'keywords' => 'array' if your DB column is json)
             $listing = RealEstateListing::factory()
-                ->for($randomSeller, 'seller') // Use the single random seller here
+                ->for($randomSeller, 'seller')
                 ->create($data);
 
-            // Create Image
-            $listing->images()->create([
-                'image_path' => $imageUrl,
-                'is_main'    => true,
-            ]);
+            // 4. Loop through images and save them
+            foreach ($imageUrls as $index => $url) {
+                $listing->images()->create([
+                    'image_path' => $url,
+                    'is_main'    => $index === 0, // Returns TRUE for the first item (0), FALSE for others
+                ]);
+            }
         }
     }
 }
