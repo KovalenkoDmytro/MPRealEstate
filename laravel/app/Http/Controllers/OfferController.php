@@ -27,6 +27,7 @@ class OfferController extends Controller
 
         $user = auth()->user();
         $offers = $this->offerService->getAllUserOffers($user);
+        $offers_stats = $this->offerService->getUserOfferStats($user);
 
         $role = $user->getRoleNames()->first();
 
@@ -38,6 +39,7 @@ class OfferController extends Controller
 
         return Inertia::render($viewPath, [
             'offers' => $offers,
+            'offers_stats' => $offers_stats,
         ]);
 
     }

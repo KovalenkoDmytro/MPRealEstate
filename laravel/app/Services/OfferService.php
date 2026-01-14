@@ -67,28 +67,26 @@ class OfferService
     }
 
 
-    public function getAllUserOffers(User $user): Collection {
+    public function getAllUserOffers(User $user): Collection
+    {
 
-        $userId = $user->id;
-        $role = $user->getRoleNames()->first();
-        $query = Offer::query()->latest();
+        $query = Offer::with('listing.mainImage')->latest();
 
-        if ($role === 'seller') {
 
-            $query->whereHas('listing', fn($q) => $q->where('seller_id', $userId))
-                ->with(['buyer:id,name,email', 'listing:id,title']);
-
-        } elseif ($role === 'buyer') {
-            $query->where('buyer_id', $userId)
-                ->with(['listing:id,title,price,seller_id', 'listing.seller:id,name']);
-
-        } else {
+        if ($user->hasRole('seller')) {
+            $query->whereHas('listing', fn($q) => $q->where('seller_id', $user->id))
+                ->with('buyer');
+        }
+        elseif ($user->hasRole('buyer')) {
+            $query->where('buyer_id', $user->id)
+                ->with('listing.seller');
+        }
+        else {
             return collect();
         }
 
         return $query->get();
     }
-
 
     /**
      * Get aggregated Offer statistics (Efficient Query Builder Approach).
