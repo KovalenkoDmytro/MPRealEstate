@@ -1,0 +1,15 @@
+.listing-show-page{
+    .main-listing-slider .swiper-button-next,
+    .main-listing-slider .swiper-button-prev {
+        color: white;
+        background: rgba(0,0,0,0.3);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        transform: scale(0.7);
+    }
+    .main-listing-slider .swiper-button-next:after,
+    .main-listing-slider .swiper-button-prev:after {
+        font-size: 20px;
+    }
+}

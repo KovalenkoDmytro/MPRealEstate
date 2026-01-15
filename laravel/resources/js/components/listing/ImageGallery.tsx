@@ -1,58 +1,117 @@
-import React from "react";
-import { Box, Grid, Typography, Card, CardMedia } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { FreeMode, Navigation, Thumbs } from "swiper/modules";
+import type { Swiper as SwiperType } from "swiper";
+import Badge from "@/components/common/Badge";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/free-mode";
+import "swiper/css/navigation";
+import "swiper/css/thumbs";
+import theme from "@/theme";
+import {formatCurrency} from "@/helpers/priceHelper";
 
 interface ImageGalleryProps {
     mainImage: { image_path: string } | null;
     images: Array<{ id: number; image_path: string }>;
+    price: string | number;
 }
 
-export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images }) => {
-    return (
-        <Box maxWidth="800px" mx="auto">
-            {/* Main Image */}
-            {mainImage ? (
-                <Card sx={{ borderRadius: 2, boxShadow: 3, mb: 2 }}>
-                    <CardMedia
-                        component="img"
-                        height="280"
-                        image={mainImage.image_path}
-                        alt="Main Image"
-                        sx={{ objectFit: "cover" }}
-                    />
-                </Card>
-            ) : (
-                <Box
-                    height={280}
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    bgcolor="grey.200"
-                    borderRadius={2}
-                >
-                    <Typography variant="body2" color="textSecondary">
-                        No Image Available
-                    </Typography>
-                </Box>
-            )}
+export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, price }) => {
+    const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
 
-            {/* Gallery Images */}
-            {images && images.length > 0 && (
-                <Grid container spacing={2} mt={1}>
-                    {images.map((img) => (
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }} key={img.id}>
-                            <Card sx={{ borderRadius: 2, boxShadow: 1 }}>
-                                <CardMedia
-                                    component="img"
-                                    height="100"
-                                    image={img.image_path}
-                                    alt="Gallery"
-                                    sx={{ objectFit: "cover" }}
+    // Combine main image and gallery images for the slider
+    const allImages = mainImage ? [mainImage, ...images] : images;
+
+    if (!allImages || allImages.length === 0) {
+        return (
+            <Box sx={{ height: 400, display: "flex", justifyContent: "center", alignItems: "center", bgcolor: "grey.100", borderRadius: 4 }}>
+                <Typography color="textSecondary">No Images Available</Typography>
+            </Box>
+        );
+    }
+
+    return (
+        <Box
+            className="listing-gallery"
+            sx={{ width: "100%",
+                position: "relative",
+                mb: 4 ,
+                borderRadius: theme.shape.borderRadius,
+                boxShadow: theme.shape.boxShadow,
+        }}>
+            {/* Main Slider */}
+            <Swiper
+                spaceBetween={10}
+                navigation={true}
+                thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+                modules={[FreeMode, Navigation, Thumbs]}
+                className="main-listing-slider"
+                style={{
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    height: '550px'
+                }}
+            >
+                {allImages.map((img, index) => (
+                    <SwiperSlide key={index}>
+                        <img
+                            src={img.image_path}
+                            alt={`Property ${index}`}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                    </SwiperSlide>
+                ))}
+
+
+                {price && (
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            top: 20,
+                            right: 20,
+
+                        }}
+                    >
+                    <Badge version="primary" text={formatCurrency(price)}/>
+                    </Box>
+                )}
+            </Swiper>
+
+            {/* Thumbnails Slider */}
+            <Box sx={{ p: 2}}>
+                <Swiper
+                    onSwiper={setThumbsSwiper}
+                    spaceBetween={15}
+                    slidesPerView={6}
+                    freeMode={true}
+                    watchSlidesProgress={true}
+                    modules={[FreeMode, Navigation, Thumbs]}
+                    style={{ height: '100px'}}
+                >
+                    {allImages.map((img, index) => (
+                        <SwiperSlide key={`thumb-${index}`} style={{ cursor: 'pointer' }}>
+                            <Box
+                                sx={{
+                                    height: '100%',
+                                    borderRadius: '12px',
+                                    overflow: 'hidden',
+
+                                }}
+                            >
+                                <img
+                                    src={img.image_path}
+                                    alt={`Thumb ${index}`}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 />
-                            </Card>
-                        </Grid>
+                            </Box>
+                        </SwiperSlide>
                     ))}
-                </Grid>
-            )}
+                </Swiper>
+            </Box>
+
         </Box>
     );
 };
