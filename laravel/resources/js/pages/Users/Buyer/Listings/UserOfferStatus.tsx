@@ -1,8 +1,5 @@
 import React from 'react';
-import { Box, Stack, Typography, Chip } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import { Box, Typography, Chip, Alert, AlertTitle } from '@mui/material';
 import { Offer } from '@/types';
 import theme from "@/theme";
 
@@ -11,79 +8,68 @@ type UserOfferStatusProps = {
 };
 
 export const UserOfferStatus = ({ offer }: UserOfferStatusProps) => {
-    // 1. Define the UI configuration for each status
+
+    // 1. Map offer status to Alert severity and content
     const statusConfig: Record<string, {
-        color: string;
+        severity: 'success' | 'error' | 'info';
         title: string;
         message: string;
-        icon: React.ReactNode;
-        borderColor: string;
-        bgColor: string;
     }> = {
         accepted: {
-            color: 'success.main', // Green
+            severity: 'success',
             title: 'Offer Accepted!',
             message: 'Congratulations! The seller has accepted your offer.',
-            icon: <CheckCircleIcon color="success" />,
-            borderColor: '#c3e6cb',
-            bgColor: '#f0fff4'
         },
         rejected: {
-            color: 'error.main', // Red
+            severity: 'error',
             title: 'Offer Declined',
             message: 'The seller has decided not to proceed with this offer.',
-            icon: <CancelIcon color="error" />,
-            borderColor: '#feb2b2',
-            bgColor: '#fff5f5'
         },
         pending: {
-            color: 'info.main', // Blue
+            severity: 'info',
             title: 'Offer Pending',
             message: 'Offer submitted. Awaiting seller response.',
-            icon: <HourglassEmptyIcon color="info" />,
-            borderColor: '#bbdefb',
-            bgColor: '#e3f2fd'
         }
     };
 
     // 2. Get current config or fallback to pending
-    const currentStatus = statusConfig[offer.status] || statusConfig.pending;
+    const config = statusConfig[offer.status] || statusConfig.pending;
 
     return (
-        <Box
+        <Alert
+            severity={config.severity}
+            variant="standard"
             sx={{
-                backgroundColor: currentStatus.bgColor,
-                border: `1px solid ${currentStatus.borderColor}`,
-                borderRadius: theme.shape.borderRadius,
-                p: theme.shape.padding,
+                p: theme.shape.padding, borderRadius: theme.shape.borderRadius,
+                '& .MuiAlert-message': { width: '100%' },
+                alignItems: 'flex-start',
             }}
         >
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                <Box>
-                    <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-                        {currentStatus.icon}
-                        <Typography variant="h6" sx={{ color: currentStatus.color, fontWeight: 'bold' }}>
-                            {currentStatus.title}
-                        </Typography>
-                    </Stack>
 
-                    <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1, color: currentStatus.color }}>
+            <Box display="flex" justifyContent="space-between" alignItems="flex-start" width="100%">
+
+                <Box>
+                    <AlertTitle sx={{ fontWeight: 'bold' }}>
+                        {config.title}
+                    </AlertTitle>
+
+                    <Typography variant="h4" sx={{ fontWeight: 'bold', my: 1 }}>
                         ${parseFloat(String(offer.amount)).toLocaleString()}
                     </Typography>
 
-                    <Typography variant="body2" color="text.secondary">
-                        {currentStatus.message}
+                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                        {config.message}
                     </Typography>
                 </Box>
 
-                {/* Optional: Status Chip for explicit clarity */}
                 <Chip
                     label={offer.status.toUpperCase()}
-                    color={offer.status === 'accepted' ? 'success' : offer.status === 'rejected' ? 'error' : 'info'}
+                    color={config.severity}
                     size="small"
-                    variant="outlined"
+                    variant="filled"
+                    sx={{ fontWeight: 600, ml: 2 }}
                 />
-            </Stack>
-        </Box>
+            </Box>
+        </Alert>
     );
 };

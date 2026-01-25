@@ -9,6 +9,10 @@ const colors = {
     cloud: '#F9FAFB',
     border: '#E5E7EB',
     rosyPink: '#CB9A9F',
+    success: '#00C851',
+    error: '#EF4444',
+    warning: '#FFAB00',
+    info: '#3B82F6',
 };
 
 declare module '@mui/material/styles' {
@@ -52,6 +56,20 @@ const theme = createTheme({
             paper: colors.white,
             sidebar: colors.charcoal,
             white: colors.white,
+        },
+        success: {
+            main: colors.success,
+            contrastText: '#ffffff',
+        },
+        error: {
+            main: colors.error,
+        },
+        warning: {
+            main: colors.warning,
+            contrastText: '#ffffff',
+        },
+        info: {
+            main: colors.info,
         },
 
     },

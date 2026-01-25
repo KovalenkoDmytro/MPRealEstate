@@ -8,7 +8,7 @@ import { RealEstateListing, Offer } from "@/types";
 import { offerService } from "@/services/offerService";
 import { useNotification } from "@/context/NotificationContext";
 import {
-    Button, Dialog, DialogTitle, DialogContent, DialogActions,
+    Dialog, DialogTitle, DialogContent,
     Stack, Typography, Box, Paper, Container
 } from "@mui/material";
 import SetAppointmentForm from "@/components/listing/appointments/SetAppointmentForm";
@@ -72,14 +72,12 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
 
 
 
-
-
-
                     {/* 4. Appointment Section */}
-                    <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Schedule a Viewing</Typography>
-                        <SetAppointmentForm listing={listing} />
-                    </Paper>
+                    <SetAppointmentForm listing={listing} />
+
+
+
+
 
                     {/* 5. Location Section */}
                     <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
