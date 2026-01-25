@@ -13,7 +13,10 @@ import {
 } from "@mui/material";
 import SetAppointmentForm from "@/components/listing/appointments/SetAppointmentForm";
 import PropertyMapSelector from "@/components/maps/PropertyMapSelect";
-import IconArrowLeft from "@/icons/IconArrowLeft"; // Assuming this handles the location view
+import IconArrowLeft from "@/icons/IconArrowLeft";
+import { UserOfferStatus } from "./UserOfferStatus";
+import { MakeOfferPrompt } from "./MakeOfferPrompt";
+import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
 
 type PageProps = {
     listing: RealEstateListing;
@@ -61,48 +64,16 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
                     <ListingDetails listing={listing} role={"buyer"} />
 
                     {/* 3. Offer Status Section */}
-                    <Paper
-                        variant="outlined"
-                        sx={{
-                            p: 3,
-                            borderRadius: 2,
-                            borderStyle: userOffer ? 'solid' : 'dashed',
-                            borderColor: userOffer ? '#c3e6cb' : '#e0e0e0',
-                            backgroundColor: userOffer ? '#f0fff4' : 'inherit'
-                        }}
-                    >
-                        {userOffer ? (
-                            <Box>
-                                <Stack direction="row" spacing={1} alignItems="center">
-                                    <Typography variant="h6" color="success.main" sx={{ fontWeight: 'bold' }}>
-                                        Check Your Offer
-                                    </Typography>
-                                </Stack>
-                                <Typography variant="h4" sx={{ fontWeight: 'bold', my: 1, color: '#2e7d32' }}>
-                                    ${parseFloat(String(userOffer.amount)).toLocaleString()}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    Competitive offer submitted. Awaiting seller response.
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                <Box>
-                                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>No Offer Yet</Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Make an offer to show your interest in this property
-                                    </Typography>
-                                </Box>
-                                <Button
-                                    variant="contained"
-                                    onClick={() => setDialogOpen(true)}
-                                    sx={{ bgcolor: '#4a2c4a', '&:hover': { bgcolor: '#3a223a' }, textTransform: 'none', px: 4 }}
-                                >
-                                    Make an Offer
-                                </Button>
-                            </Stack>
-                        )}
-                    </Paper>
+                    {userOffer ? (
+                        <UserOfferStatus offer={userOffer} />
+                    ) : (
+                        <MakeOfferPrompt onMakeOffer={() => setDialogOpen(true)} />
+                    )}
+
+
+
+
+
 
                     {/* 4. Appointment Section */}
                     <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
@@ -121,14 +92,30 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
             </Container>
 
             {/* Offer Dialog */}
-            <Dialog open={dialogOpen} onClose={() => !processing && setDialogOpen(false)} fullWidth maxWidth="sm">
-                <DialogTitle sx={{ fontWeight: 'bold' }}>Make an Offer</DialogTitle>
-                <DialogContent dividers>
-                    <OfferForm onSubmit={handleSubmit} processing={processing} />
+            <Dialog
+                open={dialogOpen}
+                onClose={() => !processing && setDialogOpen(false)}
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle sx={{ fontWeight: 'bold' , display: 'flex', alignItems: 'center', gap: '8px'}}>
+                    <LocalOfferRoundedIcon color="primary" />
+
+                    Make an Offer</DialogTitle>
+
+                {/* Added padding here since we removed it from the OfferForm */}
+                <DialogContent dividers sx={{ p: 3 }}>
+                    <OfferForm
+                        onSubmit={handleSubmit}
+                        // Pass the cancel handler here
+                        onCancel={() => setDialogOpen(false)}
+                        processing={processing}
+                        // Ensure you pass errors if you have them, or an empty object
+                        // errors={errors || {}}
+                    />
                 </DialogContent>
-                <DialogActions sx={{ p: 2 }}>
-                    <Button onClick={() => setDialogOpen(false)} color="inherit">Cancel</Button>
-                </DialogActions>
+
+                {/* Removed DialogActions entirely - the form handles the buttons now */}
             </Dialog>
         </AuthenticatedLayout>
     );

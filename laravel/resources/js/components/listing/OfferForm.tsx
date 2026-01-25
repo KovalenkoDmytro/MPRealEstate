@@ -1,7 +1,5 @@
 import React from "react";
 import {
-    Box,
-    Paper,
     Stack,
     Typography,
     TextField,
@@ -9,20 +7,16 @@ import {
     Button,
     CircularProgress,
 } from "@mui/material";
-import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface OfferFormProps {
     onSubmit: (data: { amount: string; message: string }) => void;
+    onCancel?: () => void;
     processing: boolean;
-    errors: Record<string, string>;
+    errors?: Record<string, string>;
 }
 
-export const OfferForm: React.FC<OfferFormProps> = ({
-                                                        onSubmit,
-                                                        processing,
-                                                        errors = {},
-                                                    }) => {
+export const OfferForm: React.FC<OfferFormProps> = ({onSubmit, onCancel, processing, errors = {},}) => {
     const [amount, setAmount] = React.useState("");
     const [message, setMessage] = React.useState("");
     const [confirmOpen, setConfirmOpen] = React.useState(false);
@@ -31,6 +25,7 @@ export const OfferForm: React.FC<OfferFormProps> = ({
         () => (amount.trim() === "" ? NaN : Number(amount)),
         [amount]
     );
+
     const canSubmit = Number.isFinite(amountNumber) && amountNumber > 0 && message.trim().length > 0;
 
     const openConfirm = (e: React.FormEvent) => {
@@ -40,9 +35,9 @@ export const OfferForm: React.FC<OfferFormProps> = ({
     };
 
     const handleConfirm = () => {
-        // send as a string (2 decimals)
         const normalized = Number(amountNumber.toFixed(2)).toString();
         onSubmit({ amount: normalized, message: message.trim() });
+        setConfirmOpen(false); // Close confirm dialog after submitting
     };
 
     const handleAmountBlur = () => {
@@ -51,25 +46,11 @@ export const OfferForm: React.FC<OfferFormProps> = ({
     };
 
     return (
-        <Paper
-            component="form"
-            onSubmit={openConfirm}
-            elevation={0}
-            sx={{
-                mt: 3,
-                p: 3,
-                borderRadius: 2,
-                border: "1px solid",
-                borderColor: "divider",
-                background: "linear-gradient(180deg, #ffffff 0%, #fafafa 100%)",
-            }}
-        >
-            <Stack spacing={2}>
-                <Stack direction="row" spacing={1.25} alignItems="center">
-                    <LocalOfferRoundedIcon color="primary" />
-                    <Typography variant="h6">Make an Offer</Typography>
-                </Stack>
+        <Stack spacing={3} component="form" onSubmit={openConfirm}>
 
+
+            {/* Inputs */}
+            <Stack spacing={2}>
                 <TextField
                     label="Offer Price"
                     type="number"
@@ -78,18 +59,14 @@ export const OfferForm: React.FC<OfferFormProps> = ({
                     onBlur={handleAmountBlur}
                     required
                     fullWidth
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
-                        inputProps: { min: 1, step: "0.01" },
+                    slotProps={{
+                        htmlInput: {
+                            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                            inputProps: { min: 1, step: "0.01" },
+                        },
                     }}
                     error={Boolean(errors.amount) || (!!amount && !Number.isFinite(amountNumber))}
-                    helperText={
-                        errors.amount
-                            ? errors.amount
-                            : !!amount && !Number.isFinite(amountNumber)
-                                ? "Enter a valid amount."
-                                : " "
-                    }
+                    helperText={errors.amount || (!!amount && !Number.isFinite(amountNumber) ? "Enter a valid amount." : " ")}
                 />
 
                 <TextField
@@ -103,18 +80,29 @@ export const OfferForm: React.FC<OfferFormProps> = ({
                     error={Boolean(errors.message)}
                     helperText={errors.message || " "}
                 />
+            </Stack>
 
-                <Box>
+            {/* Actions: Both buttons are now here for consistent layout */}
+            <Stack direction="row" spacing={2} justifyContent="flex-end">
+                {onCancel && (
                     <Button
-                        type="submit"
-                        variant="contained"
-                        size="large"
-                        disabled={!canSubmit || processing}
-                        startIcon={processing ? <CircularProgress size={18} /> : undefined}
+                        onClick={onCancel}
+                        variant="outlined"
+                        color="inherit"
+                        disabled={processing}
                     >
-                        {processing ? "Sending…" : "Submit Offer"}
+                        Cancel
                     </Button>
-                </Box>
+                )}
+                <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    disabled={!canSubmit || processing}
+                    startIcon={processing ? <CircularProgress size={18} color="inherit" /> : undefined}
+                >
+                    {processing ? "Sending..." : "Submit Offer"}
+                </Button>
             </Stack>
 
             <ConfirmDialog
@@ -122,7 +110,7 @@ export const OfferForm: React.FC<OfferFormProps> = ({
                 onClose={() => setConfirmOpen(false)}
                 title="Submit this offer?"
                 description={
-                    <Stack spacing={0.75}>
+                    <Stack spacing={1}>
                         <Typography variant="body2" color="text.secondary">
                             Please confirm your offer details before sending to the seller.
                         </Typography>
@@ -138,6 +126,6 @@ export const OfferForm: React.FC<OfferFormProps> = ({
                 confirmColor="primary"
                 onConfirm={handleConfirm}
             />
-        </Paper>
+        </Stack>
     );
 };

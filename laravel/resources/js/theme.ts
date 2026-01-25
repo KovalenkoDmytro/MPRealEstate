@@ -53,6 +53,7 @@ const theme = createTheme({
             sidebar: colors.charcoal,
             white: colors.white,
         },
+
     },
     shape: {
         borderRadius: '16px',

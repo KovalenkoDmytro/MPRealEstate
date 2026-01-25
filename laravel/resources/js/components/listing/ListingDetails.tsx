@@ -69,7 +69,6 @@ export const ListingDetails = ({ listing }: ListingDetailsProps) => {
                 className="listing-gallery"
                 sx={{ width: "100%",
                     position: "relative",
-                    mb: 4 ,
                     borderRadius: theme.shape.borderRadius,
                     boxShadow: theme.shape.boxShadow,
                     padding: theme.shape.padding,
