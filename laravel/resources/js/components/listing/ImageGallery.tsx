@@ -52,7 +52,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, p
                 style={{
                     borderRadius: '16px',
                     overflow: 'hidden',
-                    height: '550px'
+                    height: '550px',
+                    borderBottomLeftRadius: 0,
+                    borderBottomRightRadius: 0,
                 }}
             >
                 {allImages.map((img, index) => (
@@ -60,7 +62,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, p
                         <img
                             src={img.image_path}
                             alt={`Property ${index}`}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover',  }}
                         />
                     </SwiperSlide>
                 ))}

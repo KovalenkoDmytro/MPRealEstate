@@ -1,5 +1,5 @@
 import React from "react";
-import { Head } from "@inertiajs/react";
+import {Head, Link} from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { ImageGallery } from "@/components/listing/ImageGallery";
 import { ListingDetails } from "@/components/listing/ListingDetails";
@@ -12,7 +12,8 @@ import {
     Stack, Typography, Box, Paper, Container
 } from "@mui/material";
 import SetAppointmentForm from "@/components/listing/appointments/SetAppointmentForm";
-import PropertyMapSelector from "@/components/maps/PropertyMapSelect"; // Assuming this handles the location view
+import PropertyMapSelector from "@/components/maps/PropertyMapSelect";
+import IconArrowLeft from "@/icons/IconArrowLeft"; // Assuming this handles the location view
 
 type PageProps = {
     listing: RealEstateListing;
@@ -47,6 +48,11 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
             <Head title={listing.title} />
 
             <Container className='listing-show-page'>
+                <Link href={route(`listings.index`)} style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', textDecoration: 'none', gap: '8px'   }}>
+                    <IconArrowLeft/>
+                    <Typography> Back to Listings</Typography>
+                </Link>
+
                 <Stack spacing={4}>
                     {/* 1. Image Gallery */}
                     <ImageGallery mainImage={listing.main_image} images={listing.images || []}  price={listing.price}/>
