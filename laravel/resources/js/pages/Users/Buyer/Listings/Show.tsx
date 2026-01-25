@@ -9,7 +9,7 @@ import { offerService } from "@/services/offerService";
 import { useNotification } from "@/context/NotificationContext";
 import {
     Dialog, DialogTitle, DialogContent,
-    Stack, Typography, Box, Paper, Container
+    Stack, Typography, Box, Paper, Container, Grid
 } from "@mui/material";
 import SetAppointmentForm from "@/components/listing/appointments/SetAppointmentForm";
 import PropertyMapSelector from "@/components/maps/PropertyMapSelect";
@@ -17,6 +17,7 @@ import IconArrowLeft from "@/icons/IconArrowLeft";
 import { UserOfferStatus } from "./UserOfferStatus";
 import { MakeOfferPrompt } from "./MakeOfferPrompt";
 import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
+import IconLocationMark from "@/icons/IconLocationMark";
 
 type PageProps = {
     listing: RealEstateListing;
@@ -60,20 +61,44 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
                     {/* 1. Image Gallery */}
                     <ImageGallery mainImage={listing.main_image} images={listing.images || []}  price={listing.price}/>
 
-                    {/* 2. Listing Details (Price, Specs, Property Details) */}
-                    <ListingDetails listing={listing} role={"buyer"} />
+                    <Box mb={4}>
+                        <Typography variant="h4" fontWeight="bold" gutterBottom>
+                            {listing.title}
+                        </Typography>
+                        <Stack direction="row" spacing={1} alignItems="center" color="text.secondary">
+                            <IconLocationMark/>
+                            <Typography variant="body1">
+                                {`${listing.street_number} ${listing.street_name}, ${listing.city}, ${listing.province} ${listing.postal_code}`}
+                            </Typography>
+                        </Stack>
+                    </Box>
 
-                    {/* 3. Offer Status Section */}
-                    {userOffer ? (
-                        <UserOfferStatus offer={userOffer} />
-                    ) : (
-                        <MakeOfferPrompt onMakeOffer={() => setDialogOpen(true)} />
-                    )}
+                    <Grid container spacing={3}>
 
 
+                        <Grid size={{ xs: 12, md: 8 }}>
+                            <ListingDetails listing={listing} role="buyer" />
+                        </Grid>
 
-                    {/* 4. Appointment Section */}
-                    <SetAppointmentForm listing={listing} />
+
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <Stack spacing={3}>
+
+                                {/* 1. Offer Section */}
+                                {userOffer ? (
+                                    <UserOfferStatus offer={userOffer} />
+                                ) : (
+                                    <MakeOfferPrompt onMakeOffer={() => setDialogOpen(true)} />
+                                )}
+
+                                {/* 2. Appointment Section */}
+                                <SetAppointmentForm listing={listing} />
+
+                            </Stack>
+                        </Grid>
+
+                    </Grid>
+
 
 
 

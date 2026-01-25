@@ -51,19 +51,6 @@ export const ListingDetails = ({ listing }: ListingDetailsProps) => {
     return (
         <Paper elevation={0} sx={{ p: 0, bgcolor: 'transparent' }}>
 
-            {/* --- HEADER SECTION --- */}
-            <Box mb={4}>
-                <Typography variant="h4" fontWeight="bold" gutterBottom>
-                    {listing.title}
-                </Typography>
-                <Stack direction="row" spacing={1} alignItems="center" color="text.secondary">
-                    <IconLocationMark/>
-                    <Typography variant="body1">
-                        {`${listing.street_number} ${listing.street_name}, ${listing.city}, ${listing.province} ${listing.postal_code}`}
-                    </Typography>
-                </Stack>
-            </Box>
-
 
             <Box
                 className="listing-gallery"
@@ -82,7 +69,7 @@ export const ListingDetails = ({ listing }: ListingDetailsProps) => {
                 <Box
                     sx={{
                         display: 'grid',
-                        gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(6, 1fr)' },
+                        gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
                         gap: 4
                     }}
                 >
