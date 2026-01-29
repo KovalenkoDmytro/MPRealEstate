@@ -147,6 +147,7 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
                         version="primary"
                         text={activeAppointment ? "Request Active" : "Request Visit"}
                         disabled={isDisabled}
+                        type="submit"
                     />
 
                 </Box>
