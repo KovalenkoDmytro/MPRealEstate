@@ -18,6 +18,7 @@ import { UserOfferStatus } from "./UserOfferStatus";
 import { MakeOfferPrompt } from "./MakeOfferPrompt";
 import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
 import IconLocationMark from "@/icons/IconLocationMark";
+import {ListingLocationMap} from "@/components/maps/ListingLocationMap";
 
 type PageProps = {
     listing: RealEstateListing;
@@ -47,6 +48,7 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
         }
     };
 
+
     return (
         <AuthenticatedLayout header="Dashboard">
             <Head title={listing.title} />
@@ -58,7 +60,7 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
                 </Link>
 
                 <Stack spacing={4}>
-                    {/* 1. Image Gallery */}
+
                     <ImageGallery mainImage={listing.main_image} images={listing.images || []}  price={listing.price}/>
 
                     <Box mb={4}>
@@ -96,25 +98,14 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
 
                             </Stack>
                         </Grid>
-
                     </Grid>
+                    <ListingLocationMap lng={listing.longitude} lat={listing.latitude}/>
 
 
-
-
-
-
-                    {/* 5. Location Section */}
-                    <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Location</Typography>
-                        <Box sx={{ height: 400, width: '100%', borderRadius: 2, overflow: 'hidden' }}>
-                            <PropertyMapSelector />
-                        </Box>
-                    </Paper>
                 </Stack>
             </Container>
 
-            {/* Offer Dialog */}
+
             <Dialog
                 open={dialogOpen}
                 onClose={() => !processing && setDialogOpen(false)}
@@ -123,18 +114,15 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
             >
                 <DialogTitle sx={{ fontWeight: 'bold' , display: 'flex', alignItems: 'center', gap: '8px'}}>
                     <LocalOfferRoundedIcon color="primary" />
+                    Make an Offer
+                </DialogTitle>
 
-                    Make an Offer</DialogTitle>
 
-                {/* Added padding here since we removed it from the OfferForm */}
                 <DialogContent dividers sx={{ p: 3 }}>
                     <OfferForm
                         onSubmit={handleSubmit}
-                        // Pass the cancel handler here
                         onCancel={() => setDialogOpen(false)}
                         processing={processing}
-                        // Ensure you pass errors if you have them, or an empty object
-                        // errors={errors || {}}
                     />
                 </DialogContent>
 

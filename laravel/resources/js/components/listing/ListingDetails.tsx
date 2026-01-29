@@ -48,6 +48,7 @@ const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: stri
 export const ListingDetails = ({ listing }: ListingDetailsProps) => {
     const theme = useTheme();
 
+
     return (
         <Paper elevation={0} sx={{ p: 0, bgcolor: 'transparent' }}>
 
@@ -62,6 +63,19 @@ export const ListingDetails = ({ listing }: ListingDetailsProps) => {
                 }}>
 
                 {/* --- PROPERTY DETAILS HEADER --- */}
+
+
+                <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" fontWeight="bold" gutterBottom >
+                        Property Description
+                    </Typography>
+
+                    <Typography>
+                        {listing.description}
+                    </Typography>
+                </Box>
+
+
                 <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ mb: 3 }}>
                     Property Details
                 </Typography>
