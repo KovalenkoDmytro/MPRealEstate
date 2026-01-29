@@ -1,12 +1,18 @@
 .listing-show-page{
     .main-listing-slider .swiper-button-next,
     .main-listing-slider .swiper-button-prev {
-        color: white;
-        background: rgba(0,0,0,0.3);
+        color: #000;
+        background: white;
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        transform: scale(0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg{
+            width: 10px;
+        }
     }
     .main-listing-slider .swiper-button-next:after,
     .main-listing-slider .swiper-button-prev:after {

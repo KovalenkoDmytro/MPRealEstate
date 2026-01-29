@@ -1,6 +1,7 @@
 import React from 'react';
-import { Stack, Box, Typography, Button } from '@mui/material';
+import { Stack, Box, Typography } from '@mui/material';
 import theme from "@/theme";
+import Button from "@/components/common/Button";
 
 type MakeOfferPromptProps = {
     onMakeOffer: () => void;
@@ -15,7 +16,7 @@ export const MakeOfferPrompt = ({ onMakeOffer }: MakeOfferPromptProps) => {
                 borderRadius: theme.shape.borderRadius,
                 p: theme.shape.padding,
             }}
-            direction="row" justifyContent="space-between" alignItems="center">
+            direction="column" justifyContent="space-between" alignItems="center" gap={2}>
             <Box>
                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                     No Offer Yet
@@ -24,18 +25,10 @@ export const MakeOfferPrompt = ({ onMakeOffer }: MakeOfferPromptProps) => {
                     Make an offer to show your interest in this property
                 </Typography>
             </Box>
-            <Button
-                variant="contained"
-                onClick={onMakeOffer}
-                sx={{
-                    bgcolor: '#4a2c4a',
-                    '&:hover': { bgcolor: '#3a223a' },
-                    textTransform: 'none',
-                    px: 4
-                }}
-            >
-                Make an Offer
-            </Button>
+
+            <Button version="primary" onClick={onMakeOffer} text="Make an Offer"/>
+
+
         </Stack>
     );
 };

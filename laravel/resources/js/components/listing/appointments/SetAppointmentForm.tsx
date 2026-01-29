@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, useMemo } from "react";
-import { Box, Button, Typography, Alert, Paper, Chip, Stack } from "@mui/material";
+import { Box, Typography, Alert, Paper, Chip } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -9,6 +9,7 @@ import { useNotification } from "@/context/NotificationContext";
 import { extractErrorMessage } from "@/helpers/errorHelpers";
 import { RealEstateListing, Appointment } from "@/types";
 import theme from "@/theme";
+import Button from "@/components/common/Button";
 
 const isActive = (status: Appointment['status']) =>
     ['pending', 'accepted'].includes(status);
@@ -143,13 +144,11 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
                     />
 
                     <Button
+                        version="primary"
+                        text={activeAppointment ? "Request Active" : "Request Visit"}
                         disabled={isDisabled}
-                        type="submit"
-                        variant="contained"
-                        size="large"
-                    >
-                        {activeAppointment ? "Request Active" : "Request Visit"}
-                    </Button>
+                    />
+
                 </Box>
             </LocalizationProvider>
         </Paper>

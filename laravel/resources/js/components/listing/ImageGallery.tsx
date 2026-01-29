@@ -73,7 +73,6 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, p
                             position: "absolute",
                             top: 20,
                             right: 20,
-
                         }}
                     >
                     <Badge version="primary" text={formatCurrency(price)}/>

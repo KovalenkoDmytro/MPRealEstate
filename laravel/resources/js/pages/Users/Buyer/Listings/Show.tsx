@@ -9,10 +9,9 @@ import { offerService } from "@/services/offerService";
 import { useNotification } from "@/context/NotificationContext";
 import {
     Dialog, DialogTitle, DialogContent,
-    Stack, Typography, Box, Paper, Container, Grid
+    Stack, Typography, Box, Container, Grid
 } from "@mui/material";
 import SetAppointmentForm from "@/components/listing/appointments/SetAppointmentForm";
-import PropertyMapSelector from "@/components/maps/PropertyMapSelect";
 import IconArrowLeft from "@/icons/IconArrowLeft";
 import { UserOfferStatus } from "./UserOfferStatus";
 import { MakeOfferPrompt } from "./MakeOfferPrompt";
