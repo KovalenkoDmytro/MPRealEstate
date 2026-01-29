@@ -9,6 +9,7 @@ import {
     useTheme,
 } from '@mui/material';
 import {OpenInNew as OpenInNewIcon} from '@mui/icons-material';
+import theme from "@/theme";
 
 
 const useLeaflet = () => {
@@ -126,7 +127,7 @@ export const ListingLocationMap: React.FC<ListingLocationMapProps> = ({
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 2,
-                    bgcolor: 'background.default',
+                    backgroundColor: theme.palette.background.white,
                     color: 'text.secondary'
                 }}
             >
@@ -162,10 +163,9 @@ export const ListingLocationMap: React.FC<ListingLocationMapProps> = ({
                     spacing={2}
                 >
 
-                    {/* Action Button */}
                     <Button
                         variant="contained"
-                        color="primary" // Uses theme primary color (usually blue)
+                        color="primary"
                         size="small"
                         onClick={handleGetDirections}
                         endIcon={<OpenInNewIcon />}

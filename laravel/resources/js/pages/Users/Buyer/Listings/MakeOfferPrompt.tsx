@@ -10,7 +10,7 @@ export const MakeOfferPrompt = ({ onMakeOffer }: MakeOfferPromptProps) => {
     return (
         <Stack
             sx={{
-                backgroundColor: "#fff",
+                backgroundColor: theme.palette.background.white,
                 border: `1px solid #E5E7EB`,
                 borderRadius: theme.shape.borderRadius,
                 p: theme.shape.padding,

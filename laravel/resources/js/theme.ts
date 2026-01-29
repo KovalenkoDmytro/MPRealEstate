@@ -29,11 +29,23 @@ declare module '@mui/material/styles' {
         padding: string | number;
         boxShadow: string;
     }
-
+    interface Palette {
+        border: {
+            main: string;
+        };
+    }
+    interface PaletteOptions {
+        border?: {
+            main: string;
+        };
+    }
     interface ShapeOptions {
         borderRadius?: number | string;
         padding?: string | number;
         boxShadow?: string;
+        border?: {
+            main: string;
+        };
     }
 }
 
@@ -44,6 +56,9 @@ const theme = createTheme({
         },
         secondary: {
             main: colors.charcoal,
+        },
+        border: {
+            main: colors.border,
         },
         text: {
             primary: colors.charcoal,

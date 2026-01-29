@@ -5,12 +5,10 @@ import {
     Typography,
     Divider,
     Stack,
-    Grid,
     Paper,
     Chip,
     useTheme
 } from "@mui/material";
-import IconLocationMark from "@/icons/IconLocationMark";
 import IconBed from "@/icons/IconBed";
 import IconBath from "@/icons/IconBath";
 import IconSqft from "@/icons/IconSqft";
@@ -22,6 +20,7 @@ import IconCalendarToday from "@/icons/IconCalendarToday";
 import IconBasement from "@/icons/IconBasement";
 import IconLotSpace from "@/icons/IconLotSpace";
 import IconKeywords from "@/icons/IconKeywords";
+import theme from "@/theme";
 
 type ListingDetailsProps = {
     listing: RealEstateListing;
@@ -52,14 +51,14 @@ export const ListingDetails = ({ listing }: ListingDetailsProps) => {
     return (
         <Paper elevation={0} sx={{ p: 0, bgcolor: 'transparent' }}>
 
-
             <Box
                 className="listing-gallery"
                 sx={{ width: "100%",
                     position: "relative",
                     borderRadius: theme.shape.borderRadius,
-                    boxShadow: theme.shape.boxShadow,
+                    border: `1px solid ${theme.palette.border.main}`,
                     padding: theme.shape.padding,
+                    backgroundColor: theme.palette.background.white,
                 }}>
 
                 {/* --- PROPERTY DETAILS HEADER --- */}

@@ -4,8 +4,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Thumbs } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import Badge from "@/components/common/Badge";
-
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/navigation";
@@ -40,7 +38,8 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, p
                 position: "relative",
                 mb: 4 ,
                 borderRadius: theme.shape.borderRadius,
-                boxShadow: theme.shape.boxShadow,
+                backgroundColor: theme.palette.background.white,
+                border: `1px solid ${theme.palette.border.main}`,
         }}>
             {/* Main Slider */}
             <Swiper
