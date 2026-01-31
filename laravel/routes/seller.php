@@ -32,7 +32,7 @@ Route::prefix('seller')->middleware(['auth', 'role:seller'])->name('seller.')->g
     });
 
     Route::prefix('appointments')->name('appointments.')->group(function () {
-        Route::get('/', [AppointmentController::class, 'showAllSellerAppointments'])->name('index');
+        Route::get('/', [AppointmentController::class, 'index'])->name('index');
         Route::post('/', [AppointmentController::class, 'handle'])->name('handle');
     });
 });

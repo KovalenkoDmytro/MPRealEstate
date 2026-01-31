@@ -55,28 +55,42 @@ class AppointmentController extends Controller
         return JsonResponder::send(new ErrorResponse(__('Invalid action.')), 400);
     }
 
-    public function showAllSellerAppointments(): Response
+    public function index(): Response
     {
-        $appointments = Appointment::where('seller_id', auth()->id())
-            ->with(['buyer', 'listing'])
-            ->orderBy('scheduled_at', 'desc')
-            ->get();
 
-        return inertia('Users/Seller/Appointments/Index', [
-            'appointments' => $appointments,
-        ]);
-    }
+        $user_role = auth()->user()->role;
 
-    public function showAllBuyerAppointments(): Response
-    {
-        $appointments = Appointment::where('buyer_id', auth()->id())
-            ->with(['seller', 'listing'])
-            ->orderBy('scheduled_at', 'desc')
-            ->get();
+        $all_appointments = $this->service->getAllAppointments();
+        $today_appointments = $this->service->getTodayAppointments();
+        $upcoming_appointments = $this->service->getUpcomingAppointments();
+        $past_appointments = $this->service->getPastAppointments();
+        $accepted_appointments = $this->service->getAcceptedAppointments();
+        $pending_appointments = $this->service->getPendingAppointments();
+        $canseled_appointments = $this->service->getCanceledAppointments();
 
-        return inertia('Users/Buyer/Appointments/Index', [
-            'appointments' => $appointments,
-        ]);
+        if($user_role === 'buyer '){
+            $rejected_appointments = $this->service->getRejectedAppointments();
+        }
+
+        $data = [
+            'all_appointments' => $all_appointments,
+            'today_appointments' => $today_appointments,
+            'upcoming_appointments' => $upcoming_appointments,
+            'past_appointments' => $past_appointments,
+            'accepted_appointments' => $accepted_appointments,
+            'pending_appointments' => $pending_appointments,
+            'canceled_appointments' => $canseled_appointments,
+        ];
+        if ($user_role === 'buyer') {
+            $data['rejected_appointments'] = $this->service->getRejectedAppointments();
+        }
+
+        if($user_role === 'buyer '){
+            return inertia('Users/Buyer/Appointments/Index', $data);
+        }
+
+        return inertia('Users/Seller/Appointments/Index', $data);
+
     }
 
     public function buyerCancel(Request $request): JsonResponse {

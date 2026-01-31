@@ -15,30 +15,15 @@ import {
 } from "@mui/material";
 
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import { RealEstateListing, User } from "@/types";
 import { format } from "date-fns";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { appointmentService } from "@/services/appointmentService";
 import { useNotification } from "@/context/NotificationContext";
+import ApointmentsOverviewCards from "@/pages/Users/Buyer/Appointments/ApointmentsOverviewCards";
+import type {BuyerAppointmentsPage} from "@/types/Appointments/buyerAppointmentsStat";
 
-export interface BuyerAppointment {
-    id: number;
-    buyer_id: number;
-    seller_id: number;
-    real_estate_listing_id: number;
 
-    scheduled_at: string;
-    status: "pending" | "accepted" | "rejected" | "cancelled by buyer";
-
-    rejection_reason?: string | null;
-    access_code?: string | null;
-    buyer_cancelled_at?: string | null;
-
-    seller: User;
-    listing: RealEstateListing;
-}
-
-export default function BuyerAppointmentsPage({ appointments }: { appointments: BuyerAppointment[] }) {
+export default function BuyerAppointmentsPage( appointments : BuyerAppointmentsPage) {
     const { showNotification } = useNotification();
 
     // Dialog state
@@ -67,94 +52,103 @@ export default function BuyerAppointmentsPage({ appointments }: { appointments: 
     };
 
     return (
-        <AuthenticatedLayout
-            header="My Appointments"
-        >
-            <Box maxWidth="900px" mx="auto" mt={4}>
+        <AuthenticatedLayout header="My Appointments">
+
+            <ApointmentsOverviewCards
+                todayCount={appointments.today_appointments.length}
+                upcomingCount={appointments.upcoming_appointments.length}
+                acceptedCount={appointments.accepted_appointments.length}
+                rejectedCount={appointments.rejected_appointments.length}
+                pendingCount={appointments.pending_appointments.length}
+                cancelledCount={appointments.canceled_appointments.length}
+            />
 
 
-                <Card>
-                    <CardContent>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Listing</TableCell>
-                                    <TableCell>Seller</TableCell>
-                                    <TableCell>Date</TableCell>
-                                    <TableCell>Status</TableCell>
-                                    <TableCell>Details</TableCell>
-                                    <TableCell align="right">Actions</TableCell>
-                                </TableRow>
-                            </TableHead>
+            {/*<Box  mx="auto" mt={4}>*/}
 
-                            <TableBody>
-                                {appointments.map((appt) => (
-                                    <TableRow key={appt.id}>
-                                        <TableCell>
-                                            <Link href={route('buyer.listings.show', appt.listing.id)}>{appt.listing.title}</Link>
-                                            <Typography variant="body2">${appt.listing.price}</Typography>
-                                        </TableCell>
 
-                                        <TableCell>{appt.seller.name}</TableCell>
+            {/*    <Card>*/}
+            {/*        <CardContent>*/}
+            {/*            <Table>*/}
+            {/*                <TableHead>*/}
+            {/*                    <TableRow>*/}
+            {/*                        <TableCell>Listing</TableCell>*/}
+            {/*                        <TableCell>Seller</TableCell>*/}
+            {/*                        <TableCell>Date</TableCell>*/}
+            {/*                        <TableCell>Status</TableCell>*/}
+            {/*                        <TableCell>Details</TableCell>*/}
+            {/*                        <TableCell align="right">Actions</TableCell>*/}
+            {/*                    </TableRow>*/}
+            {/*                </TableHead>*/}
 
-                                        <TableCell>
-                                            {format(new Date(appt.scheduled_at), "PPpp")}
-                                        </TableCell>
+            {/*                <TableBody>*/}
+            {/*                    {appointments.all_appointments.map((appt) => (*/}
+            {/*                        <TableRow key={appt.id}>*/}
+            {/*                            <TableCell>*/}
+            {/*                                <Link href={route('buyer.listings.show', appt.listing.id)}>{appt.listing.title}</Link>*/}
+            {/*                                <Typography variant="body2">${appt.listing.price}</Typography>*/}
+            {/*                            </TableCell>*/}
 
-                                        <TableCell>
-                                            <Chip
-                                                label={appt.status}
-                                                color={
-                                                    appt.status === "pending"
-                                                        ? "warning"
-                                                        : appt.status === "accepted"
-                                                            ? "success"
-                                                            : appt.status === "rejected"
-                                                                ? "error"
-                                                                : "default"
-                                                }
-                                            />
-                                        </TableCell>
+            {/*                            <TableCell>{appt.seller.name}</TableCell>*/}
 
-                                        <TableCell>
-                                            {appt.status === "accepted" && appt.access_code && (
-                                                <Typography color="green">
-                                                    Access Code: <strong>{appt.access_code}</strong>
-                                                </Typography>
-                                            )}
+            {/*                            <TableCell>*/}
+            {/*                                {format(new Date(appt.scheduled_at), "PPpp")}*/}
+            {/*                            </TableCell>*/}
 
-                                            {appt.status === "rejected" && appt.rejection_reason && (
-                                                <Typography color="error">
-                                                    Reason: {appt.rejection_reason}
-                                                </Typography>
-                                            )}
+            {/*                            <TableCell>*/}
+            {/*                                <Chip*/}
+            {/*                                    label={appt.status}*/}
+            {/*                                    color={*/}
+            {/*                                        appt.status === "pending"*/}
+            {/*                                            ? "warning"*/}
+            {/*                                            : appt.status === "accepted"*/}
+            {/*                                                ? "success"*/}
+            {/*                                                : appt.status === "rejected"*/}
+            {/*                                                    ? "error"*/}
+            {/*                                                    : "default"*/}
+            {/*                                    }*/}
+            {/*                                />*/}
+            {/*                            </TableCell>*/}
 
-                                            {appt.status === "cancelled by buyer" && (
-                                                <Typography color="gray">
-                                                    You cancelled this appointment.
-                                                </Typography>
-                                            )}
-                                        </TableCell>
+            {/*                            <TableCell>*/}
+            {/*                                {appt.status === "accepted" && appt.access_code && (*/}
+            {/*                                    <Typography color="green">*/}
+            {/*                                        Access Code: <strong>{appt.access_code}</strong>*/}
+            {/*                                    </Typography>*/}
+            {/*                                )}*/}
 
-                                        <TableCell align="right">
-                                            {(appt.status === "pending" || appt.status === "accepted") && (
-                                                <Button
-                                                    variant="outlined"
-                                                    color="error"
-                                                    size="small"
-                                                    onClick={() => openCancelDialog(appt.id)}
-                                                >
-                                                    Cancel
-                                                </Button>
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
-            </Box>
+            {/*                                {appt.status === "rejected" && appt.rejection_reason && (*/}
+            {/*                                    <Typography color="error">*/}
+            {/*                                        Reason: {appt.rejection_reason}*/}
+            {/*                                    </Typography>*/}
+            {/*                                )}*/}
+
+            {/*                                {appt.status === "cancelled by buyer" && (*/}
+            {/*                                    <Typography color="gray">*/}
+            {/*                                        You cancelled this appointment.*/}
+            {/*                                    </Typography>*/}
+            {/*                                )}*/}
+            {/*                            </TableCell>*/}
+
+            {/*                            <TableCell align="right">*/}
+            {/*                                {(appt.status === "pending" || appt.status === "accepted") && (*/}
+            {/*                                    <Button*/}
+            {/*                                        variant="outlined"*/}
+            {/*                                        color="error"*/}
+            {/*                                        size="small"*/}
+            {/*                                        onClick={() => openCancelDialog(appt.id)}*/}
+            {/*                                    >*/}
+            {/*                                        Cancel*/}
+            {/*                                    </Button>*/}
+            {/*                                )}*/}
+            {/*                            </TableCell>*/}
+            {/*                        </TableRow>*/}
+            {/*                    ))}*/}
+            {/*                </TableBody>*/}
+            {/*            </Table>*/}
+            {/*        </CardContent>*/}
+            {/*    </Card>*/}
+            {/*</Box>*/}
 
             {/* Cancel Confirmation Dialog */}
             <ConfirmDialog

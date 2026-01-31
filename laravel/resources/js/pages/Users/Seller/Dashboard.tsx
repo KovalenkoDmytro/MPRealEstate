@@ -1,6 +1,6 @@
 import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
-import { SellerStats } from "@/types/sellerAppointmentsStat";
+import { SellerStats } from "@/types/Appointments/sellerAppointmentsStat";
 import AppointmentStats from "@/components/dashboard/seller/appointments/AppointmentStats";
 import { PerformanceStats } from "@/types/models";
 import PropertyPerformance from "@/components/dashboard/seller/propertyPerformance/PropertyPerformance";

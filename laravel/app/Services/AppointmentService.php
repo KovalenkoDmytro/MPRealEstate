@@ -10,6 +10,7 @@ use App\Notifications\Appointments\AppointmentCancelledByBuyerNotification;
 use App\Notifications\Appointments\AppointmentRejectedNotification;
 use App\Notifications\Appointments\AppointmentRequestNotification;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -84,14 +85,6 @@ class AppointmentService {
             new AppointmentCancelledByBuyerNotification($appointment)
         );
     }
-
-    /**
-     * Get Appointment Statistics specifically for a Seller.
-     * * @param int $sellerId The user ID of the seller
-     *
-     * @return array
-     */
-    // App\Services\AppointmentService.php
 
     public function getSellerStatistics(int $sellerId): array {
         // Define time windows
@@ -201,5 +194,186 @@ class AppointmentService {
             'nextAppointmentDate' => $nextAppointmentDate,
         ];
     }
+
+
+
+    public function getTodayAppointments(): Collection {
+        $user = Auth::user();
+        $userRole = $user->role;
+        $today = Carbon::today();
+
+        if($userRole === 'seller'){
+            $todayAppointments = Appointment::where('seller_id', $user->id)->where('scheduled_at', $today)->get();
+        }
+
+        if($userRole === 'buyer'){
+            $todayAppointments = Appointment::where('buyer_id', $user->id)->where('scheduled_at', $today)->get();
+        }
+
+        return new Collection();
+    }
+
+    /**
+     * Get appointments for the past 7 days (excluding today).
+     */
+    public function getPastAppointments($days = 7): Collection
+    {
+        $user = Auth::user();
+
+        // Start: 7 days ago at 00:00:00
+        $startDate = Carbon::today()->subDays($days)->startOfDay();
+
+        // End: Yesterday at 23:59:59
+        $endDate = Carbon::yesterday()->endOfDay();
+
+        $query = Appointment::query();
+
+        // Filter by Role
+        if ($user->role === 'seller') {
+            $query->where('seller_id', $user->id);
+        } elseif ($user->role === 'buyer') {
+            $query->where('buyer_id', $user->id);
+        } else {
+            return new Collection();
+        }
+
+        // Apply Date Range and Sort (Most recent past first)
+        return $query->whereBetween('scheduled_at', [$startDate, $endDate])
+            ->orderBy('scheduled_at', 'desc')
+            ->get();
+    }
+
+    /**
+     * Get appointments for the upcoming 7 days (excluding today).
+     */
+    public function getUpcomingAppointments($days = 7): Collection
+    {
+        $user = Auth::user();
+
+        // Start: Tomorrow at 00:00:00
+        $startDate = Carbon::tomorrow()->startOfDay();
+
+        // End: 7 days from now at 23:59:59
+        $endDate = Carbon::today()->addDays($days)->endOfDay();
+
+        $query = Appointment::query();
+
+        // Filter by Role
+        if ($user->role === 'seller') {
+            $query->where('seller_id', $user->id);
+        } elseif ($user->role === 'buyer') {
+            $query->where('buyer_id', $user->id);
+        } else {
+            return new Collection();
+        }
+
+        // Apply Date Range and Sort (Soonest upcoming first)
+        return $query->whereBetween('scheduled_at', [$startDate, $endDate])
+            ->orderBy('scheduled_at', 'asc')
+            ->get();
+    }
+
+    /**
+     * Get all pending appointments.
+     */
+    public function getPendingAppointments(): Collection
+    {
+        $user = Auth::user();
+        $query = Appointment::query();
+
+        if ($user->role === 'seller') {
+            $query->where('seller_id', $user->id);
+        } elseif ($user->role === 'buyer') {
+            $query->where('buyer_id', $user->id);
+        } else {
+            return new Collection();
+        }
+
+        return $query->where('status', 'pending')
+            ->orderBy('scheduled_at', 'asc')
+            ->get();
+    }
+
+    /**
+     * Get all accepted appointments.
+     */
+    public function getAcceptedAppointments(): Collection
+    {
+        $user = Auth::user();
+        $query = Appointment::query();
+
+        if ($user->role === 'seller') {
+            $query->where('seller_id', $user->id);
+        } elseif ($user->role === 'buyer') {
+            $query->where('buyer_id', $user->id);
+        } else {
+            return new Collection();
+        }
+
+        return $query->where('status', 'accepted')
+            ->orderBy('scheduled_at', 'asc')
+            ->get();
+    }
+
+    /**
+     * Get all rejected appointments.
+     */
+    public function getRejectedAppointments(): Collection
+    {
+        $user = Auth::user();
+
+        // This is only available for buyers
+        if ($user->role !== 'buyer') {
+            return new Collection();
+        }
+
+        return Appointment::query()
+            ->where('buyer_id', $user->id)
+            ->where('status', 'rejected')
+            ->orderBy('scheduled_at', 'desc')
+            ->get();
+    }
+
+
+    /**
+     * Get all appointments for the user regardless of status or date.
+     */
+    public function getAllAppointments(): Collection
+    {
+        $user = Auth::user();
+        $query = Appointment::query();
+
+        if ($user->role === 'seller') {
+            $query->where('seller_id', $user->id)
+                ->with(['buyer', 'listing']);
+        } elseif ($user->role === 'buyer') {
+            $query->where('buyer_id', $user->id)
+                ->with(['seller', 'listing']);
+        } else {
+            return new Collection();
+        }
+
+        return $query->orderBy('scheduled_at', 'desc')->get();
+    }
+
+    /**
+     * Get canceled by buyers appointments.
+     */
+    public function getCanceledAppointments(): Collection
+    {
+        $user = Auth::user();
+        $query = Appointment::query();
+
+        if ($user->role === 'seller') {
+            $query->where('seller_id', $user->id);
+        } else {
+            return new Collection();
+        }
+
+        return $query->where('status', 'cancelled by buyer')
+            ->orderBy('scheduled_at', 'asc')
+            ->get();
+    }
+
 
 }

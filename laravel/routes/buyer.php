@@ -30,7 +30,7 @@ Route::prefix('buyer')->middleware(['auth', 'role:buyer'])->name('buyer.')->grou
     });
 
     Route::prefix('appointments')->name('appointments.')->group(function () {
-        Route::get('/', [AppointmentController::class, 'showAllBuyerAppointments'])->name('index');
+        Route::get('/', [AppointmentController::class, 'index'])->name('index');
         Route::post('/', [AppointmentController::class, 'buyerCancel'])->name('cancel');
 
     });

@@ -12,7 +12,7 @@ import {
     ChartOptions
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { DailyStat } from "@/types/sellerAppointmentsStat";
+import { DailyStat } from "@/types/Appointments/sellerAppointmentsStat";
 
 ChartJS.register(
     CategoryScale,

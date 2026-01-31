@@ -4,7 +4,7 @@ import {AccessTime, TodayRounded} from '@mui/icons-material';
 import { appointmentTheme } from './theme';
 import StatCard from './StatCard';
 import DailyActivityChart from './DailyActivityChart';
-import { SellerStats } from "@/types/sellerAppointmentsStat";
+import { SellerStats } from "@/types/Appointments/sellerAppointmentsStat";
 
 interface AppointmentStatsProps {
     stats: SellerStats;
