@@ -196,21 +196,27 @@ class AppointmentService {
     }
 
 
-
-    public function getTodayAppointments(): Collection {
+    /**
+     * Get appointments scheduled specifically for today.
+     */
+    public function getTodayAppointments(): Collection
+    {
         $user = Auth::user();
-        $userRole = $user->role;
-        $today = Carbon::today();
+        $query = Appointment::query();
 
-        if($userRole === 'seller'){
-            $todayAppointments = Appointment::where('seller_id', $user->id)->where('scheduled_at', $today)->get();
+        // Filter by Role
+        if ($user->role === 'seller') {
+            $query->where('seller_id', $user->id);
+        } elseif ($user->role === 'buyer') {
+            $query->where('buyer_id', $user->id);
+        } else {
+            return new Collection();
         }
 
-        if($userRole === 'buyer'){
-            $todayAppointments = Appointment::where('buyer_id', $user->id)->where('scheduled_at', $today)->get();
-        }
-
-        return new Collection();
+        // Use whereDate to match any time on "Today"
+        return $query->whereDate('scheduled_at', Carbon::today())
+            ->orderBy('scheduled_at', 'asc')
+            ->get();
     }
 
     /**
@@ -366,6 +372,9 @@ class AppointmentService {
 
         if ($user->role === 'seller') {
             $query->where('seller_id', $user->id);
+        } elseif ($user->role === 'buyer') {
+            $query->where('buyer_id', $user->id)
+                ->with(['seller', 'listing']);
         } else {
             return new Collection();
         }

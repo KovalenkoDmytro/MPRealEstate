@@ -41,6 +41,8 @@ export interface Appointment {
     /** ID of the related real estate listing */
     real_estate_listing_id: number;
 
+    buyer_cancelled_at:  string | null;
+
     /** Scheduled date & time of the appointment (ISO string with timezone) */
     scheduled_at: string;
 

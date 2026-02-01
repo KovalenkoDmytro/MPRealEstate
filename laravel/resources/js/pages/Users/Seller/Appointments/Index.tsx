@@ -22,6 +22,7 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import {Head} from "@inertiajs/react";
 import type {SellerAppointmentsPage} from "@/types/Appointments/sellerAppointmentsStat";
 import ApointmentsOverviewCards from "@/pages/Users/Buyer/Appointments/ApointmentsOverviewCards";
+import AppointmentCalendar from "@/components/appointment/AppointmentCalendar";
 
 // Interface definitions remain the same
 export interface SellerAppointment {
@@ -48,6 +49,8 @@ export default function SellerAppointmentsPage(appointments: SellerAppointmentsP
     const [selectedApptId, setSelectedApptId] = useState<number | null>(null);
     const [rejectionReason, setRejectionReason] = useState("");
     const [accessCode, setAccessCode] = useState("");
+
+
 
     const openApproveDialog = (id: number) => {
         setSelectedApptId(id);
@@ -81,7 +84,7 @@ export default function SellerAppointmentsPage(appointments: SellerAppointmentsP
         showNotification(response.message, response.status);
         location.reload();
     };
-
+    console.log('seller')
     const getStatusColor = (status: SellerAppointment['status']) => {
         switch (status) {
             case 'pending': return { color: '#F97316', bg: '#FFF7ED' }; // Orange
@@ -91,6 +94,8 @@ export default function SellerAppointmentsPage(appointments: SellerAppointmentsP
             default: return { color: '#6B7280', bg: '#F3F4F6' }; // Gray
         }
     };
+
+
 
     return (
         <AuthenticatedLayout header="My Appointments">
@@ -102,6 +107,9 @@ export default function SellerAppointmentsPage(appointments: SellerAppointmentsP
                 pendingCount={appointments.pending_appointments.length}
                 cancelledCount={appointments.canceled_appointments.length}
             />
+
+
+            <AppointmentCalendar appointments={[]} />
 
             {/*<Box>*/}
             {/*    <Card*/}

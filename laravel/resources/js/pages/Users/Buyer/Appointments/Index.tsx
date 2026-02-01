@@ -21,6 +21,7 @@ import { appointmentService } from "@/services/appointmentService";
 import { useNotification } from "@/context/NotificationContext";
 import ApointmentsOverviewCards from "@/pages/Users/Buyer/Appointments/ApointmentsOverviewCards";
 import type {BuyerAppointmentsPage} from "@/types/Appointments/buyerAppointmentsStat";
+import AppointmentCalendar from "@/components/appointment/AppointmentCalendar";
 
 
 export default function BuyerAppointmentsPage( appointments : BuyerAppointmentsPage) {
@@ -51,6 +52,15 @@ export default function BuyerAppointmentsPage( appointments : BuyerAppointmentsP
         }
     };
 
+    const calendarData = ()=>{
+        return[
+            ...appointments.upcoming_appointments,
+            ...appointments.today_appointments,
+            ...appointments.past_appointments,
+        ]
+    }
+    console.log(appointments.today_appointments)
+
     return (
         <AuthenticatedLayout header="My Appointments">
 
@@ -62,6 +72,8 @@ export default function BuyerAppointmentsPage( appointments : BuyerAppointmentsP
                 pendingCount={appointments.pending_appointments.length}
                 cancelledCount={appointments.canceled_appointments.length}
             />
+
+            <AppointmentCalendar appointments={calendarData()} />
 
 
             {/*<Box  mx="auto" mt={4}>*/}

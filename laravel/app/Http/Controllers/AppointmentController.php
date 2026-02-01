@@ -85,7 +85,7 @@ class AppointmentController extends Controller
             $data['rejected_appointments'] = $this->service->getRejectedAppointments();
         }
 
-        if($user_role === 'buyer '){
+        if($user_role === 'buyer'){
             return inertia('Users/Buyer/Appointments/Index', $data);
         }
 
