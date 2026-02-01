@@ -174,7 +174,7 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
                     sx={{
                         display: 'flex',
                         flexDirection: { xs: 'column', md: 'row' },
-                        gap: 4,
+                        gap: 1.5,
                         justifyContent: 'center'
                     }}
                 >

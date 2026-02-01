@@ -351,10 +351,10 @@ class AppointmentService {
 
         if ($user->role === 'seller') {
             $query->where('seller_id', $user->id)
-                ->with(['buyer', 'listing']);
+                ->with(['buyer', 'listing.mainImage']);
         } elseif ($user->role === 'buyer') {
             $query->where('buyer_id', $user->id)
-                ->with(['seller', 'listing']);
+                ->with(['seller', 'listing.mainImage']);
         } else {
             return new Collection();
         }

@@ -1,7 +1,7 @@
 import {Link} from "@mui/material";
 
 export type ButtonProps = {
-    version: 'primary' | 'secondary' | 'outline';
+    version?: 'primary' | 'secondary' | 'outline';
     text: string;
     onClick?: () => void;
     link?: boolean;

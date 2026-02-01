@@ -24,6 +24,8 @@ export interface User extends BaseEntity {
     email: string;
     /** Timestamp when the email was verified, or null if not verified */
     email_verified_at: string | null;
+    /** Phone number of the user */
+    phone_number: string;
     /** Role of the user in the system */
     role: UserRole;
     /** Whether the user is a lawyer representing buyers */

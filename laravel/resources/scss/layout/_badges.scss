@@ -1,20 +1,36 @@
 @use '../abstracts/variables' as *;
 
-.badge{
+.badge {
     color: $white-color;
     font-size: 14px;
     font-style: normal;
     font-weight: 600;
     line-height: 1.4;
-    padding: 8px 16px;
+    padding: 8px 16px; // Default large padding
     z-index: 9;
     position: relative;
-    max-width: max-content;
+    width: fit-content;
     border-radius: 10px;
-    &:first-letter{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+
+    &:first-letter {
         text-transform: uppercase;
     }
 
+    // --- Size Variants ---
+    &.badge-small {
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        line-height: 1.2;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    // --- Color Variants ---
     &.badge-primary {
         background-color: $color-maroon;
     }
@@ -38,12 +54,12 @@
     }
 
     &.badge-error {
-        background-color: $error-color;
-        color: #C10007;
+        background-color: #FEE2E2;
+        color: #991B1B;
     }
 
     &.badge-warning {
-        background-color: $warning-color;
-        color: #A65F00;
+        background-color: #FEF3C7;
+        color: #92400E;
     }
 }

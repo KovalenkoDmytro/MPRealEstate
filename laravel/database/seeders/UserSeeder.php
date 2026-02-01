@@ -29,13 +29,14 @@ class UserSeeder extends Seeder
 
         foreach ($users as $userData) {
             $user = User::updateOrCreate(
-                ['email' => $userData['email']], // Ensure uniqueness
+                ['email' => $userData['email']],
                 [
+                    'phone_number' => fake('phone_number'),
                     'email_verified_at'=> now(),
                     'name' => $userData['name'],
                     'password' => Hash::make('password'),
                     'role' => $userData['role'],
-                    ]
+                ]
             );
 
             // Assign a role using Spatie

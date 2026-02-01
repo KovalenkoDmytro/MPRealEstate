@@ -9,3 +9,5 @@ export * from './offer';
 export * from './realEstateListing';
 export * from './file';
 export * from './pageProps';
+export * from './Appointments/appointmentWithListing';
+
