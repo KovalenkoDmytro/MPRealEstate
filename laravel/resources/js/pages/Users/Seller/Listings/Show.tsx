@@ -29,28 +29,28 @@ interface PageProps {
 export default function ListingShowPage({ listing }: PageProps) {
     const [offers, setOffers] = useState<Offer[]>(listing.offers || []);
     const { showNotification } = useNotification();
-    const handleUpdateStatus = async (offerId: number, status: "accepted" | "rejected") => {
-
-            const response = await offerService.updateOfferStatus(offerId, status);
-
-            if (response.status === "success") {
-                showNotification(response.message, response.status );
-                const updatedStatus = response.data.status;
-
-                setOffers(prev =>
-                    prev.map(offer =>
-                        offer.id === offerId
-                            ? ({ ...offer, status: updatedStatus } as Offer)
-                            : offer
-                    )
-                );
-            }else {
-                showNotification(response.message, "error");}
-
-
-
-
-    };
+    // const handleUpdateStatus = async (offerId: number, status: "accepted" | "rejected") => {
+    //
+    //         const response = await offerService.updateOfferStatus(offerId, status);
+    //
+    //         if (response.status === "success") {
+    //             showNotification(response.message, response.status );
+    //             const updatedStatus = response.data.status;
+    //
+    //             setOffers(prev =>
+    //                 prev.map(offer =>
+    //                     offer.id === offerId
+    //                         ? ({ ...offer, status: updatedStatus } as Offer)
+    //                         : offer
+    //                 )
+    //             );
+    //         }else {
+    //             showNotification(response.message, "error");}
+    //
+    //
+    //
+    //
+    // };
 
     return (
         <AuthenticatedLayout
@@ -127,7 +127,7 @@ export default function ListingShowPage({ listing }: PageProps) {
                             📑 Offers Received
                         </Typography>
 
-                        <ReceivedOffers offers={offers} onUpdateStatus={handleUpdateStatus} />
+                        {/*<ReceivedOffers offers={offers} onUpdateStatus={handleUpdateStatus} />*/}
                     </CardContent>
                 </Card>
             </Box>
