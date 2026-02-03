@@ -15,6 +15,7 @@ use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Helpers\Responses\ErrorResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class OfferService
 {
@@ -67,7 +68,7 @@ class OfferService
     }
 
 
-    public function getAllUserOffers(User $user): Collection
+    public function getAllUserOffers(User $user, int $perPage = 10): LengthAwarePaginator
     {
 
         $query = Offer::with('listing.mainImage')->latest();
@@ -82,10 +83,10 @@ class OfferService
                 ->with('listing.seller');
         }
         else {
-            return collect();
+            return new LengthAwarePaginator([], 0, $perPage);
         }
 
-        return $query->get();
+        return $query->paginate($perPage);
     }
 
     /**
