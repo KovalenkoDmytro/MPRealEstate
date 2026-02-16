@@ -12,6 +12,7 @@ interface RecentOffersListProps {
 const DISPLAY_LIMIT = 3;
 
 export default function RecentOffersList({ offers }: RecentOffersListProps) {
+    // console.log(offers);
     const displayedOffers = offers.slice(0, DISPLAY_LIMIT);
     const hasMore = offers.length > DISPLAY_LIMIT;
 

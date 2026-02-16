@@ -12,7 +12,9 @@ import {
 import theme from "@/theme";
 
 type PageProps = {
-    offers: Offer[];
+    offers: {
+        data: Offer[];
+    };
     offers_stats: OfferStats;
     appointments_stats: AppointmentsStats;
     favorite_listings: {
@@ -22,7 +24,7 @@ type PageProps = {
     listings_recently_viewed : RealEstateListing[];
 };
 export default function Dashboard({ offers_stats, appointments_stats, favorite_listings, offers, listings_recently_viewed }: PageProps) {
-
+    console.log(offers);
     return (
         <AuthenticatedLayout
             header="Dashboard"
@@ -93,7 +95,7 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
                             boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)'
                     }}
                     >
-                        <RecentOffersList offers={offers} />
+                        <RecentOffersList offers={offers.data} />
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
