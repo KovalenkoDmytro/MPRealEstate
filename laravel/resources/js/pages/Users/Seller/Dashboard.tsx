@@ -24,14 +24,8 @@ export default function Dashboard({
 }: DashboardProps) {
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard
-                </h2>
-            }
+        <AuthenticatedLayout header="Dashboard"
         >
-            <Head title="Dashboard" />
 
             <AppointmentStats stats={appointments_stats} />
 
