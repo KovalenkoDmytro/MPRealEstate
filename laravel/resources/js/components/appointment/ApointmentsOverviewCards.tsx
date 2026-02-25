@@ -7,6 +7,8 @@ import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconPending from "@/icons/IconPending";
 import IconCanceled from "@/icons/IconCanceled";
+import theme from "@/theme";
+import React from "react";
 
 
 type BuyerAppointmentsOverviewCardsType = {
@@ -36,7 +38,6 @@ export default function ApointmentsOverviewCards({todayCount = 0, acceptedCount=
                     label="Accepted"
                     value={acceptedCount}
                     icon={<IconConfirm/>}
-                    iconBgColor="#2C233E1A"
                 />
             </Grid>
 
@@ -55,7 +56,7 @@ export default function ApointmentsOverviewCards({todayCount = 0, acceptedCount=
                         label="Rejected"
                         value={rejectedCount}
                         icon={<IconClose/>}
-                        iconBgColor="#572A4D1A"
+                        iconBgColor="#4A5565"
                     />
                 </Grid> }
 
@@ -74,8 +75,8 @@ export default function ApointmentsOverviewCards({todayCount = 0, acceptedCount=
                 <StatCard
                     label="Cancelled"
                     value={cancelledCount}
-                    icon={<IconCanceled/>}
-                    iconBgColor="#CB9A9F1A"
+                    icon={<IconClose/>}
+                    iconBgColor="#4A5565"
                 />
             </Grid>
         </Grid>

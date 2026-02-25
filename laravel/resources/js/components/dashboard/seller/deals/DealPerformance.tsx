@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Grid } from '@mui/material';
+import {Box, Typography, Grid, Stack} from '@mui/material';
 import {
     HandshakeRounded,
     CheckCircleRounded,
@@ -9,6 +9,12 @@ import {
 
 import DealMetricCard from './DealMetricCard';
 import { DealStats } from "@/types/models";
+import theme from "@/theme";
+import IconTrendingUpBig from "@/icons/IconTrendingUpBig";
+import IconArrangement from "@/icons/IconArrangement";
+import StatCard from "@/components/common/StatCard";
+import IconConfirm from "@/icons/IconConfirm";
+import IconClose from "@/icons/IconClose";
 
 interface DealPerformanceProps {
     stats: DealStats;
@@ -18,55 +24,61 @@ export default function DealPerformance({ stats }: DealPerformanceProps) {
     return (
         <Box
             sx={{
-                mb: 6,
-                p: { xs: 3, md: 4 },
-                backgroundColor: 'background.paper',
-                borderRadius: 4,
-                boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.05)',
-            }}>
-            <Box display="flex" alignItems="center" gap={1.5} mb={4}>
-                <Box sx={{ p: 1, bgcolor: '#EEF2FF', borderRadius: 2, color: '#3B82F6', display: 'flex' }}>
-                    <HandshakeRounded fontSize="small" />
+                p: theme.shape.padding,
+                backgroundColor: theme.palette.background.white,
+                borderRadius: theme.shape.borderRadius,
+                border: `1px solid ${theme.palette.border.main}`,
+            }}
+        >
+            <Stack gap={1.5} mb={4}>
+                <Box display="flex" alignItems="center" gap={1.5}>
+                    <IconArrangement/>
+                    <Typography variant="h5" fontWeight={700} color="text.primary">
+                        Deal Activity
+                    </Typography>
                 </Box>
-                <Typography variant="h5" fontWeight={700} color="text.primary">
-                    Deal Activity
+
+                <Typography variant="body2" color="text.secondary">
+                    Current status
                 </Typography>
-            </Box>
+            </Stack>
+
 
             <Grid container spacing={3}>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <DealMetricCard
-                        title="Pending Deals"
+                    <StatCard
+                        label="Pending Deals"
                         value={stats.pending}
-                        type="pending"
-                        icon={<HourglassEmptyRounded />}
+                        // icon={<VisibilityRounded/>}
+                        // iconBgColor="#D07669"
                     />
                 </Grid>
 
+
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <DealMetricCard
-                        title="Completed"
+                    <StatCard
+                        label="Completed"
                         value={stats.completed}
-                        type="completed"
-                        icon={<CheckCircleRounded />}
+                        icon={<IconConfirm/>}
+                        iconBgColor={theme.palette.primary.main}
                     />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <DealMetricCard
-                        title="Broken"
+                    <StatCard
+                        label="Broken"
                         value={stats.broken}
-                        type="broken"
-                        icon={<CancelRounded />}
+                        icon={<IconClose/>}
+                        iconBgColor="#4A5565"
                     />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <DealMetricCard
-                        title="Total All Time"
+                    <StatCard
+                        label="Total All Time"
                         value={stats.total}
-                        type="total"
-                        icon={<HandshakeRounded />}
+                        // icon={<VisibilityRounded/>}
+                        // iconBgColor="#D07669"
                     />
                 </Grid>
             </Grid>

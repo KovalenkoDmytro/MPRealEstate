@@ -1,5 +1,8 @@
 import {Grid} from "@mui/material";
 import StatCard from "@/components/common/StatCard";
+import IconConfirm from "@/icons/IconConfirm";
+import theme from "@/theme";
+import IconTrendingUpBig from "@/icons/IconTrendingUpBig";
 
 type DealsOverviewCardsType = {
     active: number;
@@ -15,10 +18,7 @@ export default function DealsOverviewCards({active, pending, closed}: DealsOverv
                 <StatCard
                     label="Active Deals"
                     value={active}
-                    icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M22 7L13.5 15.5L8.5 10.5L2 17" stroke="#572A4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M16 7H22V13" stroke="#572A4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>}
+                    icon={<IconTrendingUpBig/>}
                     iconBgColor="#572A4D1A"
                 />
             </Grid>
@@ -39,11 +39,8 @@ export default function DealsOverviewCards({active, pending, closed}: DealsOverv
                 <StatCard
                     label="Closed Deals"
                     value={closed}
-                    icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M21.801 9.99999C22.2577 12.2413 21.9322 14.5714 20.8788 16.6018C19.8255 18.6322 18.1079 20.24 16.0125 21.1573C13.9171 22.0746 11.5706 22.2458 9.36428 21.6424C7.15795 21.0389 5.22517 19.6974 3.88825 17.8414C2.55134 15.9854 1.8911 13.7272 2.01764 11.4434C2.14418 9.15952 3.04986 6.98808 4.58363 5.29116C6.1174 3.59424 8.18656 2.47442 10.446 2.11844C12.7055 1.76247 15.0188 2.19185 17 3.33499" stroke="#2C233E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M9 11L12 14L22 4" stroke="#2C233E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>}
-                    iconBgColor="#2C233E1A"
+                    icon={<IconConfirm/>}
+                    iconBgColor={theme.palette.primary.main}
                 />
             </Grid>
         </Grid>

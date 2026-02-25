@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Grid } from '@mui/material';
+import {Box, Typography, Grid, Stack} from '@mui/material';
 import {
     LocalOfferRounded,
     CheckCircleRounded,
@@ -9,6 +9,12 @@ import {
 
 import OfferMetricCard from './OfferMetricCard';
 import { OfferStats } from "@/types/models";
+import theme from "@/theme";
+import IconTrendingUpBig from "@/icons/IconTrendingUpBig";
+import StatCard from "@/components/common/StatCard";
+import IconDollar from "@/icons/IconDollar";
+import IconConfirm from "@/icons/IconConfirm";
+import IconClose from "@/icons/IconClose";
 
 interface OfferPerformanceProps {
     stats: OfferStats;
@@ -18,56 +24,61 @@ export default function OfferPerformance({ stats }: OfferPerformanceProps) {
     return (
         <Box
             sx={{
-                mb: 6,
-                p: { xs: 3, md: 4 },
-                backgroundColor: 'background.paper',
-                borderRadius: 4,
-                boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.05)',
+                p: theme.shape.padding,
+                backgroundColor: theme.palette.background.white,
+                borderRadius: theme.shape.borderRadius,
+                border: `1px solid ${theme.palette.border.main}`,
             }}
         >
-            <Box display="flex" alignItems="center" gap={1.5} mb={4}>
-                <Box sx={{ p: 1, bgcolor: '#FFF7ED', borderRadius: 2, color: '#F97316', display: 'flex' }}>
-                    <LocalOfferRounded fontSize="small" />
+
+            <Stack gap={1.5} mb={4}>
+                <Box display="flex" alignItems="center" gap={1.5}>
+                    <IconDollar/>
+                    <Typography variant="h5" fontWeight={700} color="text.primary">
+                        Offer Activity
+                    </Typography>
                 </Box>
-                <Typography variant="h5" fontWeight={700} color="text.primary">
-                    Offer Activity
+
+                <Typography variant="body2" color="text.secondary">
+                    Response tracking
                 </Typography>
-            </Box>
+            </Stack>
+
 
             <Grid container spacing={3}>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <OfferMetricCard
-                        title="Pending Response"
+                    <StatCard
+                        label="Pending Response"
                         value={stats.pending}
-                        type="pending"
-                        icon={<PendingActionsRounded />}
+                        // icon={<VisibilityRounded/>}
+                        // iconBgColor="#D07669"
                     />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <OfferMetricCard
-                        title="Accepted"
+                    <StatCard
+                        label="Accepted"
                         value={stats.accepted}
-                        type="accepted"
-                        icon={<CheckCircleRounded />}
+                        icon={<IconConfirm/>}
+                        iconBgColor={theme.palette.primary.main}
                     />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <OfferMetricCard
-                        title="Rejected"
+                    <StatCard
+                        label="Rejected"
                         value={stats.rejected}
-                        type="rejected"
-                        icon={<CancelRounded />}
+                        icon={<IconClose/>}
+                        iconBgColor="#4A5565"
                     />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <OfferMetricCard
-                        title="Total Received"
+                    <StatCard
+                        label="Total Received"
                         value={stats.total}
-                        type="total"
-                        icon={<LocalOfferRounded />}
+                        // icon={<VisibilityRounded/>}
+                        // iconBgColor="#D07669"
                     />
                 </Grid>
             </Grid>

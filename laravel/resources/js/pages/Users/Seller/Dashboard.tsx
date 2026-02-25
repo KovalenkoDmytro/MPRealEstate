@@ -1,4 +1,3 @@
-import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
 import { SellerStats } from "@/types/Appointments/sellerAppointmentsStat";
 import AppointmentStats from "@/components/dashboard/seller/appointments/AppointmentStats";
@@ -7,7 +6,6 @@ import PropertyPerformance from "@/components/dashboard/seller/propertyPerforman
 import DealPerformance from "@/components/dashboard/seller/deals/DealPerformance";
 import { DealStats, OfferStats } from "@/types/models";
 import OfferPerformance from "@/components/dashboard/seller/offers/OfferPerformance";
-
 
 interface DashboardProps {
     offers_stats: OfferStats;
@@ -24,19 +22,11 @@ export default function Dashboard({
 }: DashboardProps) {
 
     return (
-        <AuthenticatedLayout header="Dashboard"
-        >
-
+        <AuthenticatedLayout header="Dashboard">
             <AppointmentStats stats={appointments_stats} />
-
             <PropertyPerformance stats={listingsPerformance_stats} />
-
             <DealPerformance stats={deals_stats} />
-
             <OfferPerformance stats={offers_stats} />
-
-
-
         </AuthenticatedLayout>
     );
 }

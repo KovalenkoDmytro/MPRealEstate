@@ -1,4 +1,5 @@
 import React, {ReactNode} from "react";
+import theme from "@/theme";
 
 type StatCardProps = {
     label: string;
@@ -10,7 +11,7 @@ type StatCardProps = {
     borderColor?: string;
 };
 
-export default function StatCard({label, value, detail, icon, iconBgColor, backgroundColor = '#FFFFFF' , borderColor = '#E5E7EB'}: StatCardProps) {
+export default function StatCard({label, value, detail, icon, iconBgColor = theme.palette.primary.main, backgroundColor = '#FFFFFF' , borderColor = '#E5E7EB'}: StatCardProps) {
     return (
         <div className="stat-card" style={{backgroundColor: backgroundColor, borderColor: borderColor}}>
             <div className="stat-container">
