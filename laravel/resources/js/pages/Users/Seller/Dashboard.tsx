@@ -6,6 +6,7 @@ import PropertyPerformance from "@/components/dashboard/seller/propertyPerforman
 import DealPerformance from "@/components/dashboard/seller/deals/DealPerformance";
 import { DealStats, OfferStats } from "@/types/models";
 import OfferPerformance from "@/components/dashboard/seller/offers/OfferPerformance";
+import {Grid, Stack} from "@mui/material";
 
 interface DashboardProps {
     offers_stats: OfferStats;
@@ -23,10 +24,20 @@ export default function Dashboard({
 
     return (
         <AuthenticatedLayout header="Dashboard">
-            <AppointmentStats stats={appointments_stats} />
-            <PropertyPerformance stats={listingsPerformance_stats} />
-            <DealPerformance stats={deals_stats} />
-            <OfferPerformance stats={offers_stats} />
+            <Stack spacing={4}>
+                <AppointmentStats stats={appointments_stats} />
+                <PropertyPerformance stats={listingsPerformance_stats} />
+
+                <Grid container spacing={3}>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <DealPerformance stats={deals_stats} view={'column'}/>
+                    </Grid>
+
+                    <Grid size={{ xs: 12, md: 6 }}>
+                        <OfferPerformance stats={offers_stats} view={'column'}/>
+                    </Grid>
+                </Grid>
+            </Stack>
         </AuthenticatedLayout>
     );
 }

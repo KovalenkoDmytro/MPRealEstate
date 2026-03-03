@@ -1,16 +1,7 @@
 import React from 'react';
-import {Box, Typography, Grid, Stack} from '@mui/material';
-import {
-    LocalOfferRounded,
-    CheckCircleRounded,
-    CancelRounded,
-    PendingActionsRounded
-} from '@mui/icons-material';
-
-import OfferMetricCard from './OfferMetricCard';
+import { Box, Typography, Grid, Stack } from '@mui/material';
 import { OfferStats } from "@/types/models";
 import theme from "@/theme";
-import IconTrendingUpBig from "@/icons/IconTrendingUpBig";
 import StatCard from "@/components/common/StatCard";
 import IconDollar from "@/icons/IconDollar";
 import IconConfirm from "@/icons/IconConfirm";
@@ -20,13 +11,46 @@ import IconInbox from "@/icons/IconInbox";
 
 interface OfferPerformanceProps {
     stats: OfferStats;
+    view?: 'column' | 'row';
 }
 
-export default function OfferPerformance({ stats }: OfferPerformanceProps) {
+export default function OfferPerformance({ stats, view = 'row' }: OfferPerformanceProps) {
+
+    const statCards = [
+        {
+            label: "Pending Response",
+            value: stats.pending,
+            icon: <IconClock/>,
+            iconBgColor: "#D07669",
+            background: "linear-gradient(135deg, rgba(208, 118, 105, 0.10) 0%, rgba(208, 118, 105, 0.05) 100%)"
+        },
+        {
+            label: "Accepted",
+            value: stats.accepted,
+            icon: <IconConfirm/>,
+            iconBgColor: theme.palette.primary.main,
+            background: "linear-gradient(135deg, rgba(87, 42, 77, 0.10) 0%, rgba(87, 42, 77, 0.05) 100%)"
+        },
+        {
+            label: "Rejected",
+            value: stats.rejected,
+            icon: <IconClose/>,
+            iconBgColor: "#4A5565",
+            background: "linear-gradient(135deg, #F3F4F6 0%, #F9FAFB 100%)"
+        },
+        {
+            label: "Total Received",
+            value: stats.total,
+            icon: <IconInbox/>,
+            iconBgColor: "#CB9A9F",
+            background: "linear-gradient(90deg, rgba(203, 154, 159, 0.10) 0%, rgba(203, 154, 159, 0.05) 100%)"
+        }
+    ];
+
     return (
         <Box
             sx={{
-                p: theme.shape.padding,
+                p: theme.shape.padding || 3,
                 backgroundColor: theme.palette.background.white,
                 borderRadius: theme.shape.borderRadius,
                 border: `1px solid ${theme.palette.border.main}`,
@@ -47,47 +71,21 @@ export default function OfferPerformance({ stats }: OfferPerformanceProps) {
             </Stack>
 
 
-            <Grid container spacing={3}>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <StatCard
-                        label="Pending Response"
-                        value={stats.pending}
-                        icon={<IconClock/>}
-                        iconBgColor="#D07669"
-                        background="linear-gradient(135deg, rgba(208, 118, 105, 0.10) 0%, rgba(208, 118, 105, 0.05) 100%)"
-                    />
+            {view === 'column' ? (
+                <Stack spacing={3}>
+                    {statCards.map((card, index) => (
+                        <StatCard key={index} {...card} />
+                    ))}
+                </Stack>
+            ) : (
+                <Grid container spacing={3}>
+                    {statCards.map((card, index) => (
+                        <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
+                            <StatCard {...card} />
+                        </Grid>
+                    ))}
                 </Grid>
-
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <StatCard
-                        label="Accepted"
-                        value={stats.accepted}
-                        icon={<IconConfirm/>}
-                        iconBgColor={theme.palette.primary.main}
-                        background="linear-gradient(135deg, rgba(87, 42, 77, 0.10) 0%, rgba(87, 42, 77, 0.05) 100%)"
-                    />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <StatCard
-                        label="Rejected"
-                        value={stats.rejected}
-                        icon={<IconClose/>}
-                        iconBgColor="#4A5565"
-                        background="linear-gradient(135deg, #F3F4F6 0%, #F9FAFB 100%)"
-                    />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <StatCard
-                        label="Total Received"
-                        value={stats.total}
-                        icon={<IconInbox/>}
-                        background={"linear-gradient(90deg, rgba(203, 154, 159, 0.10) 0%, rgba(203, 154, 159, 0.05) 100%)"}
-                        iconBgColor="#CB9A9F"
-                    />
-                </Grid>
-            </Grid>
+            )}
         </Box>
     );
 }
