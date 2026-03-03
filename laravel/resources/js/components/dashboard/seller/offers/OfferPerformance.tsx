@@ -15,6 +15,8 @@ import StatCard from "@/components/common/StatCard";
 import IconDollar from "@/icons/IconDollar";
 import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
+import IconClock from "@/icons/IconClock";
+import IconInbox from "@/icons/IconInbox";
 
 interface OfferPerformanceProps {
     stats: OfferStats;
@@ -50,8 +52,9 @@ export default function OfferPerformance({ stats }: OfferPerformanceProps) {
                     <StatCard
                         label="Pending Response"
                         value={stats.pending}
-                        // icon={<VisibilityRounded/>}
-                        // iconBgColor="#D07669"
+                        icon={<IconClock/>}
+                        iconBgColor="#D07669"
+                        background="linear-gradient(135deg, rgba(208, 118, 105, 0.10) 0%, rgba(208, 118, 105, 0.05) 100%)"
                     />
                 </Grid>
 
@@ -61,6 +64,7 @@ export default function OfferPerformance({ stats }: OfferPerformanceProps) {
                         value={stats.accepted}
                         icon={<IconConfirm/>}
                         iconBgColor={theme.palette.primary.main}
+                        background="linear-gradient(135deg, rgba(87, 42, 77, 0.10) 0%, rgba(87, 42, 77, 0.05) 100%)"
                     />
                 </Grid>
 
@@ -70,6 +74,7 @@ export default function OfferPerformance({ stats }: OfferPerformanceProps) {
                         value={stats.rejected}
                         icon={<IconClose/>}
                         iconBgColor="#4A5565"
+                        background="linear-gradient(135deg, #F3F4F6 0%, #F9FAFB 100%)"
                     />
                 </Grid>
 
@@ -77,8 +82,9 @@ export default function OfferPerformance({ stats }: OfferPerformanceProps) {
                     <StatCard
                         label="Total Received"
                         value={stats.total}
-                        // icon={<VisibilityRounded/>}
-                        // iconBgColor="#D07669"
+                        icon={<IconInbox/>}
+                        background={"linear-gradient(90deg, rgba(203, 154, 159, 0.10) 0%, rgba(203, 154, 159, 0.05) 100%)"}
+                        iconBgColor="#CB9A9F"
                     />
                 </Grid>
             </Grid>

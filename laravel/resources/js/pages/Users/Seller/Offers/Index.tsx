@@ -7,6 +7,7 @@ import StatCard from "@/components/common/StatCard";
 import {OfferStats} from "@/types/models";
 import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
+import IconClock from "@/icons/IconClock";
 
 // Define the full paginated structure
 interface PaginatedOffers {
@@ -34,10 +35,7 @@ export default function OffersIndexPage({ offers, offers_stats }: OffersIndexPag
                     <StatCard
                         label="Pending"
                         value={offers_stats.pending}
-                        icon={<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#D07669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M12 6V12L16 14" stroke="#D07669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>}
+                        icon={<IconClock/>}
                         iconBgColor="#D076691A"
                     />
                 </Grid>
