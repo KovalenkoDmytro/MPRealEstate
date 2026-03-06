@@ -172,19 +172,41 @@ class RealEstateListingService
     {
         $now = now();
         $startOfToday = $now->copy()->startOfDay();
-        $sevenDaysAgo = $now->copy()->subDays(7)->startOfDay();
 
-
-        $baseQuery = ListingView::whereHas('listing', function ($query) use ($sellerId) {
-            $query->where('seller_id', $sellerId);
-        });
+        $baseQuery = ListingView::getForSeller($sellerId);
 
         return [
             'today'       => (clone $baseQuery)->where('viewed_at', '>=', $startOfToday)->count(),
-            'last_7_days' => (clone $baseQuery)->where('viewed_at', '>=', $sevenDaysAgo)->count(),
+            'last_7_days' => (clone $baseQuery)->where('viewed_at', '>=', now()->subDays(7))->count(),
             'total'       => (clone $baseQuery)->count(),
             'unique'      => (clone $baseQuery)->distinct('user_id')->count('user_id'),
         ];
+    }
+
+    public function getLast7DaysViews(int $sellerId): array
+    {
+        $sevenDaysAgo = now()->subDays(6)->startOfDay();
+
+        // Query the database for counts grouped by date
+        $dailyRecords = ListingView::getForSeller($sellerId)
+            ->where('viewed_at', '>=', $sevenDaysAgo)
+            ->selectRaw('DATE(viewed_at) as date, count(*) as total')
+            ->groupBy('date')
+            ->pluck('total', 'date');
+
+        $dailyTrend = [];
+
+        // Loop through the last 7 days (including today) to ensure the array is full
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+
+            $dailyTrend[] = [
+                'date'  => $date,
+                'total' => $dailyRecords[$date] ?? 0, // Fill with 0 if no records exist for this date
+            ];
+        }
+
+        return $dailyTrend;
     }
 
 
@@ -193,10 +215,11 @@ class RealEstateListingService
 
         $totalFavorites = $this->calculateTotalFavorites($sellerId);
         $viewStats = $this->calculateTotalViews($sellerId);
+        $last7DaysViews = $this->getLast7DaysViews($sellerId);
 
         return [
             'favorites' => [
-                'total' => $totalFavorites
+                'total' => $totalFavorites,
             ],
             'views' => [
                 'total'       => $viewStats['total'],
@@ -204,6 +227,9 @@ class RealEstateListingService
                 'today'       => $viewStats['today'],
                 'last_7_days' => $viewStats['last_7_days'],
             ],
+            'chart_data' =>[
+                'last_7_days' => $last7DaysViews,
+            ]
         ];
     }
 

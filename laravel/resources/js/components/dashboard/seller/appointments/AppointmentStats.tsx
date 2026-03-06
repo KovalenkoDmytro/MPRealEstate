@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import {Box, Grid, Typography, ThemeProvider, Stack} from '@mui/material';
-import {AccessTime, TodayRounded} from '@mui/icons-material';
 import { appointmentTheme } from './theme';
-
 import DailyActivityChart from './DailyActivityChart';
 import { SellerStats } from "@/types/Appointments/sellerAppointmentsStat";
 import StatCard from "@/components/common/StatCard";
@@ -33,7 +31,7 @@ export default function AppointmentStats({ stats }: AppointmentStatsProps) {
 
 
     return (
-        <ThemeProvider theme={appointmentTheme}>
+
             <Box
                 sx={{
                     p: theme.shape.padding,
@@ -100,6 +98,5 @@ export default function AppointmentStats({ stats }: AppointmentStatsProps) {
 
                 <DailyActivityChart data={chartData} />
             </Box>
-        </ThemeProvider>
     );
 }

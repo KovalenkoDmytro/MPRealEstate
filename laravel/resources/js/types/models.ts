@@ -29,4 +29,10 @@ export interface PerformanceStats {
         today: number;
         last_7_days: number;
     };
+    chart_data:{
+        last_7_days: {
+            date: string;
+            total: number;
+        }[]
+    }
 }

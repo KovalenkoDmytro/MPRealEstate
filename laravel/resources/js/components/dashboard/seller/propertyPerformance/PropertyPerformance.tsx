@@ -6,16 +6,19 @@ import IconTrendingUpBig from "@/icons/IconTrendingUpBig";
 import StatCard from "@/components/common/StatCard";
 import IconCalendarToday from "@/icons/IconCalendarToday";
 import IconEye from "@/icons/IconEye";
-import IconUser from "@/icons/IconUser";
 import IconUsers from "@/icons/IconUsers";
 import IconHeart from "@/icons/IconHeart";
 import IconContainer from "@/components/common/IconContainer";
+import DailyActivityChart from "@/components/dashboard/seller/propertyPerformance/DailyActivityChart";
 
 interface PropertyPerformanceProps {
     stats: PerformanceStats;
 }
 
 export default function PropertyPerformance({ stats }: PropertyPerformanceProps) {
+
+    const chartData = stats.chart_data.last_7_days || [];
+
     return (
         <Box
             sx={{
@@ -42,7 +45,7 @@ export default function PropertyPerformance({ stats }: PropertyPerformanceProps)
             </Stack>
 
 
-            <Grid container spacing={3}>
+            <Grid container spacing={3} mb={6} >
 
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <StatCard
@@ -84,8 +87,9 @@ export default function PropertyPerformance({ stats }: PropertyPerformanceProps)
                         iconBgColor="#D07669"
                     />
                 </Grid>
-
             </Grid>
+
+            <DailyActivityChart data={chartData} />
         </Box>
     );
 }

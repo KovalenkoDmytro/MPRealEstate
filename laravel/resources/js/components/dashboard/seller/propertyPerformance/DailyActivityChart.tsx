@@ -40,13 +40,13 @@ export default function DailyActivityChart({data}: ChartProps) {
             datasets: [{
                 label: 'Appointments',
                 data: data.map(d => d.total),
-                borderColor: '#cb9a9f',
-                backgroundColor: '#cb9a9f',
+                borderColor: theme.palette.primary.main,
+                backgroundColor: theme.palette.primary.main,
                 borderWidth: 3,
                 tension: 0.4,
                 pointRadius: 5,
-                pointBackgroundColor: '#cb9a9f',
-                pointBorderColor: '#cb9a9f',
+                pointBackgroundColor: theme.palette.primary.main,
+                pointBorderColor: theme.palette.primary.main,
                 pointHoverRadius: 8,
                 z: 10,
                 clip: false as const,
@@ -140,7 +140,7 @@ export default function DailyActivityChart({data}: ChartProps) {
                             fontWeight={600}
                             textTransform="uppercase"
                             letterSpacing="0.05em">
-                    Appointments per day
+                    Views Trend (Last 7 days)
                 </Typography>
             </Box>
 
