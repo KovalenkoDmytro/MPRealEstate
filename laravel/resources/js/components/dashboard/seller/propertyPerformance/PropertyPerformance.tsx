@@ -9,6 +9,7 @@ import IconEye from "@/icons/IconEye";
 import IconUser from "@/icons/IconUser";
 import IconUsers from "@/icons/IconUsers";
 import IconHeart from "@/icons/IconHeart";
+import IconContainer from "@/components/common/IconContainer";
 
 interface PropertyPerformanceProps {
     stats: PerformanceStats;
@@ -27,7 +28,9 @@ export default function PropertyPerformance({ stats }: PropertyPerformanceProps)
 
             <Stack gap={1.5} mb={4}>
                 <Box display="flex" alignItems="center" gap={1.5}>
-                    <IconTrendingUpBig/>
+                    <IconContainer bgColor="#D07669" >
+                        <IconTrendingUpBig/>
+                    </IconContainer>
                     <Typography variant="h5" fontWeight={700} color="text.primary">
                         Property Performance
                     </Typography>

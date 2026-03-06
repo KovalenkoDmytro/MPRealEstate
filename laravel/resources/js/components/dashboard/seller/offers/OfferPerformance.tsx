@@ -8,6 +8,8 @@ import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconClock from "@/icons/IconClock";
 import IconInbox from "@/icons/IconInbox";
+import IconTrendingUpBig from "@/icons/IconTrendingUpBig";
+import IconContainer from "@/components/common/IconContainer";
 
 interface OfferPerformanceProps {
     stats: OfferStats;
@@ -59,7 +61,9 @@ export default function OfferPerformance({ stats, view = 'row' }: OfferPerforman
 
             <Stack gap={1.5} mb={4}>
                 <Box display="flex" alignItems="center" gap={1.5}>
-                    <IconDollar/>
+                    <IconContainer>
+                        <IconDollar/>
+                    </IconContainer>
                     <Typography variant="h5" fontWeight={700} color="text.primary">
                         Offer Activity
                     </Typography>

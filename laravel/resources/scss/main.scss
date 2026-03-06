@@ -18,6 +18,7 @@
 @use 'layout/guest-layout';
 
 // 5. Components
+@use 'components/common/icon-container';
 @use 'components/stat-card';
 @use "components/listing-card";
 @use "components/saved-listing-mini-card";

@@ -12,6 +12,7 @@ import IconTrendingUpBig from "@/icons/IconTrendingUpBig";
 import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconClock from "@/icons/IconClock";
+import IconContainer from "@/components/common/IconContainer";
 
 interface AppointmentStatsProps {
     stats: SellerStats;
@@ -43,7 +44,9 @@ export default function AppointmentStats({ stats }: AppointmentStatsProps) {
             >
                 <Stack  gap={1.5} mb={4}>
                     <Box display="flex" alignItems="center" gap={1.5}>
-                        <IconAppointments/>
+                        <IconContainer>
+                            <IconAppointments/>
+                        </IconContainer>
                         <Typography variant="h5" fontWeight={700} color="text.primary">
                             Appointments
                         </Typography>

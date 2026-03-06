@@ -8,6 +8,8 @@ import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconClock from "@/icons/IconClock";
 import IconHandShake from "@/icons/IconHandShake";
+import IconDollar from "@/icons/IconDollar";
+import IconContainer from "@/components/common/IconContainer";
 
 interface DealPerformanceProps {
     stats: DealStats;
@@ -59,7 +61,10 @@ export default function DealPerformance({ stats, view = 'row' }: DealPerformance
         >
             <Stack gap={1.5} mb={4}>
                 <Box display="flex" alignItems="center" gap={1.5}>
-                    <IconArrangement/>
+
+                    <IconContainer bgColor="rgb(74, 85, 101)">
+                        <IconArrangement/>
+                    </IconContainer>
                     <Typography variant="h5" fontWeight={700} color="text.primary">
                         Deal Activity
                     </Typography>
