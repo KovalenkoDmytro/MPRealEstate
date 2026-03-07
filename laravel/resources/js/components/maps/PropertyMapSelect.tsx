@@ -1,313 +1,371 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { useTheme, Box, CircularProgress, Typography, IconButton } from '@mui/material';
+import { Fullscreen, FullscreenExit } from '@mui/icons-material';
 
-// ============================================================================
-// START OF REUSABLE COMPONENT (PropertyMapSelector.tsx)
-// ============================================================================
-
-// --- Icons (Inline SVGs to ensure stability & portability) ---
-const Icons = {
-    Search: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>,
-    MapPin: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-4 10-6 10s-6-4-6-10a6 6 0 0 1 12 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
-    Loader: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>,
-    Check: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>,
-    Alert: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+// Define a lightweight type that matches our optimized Laravel endpoint
+export type MapListing = {
+    id: number;
+    title: string;
+    price: number;
+    latitude: number;
+    longitude: number;
+    main_image: {
+        image_path: string;
+    } | null;
 };
 
-// --- Types ---
+export default function PropertyMapSelector() {
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
+    const mapContainerRef = useRef<HTMLDivElement | null>(null);
+    const mapRef = useRef<mapboxgl.Map | null>(null);
+    const markersRef = useRef<mapboxgl.Marker[]>([]);
+    const selectedBuildingIdRef = useRef<string | number | null>(null);
+    const theme = useTheme();
 
-export interface PropertyLocation {
-    address: string;
-    lat: number;
-    lng: number;
-}
+    const [isLoading, setIsLoading] = useState(true);
+    const [mapData, setMapData] = useState<MapListing[]>([]);
+    const [isMapLoaded, setIsMapLoaded] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
-export interface PropertyMapSelectorProps {
-    /** Callback when user selects a location (triggers on map click or search success) */
-    onPropertySelect: (location: PropertyLocation) => void;
-}
-
-// --- Helper Hook to Load Leaflet Dynamically ---
-const useLeaflet = () => {
-    const [loaded, setLoaded] = useState(false);
-
+    // 1. Fetch Lightweight Map Data
     useEffect(() => {
-        if ((window as any).L && (window as any).L.map) {
-            setLoaded(true);
-            return;
-        }
+        let isMounted = true;
 
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-        document.head.appendChild(link);
+        const fetchMapData = async () => {
+            try {
+                setIsLoading(true);
+                const response = await fetch('/api/map-listings');
+                const data = await response.json();
 
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-        script.async = true;
-        script.onload = () => {
-            const checkInterval = setInterval(() => {
-                if ((window as any).L && (window as any).L.map) {
-                    clearInterval(checkInterval);
-                    setLoaded(true);
+                if (isMounted) {
+                    setMapData(data);
+                    setIsLoading(false);
                 }
-            }, 100);
+            } catch (error) {
+                console.error("Failed to fetch map data:", error);
+                if (isMounted) setIsLoading(false);
+            }
         };
-        document.body.appendChild(script);
+
+        fetchMapData();
+
+        return () => { isMounted = false; };
     }, []);
 
-    return loaded;
-};
-
-// --- Main Component ---
-
-export const PropertyMapSelector: React.FC<PropertyMapSelectorProps> = ({
-                                                                            onPropertySelect
-                                                                        }) => {
-    const isLeafletLoaded = useLeaflet();
-
-    // State
-    const [address, setAddress] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [status, setStatus] = useState<{ msg: string; type: 'success' | 'error' | 'info' } | null>(null);
-
-    // Refs
-    const mapContainerRef = useRef<HTMLDivElement>(null);
-    const mapInstanceRef = useRef<any>(null); // Leaflet Map
-    const markerRef = useRef<any>(null);      // Leaflet Marker (Selection)
-
-    // --- Map Initialization ---
+    // 2. Initialize Map (Runs ONLY once when component mounts)
     useEffect(() => {
-        if (!isLeafletLoaded || !mapContainerRef.current) return;
-        if (mapInstanceRef.current) return;
+        mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || 'YOUR_MAPBOX_ACCESS_TOKEN';
 
-        const L = (window as any).L;
-        if (!L || !L.map) return;
+        if (!mapContainerRef.current || mapRef.current) return;
 
-        // 1. Create Map
-        const map = L.map(mapContainerRef.current).setView([51.505, -0.09], 13);
-        mapInstanceRef.current = map;
-
-        // 2. Add Tile Layer
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-
-        // 3. Click Listener
-        map.on('click', (e: any) => {
-            handleMapClick(e.latlng.lat, e.latlng.lng);
+        // Initialize Map with a default center (Calgary) using streets-v12
+        mapRef.current = new mapboxgl.Map({
+            container: mapContainerRef.current,
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [-114.0719, 51.0447],
+            zoom: 11,
+            pitch: 45,
+            bearing: -17.6,
+            antialias: true
         });
 
-        // 4. Force Resize
-        setTimeout(() => { map.invalidateSize(); }, 200);
+        const map = mapRef.current;
 
+        // Add 3D Buildings on Style Load
+        map.on('style.load', () => {
+            const style = map.getStyle();
+            const layers = style?.layers;
+            let labelLayerId;
+
+            if (layers) {
+                for (let i = 0; i < layers.length; i++) {
+                    const layer = layers[i];
+                    if (layer.type === 'symbol' && layer.layout && (layer.layout as any)['text-field']) {
+                        labelLayerId = layer.id;
+                        break;
+                    }
+                }
+            }
+
+            map.addLayer(
+                {
+                    id: 'add-3d-buildings',
+                    source: 'composite',
+                    'source-layer': 'building',
+                    filter: ['==', 'extrude', 'true'],
+                    type: 'fill-extrusion',
+                    minzoom: 14,
+                    paint: {
+                        'fill-extrusion-color': [
+                            'case',
+                            // 1st Priority: The building the user actually clicked on (Dark Maroon)
+                            ['boolean', ['feature-state', 'clicked'], false],
+                            theme.palette.primary.main,
+                            // 2nd Priority: Any building that has a listing marker on it (Soft Rosy Pink)
+                            ['boolean', ['feature-state', 'hasListing'], false],
+                            '#CB9A9F',
+                            // Default: Light Gray
+                            '#e5e7eb'
+                        ],
+                        'fill-extrusion-height': [
+                            'interpolate', ['linear'], ['zoom'], 15, 0, 15.05, ['get', 'height']
+                        ],
+                        'fill-extrusion-base': [
+                            'interpolate', ['linear'], ['zoom'], 15, 0, 15.05, ['get', 'min_height']
+                        ],
+                        'fill-extrusion-opacity': 0.8
+                    }
+                },
+                labelLayerId
+            );
+
+            setIsMapLoaded(true);
+        });
+
+        // Cleanup map properly
         return () => {
-            if (mapInstanceRef.current) {
-                mapInstanceRef.current.remove();
-                mapInstanceRef.current = null;
+            setIsMapLoaded(false);
+            if (mapRef.current) {
+                mapRef.current.remove();
+                mapRef.current = null;
             }
         };
-    }, [isLeafletLoaded]);
+    }, [theme.palette.primary.main]);
 
-    // --- Logic Functions ---
+    // 3. Plot Markers & Dynamic Highlights
+    useEffect(() => {
+        if (!isMapLoaded || isLoading || mapData.length === 0 || !mapRef.current) return;
 
-    const showStatus = (msg: string, type: 'success' | 'error' | 'info') => {
-        setStatus({ msg, type });
-        setTimeout(() => setStatus(null), 3000);
-    };
+        const map = mapRef.current;
 
-    const updateMarkerAndNotify = (lat: number, lng: number, newAddress: string) => {
-        const L = (window as any).L;
-        const map = mapInstanceRef.current;
-        if (!map || !L) return;
+        // Fly to the center of the loaded data
+        const centerLng = mapData.reduce((sum, l) => sum + l.longitude, 0) / mapData.length;
+        const centerLat = mapData.reduce((sum, l) => sum + l.latitude, 0) / mapData.length;
 
-        if (markerRef.current) markerRef.current.remove();
-
-        markerRef.current = L.marker([lat, lng]).addTo(map)
-            .bindPopup(`<b>Selected</b><br>${newAddress}`)
-            .openPopup();
-
-        map.setView([lat, lng], 16);
-        setAddress(newAddress);
-
-        // Automatically pass data to parent component
-        onPropertySelect({
-            address: newAddress,
-            lat: lat,
-            lng: lng
+        map.flyTo({
+            center: [centerLng, centerLat],
+            zoom: 11,
+            essential: true
         });
-    };
 
-    const handleMapClick = async (lat: number, lng: number) => {
-        setIsLoading(true);
-        setAddress("Loading address...");
-        try {
-            const response = await fetch(`https://photon.komoot.io/reverse?lon=${lng}&lat=${lat}`);
-            const data = await response.json();
+        const updateHighlights = () => {
+            if (map.getZoom() < 13.5) return;
 
-            let foundAddress = "Unknown Location";
-            if (data.features && data.features.length > 0) {
-                foundAddress = formatPhotonAddress(data.features[0].properties);
-            }
-            updateMarkerAndNotify(lat, lng, foundAddress);
-        } catch (error) {
-            console.error(error);
-            showStatus("Failed to fetch address details", "error");
-            setAddress("");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            const bounds = map.getBounds();
+            if (!bounds) return;
 
-    const handleManualSearch = async () => {
-        if (!address.trim()) {
-            showStatus("Please enter an address first", "error");
-            return;
-        }
-        setIsLoading(true);
-        try {
-            const response = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(address)}`);
-            const data = await response.json();
+            const visibleListings = mapData.filter(l => bounds.contains([l.longitude, l.latitude]));
+            const listingsToProcess = visibleListings.slice(0, 300);
 
-            if (data.features && data.features.length > 0) {
-                const result = data.features[0];
-                const [lng, lat] = result.geometry.coordinates;
-                const formatted = formatPhotonAddress(result.properties);
-                updateMarkerAndNotify(lat, lng, formatted);
-                showStatus("Location found!", "success");
-            } else {
-                showStatus("Address not found", "error");
-            }
-        } catch (error) {
-            console.error(error);
-            showStatus("Search failed", "error");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+            listingsToProcess.forEach(listing => {
+                const point = map.project([listing.longitude, listing.latitude]);
+                const bbox: [mapboxgl.PointLike, mapboxgl.PointLike] = [
+                    [point.x - 10, point.y - 10],
+                    [point.x + 10, point.y + 10]
+                ];
 
-    const formatPhotonAddress = (props: any) => {
-        const parts = [];
-        if (props.name) parts.push(props.name);
+                const features = map.queryRenderedFeatures(bbox, { layers: ['add-3d-buildings'] });
 
-        const streetPart = [props.housenumber, props.street].filter(Boolean).join(" ");
-        if (streetPart) parts.push(streetPart);
+                if (features.length > 0 && features[0].id !== undefined) {
+                    map.setFeatureState(
+                        { source: 'composite', sourceLayer: 'building', id: features[0].id },
+                        { hasListing: true }
+                    );
+                }
+            });
+        };
 
-        if (props.city) parts.push(props.city);
-        if (props.state) parts.push(props.state);
-        if (props.country) parts.push(props.country);
+        map.on('idle', updateHighlights);
+        map.on('moveend', updateHighlights);
 
-        return parts.join(", ") || "Unknown Location";
-    };
+        const setBuildingClickedState = (featureId: string | number | undefined | null, isClicked: boolean) => {
+            if (!map || featureId === undefined || featureId === null) return;
+            map.setFeatureState(
+                { source: 'composite', sourceLayer: 'building', id: featureId },
+                { clicked: isClicked }
+            );
+        };
 
-    if (!isLeafletLoaded) {
-        return (
-            <div className="flex items-center justify-center p-10 gap-2 text-slate-500">
-                <Icons.Loader />
-                <span>Loading Map Engine...</span>
-            </div>
-        );
-    }
+        markersRef.current.forEach(marker => marker.remove());
+        markersRef.current = [];
 
-    return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[500px] w-full bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
-            {/* Sidebar Controls */}
-            <div className="p-6 bg-slate-50 border-r border-slate-200 flex flex-col gap-5 overflow-y-auto">
-                <div>
-                    <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                        <span className="text-blue-600"><Icons.MapPin /></span>
-                        Select Property
-                    </h2>
-                    <p className="text-sm text-slate-500 mt-1">
-                        Click map or search to select.
+        mapData.forEach((listing) => {
+            if (!listing.latitude || !listing.longitude) return;
+
+            const shortPrice = `$${(listing.price / 1000).toFixed(0)}k`;
+            const fullPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(listing.price);
+            const imageUrl = listing.main_image?.image_path || '/images/placeholder-house.jpg';
+            const detailUrl = route("buyer.listings.show", listing.id);
+
+            const el = document.createElement('div');
+            el.className = 'custom-map-marker';
+            el.style.backgroundColor = theme.palette.primary.main;
+            el.style.color = '#ffffff';
+            el.style.padding = '4px 10px';
+            el.style.borderRadius = '14px';
+            el.style.border = '2px solid #ffffff';
+            el.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+            el.style.fontWeight = 'bold';
+            el.style.fontSize = '12px';
+            el.style.cursor = 'pointer';
+            el.innerText = shortPrice;
+
+            const popupContent = `
+                <div style="padding: 4px; font-family: sans-serif; text-align: center; min-width: 160px;">
+                    <img src="${imageUrl}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;" alt="${listing.title}"/>
+                    <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: #1a202c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;">
+                        ${listing.title}
+                    </h4>
+                    <p style="margin: 0 0 10px 0; font-size: 15px; font-weight: 800; color: ${theme.palette.primary.main};">
+                        ${fullPrice}
                     </p>
+                    <a href="${detailUrl}" style="display: block; width: 100%; background: ${theme.palette.primary.main}; color: white; padding: 8px 0; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600; transition: opacity 0.2s;">
+                        View Details
+                    </a>
                 </div>
+            `;
 
-                {/* Status Message */}
-                {status && (
-                    <div className={`p-3 rounded-lg text-sm flex items-center gap-2 ${
-                        status.type === 'error' ? 'bg-red-50 text-red-600' :
-                            status.type === 'success' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'
-                    }`}>
-                        <span>{status.type === 'error' ? <Icons.Alert /> : <Icons.Check />}</span>
-                        {status.msg}
-                    </div>
-                )}
+            const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(popupContent);
 
-                {/* Address Input */}
-                <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase text-slate-500">Address</label>
-                    <div className="flex gap-2">
-            <textarea
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Type address..."
-                className="w-full p-3 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none h-24"
-            />
-                    </div>
-                    <button
-                        onClick={handleManualSearch}
-                        disabled={isLoading}
-                        className="w-full py-2 px-4 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors"
-                    >
-                        {isLoading ? <Icons.Loader /> : <Icons.Search />}
-                        <span>Find Address on Map</span>
-                    </button>
-                </div>
-            </div>
+            popup.on('open', () => {
+                const point = map.project([listing.longitude, listing.latitude]);
+                const bbox: [mapboxgl.PointLike, mapboxgl.PointLike] = [
+                    [point.x - 10, point.y - 10],
+                    [point.x + 10, point.y + 10]
+                ];
 
-            {/* Map Container */}
-            <div className="lg:col-span-2 relative bg-slate-200 h-full min-h-[400px]">
-                <style>{`.leaflet-container { height: 100%; width: 100%; }`}</style>
-                <div ref={mapContainerRef} className="absolute inset-0 z-0 h-full w-full" />
+                const features = map.queryRenderedFeatures(bbox, { layers: ['add-3d-buildings'] });
 
-                {!address && !isLoading && (
-                    <div className="absolute top-4 right-4 z-[400] bg-white/90 backdrop-blur p-3 rounded-lg shadow-md text-sm text-slate-600 max-w-xs border border-white/50">
-                        Click anywhere on the map to select address.
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-};
+                if (features.length > 0) {
+                    setBuildingClickedState(selectedBuildingIdRef.current, false);
 
-// ============================================================================
-// END OF REUSABLE COMPONENT
-// ============================================================================
+                    const featureId = features[0].id;
+                    if (featureId !== undefined) {
+                        selectedBuildingIdRef.current = featureId;
+                        setBuildingClickedState(featureId, true);
+                    }
+                }
+            });
 
+            popup.on('close', () => {
+                setBuildingClickedState(selectedBuildingIdRef.current, false);
+                selectedBuildingIdRef.current = null;
+            });
 
-// --- APP COMPONENT (Usage Example) ---
+            const marker = new mapboxgl.Marker(el)
+                .setLngLat([listing.longitude, listing.latitude])
+                .setPopup(popup)
+                .addTo(map);
 
-export default function App() {
-    const [selectedLocation, setSelectedLocation] = useState<PropertyLocation | null>(null);
+            markersRef.current.push(marker);
+        });
+
+        return () => {
+            map.off('idle', updateHighlights);
+            map.off('moveend', updateHighlights);
+
+            markersRef.current.forEach(marker => marker.remove());
+            markersRef.current = [];
+        };
+
+    }, [mapData, isLoading, isMapLoaded, theme.palette.primary.main]);
+
+    // 4. Handle Fullscreen Toggle
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            wrapperRef.current?.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable fullscreen: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    };
+
+    // Keep React state in sync with browser fullscreen state (e.g., if user presses 'Esc')
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            setIsFullscreen(!!document.fullscreenElement);
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    }, []);
+
+    // Resize map when fullscreen is toggled so it fills the screen perfectly
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            mapRef.current?.resize();
+        }, 100); // Small delay to let the browser finish animating the layout
+        return () => clearTimeout(timeout);
+    }, [isFullscreen]);
 
     return (
-        <div className="min-h-screen bg-slate-100 p-8 font-sans">
-            <div className="max-w-5xl mx-auto space-y-8">
+        <div ref={wrapperRef} style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: '#fff' }}>
 
-                <div className="text-center space-y-2">
-                    <h1 className="text-3xl font-bold text-slate-800">Address Selector</h1>
-                    <p className="text-slate-500">Clicking the map immediately returns the address data below.</p>
-                </div>
+            {/* Fullscreen Toggle Button */}
+            {isMapLoaded && !isLoading && (
+                <IconButton
+                    onClick={toggleFullscreen}
+                    sx={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                        zIndex: 10,
+                        backgroundColor: 'background.paper',
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                        '&:hover': {
+                            backgroundColor: 'grey.100',
+                        }
+                    }}
+                    aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                >
+                    {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
+                </IconButton>
+            )}
 
-                {/* Using the extracted component */}
-                <PropertyMapSelector
-                    onPropertySelect={(location) => setSelectedLocation(location)}
-                />
+            {/* Loading Overlay */}
+            {(!isMapLoaded || isLoading) && (
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        inset: 0,
+                        zIndex: 10,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        bgcolor: 'rgba(255,255,255,0.7)',
+                        backdropFilter: 'blur(2px)'
+                    }}
+                >
+                    <CircularProgress color="primary" sx={{ mb: 2 }} />
+                    <Typography variant="body2" fontWeight={600} color="text.secondary">
+                        Loading map...
+                    </Typography>
+                </Box>
+            )}
 
-                {/* Displaying Return Data */}
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h3 className="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Data returned to Parent Component:</h3>
-                    {selectedLocation ? (
-                        <pre className="bg-slate-50 p-4 rounded-lg text-sm text-slate-700 font-mono overflow-auto">
-               {JSON.stringify(selectedLocation, null, 2)}
-             </pre>
-                    ) : (
-                        <div className="text-slate-400 italic">No location selected yet.</div>
-                    )}
-                </div>
+            <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
 
-            </div>
+            <style>
+                {`
+                .mapboxgl-popup-content {
+                    border-radius: 12px;
+                    padding: 12px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                }
+                .mapboxgl-popup-tip {
+                    display: none;
+                }
+                .custom-map-marker:hover {
+                    transform: scale(1.1);
+                    transition: transform 0.2s ease-in-out;
+                    z-index: 10;
+                }
+                `}
+            </style>
         </div>
     );
 }

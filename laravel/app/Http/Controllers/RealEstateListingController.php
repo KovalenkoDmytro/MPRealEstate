@@ -17,7 +17,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Http\Requests\RealEstateListingRequest;
 use Illuminate\Http\JsonResponse;
-
+use Illuminate\Http\Request;
 
 class RealEstateListingController extends Controller {
     use AuthorizesRequests;
@@ -138,6 +138,20 @@ class RealEstateListingController extends Controller {
         };
     }
 
+    /**
+     * Returns a lightweight JSON payload for the Mapbox 3D Map
+     */
+    public function mapData(Request $request)
+    {
+        $listings = RealEstateListing::select('id', 'title', 'price', 'latitude', 'longitude')
+            ->with(['mainImage' => function($query) {
 
+                $query->select('id', 'real_estate_listing_id', 'image_path');
+            }])
+            ->where('status', 'available')
+            ->get();
+
+        return response()->json($listings);
+    }
 
 }

@@ -58,6 +58,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/', [RealEstateListingController::class, 'index'])->name('index');
         });
 
+    // This endpoint returns lightweight JSON specifically for the 5000+ map pins
+    Route::get('/api/map-listings', [RealEstateListingController::class, 'mapData'])->name('api.map-listings');
+
 
     //Appointment confirmation
     Route::middleware(['role:buyer|seller'])->group(function () {

@@ -6,6 +6,7 @@ import PropertyMapSelector from "@/components/maps/PropertyMapSelect";
 import ListingWideCard from "@/components/listing_new/ListingWideCard";
 // Assuming you are using Inertia.js based on the Laravel context
 import { router } from '@inertiajs/react';
+import theme from "@/theme";
 
 type ComponentProps = {
     listings: {
@@ -44,7 +45,18 @@ export default function Listings({ listings, favoriteListings, viewMode }: Compo
 
     // Map View
     if (viewMode === 'map') {
-        return <PropertyMapSelector />;
+        return (
+            <Box sx={{
+                height: '80vh',
+                width: '100%',
+                borderRadius: theme.shape.borderRadius,
+                overflow: 'hidden',
+                border: `1px solid ${theme.palette.border.main}`,
+                borderColor: theme.palette.border.main,
+            }}>
+                <PropertyMapSelector />
+            </Box>
+        );
     }
 
     return (
