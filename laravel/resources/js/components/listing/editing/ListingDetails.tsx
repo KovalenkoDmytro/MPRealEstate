@@ -26,7 +26,7 @@ interface Props {
 }
 
 export default function ListingDetails({ data, handleChange, errors }: Props) {
-
+    console.log(data)
     const processChange = (name: string, value: any) => {
         let localValue = value;
 
@@ -35,6 +35,18 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
         }
 
         handleChange(name, localValue);
+    };
+
+    const getFullAddress = (data: any) => {
+        const parts = [
+            data.street_number && data.street_name ? `${data.street_number} ${data.street_name}` : null,
+            data.city,
+            data.province,
+            data.postal_code,
+            data.country
+        ].filter(Boolean);
+
+        return parts.join(", ");
     };
 
     return (
@@ -70,24 +82,21 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
 
                 {/* Address Autocomplete */}
                 <Grid size={{ xs: 12 }}>
-                    <p> Address Autocomplete</p>
+                    <Typography variant="subtitle2" gutterBottom>
+                        Address
+                    </Typography>
+
                     <AddressAutocomplete
+                        value={getFullAddress(data)}
                         onSelect={(place) => {
-
-                            const comps = place.addressComponents || [];
-
-                            const get = (type: string) =>
-                                comps.find((c) => c.types.includes(type))?.longText ?? "";
-
-                            handleChange("street_number", get("street_number"));
-                            handleChange("street_name", get("route"));
-                            handleChange("city", get("locality"));
-                            handleChange("province", get("administrative_area_level_1"));
-                            handleChange("postal_code", get("postal_code"));
-                            handleChange("country", get("country"));
-
-                            handleChange("latitude", place.location?.lat() ?? null);
-                            handleChange("longitude", place.location?.lng() ?? null);
+                            handleChange("street_number", place.streetNumber);
+                            handleChange("street_name", place.streetName);
+                            handleChange("city", place.city);
+                            handleChange("province", place.province);
+                            handleChange("postal_code", place.postalCode);
+                            handleChange("country", place.country);
+                            handleChange("latitude", place.latitude);
+                            handleChange("longitude", place.longitude);
                         }}
                     />
                 </Grid>

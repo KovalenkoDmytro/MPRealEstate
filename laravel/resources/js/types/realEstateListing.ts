@@ -65,6 +65,7 @@ export interface Appointment {
  * Represents a real estate listing in the system
  */
 export interface RealEstateListing extends BaseEntity {
+    location: string;
     /** Title of the property listing */
     title: string;
     /** Detailed description of the property */

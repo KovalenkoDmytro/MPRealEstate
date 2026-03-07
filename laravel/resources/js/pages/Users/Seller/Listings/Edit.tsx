@@ -19,7 +19,6 @@ type ListingFormData = {
     title: string;
     description: string;
     price: number|null;
-    location: string;
     bedrooms: number;
     bathrooms: number;
     square_feet: number|null;
@@ -34,6 +33,12 @@ type ListingFormData = {
     status: PropertyStatus;
     price_reduced: boolean;
     keywords: string[];
+    street_number: string;
+    street_name: string;
+    city: string;
+    province: string;
+    postal_code: string;
+    country: string;
 
     // Upload-specific fields
     main_image: File | null;
@@ -42,11 +47,11 @@ type ListingFormData = {
 };
 
 export default function EditListing({ listing }: { listing: RealEstateListing }) {
+    console.log("Listing data:", listing);
     const [data, setData] = useState<ListingFormData>({
         title: listing.title || "",
         description: listing.description || "",
         price: listing.price || null,
-        location: listing.location || "",
         bedrooms: listing.bedrooms || 1,
         bathrooms: listing.bathrooms || 1,
         square_feet: listing.square_feet || null,
@@ -61,6 +66,12 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         status: listing.status || PropertyStatus.Available,
         price_reduced: listing.price_reduced || false,
         keywords: listing.keywords || [],
+        street_number: listing.street_number || "",
+        street_name: listing.street_name || "",
+        city: listing.city || "",
+        province: listing.province || "",
+        postal_code: listing.postal_code || "",
+        country: listing.country || "",
         main_image: null,
         gallery_images: [],
         remove_images: [],
@@ -196,9 +207,11 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         setProcessing(false);
     };
 
+
+
     return (
-        <AuthenticatedLayout header={<h2 className="text-xl font-semibold text-gray-800">Edit Listing</h2>}>
-            <Head title="Edit Listing" />
+        <AuthenticatedLayout header="Edit Listing">
+
             <div className="container mx-auto p-4">
                 <div className="mt-4">
                     <Link href={route("listings.index")} className="text-blue-500">
