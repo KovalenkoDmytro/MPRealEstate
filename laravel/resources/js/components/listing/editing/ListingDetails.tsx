@@ -14,6 +14,10 @@ import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
 import KeywordsInput from "@/components/listing/form/KeywordsInput";
 import { ValidationErrors } from "@/types/validationErrors";
 import AddressAutocomplete from "@/components/listing/form/AddressAutocomplete";
+import IconHome from "@/icons/IconHome";
+import IconContainer from "@/components/common/IconContainer";
+import IconAppointments from "@/icons/IconAppointments";
+import theme from "@/theme";
 
 interface Props {
     data: any;
@@ -34,13 +38,23 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
     };
 
     return (
-        <Box sx={{ backgroundColor: "white", p: 3, borderRadius: 2, boxShadow: 1 }}>
+        <Box sx={{
+            p: theme.shape.padding,
+            backgroundColor: theme.palette.background.white,
+            borderRadius: theme.shape.borderRadius,
+            border: `1px solid ${theme.palette.border.main}`,
+        }}>
 
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-                🏠 Property & Financial Details
-            </Typography>
+            <Box display="flex" alignItems="center" gap={1.5} mb={4}>
+                <IconContainer>
+                    <IconHome/>
+                </IconContainer>
+                <Typography variant="h5" fontWeight={700} color="text.primary">
+                    Property & Financial Details
+                </Typography>
+            </Box>
 
-            <Grid container spacing={2} sx={{ width: "100%" }}>
+            <Grid container spacing={4} sx={{ width: "100%" }}>
                 {/* Title */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <TextField
@@ -226,9 +240,9 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                 </Grid>
             </Grid>
 
-            {/* 🔹 FEATURES SECTION */}
+            {/*  FEATURES SECTION */}
             <Typography variant="h6" fontWeight="bold" sx={{ mt: 4 }} gutterBottom>
-                🧱 Features
+                Features
             </Typography>
 
             <Grid container spacing={2}>

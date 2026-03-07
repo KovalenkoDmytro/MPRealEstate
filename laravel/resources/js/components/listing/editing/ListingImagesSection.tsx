@@ -1,14 +1,15 @@
-import React from "react";
+import React, {useRef} from "react";
 import {
     Box,
     Typography,
     ImageList,
     ImageListItem,
-    IconButton,
-    Button, Alert,
+    IconButton, Alert,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import UploadIcon from "@mui/icons-material/CloudUpload";
+import theme from "@/theme";
+import Button from "@/components/common/Button";
+import IconUpload from "@/icons/IconUpload";
 
 interface GalleryImagePreview {
     id?: number;
@@ -38,12 +39,20 @@ interface Props {
 
 export default function ListingImagesSection({images, handlers, disableGalleryUpload, errors}: Props) {
     const {previewMainImage, previewGalleryImages, totalGalleryImages} = images;
-    const {handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,} = handlers;
+    const {handleMainImageChange, handleGalleryImagesChange, removeGalleryImage,} = handlers;
+
+    const inputMainImageRef = useRef<HTMLInputElement>(null);
+    const inputGlleryImagesRef = useRef<HTMLInputElement>(null);
 
     return (
-        <Box sx={{backgroundColor: "white", p: 3, borderRadius: 2, boxShadow: 1}}>
+        <Box sx={{
+            p: theme.shape.padding,
+            backgroundColor: theme.palette.background.white,
+            borderRadius: theme.shape.borderRadius,
+            border: `1px solid ${theme.palette.border.main}`,
+        }}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
-                📸 Images
+                Images
             </Typography>
 
             <Box sx={{mb: 3}}>
@@ -55,18 +64,23 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
                         {errors}
                     </Alert>
                 }
+                Upload Main Image
+
+                <input
+                    ref={inputMainImageRef}
+                    type="file"
+                    hidden
+                    accept="image/jpeg,image/png,image/jpg,image/webp"
+                    onChange={handleMainImageChange}
+                />
+
                 <Button
-                    component="label"
-                    variant="outlined"
-                    startIcon={<UploadIcon/>}
+                    version="outline"
+                    text={previewMainImage ? "Change Main Image" : "Upload Main Image"}
+                    icon={<IconUpload/>}
+                    onClick={() => {inputMainImageRef.current?.click()}}
                 >
-                    Upload Main Image
-                    <input
-                        type="file"
-                        hidden
-                        accept="image/jpeg,image/png,image/jpg,image/webp"
-                        onChange={handleMainImageChange}
-                    />
+
                 </Button>
 
                 {/* --- ADDED HELPER TEXT FOR MAIN IMAGE --- */}
@@ -76,54 +90,42 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
                 {/* --- END HELPER TEXT --- */}
 
                 {previewMainImage && (
-                    <Box sx={{position: "relative", display: "inline-block", mt: 2}}> {/* Added mt: 2 */}
+                    <Box mt={2}>
                         <img
                             src={previewMainImage}
                             alt="Main Preview"
                             style={{
-                                width: 160,
-                                height: 110,
+                                width: "100%",
+                                height: 510,
                                 objectFit: "cover",
-                                borderRadius: 8,
+                                borderRadius: theme.shape.borderRadius,
+                                border: `1px solid ${theme.palette.border.main}`,
                             }}
                         />
-                        <IconButton
-                            size="small"
-                            onClick={removeMainImage}
-                            sx={{
-                                position: "absolute",
-                                top: 4,
-                                right: 4,
-                                backgroundColor: "rgba(0,0,0,0.5)",
-                                color: "white",
-                                "&:hover": {backgroundColor: "rgba(0,0,0,0.7)"},
-                            }}
-                        >
-                            <DeleteIcon fontSize="small"/>
-                        </IconButton>
                     </Box>
                 )}
             </Box>
 
 
-            <Box>
+            <Box >
                 <Typography variant="subtitle2" gutterBottom>
                     Gallery Images ({totalGalleryImages}/5)
                 </Typography>
+                <input
+                    type="file"
+                    ref={inputGlleryImagesRef}
+                    hidden
+                    accept="image/jpeg,image/png,image/jpg,image/webp"
+                    multiple
+                    onChange={handleGalleryImagesChange}
+                />
                 <Button
-                    component="label"
-                    variant="outlined"
-                    startIcon={<UploadIcon/>}
+                    version="outline"
+                    text="Upload Gallery Images"
+                    icon={<IconUpload/>}
                     disabled={disableGalleryUpload || previewGalleryImages.length >= 5}
+                    onClick={() => {inputGlleryImagesRef.current?.click()}}
                 >
-                    Upload Gallery Images
-                    <input
-                        type="file"
-                        hidden
-                        accept="image/jpeg,image/png,image/jpg,image/webp"
-                        multiple
-                        onChange={handleGalleryImagesChange}
-                    />
                 </Button>
 
                 <Typography variant="caption" color="textSecondary" sx={{display: "block", mt: 1}}>
@@ -134,7 +136,7 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
 
 
                 {/* Gallery Preview */}
-                <ImageList cols={4} gap={8} sx={{mt: 2}}>
+                <ImageList cols={2} gap={20} sx={{mt: 2}}>
                     {previewGalleryImages.map((image, index) => (
                         <ImageListItem key={index} sx={{position: "relative"}}>
                             <img
@@ -142,9 +144,10 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
                                 alt={`Gallery image ${index + 1}`}
                                 style={{
                                     width: "100%",
-                                    height: 80,
+                                    height: 280,
                                     objectFit: "cover",
-                                    borderRadius: 6,
+                                    borderRadius: theme.shape.borderRadius,
+                                    border: `1px solid ${theme.palette.border.main}`,
                                 }}
                             />
                             <IconButton

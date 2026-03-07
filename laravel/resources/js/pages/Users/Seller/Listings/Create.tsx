@@ -8,6 +8,8 @@ import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import {ValidationErrors} from "@/types/validationErrors";
 import {useNotification} from "@/context/NotificationContext";
+import {Grid, Stack} from "@mui/material";
+import Button from "@/components/common/Button";
 
 type GalleryImagePreview = {
     file?: File;
@@ -191,14 +193,10 @@ export default function CreateListing() {
     };
 
     return (
-        <AuthenticatedLayout header={<h2 className="text-xl font-semibold text-gray-800">Create Listing</h2>}>
-            <Head title="Create Listing"/>
-            <div className="container mx-auto p-4">
-
-                {/* Property, Financial & Features */}
+        <AuthenticatedLayout header="Create New Listing">
+            <Stack spacing={4}>
                 <ListingDetails data={data} errors={errors} handleChange={handleChange} />
 
-                {/* Images */}
                 <ImagesSection
                     images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
                     handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
@@ -206,17 +204,13 @@ export default function CreateListing() {
                     errors={errors?.main_image?.[0]}
                 />
 
-                {/* Submit Button */}
-                <div className="text-end mt-8">
-                    <button
-                        onClick={submit}
-                        disabled={processing}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
-                    >
-                        {processing ? "Creating..." : "Create Listing"}
-                    </button>
-                </div>
-            </div>
+                <Button
+                    version={"primary"}
+                    text={processing ? "Creating..." : "Create Listing"}
+                    disabled={processing}
+                    onClick={submit}
+                />
+            </Stack>
         </AuthenticatedLayout>
     );
 }
