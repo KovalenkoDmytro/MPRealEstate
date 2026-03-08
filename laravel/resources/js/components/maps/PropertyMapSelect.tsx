@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createRoot, Root } from 'react-dom/client';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useTheme, Box, CircularProgress, Typography, IconButton } from '@mui/material';
-import { Fullscreen, FullscreenExit } from '@mui/icons-material';
+import { Fullscreen, FullscreenExit, ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 // Define a lightweight type that matches our optimized Laravel endpoint
 export type MapListing = {
@@ -16,11 +17,77 @@ export type MapListing = {
     } | null;
 };
 
+// --- React Component for the Popup Slider ---
+const PopupContent = ({ listings, theme }: { listings: MapListing[], theme: any }) => {
+    const [index, setIndex] = useState(0);
+    const listing = listings[index];
+
+    const next = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIndex((prev) => (prev + 1) % listings.length);
+    };
+
+    const prev = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIndex((prev) => (prev - 1 + listings.length) % listings.length);
+    };
+
+    const fullPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(listing.price);
+    const imageUrl = listing.main_image?.image_path || '/images/placeholder-house.jpg';
+
+    // @ts-ignore
+    const detailUrl = typeof route === 'function' ? route("buyer.listings.show", listing.id) : `/listings/${listing.id}`;
+
+    return (
+        <Box sx={{ p: 0.5, textAlign: 'center', width: '100%', position: 'relative', fontFamily: 'sans-serif' }}>
+            <Box sx={{ position: 'relative', width: '100%', height: 320, mb: 1, borderRadius: 1.5, overflow: 'hidden' }}>
+                <img src={imageUrl} alt={listing.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+
+                {/* Carousel Controls (Only show if multiple listings) */}
+                {listings.length > 1 && (
+                    <>
+                        <IconButton
+                            size="medium"
+                            onClick={prev}
+                            sx={{ position: 'absolute', left: 4, top: '50%', transform: 'translateY(-50%)', bgcolor: 'rgba(255,255,255,0.8)', '&:hover': { bgcolor: 'white' }, width: 35, height: 35 }}
+                        >
+                            <ChevronLeft sx={{ fontSize: 16 }} />
+                        </IconButton>
+                        <IconButton
+                            size="medium"
+                            onClick={next}
+                            sx={{ position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)', bgcolor: 'rgba(255,255,255,0.8)', '&:hover': { bgcolor: 'white' }, width: 35, height: 35 }}
+                        >
+                            <ChevronRight sx={{ fontSize: 16 }} />
+                        </IconButton>
+                        <Box sx={{ position: 'absolute', top: 6, right: 6, bgcolor: 'rgba(0,0,0,0.6)', color: 'white', px: 1, py: 0.25, borderRadius: 1, fontSize: '15px', fontWeight: 500 }}>
+                            {index + 1}/{listings.length}
+                        </Box>
+                    </>
+                )}
+            </Box>
+
+            <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, color: '#1a202c', mb: 0.5 }}>
+                {listing.title}
+            </Typography>
+            <Typography variant="body1" sx={{ fontWeight: 800, color: theme.palette.primary.main, mb: 1.5 }}>
+                {fullPrice}
+            </Typography>
+
+            <a href={detailUrl} style={{ display: 'block', width: '100%', background: theme.palette.primary.main, color: 'white', padding: '8px 0', borderRadius: '6px', textDecoration: 'none', fontSize: '12px', fontWeight: 600 }}>
+                View Details
+            </a>
+        </Box>
+    );
+};
+
+
 export default function PropertyMapSelector() {
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const markersRef = useRef<mapboxgl.Marker[]>([]);
+    const popupRootsRef = useRef<Root[]>([]); // Track React roots to unmount them cleanly
     const selectedBuildingIdRef = useRef<string | number | null>(null);
     const theme = useTheme();
 
@@ -76,7 +143,9 @@ export default function PropertyMapSelector() {
         // Add 3D Buildings on Style Load
         map.on('style.load', () => {
             const style = map.getStyle();
-            const layers = style?.layers;
+            if (!style) return;
+
+            const layers = style.layers;
             let labelLayerId;
 
             if (layers) {
@@ -140,6 +209,17 @@ export default function PropertyMapSelector() {
 
         const map = mapRef.current;
 
+        // --- GROUP LISTINGS BY EXACT COORDINATES ---
+        // Groups listings roughly within the same building to prevent overlapping pins
+        const groupedData: Record<string, MapListing[]> = {};
+        mapData.forEach(listing => {
+            if (!listing.latitude || !listing.longitude) return;
+            const key = `${listing.latitude.toFixed(5)},${listing.longitude.toFixed(5)}`;
+            if (!groupedData[key]) groupedData[key] = [];
+            groupedData[key].push(listing);
+        });
+        const groupedListingsArray = Object.values(groupedData);
+
         // Fly to the center of the loaded data
         const centerLng = mapData.reduce((sum, l) => sum + l.longitude, 0) / mapData.length;
         const centerLat = mapData.reduce((sum, l) => sum + l.latitude, 0) / mapData.length;
@@ -156,11 +236,16 @@ export default function PropertyMapSelector() {
             const bounds = map.getBounds();
             if (!bounds) return;
 
-            const visibleListings = mapData.filter(l => bounds.contains([l.longitude, l.latitude]));
-            const listingsToProcess = visibleListings.slice(0, 300);
+            // Apply highlights to buildings on screen
+            const visibleGroups = groupedListingsArray.filter(group => {
+                const first = group[0];
+                return bounds.contains([first.longitude, first.latitude]);
+            });
+            const groupsToProcess = visibleGroups.slice(0, 300);
 
-            listingsToProcess.forEach(listing => {
-                const point = map.project([listing.longitude, listing.latitude]);
+            groupsToProcess.forEach(group => {
+                const first = group[0];
+                const point = map.project([first.longitude, first.latitude]);
                 const bbox: [mapboxgl.PointLike, mapboxgl.PointLike] = [
                     [point.x - 10, point.y - 10],
                     [point.x + 10, point.y + 10]
@@ -188,16 +273,15 @@ export default function PropertyMapSelector() {
             );
         };
 
+        // Clear existing markers and React roots safely
         markersRef.current.forEach(marker => marker.remove());
         markersRef.current = [];
+        popupRootsRef.current.forEach(root => { setTimeout(() => root.unmount(), 0); });
+        popupRootsRef.current = [];
 
-        mapData.forEach((listing) => {
-            if (!listing.latitude || !listing.longitude) return;
-
-            const shortPrice = `$${(listing.price / 1000).toFixed(0)}k`;
-            const fullPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(listing.price);
-            const imageUrl = listing.main_image?.image_path || '/images/placeholder-house.jpg';
-            const detailUrl = route("buyer.listings.show", listing.id);
+        // Plot Grouped Markers
+        groupedListingsArray.forEach((group) => {
+            const firstListing = group[0];
 
             const el = document.createElement('div');
             el.className = 'custom-map-marker';
@@ -210,27 +294,29 @@ export default function PropertyMapSelector() {
             el.style.fontWeight = 'bold';
             el.style.fontSize = '12px';
             el.style.cursor = 'pointer';
-            el.innerText = shortPrice;
 
-            const popupContent = `
-                <div style="padding: 4px; font-family: sans-serif; text-align: center; min-width: 160px;">
-                    <img src="${imageUrl}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;" alt="${listing.title}"/>
-                    <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 700; color: #1a202c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;">
-                        ${listing.title}
-                    </h4>
-                    <p style="margin: 0 0 10px 0; font-size: 15px; font-weight: 800; color: ${theme.palette.primary.main};">
-                        ${fullPrice}
-                    </p>
-                    <a href="${detailUrl}" style="display: block; width: 100%; background: ${theme.palette.primary.main}; color: white; padding: 8px 0; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 600; transition: opacity 0.2s;">
-                        View Details
-                    </a>
-                </div>
-            `;
+            // Set text based on grouping
+            if (group.length > 1) {
+                el.innerText = `${group.length} Units`;
+            } else {
+                const shortPrice = firstListing.price >= 1000000
+                    ? `$${Number((firstListing.price / 1000000).toFixed(2))}M`
+                    : `$${(firstListing.price / 1000).toFixed(0)}k`;
 
-            const popup = new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(popupContent);
+                el.innerText = shortPrice;
+            }
+
+            // Render custom React Component into the Mapbox Popup
+            const popupNode = document.createElement('div');
+            const popupRoot = createRoot(popupNode);
+            popupRoot.render(<PopupContent listings={group} theme={theme} />);
+            popupRootsRef.current.push(popupRoot);
+
+            const popup = new mapboxgl.Popup({ offset: 25, closeButton: false, maxWidth: '520px' })
+                .setDOMContent(popupNode);
 
             popup.on('open', () => {
-                const point = map.project([listing.longitude, listing.latitude]);
+                const point = map.project([firstListing.longitude, firstListing.latitude]);
                 const bbox: [mapboxgl.PointLike, mapboxgl.PointLike] = [
                     [point.x - 10, point.y - 10],
                     [point.x + 10, point.y + 10]
@@ -254,12 +340,14 @@ export default function PropertyMapSelector() {
                 selectedBuildingIdRef.current = null;
             });
 
-            const marker = new mapboxgl.Marker(el)
-                .setLngLat([listing.longitude, listing.latitude])
-                .setPopup(popup)
-                .addTo(map);
+            if (map.getContainer()) {
+                const marker = new mapboxgl.Marker(el)
+                    .setLngLat([firstListing.longitude, firstListing.latitude])
+                    .setPopup(popup)
+                    .addTo(map);
 
-            markersRef.current.push(marker);
+                markersRef.current.push(marker);
+            }
         });
 
         return () => {
@@ -268,6 +356,8 @@ export default function PropertyMapSelector() {
 
             markersRef.current.forEach(marker => marker.remove());
             markersRef.current = [];
+            popupRootsRef.current.forEach(root => { setTimeout(() => root.unmount(), 0); });
+            popupRootsRef.current = [];
         };
 
     }, [mapData, isLoading, isMapLoaded, theme.palette.primary.main]);
