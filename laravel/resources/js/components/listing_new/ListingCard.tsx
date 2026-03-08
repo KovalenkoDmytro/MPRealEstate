@@ -129,7 +129,7 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
                         <span className="price-label">Price</span>
                         <div className="price-value">{formatCurrency(listing.price)}</div>
                     </div>
-                    <Button version="primary" text="View Details" link={true} href={detailUrl} />
+                    <Button version="outline" text="View Details" link={true} href={detailUrl} />
                 </div>
             </div>
         </div>

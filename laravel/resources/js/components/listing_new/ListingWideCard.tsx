@@ -18,14 +18,12 @@ import {
     useTheme
 } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
-
-// --- Swiper Imports ---
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
-// Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+
 
 type ListingCardProps = {
     listing: RealEstateListing;
@@ -77,8 +75,7 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
     };
 
     const formattedSqft = new Intl.NumberFormat('en-US').format(listing.square_feet);
-    // @ts-ignore
-    const detailUrl = typeof route === 'function' ? route("buyer.listings.show", listing.id) : `/listings/${listing.id}`;
+    const detailUrl = route("buyer.listings.show", listing.id) ;
 
     return (
         <Paper
@@ -86,18 +83,15 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
             sx={{
                 borderRadius: theme.shape.borderRadius,
                 overflow: 'hidden',
-                border: '1px solid',
-                borderColor: '#e2e8f0',
+                border: `1px solid ${theme.palette.border.main}`,
+                borderColor: theme.palette.border.main,
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },
                 bgcolor: theme.palette.background.paper,
-                transition: 'box-shadow 0.3s ease',
-                '&:hover': { boxShadow: theme.shadows[4] }
             }}
         >
             {/* 1. Left Section: Swiper Image Slider */}
-            <Box
-                sx={{
+            <Box sx={{
                     width: { xs: '100%', md: 300 },
                     height: { xs: 240, md: 'auto' },
                     minHeight: { md: 260 },
@@ -148,8 +142,7 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
                         backgroundColor: '#fff !important', // Active dot color
                         transform: 'scale(1.2)' // Slight grow effect
                     },
-                }}
-            >
+                }}>
                 <Swiper
                     modules={[Navigation, Pagination]}
                     navigation={displayImages.length > 1}
@@ -184,7 +177,6 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
                     flexDirection: 'column',
                 }}
             >
-                {/* ... (Rest of component remains unchanged) ... */}
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1}>
                     <Typography variant="h5" fontWeight={600} sx={{ color: theme.palette.text.primary }}>
                         {listing.title}
@@ -194,8 +186,7 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
                         disabled={loadingFavorite}
                         size="small"
                         sx={{
-                            color: isFav ? theme.palette.primary.main : theme.palette.text.secondary,
-                            '&:hover': { color: theme.palette.primary.dark, bgcolor: theme.palette.action.hover }
+                            color: isFav ? theme.palette.primary.main : theme.palette.text.secondary
                         }}
                     >
                         {isFav ? <Favorite /> : <FavoriteBorder />}
@@ -240,7 +231,7 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
 
                     <Box width={150}>
                         <Button
-                            version="primary"
+                            version="outline"
                             text="View Details"
                             link={true}
                             href={detailUrl}

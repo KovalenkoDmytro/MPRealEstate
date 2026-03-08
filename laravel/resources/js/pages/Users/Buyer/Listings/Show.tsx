@@ -98,7 +98,7 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
                             </Stack>
                         </Grid>
                     </Grid>
-                    <ListingLocationMap lng={listing.longitude} lat={listing.latitude}/>
+                    <ListingLocationMap listing={listing} />
 
 
                 </Stack>

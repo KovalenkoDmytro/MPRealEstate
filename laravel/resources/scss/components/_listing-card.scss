@@ -180,16 +180,20 @@
             justify-content: space-between;
 
             .price-label {
-                font-size: 0.75rem;
+                font-size: 16px;
                 color: $color-tan;
                 display: block;
                 margin-bottom: 2px;
             }
 
             .price-value {
-                font-size: 17px;
-                font-weight: 700;
+                font-size: 27px;
+                font-weight: 600;
                 color: $color-charcoal;
+            }
+
+            .btn{
+                max-width: max-content;
             }
         }
     }

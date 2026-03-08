@@ -23,14 +23,12 @@ export default function Listings({ listings, favoriteListings, viewMode }: Compo
 
     // Handle page change
     const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        // Option A: If using Inertia.js (Standard for Laravel + React)
+
         router.get(window.location.pathname, { page: value }, {
             preserveState: true,
             preserveScroll: true,
         });
 
-        // Option B: If using standard React/Next.js router, replace with:
-        // router.push(`/listings?page=${value}`);
     };
 
     if (!listings.data || listings.data.length === 0) {
@@ -63,9 +61,9 @@ export default function Listings({ listings, favoriteListings, viewMode }: Compo
         <Box>
             {/* Grid View */}
             {viewMode === 'grid' ? (
-                <Grid container spacing={3} className="listings-grid">
+                <Grid container spacing={4} className="listings-grid">
                     {listings.data.map((listing) => (
-                        <Grid sx={{xs:12, md:6, lg:4}} key={listing.id}>
+                        <Grid size={{xs:12, md:6, lg:4}} key={listing.id}>
                             <ListingCard
                                 listing={listing}
                                 isFavorite={favoriteListings.includes(listing.id)}
@@ -75,7 +73,7 @@ export default function Listings({ listings, favoriteListings, viewMode }: Compo
                 </Grid>
             ) : (
                 /* List View */
-                <Stack spacing={2} className="listings-list">
+                <Stack spacing={4} className="listings-list">
                     {listings.data.map((listing) => (
                         <Box key={listing.id}>
                             <ListingWideCard
