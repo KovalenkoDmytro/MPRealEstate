@@ -1,5 +1,5 @@
 import { router, Head } from "@inertiajs/react";
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import type { PaginatedResponse, RealEstateListing } from "@/types";
 import { FilterForm } from "@/components/listings/FilterForm";
@@ -23,6 +23,29 @@ type Props = {
 };
 
 export default function Index({ listings, favoriteListings, filters }: Props) {
+    const initialForm = {
+        location: "",
+        min_price: "",
+        max_price: "",
+        bedrooms: "",
+        bathrooms: "",
+        status: "",
+        favorites_only: false,
+        property_type: "",
+        square_feet_min: "",
+        square_feet_max: "",
+        year_built_min: "",
+        year_built_max: "",
+        has_garage: false,
+        has_basement: false,
+        min_maintenance_fee: "",
+        max_maintenance_fee: "",
+        min_property_tax: "",
+        max_property_tax: "",
+        days_on_market: "",
+        keywords: "",
+    };
+
     // State to toggle filter visibility
     const [showFilters, setShowFilters] = useState(true);
     // State for view mode
@@ -30,6 +53,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
     const [isFiltering, setIsFiltering] = useState(false);
 
     const [form, setForm] = useState({
+        ...initialForm,
         location: filters.location || "",
         min_price: filters.min_price || "",
         max_price: filters.max_price || "",
@@ -58,6 +82,11 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
         setForm((prev) => ({ ...prev, [key]: value }));
     };
 
+    const hasActiveFilters = useMemo(
+        () => Object.values(form).some((value) => value !== "" && value !== false && value !== null),
+        [form]
+    );
+
     const applyFilters = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         if (isFiltering) return;
@@ -72,6 +101,20 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
             onError: () => setIsFiltering(false),
         });
     }, [form, isFiltering]);
+
+    const resetFilters = useCallback(() => {
+        if (isFiltering) return;
+
+        setForm(initialForm);
+        setIsFiltering(true);
+
+        router.get(route("listings.index"), {}, {
+            preserveScroll: true,
+            preserveState: true,
+            onFinish: () => setIsFiltering(false),
+            onError: () => setIsFiltering(false),
+        });
+    }, [isFiltering]);
 
     const handleToggleFilters = () => {
         setShowFilters(!showFilters);
@@ -175,7 +218,9 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                         form={form}
                         updateFilter={updateFilter}
                         onApplyFilters={applyFilters}
+                        onResetFilters={resetFilters}
                         isSubmitting={isFiltering}
+                        canReset={hasActiveFilters}
                     />
                 </Box>
             </Collapse>

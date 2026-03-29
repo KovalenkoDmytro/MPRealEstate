@@ -67,14 +67,18 @@ type FilterFormProps = {
     };
     updateFilter: (key: string, value: string | number | boolean) => void;
     onApplyFilters: (e: React.FormEvent) => void;
+    onResetFilters: () => void;
     isSubmitting?: boolean;
+    canReset?: boolean;
 };
 
 export const FilterForm: React.FC<FilterFormProps> = ({
     form,
     updateFilter,
     onApplyFilters,
+    onResetFilters,
     isSubmitting = false,
+    canReset = false,
 }) => {
 
 
@@ -336,17 +340,30 @@ export const FilterForm: React.FC<FilterFormProps> = ({
                     />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        size="large"
-                        disabled={isSubmitting}
-                        startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : null}
-                    >
-                        {isSubmitting ? "Applying Filters..." : "Apply Filters"}
-                    </Button>
+                    <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", sm: "row" } }}>
+                        <Button
+                            type="button"
+                            variant="outlined"
+                            color="inherit"
+                            fullWidth
+                            size="large"
+                            disabled={isSubmitting || !canReset}
+                            onClick={onResetFilters}
+                        >
+                            Reset Filters
+                        </Button>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            size="large"
+                            disabled={isSubmitting}
+                            startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : null}
+                        >
+                            {isSubmitting ? "Applying Filters..." : "Apply Filters"}
+                        </Button>
+                    </Box>
                 </Grid>
             </Grid>
         </Box>

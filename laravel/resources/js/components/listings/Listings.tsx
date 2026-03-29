@@ -6,6 +6,8 @@ import PropertyMapSelector from "@/components/maps/PropertyMapSelect";
 import ListingWideCard from "@/components/listing_new/ListingWideCard";
 import theme from "@/theme";
 import AppPagination from "@/components/common/AppPagination";
+import IconContainer from "@/components/common/IconContainer";
+import IconHome from "@/icons/IconHome";
 
 type ComponentProps = {
     listings: PaginatedResponse<RealEstateListing>;
@@ -17,7 +19,7 @@ type ComponentProps = {
 export default function Listings({ listings, favoriteListings, viewMode, isLoading = false }: ComponentProps) {
     if (!listings.data || listings.data.length === 0) {
         return (
-            <Box sx={{ mt: 4, textAlign: "center", position: "relative" }}>
+            <Box sx={{ mt: 4, position: "relative" }}>
                 {isLoading && (
                     <Box
                         sx={{
@@ -41,9 +43,60 @@ export default function Listings({ listings, favoriteListings, viewMode, isLoadi
                         </Typography>
                     </Box>
                 )}
-                <Typography variant="body1" color="text.secondary" sx={{ opacity: isLoading ? 0.35 : 1 }}>
-                    No listings found.
-                </Typography>
+
+                <Box
+                    sx={{
+                        opacity: isLoading ? 0.35 : 1,
+                        p: { xs: 3, md: 5 },
+                        borderRadius: theme.shape.borderRadius,
+                        border: `1px solid ${theme.palette.border.main}`,
+                        background: `linear-gradient(135deg, ${theme.palette.primary.main}08 0%, ${theme.palette.background.white} 60%, ${theme.palette.secondary.main}10 100%)`,
+                        boxShadow: '0 14px 35px rgba(0, 0, 0, 0.04)',
+                        textAlign: "center",
+                    }}
+                >
+                    <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+                        <IconContainer bgColor={`${theme.palette.primary.main}12`}>
+                            <IconHome color={theme.palette.primary.main} width={22} height={22} />
+                        </IconContainer>
+                    </Box>
+
+                    <Typography
+                        variant="overline"
+                        sx={{
+                            color: theme.palette.primary.main,
+                            letterSpacing: "0.14em",
+                            fontWeight: 700,
+                            display: "block",
+                            mb: 1,
+                        }}
+                    >
+                        Search Results
+                    </Typography>
+
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            color: theme.palette.text.primary,
+                            fontWeight: 700,
+                            mb: 1,
+                        }}
+                    >
+                        No listings found.
+                    </Typography>
+
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            color: theme.palette.text.secondary,
+                            maxWidth: 560,
+                            mx: "auto",
+                            lineHeight: 1.8,
+                        }}
+                    >
+                        Try adjusting your filters, broadening the city or price range, or removing a few conditions to see more available properties.
+                    </Typography>
+                </Box>
             </Box>
         );
     }

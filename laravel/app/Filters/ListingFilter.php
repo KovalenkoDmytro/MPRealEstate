@@ -13,7 +13,15 @@ class ListingFilter
         // Text/Exact Match filters
         $query
             ->when(!empty($filters['location']), fn($q) =>
-            $q->where('location', 'like', '%' . $filters['location'] . '%'))
+            $q->where(function (Builder $addressQuery) use ($filters) {
+                $search = '%' . $filters['location'] . '%';
+
+                $addressQuery
+                    ->where('city', 'like', $search)
+                    ->orWhere('province', 'like', $search)
+                    ->orWhere('postal_code', 'like', $search)
+                    ->orWhere('street_name', 'like', $search);
+            }))
 
             ->when(!empty($filters['property_type']), fn($q) =>
             $q->where('property_type', $filters['property_type']))
