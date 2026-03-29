@@ -162,18 +162,6 @@ export const DealCard: React.FC<DealCardProps> = ({deal }) => {
                     <Typography variant="subtitle1" fontWeight={700} sx={{ color: theme.palette.text.primary }}>{counterparty?.name}</Typography>
                 </Stack>
 
-                <Box sx={{ mb: 3 }}>
-                    <Stack direction="row" justifyContent="space-between" mb={0.5}>
-                        <Typography variant="caption" color="#4a5568" >Progress</Typography>
-                        <Typography variant="caption" color="#4a5568" >45%</Typography>
-                    </Stack>
-                    <LinearProgress
-                        variant="determinate"
-                        value={45}
-                        sx={{ height: 10, borderRadius: 5, bgcolor: '#edf2f7', '& .MuiLinearProgress-bar': { bgcolor: theme.palette.primary.main } }}
-                    />
-                </Box>
-
                 <Stack direction="row" spacing={4} mb={3}>
                     <Box>
                         <Typography variant="caption">

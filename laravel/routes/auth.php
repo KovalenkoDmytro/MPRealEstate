@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
         ->middleware('throttle:6,1')
         ->name('verification.send');
 
-    // As you said, logout must be protected.
+    // Logout is a state-changing action, so it should be POST.
     Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     // Optional but recommended: Password confirmation for logged-in users.

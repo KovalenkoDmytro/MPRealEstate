@@ -11,6 +11,7 @@ import LawyerInvite from "@/components/deal/LawyerInvite";
 import FileUploadSection from "@/components/deal/FileUploadSection";
 import BreakDealSection from "@/components/deal/BreakDealSection";
 import React from "react";
+import DealPropertyDetails from "@/components/deal/DealPropertyDetails";
 
 export default function DealShowPage({deal}: { deal: PropertyDetail }) {
     const seller = deal.users.find((user) => user.role === "seller");
@@ -21,7 +22,9 @@ export default function DealShowPage({deal}: { deal: PropertyDetail }) {
 
             <DealHeader deal={deal}/>
 
-            <PropertyDetails listing={deal.real_estate_listing}/>
+            <DealPropertyDetails listing={deal.real_estate_listing}/>
+
+
 
             {seller && <DealPersonInfo person={seller}/>}
 

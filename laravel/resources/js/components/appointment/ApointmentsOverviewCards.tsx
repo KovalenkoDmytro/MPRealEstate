@@ -1,13 +1,10 @@
 import {Grid} from "@mui/material";
 import StatCard from "@/components/common/StatCard";
-import { BuyerAppointmentsStat} from "@/types/Appointments/buyerAppointmentsStat";
 import IconCalendarToday from "@/icons/IconCalendarToday";
 import IconClock from "@/icons/IconClock";
 import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconPending from "@/icons/IconPending";
-import IconCanceled from "@/icons/IconCanceled";
-import theme from "@/theme";
 import React from "react";
 
 

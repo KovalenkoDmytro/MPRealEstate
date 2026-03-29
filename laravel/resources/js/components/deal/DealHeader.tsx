@@ -1,23 +1,77 @@
 import { Deal } from "@/types";
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Typography, Stack, Paper } from "@mui/material";
+import theme from "@/theme";
+import IconDollar from "@/icons/IconDollar";
+import IconContainer from "@/components/common/IconContainer";
+import IconDocument from "@/icons/IconDocument";
+
 
 export default function DealHeader({ deal }: { deal: Deal }) {
     return (
-        <Box mb={3}>
+        <Paper
+            elevation={0}
+            sx={{
+                p: theme.shape.padding,
+                borderRadius: theme.shape.borderRadius,
+                bgcolor: theme.palette.background.white,
+                border: `1px solid ${theme.palette.border.main}`,
+            }}
+        >
             {/* Deal Title */}
-            <Typography variant="h4" fontWeight="bold" gutterBottom>
+            <Typography
+                variant="h5"
+                fontWeight="bold"
+                sx={{  mb: 2}}
+            >
                 {deal.name}
             </Typography>
 
-            {/* Amount and Description */}
-            <Stack spacing={1}>
-                <Typography variant="h6">
-                    💰 <strong>Amount:</strong> ${deal.amount.toLocaleString()}
-                </Typography>
-                <Typography variant="body1">
-                    📝 <strong>Description:</strong> {deal.deal_message}
-                </Typography>
-            </Stack>
-        </Box>
+            {/* Amount and Description Grid */}
+            <Box
+                display="grid"
+                gridTemplateColumns={{ xs: "1fr", md: "1fr 1fr" }}
+                gap={4}
+            >
+                {/* Amount Block */}
+                <Stack direction="row" spacing={2} alignItems="center">
+
+                    <IconContainer>
+                        <IconDollar />
+                    </IconContainer>
+
+                    <Box>
+                        <Typography variant="body2" sx={{ color: `${theme.palette.primary.main}`, mb: 0.5 }}>
+                            Amount:
+                        </Typography>
+                        <Typography
+                            variant="h6"
+                            fontWeight="bold"
+                        >
+                            ${deal.amount.toLocaleString()}
+                        </Typography>
+                    </Box>
+                </Stack>
+
+                {/* Description Block */}
+                <Stack direction="row" spacing={2} alignItems="center">
+
+                    <IconContainer bgColor="#886277">
+                        <IconDocument />
+                    </IconContainer>
+
+                    <Box>
+                        <Typography variant="body2" sx={{ color:`${theme.palette.primary.main}`, mb: 0.5 }}>
+                            Description:
+                        </Typography>
+                        <Typography
+                            variant="h6"
+                            fontWeight="bold"
+                        >
+                            {deal.deal_message}
+                        </Typography>
+                    </Box>
+                </Stack>
+            </Box>
+        </Paper>
     );
 }

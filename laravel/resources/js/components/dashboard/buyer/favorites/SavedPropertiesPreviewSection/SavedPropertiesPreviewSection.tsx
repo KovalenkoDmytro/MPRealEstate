@@ -16,7 +16,7 @@ export default function SavedPropertiesPreviewSection({ favoriteListing, itemsTo
                    p: theme.shape.padding,
                    borderRadius: theme.shape.borderRadius,
                    bgcolor: theme.palette.background.white,
-                   boxShadow: theme.shape.boxShadow,
+                   border: `1px solid ${theme.palette.border.main}`,
                }}
         >
             <Typography variant="h6" fontWeight={700} gutterBottom sx={{ mb: 3 }}>

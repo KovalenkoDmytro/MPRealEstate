@@ -132,7 +132,6 @@ export default function UserMenu({ user }: UserMenuProps) {
                 <MenuItem
                     component={Link}
                     href={route('logout')}
-                    method="post"
                     as="button"
                     sx={{ color: 'error.main' }}
                 >
