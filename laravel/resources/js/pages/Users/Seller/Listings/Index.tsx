@@ -1,20 +1,14 @@
 import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import type { RealEstateListing } from "@/types";
+import type { PaginatedResponse, RealEstateListing } from "@/types";
 import React from "react";
 import Button from "@/components/common/Button";
 import SellerListingCard from "@/components/listings/seller/SellerListingCard";
 import {Stack} from "@mui/material";
+import AppPagination from "@/components/common/AppPagination";
 
 type ComponentProps = {
-    listings: {
-        data: RealEstateListing[];
-        links: { url: string | null; label: string; active: boolean }[];
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-    };
+    listings: PaginatedResponse<RealEstateListing>;
 };
 
 export default function Index({ listings }: ComponentProps) {
@@ -36,8 +30,7 @@ export default function Index({ listings }: ComponentProps) {
                         <SellerListingCard listing={listing} key={index}/>
                     ))}
                 </Stack>
-
-
+                <AppPagination pagination={listings} />
             </div>
         </AuthenticatedLayout>
     );

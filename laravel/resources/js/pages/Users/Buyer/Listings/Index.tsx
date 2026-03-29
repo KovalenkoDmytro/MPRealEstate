@@ -1,7 +1,7 @@
 import { router, Head } from "@inertiajs/react";
 import React, {useCallback, useState} from "react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import type { RealEstateListing } from "@/types";
+import type { PaginatedResponse, RealEstateListing } from "@/types";
 import { FilterForm } from "@/components/listings/FilterForm";
 import Listings from "@/components/listings/Listings";
 import { listingService } from "@/services/listingService";
@@ -14,11 +14,7 @@ import ViewListIcon from '@mui/icons-material/ViewList';
 import MapIcon from '@mui/icons-material/Map';
 
 type Props = {
-    listings: {
-        data: RealEstateListing[];
-        links: { url: string | null; label: string; active: boolean }[];
-        current_page: number;
-        last_page: number;
+    listings: PaginatedResponse<RealEstateListing> & {
         total: number;
     };
     favoriteListings: number[];

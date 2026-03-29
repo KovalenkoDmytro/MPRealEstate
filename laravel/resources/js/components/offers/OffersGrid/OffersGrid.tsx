@@ -1,35 +1,17 @@
 import React from "react";
-import { Offer } from "@/types";
-import { Typography, Stack, Pagination, Box, Grid } from "@mui/material";
+import { Offer, PaginatedResponse } from "@/types";
+import { Typography, Stack, Box, Grid } from "@mui/material";
 import { useAuth } from "@/hooks/useAuth";
 import OfferCard from "@/components/offers/OffersGrid/OfferCard";
-import { router } from "@inertiajs/react";
-
-// Define the paginated structure matching Laravel's output
-interface PaginatedOffers {
-    data: Offer[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-}
+import AppPagination from "@/components/common/AppPagination";
 
 interface OffersGridProps {
-    offers: PaginatedOffers;
+    offers: PaginatedResponse<Offer>;
 }
 
 export default function OffersGrid({ offers }: OffersGridProps) {
     const user = useAuth();
     const role = user.role;
-
-    // Handle page change using Inertia
-    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        router.get(
-            window.location.href,
-            { page: value },
-            { preserveState: true, preserveScroll: true }
-        );
-    };
 
     if (!offers.data || offers.data.length === 0) {
         return (
@@ -60,20 +42,12 @@ export default function OffersGrid({ offers }: OffersGridProps) {
             )}
 
             {/* Pagination Controls */}
-            {offers.last_page > 1 && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 2 }}>
-                    <Pagination
-                        count={offers.last_page}
-                        page={offers.current_page}
-                        onChange={handlePageChange}
-                        color="primary"
-                        shape="rounded"
-                        size="large"
-                        showFirstButton
-                        showLastButton
-                    />
-                </Box>
-            )}
+            <AppPagination
+                pagination={offers}
+                showFirstButton
+                showLastButton
+                sx={{ mt: 4, mb: 2 }}
+            />
         </Box>
     );
 }

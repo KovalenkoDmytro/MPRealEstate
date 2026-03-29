@@ -1,25 +1,20 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
-import { PageProps, type RealEstateListing } from '@/types';
+import { PageProps, PaginatedResponse, type RealEstateListing } from '@/types';
 import React, { useState } from "react";
 import ListingCard from "@/components/listing_new/ListingCard";
 import Button from "@/components/common/Button";
 import theme from "@/theme";
-import { Box, Pagination, Typography } from "@mui/material";
-import { router } from '@inertiajs/react';
+import { Box, Typography } from "@mui/material";
 import IconContainer from "@/components/common/IconContainer";
 import IconFavorite from "@/icons/IconFavorite";
+import AppPagination from "@/components/common/AppPagination";
 
 // ----------------------------------------------------------------------
 //  Main Page Component
 // ----------------------------------------------------------------------
 
 interface Props extends PageProps {
-    favoriteListings: {
-        data: RealEstateListing[];
-        links: { url: string | null; label: string; active: boolean }[];
-        current_page: number;
-        last_page: number;
-    };
+    favoriteListings: PaginatedResponse<RealEstateListing>;
 }
 
 export default function ListingFavoritesPage({ favoriteListings }: Props) {
@@ -27,15 +22,6 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
 
     const handleRemoveItem = (id: number) => {
         setLocalListings((current) => current.filter(item => item.id !== id));
-    };
-
-    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-
-        router.get(window.location.pathname, { page: value }, {
-            preserveState: true,
-            preserveScroll: true,
-        });
-
     };
 
     return (
@@ -123,16 +109,7 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
 
                     )}
 
-                    {localListings.length > 0 && <Box sx={{ mt: 5, display: 'flex', justifyContent: 'center' }}>
-                        <Pagination
-                            count={favoriteListings.last_page}
-                            page={favoriteListings.current_page}
-                            onChange={handlePageChange}
-                            color="primary"
-                            shape="rounded"
-                            size="large"
-                        />
-                    </Box>}
+                    {favoriteListings.last_page > 1 && <AppPagination pagination={favoriteListings} />}
 
 
                 </div>

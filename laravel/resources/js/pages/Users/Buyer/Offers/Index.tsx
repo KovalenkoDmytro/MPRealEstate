@@ -1,25 +1,14 @@
 import React from 'react';
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import {Offer} from "@/types";
+import { Offer, PaginatedResponse } from "@/types";
 import OffersGrid from "@/components/offers/OffersGrid/OffersGrid";
 import {Grid} from "@mui/material";
 import StatCard from "@/components/common/StatCard";
 import {OfferStats} from "@/types/models";
 import IconClock from "@/icons/IconClock";
 
-// Define the full paginated structure
-interface PaginatedOffers {
-    data: Offer[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    // Add other pagination fields if needed (e.g., links, from, to)
-}
-
 type OffersIndexPageProps = {
-    // Update this to match the full paginated object
-    offers: PaginatedOffers;
+    offers: PaginatedResponse<Offer>;
     offers_stats: OfferStats
 };
 
@@ -61,7 +50,6 @@ export default function OffersIndexPage({ offers, offers_stats }: OffersIndexPag
                     />
                 </Grid>
             </Grid>
-            {/* Now 'offers' matches the expected structure for OffersGrid */}
             <OffersGrid offers={offers} />
         </AuthenticatedLayout>
     );
