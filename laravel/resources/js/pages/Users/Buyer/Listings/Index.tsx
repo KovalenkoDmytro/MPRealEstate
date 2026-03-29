@@ -27,6 +27,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
     const [showFilters, setShowFilters] = useState(true);
     // State for view mode
     const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
+    const [isFiltering, setIsFiltering] = useState(false);
 
     const [form, setForm] = useState({
         location: filters.location || "",
@@ -59,13 +60,18 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
 
     const applyFilters = useCallback((e: React.FormEvent) => {
         e.preventDefault();
+        if (isFiltering) return;
+
+        setIsFiltering(true);
         const query = listingService.applyFilters(form);
 
         router.get(route("listings.index"), query, {
             preserveScroll: true,
             preserveState: true,
+            onFinish: () => setIsFiltering(false),
+            onError: () => setIsFiltering(false),
         });
-    }, [form]);
+    }, [form, isFiltering]);
 
     const handleToggleFilters = () => {
         setShowFilters(!showFilters);
@@ -169,13 +175,15 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                         form={form}
                         updateFilter={updateFilter}
                         onApplyFilters={applyFilters}
+                        isSubmitting={isFiltering}
                     />
                 </Box>
             </Collapse>
 
             <Listings listings={listings}
-                          favoriteListings={favoriteListings}
-                          viewMode={viewMode}
+                favoriteListings={favoriteListings}
+                viewMode={viewMode}
+                isLoading={isFiltering}
             />
         </AuthenticatedLayout>
     );

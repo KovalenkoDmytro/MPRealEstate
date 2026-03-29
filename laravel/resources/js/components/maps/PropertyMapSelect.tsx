@@ -82,7 +82,11 @@ const PopupContent = ({ listings, theme }: { listings: MapListing[], theme: any 
 };
 
 
-export default function PropertyMapSelector() {
+type PropertyMapSelectorProps = {
+    listings: MapListing[];
+};
+
+export default function PropertyMapSelector({ listings }: PropertyMapSelectorProps) {
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -91,35 +95,8 @@ export default function PropertyMapSelector() {
     const selectedBuildingIdRef = useRef<string | number | null>(null);
     const theme = useTheme();
 
-    const [isLoading, setIsLoading] = useState(true);
-    const [mapData, setMapData] = useState<MapListing[]>([]);
     const [isMapLoaded, setIsMapLoaded] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
-
-    // 1. Fetch Lightweight Map Data
-    useEffect(() => {
-        let isMounted = true;
-
-        const fetchMapData = async () => {
-            try {
-                setIsLoading(true);
-                const response = await fetch('/api/map-listings');
-                const data = await response.json();
-
-                if (isMounted) {
-                    setMapData(data);
-                    setIsLoading(false);
-                }
-            } catch (error) {
-                console.error("Failed to fetch map data:", error);
-                if (isMounted) setIsLoading(false);
-            }
-        };
-
-        fetchMapData();
-
-        return () => { isMounted = false; };
-    }, []);
 
     // 2. Initialize Map (Runs ONLY once when component mounts)
     useEffect(() => {
@@ -205,14 +182,14 @@ export default function PropertyMapSelector() {
 
     // 3. Plot Markers & Dynamic Highlights
     useEffect(() => {
-        if (!isMapLoaded || isLoading || mapData.length === 0 || !mapRef.current) return;
+        if (!isMapLoaded || listings.length === 0 || !mapRef.current) return;
 
         const map = mapRef.current;
 
         // --- GROUP LISTINGS BY EXACT COORDINATES ---
         // Groups listings roughly within the same building to prevent overlapping pins
         const groupedData: Record<string, MapListing[]> = {};
-        mapData.forEach(listing => {
+        listings.forEach(listing => {
             if (!listing.latitude || !listing.longitude) return;
             const key = `${listing.latitude.toFixed(5)},${listing.longitude.toFixed(5)}`;
             if (!groupedData[key]) groupedData[key] = [];
@@ -221,8 +198,8 @@ export default function PropertyMapSelector() {
         const groupedListingsArray = Object.values(groupedData);
 
         // Fly to the center of the loaded data
-        const centerLng = mapData.reduce((sum, l) => sum + l.longitude, 0) / mapData.length;
-        const centerLat = mapData.reduce((sum, l) => sum + l.latitude, 0) / mapData.length;
+        const centerLng = listings.reduce((sum, listing) => sum + listing.longitude, 0) / listings.length;
+        const centerLat = listings.reduce((sum, listing) => sum + listing.latitude, 0) / listings.length;
 
         map.flyTo({
             center: [centerLng, centerLat],
@@ -360,7 +337,7 @@ export default function PropertyMapSelector() {
             popupRootsRef.current = [];
         };
 
-    }, [mapData, isLoading, isMapLoaded, theme.palette.primary.main]);
+    }, [isMapLoaded, listings, theme.palette.primary.main]);
 
     // 4. Handle Fullscreen Toggle
     const toggleFullscreen = () => {
@@ -395,7 +372,7 @@ export default function PropertyMapSelector() {
         <div ref={wrapperRef} style={{ position: 'relative', width: '100%', height: '100%', backgroundColor: '#fff' }}>
 
             {/* Fullscreen Toggle Button */}
-            {isMapLoaded && !isLoading && (
+            {isMapLoaded && (
                 <IconButton
                     onClick={toggleFullscreen}
                     sx={{
@@ -416,7 +393,7 @@ export default function PropertyMapSelector() {
             )}
 
             {/* Loading Overlay */}
-            {(!isMapLoaded || isLoading) && (
+            {!isMapLoaded && (
                 <Box
                     sx={{
                         position: 'absolute',

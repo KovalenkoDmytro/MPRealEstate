@@ -9,6 +9,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    CircularProgress,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import CitySelector from "@/components/common/CitySelector";
@@ -66,9 +67,15 @@ type FilterFormProps = {
     };
     updateFilter: (key: string, value: string | number | boolean) => void;
     onApplyFilters: (e: React.FormEvent) => void;
+    isSubmitting?: boolean;
 };
 
-export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onApplyFilters }) => {
+export const FilterForm: React.FC<FilterFormProps> = ({
+    form,
+    updateFilter,
+    onApplyFilters,
+    isSubmitting = false,
+}) => {
 
 
     return (
@@ -335,8 +342,10 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
                         color="primary"
                         fullWidth
                         size="large"
+                        disabled={isSubmitting}
+                        startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : null}
                     >
-                        Apply Filters
+                        {isSubmitting ? "Applying Filters..." : "Apply Filters"}
                     </Button>
                 </Grid>
             </Grid>
