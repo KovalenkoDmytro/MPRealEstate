@@ -12,6 +12,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import MapIcon from '@mui/icons-material/Map';
+import theme from "@/theme";
 
 type Props = {
     listings: PaginatedResponse<RealEstateListing> & {
@@ -23,7 +24,7 @@ type Props = {
 
 export default function Index({ listings, favoriteListings, filters }: Props) {
     // State to toggle filter visibility
-    const [showFilters, setShowFilters] = useState(false);
+    const [showFilters, setShowFilters] = useState(true);
     // State for view mode
     const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
 
@@ -157,7 +158,13 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
 
             {/* Collapsible Filter Section */}
             <Collapse in={showFilters} timeout="auto" unmountOnExit>
-                <Box sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 2, mb: 3, boxShadow: 1 }}>
+                <Box sx={{
+                    p: theme.shape.padding,
+                    background: `${theme.palette.background.white}`,
+                    borderRadius: theme.shape.borderRadius,
+                    mb: 3,
+                    border: `1px solid ${theme.palette.border.main}`,
+                }}>
                     <FilterForm
                         form={form}
                         updateFilter={updateFilter}

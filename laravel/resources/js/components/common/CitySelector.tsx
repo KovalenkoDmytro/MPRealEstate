@@ -1,5 +1,13 @@
 import React from "react";
-import {MenuItem, TextField} from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select, FormHelperText } from "@mui/material";
+
+const selectMenuProps = {
+    PaperProps: {
+        sx: {
+            maxHeight: 450,
+        },
+    },
+};
 
 type CitySelectorProps = {
     value: string;
@@ -34,21 +42,23 @@ export default function CitySelector({ value = "Calgary", onChange, error, helpe
     );
 
     return (
-        <TextField
-            select
-            label="Select City"
-            value={value}
-            error={error}
-            helperText={helperText}
-            onChange={(event) => onChange(event.target.value)}
-            name="location"
-            fullWidth
-        >
-            {sortedCities.map((city) => (
-                <MenuItem key={city} value={city}>
-                    {city}
-                </MenuItem>
-            ))}
-        </TextField>
+        <FormControl fullWidth error={error}>
+            <InputLabel id="city-selector-label">Select City</InputLabel>
+            <Select
+                labelId="city-selector-label"
+                label="Select City"
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                name="location"
+                MenuProps={selectMenuProps}
+            >
+                {sortedCities.map((city) => (
+                    <MenuItem key={city} value={city}>
+                        {city}
+                    </MenuItem>
+                ))}
+            </Select>
+            {helperText && <FormHelperText>{helperText}</FormHelperText>}
+        </FormControl>
     );
 }

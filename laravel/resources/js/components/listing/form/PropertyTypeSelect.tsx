@@ -1,5 +1,13 @@
 import React from "react";
-import { MenuItem, TextField} from "@mui/material";
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
+
+const selectMenuProps = {
+    PaperProps: {
+        sx: {
+            maxHeight: 450,
+        },
+    },
+};
 
 interface Props {
     value: string | undefined;
@@ -10,23 +18,25 @@ interface Props {
 
 export default function PropertyTypeSelect({ value, onChange, error, helperText }: Props) {
     return (
-        <TextField
-            select
-            label="Property Type"
-            name="property_type"
-            error={error}
-            value={value}
-            helperText={helperText}
-            fullWidth
-            onChange={(e) => onChange(e.target.value as string)}
-        >
-            <MenuItem value="">Any</MenuItem>
-            <MenuItem value="house">House</MenuItem>
-            <MenuItem value="condo">Condo</MenuItem>
-            <MenuItem value="townhouse">Townhouse</MenuItem>
-            <MenuItem value="land">Land</MenuItem>
-            <MenuItem value="multi-family">Multi-family</MenuItem>
-            <MenuItem value="farm">Farm</MenuItem>
-        </TextField>
+        <FormControl fullWidth error={error}>
+            <InputLabel id="property-type-select-label">Property Type</InputLabel>
+            <Select
+                labelId="property-type-select-label"
+                label="Property Type"
+                name="property_type"
+                value={value ?? ""}
+                onChange={(e) => onChange(e.target.value as string)}
+                MenuProps={selectMenuProps}
+            >
+                <MenuItem value="">Any</MenuItem>
+                <MenuItem value="house">House</MenuItem>
+                <MenuItem value="condo">Condo</MenuItem>
+                <MenuItem value="townhouse">Townhouse</MenuItem>
+                <MenuItem value="land">Land</MenuItem>
+                <MenuItem value="multi-family">Multi-family</MenuItem>
+                <MenuItem value="farm">Farm</MenuItem>
+            </Select>
+            {helperText && <FormHelperText>{helperText}</FormHelperText>}
+        </FormControl>
     );
 }

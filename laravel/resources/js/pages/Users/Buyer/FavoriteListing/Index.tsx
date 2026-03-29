@@ -36,7 +36,7 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
                         <Box
                             sx={{
                                 mb: 3,
-                                p: { xs: 3, md: 4 },
+                                p: theme.shape.padding,
                                 borderRadius: theme.shape.borderRadius,
                                 border: `1px solid ${theme.palette.border.main}`,
                                 background: `${theme.palette.background.white}`,

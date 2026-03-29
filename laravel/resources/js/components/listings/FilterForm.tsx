@@ -16,6 +16,14 @@ import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
 import YearBuiltField from "@/components/listing/form/YearBuiltField";
 import {formatCurrency, formatNumber} from "@/helpers/priceHelper";
 
+const selectMenuProps = {
+    PaperProps: {
+        sx: {
+            maxHeight: 450,
+        },
+    },
+};
+
 // Define SqFt options for the dropdowns
 const SQFT_OPTIONS = [
     500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500,
@@ -64,7 +72,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
 
 
     return (
-        <Box component="form" onSubmit={onApplyFilters} sx={{ mb: 6 }}>
+        <Box component="form" onSubmit={onApplyFilters}>
             <Grid container spacing={2}>
 
                 {/* Location & Property Type */}
@@ -112,6 +120,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
                                 value={form.square_feet_min || ''}
                                 onChange={(e) => updateFilter('square_feet_min', e.target.value)}
                                 label="Min SqFt"
+                                MenuProps={selectMenuProps}
                             >
                                 <MenuItem value="">No Min</MenuItem>
                                 {SQFT_OPTIONS.map((sqft) => (
@@ -128,6 +137,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
                                 value={form.square_feet_max || ''}
                                 onChange={(e) => updateFilter('square_feet_max', e.target.value)}
                                 label="Max SqFt"
+                                MenuProps={selectMenuProps}
                             >
                                 <MenuItem value="">No Max</MenuItem>
                                 {SQFT_OPTIONS.map((sqft) => (
@@ -148,6 +158,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
                             value={form.bedrooms || ''}
                             onChange={(e) => updateFilter('bedrooms', e.target.value)}
                             label="Min Beds"
+                            MenuProps={selectMenuProps}
                         >
                             <MenuItem value="">Any</MenuItem>
                             {[1, 2, 3, 4, 5].map((num) => (
@@ -165,6 +176,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
                             value={form.bathrooms || ''}
                             onChange={(e) => updateFilter('bathrooms', e.target.value)}
                             label="Min Baths"
+                            MenuProps={selectMenuProps}
                         >
                             <MenuItem value="">Any</MenuItem>
                             {[1, 2, 3, 4, 5].map((num) => (
@@ -202,6 +214,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
                             value={form.days_on_market || ''}
                             onChange={(e) => updateFilter('days_on_market', e.target.value)}
                             label="Listed Date"
+                            MenuProps={selectMenuProps}
                         >
                             <MenuItem value="">Any Time</MenuItem>
                             <MenuItem value="3">3 days ago</MenuItem>
@@ -221,6 +234,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
                                 value={form.min_property_tax || ''}
                                 onChange={(e) => updateFilter('min_property_tax', e.target.value)}
                                 label="Min Tax / Year"
+                                MenuProps={selectMenuProps}
                             >
                                 <MenuItem value="">No Min</MenuItem>
                                 {PROPERTY_TAX_OPTIONS.map((val) => (
@@ -237,6 +251,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
                                 value={form.max_property_tax || ''}
                                 onChange={(e) => updateFilter('max_property_tax', e.target.value)}
                                 label="Max Tax / Year"
+                                MenuProps={selectMenuProps}
                             >
                                 <MenuItem value="">No Max</MenuItem>
                                 {PROPERTY_TAX_OPTIONS.map((val) => (
@@ -258,6 +273,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
                                 value={form.min_maintenance_fee || ''}
                                 onChange={(e) => updateFilter('min_maintenance_fee', e.target.value)}
                                 label="Min Maint Fee"
+                                MenuProps={selectMenuProps}
                             >
                                 <MenuItem value="">No Min</MenuItem>
                                 {MAINTENANCE_FEE_OPTIONS.map((val) => (
@@ -274,6 +290,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onAp
                                 value={form.max_maintenance_fee || ''}
                                 onChange={(e) => updateFilter('max_maintenance_fee', e.target.value)}
                                 label="Max Maint Fee"
+                                MenuProps={selectMenuProps}
                             >
                                 <MenuItem value="">No Max</MenuItem>
                                 {MAINTENANCE_FEE_OPTIONS.map((val) => (
