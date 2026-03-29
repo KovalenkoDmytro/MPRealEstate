@@ -65,8 +65,7 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
         try {
             const response = await listingService.toggleFavorite(listing.id, previousState);
             if (isMounted.current && response.data) setIsFav(response.data.favorite);
-        } catch (error) {
-            console.error("Failed to toggle favorite", error);
+        } catch {
             if (isMounted.current) setIsFav(previousState);
             showNotification("Failed to update favorite.", "error");
         } finally {

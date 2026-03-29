@@ -1,4 +1,3 @@
-import React from 'react';
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { Offer, PaginatedResponse } from "@/types";
 import OffersGrid from "@/components/offers/OffersGrid/OffersGrid";

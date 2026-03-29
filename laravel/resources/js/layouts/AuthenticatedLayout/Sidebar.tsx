@@ -1,5 +1,5 @@
 import React from 'react';
-import { Drawer, Toolbar, Box, useTheme, Divider, List, Typography } from '@mui/material';
+import { Drawer, Toolbar, Box, useTheme, Divider, Typography } from '@mui/material';
 import { Link } from '@inertiajs/react';
 import ApplicationLogo from '@/components/ApplicationLogo';
 import SidebarNavLink from '@/layouts/AuthenticatedLayout/SidebarNavLink';

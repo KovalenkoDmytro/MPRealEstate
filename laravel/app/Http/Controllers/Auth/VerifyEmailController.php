@@ -8,9 +8,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
-use Illuminate\Http\RedirectResponse;
 
 class VerifyEmailController extends Controller
 {

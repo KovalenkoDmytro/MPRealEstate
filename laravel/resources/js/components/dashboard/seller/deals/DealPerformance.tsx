@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography, Grid, Stack } from '@mui/material';
 import { DealStats } from "@/types/models";
 import theme from "@/theme";
@@ -8,7 +7,6 @@ import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconClock from "@/icons/IconClock";
 import IconHandShake from "@/icons/IconHandShake";
-import IconDollar from "@/icons/IconDollar";
 import IconContainer from "@/components/common/IconContainer";
 
 interface DealPerformanceProps {

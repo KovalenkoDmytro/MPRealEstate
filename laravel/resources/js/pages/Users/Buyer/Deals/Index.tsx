@@ -1,4 +1,3 @@
-import React from 'react';
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import {PropertyDetail} from '@/types';
 import {DealsList} from '@/components/deals/DealsList';

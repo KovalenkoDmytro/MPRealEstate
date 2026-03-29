@@ -1,4 +1,4 @@
-import React, {useEffect, useRef } from 'react';
+import {useEffect, useRef } from 'react';
 import { RealEstateListing } from '@/types';
 import Button from '@/components/common/Button';
 import Badge from "@/components/common/Badge";

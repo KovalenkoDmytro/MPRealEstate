@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Offer, OfferStatus } from "@/types";
 import {Paper, Typography, Box, Stack, Avatar} from "@mui/material";
 import { format, parseISO } from 'date-fns';
@@ -74,8 +74,7 @@ export default function OfferCard({ offer, role }: OfferCardProps) {
             await offerService.updateOfferStatus(offer.id, actionType);
             showNotification(`Offer ${actionType} successfully`, "success");
             window.location.reload();
-        } catch (error) {
-            console.error(error);
+        } catch {
             showNotification("Failed to update offer status", "error");
         } finally {
             setDialogOpen(false);

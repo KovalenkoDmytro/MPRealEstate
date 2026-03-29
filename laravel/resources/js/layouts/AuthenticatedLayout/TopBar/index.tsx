@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { AppBar, Toolbar, IconButton, Box, Typography, Stack } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationBell from "@/layouts/AuthenticatedLayout/TopBar/NotificationBell";

@@ -1,4 +1,3 @@
-import React from "react";
 import {PropertyDetail, User} from "@/types";
 import {
     Paper,
@@ -6,7 +5,6 @@ import {
     Box,
     Stack,
     Divider,
-    LinearProgress,
     Avatar,
 } from "@mui/material";
 import {AssignmentOutlined} from '@mui/icons-material';

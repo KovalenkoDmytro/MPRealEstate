@@ -1,4 +1,3 @@
-import React from "react";
 import { Grid, Typography, Box, Stack, CircularProgress } from "@mui/material";
 import { PaginatedResponse, RealEstateListing } from "@/types";
 import ListingCard from "@/components/listing_new/ListingCard";

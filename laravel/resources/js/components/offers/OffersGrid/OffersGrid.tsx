@@ -1,4 +1,3 @@
-import React from "react";
 import { Offer, PaginatedResponse } from "@/types";
 import { Typography, Stack, Box, Grid } from "@mui/material";
 import { useAuth } from "@/hooks/useAuth";

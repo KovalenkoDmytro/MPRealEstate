@@ -127,8 +127,7 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
             link.click();
 
             URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error("Download failed:", error);
+        } catch {
             showNotification("Download failed. Try again.", "error");
         }
     };

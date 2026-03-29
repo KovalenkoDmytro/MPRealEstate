@@ -1,27 +1,24 @@
-import React, { useMemo, useState } from "react"
+import { Fragment, MouseEvent, useMemo, useState } from "react"
 import { usePage, router } from "@inertiajs/react"
 import { PageProps } from "@/types";
 import {
     IconButton,
     Badge,
     Menu,
-    MenuItem,
     Typography,
     Box,
     Button,
     List,
     ListItem,
-    ListItemText,
     Divider,
     Link as MuiLink
 } from "@mui/material";
 import {
-    Notifications as NotificationsIcon,
     Circle as CircleIcon
 } from "@mui/icons-material";
 import IconNotificationBell from "@/icons/IconNotificationBell";
 
-const NotificationBell: React.FC = () => {
+const NotificationBell = () => {
     const { props } = usePage<PageProps>()
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -43,7 +40,7 @@ const NotificationBell: React.FC = () => {
 
     const open = Boolean(anchorEl);
 
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    const handleClick = (event: MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -135,7 +132,7 @@ const NotificationBell: React.FC = () => {
                     )}
 
                     {items.map((n) => (
-                        <React.Fragment key={n.id}>
+                        <Fragment key={n.id}>
                             <ListItem
                                 alignItems="flex-start"
                                 sx={{
@@ -182,7 +179,7 @@ const NotificationBell: React.FC = () => {
                                 </Box>
                             </ListItem>
                             <Divider component="li" />
-                        </React.Fragment>
+                        </Fragment>
                     ))}
                 </List>
             </Menu>

@@ -1,7 +1,6 @@
 import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import type { PaginatedResponse, RealEstateListing } from "@/types";
-import React from "react";
 import Button from "@/components/common/Button";
 import SellerListingCard from "@/components/listings/seller/SellerListingCard";
 import {Stack} from "@mui/material";
@@ -12,8 +11,6 @@ type ComponentProps = {
 };
 
 export default function Index({ listings }: ComponentProps) {
-
-    console.log(listings)
     return (
         <AuthenticatedLayout
             header="My Listings"

@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\OfferService;
 use App\Services\DealService;
-use App\Models\Deal;
 use App\Models\RealEstateListing;
 use App\Services\SellerService;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 

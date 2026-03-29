@@ -1,4 +1,3 @@
-import React from "react";
 import { SearchBox } from "@mapbox/search-js-react";
 
 // Normalized address data to replace the old Google Place object

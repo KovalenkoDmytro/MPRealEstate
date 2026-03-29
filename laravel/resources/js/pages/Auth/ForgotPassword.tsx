@@ -1,4 +1,4 @@
-import React, { FormEventHandler, useEffect } from 'react';
+import { FormEventHandler } from 'react';
 import {
     Box,
     TextField,
@@ -9,7 +9,7 @@ import {
     Alert,
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import GuestLayout from '@/layouts/GuestLayout';
 import Button from "@/components/common/Button"; // Assuming you want to reuse your custom button
 import IconEnvelope from "@/icons/IconEnvelope"; // Your custom icon

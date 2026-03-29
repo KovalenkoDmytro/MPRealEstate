@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { PropertyDetail } from "@/types";
 import { DealService } from "@/services/dealService";
 

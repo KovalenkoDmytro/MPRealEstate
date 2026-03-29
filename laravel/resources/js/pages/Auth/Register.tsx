@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 import {
     Box,
     TextField,
@@ -72,7 +72,6 @@ export default function Register({ roles }: { roles: string[] }) {
                 setRedirectNotification(response.message, response.status);
                 window.location.href = route("verification.notice");
             } else {
-                console.log("Registration failed:", response);
                 showNotification(response.message, "error");
             }
         } catch (err: any) {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Offer } from '@/types/offer';
 import RecentOfferItem from "@/components/dashboard/buyer/offers/RecentOfferItem";
 import {Stack, Typography} from "@mui/material";
@@ -12,7 +11,6 @@ interface RecentOffersListProps {
 const DISPLAY_LIMIT = 3;
 
 export default function RecentOffersList({ offers }: RecentOffersListProps) {
-    // console.log(offers);
     const displayedOffers = offers.slice(0, DISPLAY_LIMIT);
     const hasMore = offers.length > DISPLAY_LIMIT;
 

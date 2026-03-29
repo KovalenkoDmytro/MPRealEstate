@@ -54,7 +54,6 @@ export default function VerifyEmail() {
                 setMessage(response.data.message || "Email sent successfully.");
             }
         } catch (err: any) {
-            console.error(err);
             if (err.response?.data?.message) {
                 setError(err.response.data.message);
             } else {

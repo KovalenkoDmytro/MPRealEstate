@@ -13,13 +13,11 @@ use App\Http\Requests\SetDepositRequest;
 use App\Http\Requests\SetPossessionDayRequest;
 use App\Models\Deal;
 use App\Services\DealService;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DealController extends Controller
 {

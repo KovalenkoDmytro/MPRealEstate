@@ -1,8 +1,6 @@
-import React, { useState } from "react";
 import { Head, Link } from "@inertiajs/react";
 import { RealEstateListing, Offer } from "@/types";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import { offerService } from "@/services/offerService";
 import {
     Box,
     Typography,
@@ -15,8 +13,6 @@ import {
 } from "@mui/material";
 import {ImageGallery} from "@/components/listing/ImageGallery";
 import {ListingDetails} from "@/components/listing/ListingDetails";
-import {ReceivedOffers} from "@/components/listing/ReceivedOffers";
-import {useNotification} from "@/context/NotificationContext";
 import {FavoriteBorder, PersonOutline, Visibility } from "@mui/icons-material";
 
 interface PageProps {
@@ -27,8 +23,6 @@ interface PageProps {
 }
 
 export default function ListingShowPage({ listing }: PageProps) {
-    const [offers, setOffers] = useState<Offer[]>(listing.offers || []);
-    const { showNotification } = useNotification();
     // const handleUpdateStatus = async (offerId: number, status: "accepted" | "rejected") => {
     //
     //         const response = await offerService.updateOfferStatus(offerId, status);

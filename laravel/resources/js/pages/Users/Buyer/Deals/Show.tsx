@@ -2,7 +2,6 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import {PropertyDetail} from "@/types";
 import DealHeader from "@/components/deal/DealHeader";
-import PropertyDetails from "@/components/deal/PropertyDetails";
 import DealPersonInfo from "@/components/deal/DealPersonInfo";
 import DepositSection from "@/components/deal/DepositSection";
 import ConditionDayForm from "@/components/deal/ConditionDayForm";
@@ -10,7 +9,6 @@ import PossessionDayForm from "@/components/deal/PossessionDayForm";
 import LawyerInvite from "@/components/deal/LawyerInvite";
 import FileUploadSection from "@/components/deal/FileUploadSection";
 import BreakDealSection from "@/components/deal/BreakDealSection";
-import React from "react";
 import DealPropertyDetails from "@/components/deal/DealPropertyDetails";
 
 export default function DealShowPage({deal}: { deal: PropertyDetail }) {

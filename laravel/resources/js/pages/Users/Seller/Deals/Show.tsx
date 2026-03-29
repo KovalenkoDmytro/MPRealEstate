@@ -10,7 +10,6 @@ import BreakDealSection from "@/components/deal/BreakDealSection";
 import DepositActions from "@/components/deal/seller/DepositActions";
 import ConditionDayActions from "@/components/deal/seller/ConditionDayActions";
 import PossessionDayActions from "@/components/deal/seller/PossessionDayActions";
-import React from "react";
 
 export default function SellerDealShowPage({ deal }: { deal: PropertyDetail;}) {
 

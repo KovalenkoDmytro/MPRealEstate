@@ -1,6 +1,6 @@
 import {InertiaLinkProps, Link} from '@inertiajs/react';
 import {ListItemButton, Box} from '@mui/material';
-import React, {ReactNode} from 'react';
+import {ReactNode} from 'react';
 import theme from "@/theme";
 
 interface NavLinkProps extends InertiaLinkProps {

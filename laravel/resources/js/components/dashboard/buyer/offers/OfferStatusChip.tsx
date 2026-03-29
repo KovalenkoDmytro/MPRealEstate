@@ -1,4 +1,3 @@
-import React from 'react';
 import Badge from '@/components/common/Badge';
 import { OfferStatus } from '@/types/offer';
 

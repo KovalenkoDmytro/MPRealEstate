@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography, Grid, Stack } from '@mui/material';
 import { OfferStats } from "@/types/models";
 import theme from "@/theme";
@@ -8,7 +7,6 @@ import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconClock from "@/icons/IconClock";
 import IconInbox from "@/icons/IconInbox";
-import IconTrendingUpBig from "@/icons/IconTrendingUpBig";
 import IconContainer from "@/components/common/IconContainer";
 
 interface OfferPerformanceProps {

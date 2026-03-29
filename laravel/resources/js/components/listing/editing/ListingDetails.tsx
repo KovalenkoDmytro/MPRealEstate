@@ -1,4 +1,3 @@
-import React from "react";
 import {
     Grid,
     Typography,
@@ -16,7 +15,6 @@ import { ListingFormFieldValue, ListingFormValues, ValidationErrors } from "@/ty
 import AddressAutocomplete from "@/components/listing/form/AddressAutocomplete";
 import IconHome from "@/icons/IconHome";
 import IconContainer from "@/components/common/IconContainer";
-import IconAppointments from "@/icons/IconAppointments";
 import theme from "@/theme";
 
 interface ListingDetailsFormProps {

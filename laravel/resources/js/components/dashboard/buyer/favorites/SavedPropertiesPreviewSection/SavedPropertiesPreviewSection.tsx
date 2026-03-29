@@ -1,4 +1,3 @@
-import React from 'react';
 import { Grid, Typography, Paper } from '@mui/material';
 import { FavoriteListings } from "@/types/favoriteListings";
 import SavedPropertyMiniCard

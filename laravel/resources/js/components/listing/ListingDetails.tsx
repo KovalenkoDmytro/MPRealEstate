@@ -1,4 +1,3 @@
-import React from "react";
 import { RealEstateListing } from "@/types";
 import {
     Box,
@@ -20,7 +19,6 @@ import IconCalendarToday from "@/icons/IconCalendarToday";
 import IconBasement from "@/icons/IconBasement";
 import IconLotSpace from "@/icons/IconLotSpace";
 import IconKeywords from "@/icons/IconKeywords";
-import theme from "@/theme";
 
 type ListingDetailsProps = {
     listing: RealEstateListing;

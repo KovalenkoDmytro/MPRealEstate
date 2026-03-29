@@ -1,4 +1,3 @@
-import React from 'react';
 import { Grid, Typography, Paper } from '@mui/material';
 import type {RealEstateListing} from "@/types";
 import RecentlyViewedMiniCard from "@/components/dashboard/buyer/recentlyViewed/RecentlyViewedMiniCard";

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Stack, Box, Typography } from '@mui/material';
 import theme from "@/theme";
 import Button from "@/components/common/Button";

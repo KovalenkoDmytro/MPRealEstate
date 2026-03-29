@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
-import React, { useState } from "react";
+import { Link } from "@inertiajs/react";
+import { useState } from "react";
 import { EditableListingFormValues, GalleryImagePreview, ListingFormFieldValue, PropertyStatus, RealEstateListing } from "@/types";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
@@ -66,8 +66,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
             } else {
                 setErrors(result.errors);
             }
-        } catch (error) {
-            console.error("Submission failed:", error);
+        } catch {
         } finally {
             setProcessing(false);
         }

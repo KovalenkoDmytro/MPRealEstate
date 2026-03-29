@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography, Chip, Alert, AlertTitle } from '@mui/material';
 import { Offer } from '@/types';
 import theme from "@/theme";

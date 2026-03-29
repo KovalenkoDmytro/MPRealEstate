@@ -24,7 +24,6 @@ type PageProps = {
     listings_recently_viewed : RealEstateListing[];
 };
 export default function Dashboard({ offers_stats, appointments_stats, favorite_listings, offers, listings_recently_viewed }: PageProps) {
-    console.log(offers);
     return (
         <AuthenticatedLayout
             header="Dashboard"

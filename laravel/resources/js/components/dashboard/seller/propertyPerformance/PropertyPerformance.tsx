@@ -1,4 +1,3 @@
-import React from 'react';
 import {Box, Typography, Grid, Stack} from '@mui/material';
 import { PerformanceStats } from "@/types/models";
 import theme from "@/theme";

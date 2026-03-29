@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SubmitOfferRequest;
 use App\Http\Requests\UpdateOfferStatusRequest;
 use App\Models\Offer;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
 use App\Services\OfferService;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;

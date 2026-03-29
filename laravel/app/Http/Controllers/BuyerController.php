@@ -5,11 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\RealEstateListing;
 use App\Services\BuyerService;
 use App\Services\ListingViewService;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
-use App\Models\Deal;
-use App\Http\Requests\ListingFilterRequest;
 
 class BuyerController extends Controller
 {

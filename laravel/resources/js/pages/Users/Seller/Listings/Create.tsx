@@ -1,13 +1,12 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { listingService } from "@/services/listingService";
 import { GalleryImagePreview, ListingFormFieldValue, ListingFormValues, PropertyStatus, ValidationErrors } from "@/types";
 import { imageService } from "@/services/imageService";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import {useNotification} from "@/context/NotificationContext";
-import {Grid, Stack} from "@mui/material";
+import {Stack} from "@mui/material";
 import Button from "@/components/common/Button";
 
 export default function CreateListing() {

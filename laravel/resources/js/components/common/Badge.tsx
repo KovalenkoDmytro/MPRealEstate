@@ -1,5 +1,3 @@
-import React from 'react';
-
 export type BadgeProps = {
     version?: 'primary' | 'notification' | 'accent' | 'neutral' | 'success' | 'warning' | 'error';
     text: string;

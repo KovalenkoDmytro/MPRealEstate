@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
 import { PageProps, PaginatedResponse, type RealEstateListing } from '@/types';
-import React, { useState } from "react";
+import { useState } from "react";
 import ListingCard from "@/components/listing_new/ListingCard";
 import Button from "@/components/common/Button";
 import theme from "@/theme";

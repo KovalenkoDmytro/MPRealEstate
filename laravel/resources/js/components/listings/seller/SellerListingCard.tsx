@@ -57,8 +57,6 @@ export default function SellerListingCard({ listing }: Props) {
         // Here you would typically make an API call to deactivate the listing
         // For example: await listingsService.deactivate(listing.id);
 
-        console.log(`Deactivating listing ${listing.id}`);
-
         // Mock success for now
         showNotification("Listing deactivated successfully", "success");
         setDeactivateDialogOpen(false);

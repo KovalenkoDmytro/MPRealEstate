@@ -1,4 +1,3 @@
-import React from "react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import ApointmentsOverviewCards from "@/components/appointment/ApointmentsOverviewCards";
 import AppointmentCalendar from "@/components/appointment/AppointmentCalendar";

@@ -52,9 +52,7 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
                     setIsFav(response.favorite);
                 }
             }
-        } catch (error) {
-            console.error("Failed to toggle favorite", error);
-
+        } catch {
             if (isMounted.current) {
                 setIsFav(previousState);
             }

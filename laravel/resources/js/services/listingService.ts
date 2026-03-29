@@ -35,7 +35,6 @@ export const listingService = {
             if (err.response?.status === 422) {
                 return { success: false, errors: err.response.data.errors ?? {}, message: err.response.data.message ?? "" };
             }
-            console.error("Unexpected error", err);
             throw new Error(err.message || "Unexpected error occurred");
         }
     },
@@ -53,7 +52,6 @@ export const listingService = {
             if (err.response?.status === 422) {
                 return { success: false, errors: err.response.data.errors ?? {}, message: err.response.data.message ?? "" };
             }
-            console.error("Unexpected error", err);
             throw new Error(err.message || "Unexpected error occurred");
         }
     },
@@ -62,8 +60,7 @@ export const listingService = {
         try {
             const response = await api.delete(route("seller.listings.deactivate", listingId));
             return response.data;
-        } catch (err: any) {
-            console.error("Unexpected error", err);
+        } catch {
         }
     }
 };

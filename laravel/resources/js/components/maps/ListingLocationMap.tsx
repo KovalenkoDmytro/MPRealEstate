@@ -220,9 +220,7 @@ export const ListingLocationMap: React.FC<ListingLocationMap> = ({ listing }) =>
     // 4. Handle Fullscreen
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
-            wrapperRef.current?.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable fullscreen: ${err.message}`);
-            });
+            wrapperRef.current?.requestFullscreen().catch(() => undefined);
         } else {
             document.exitFullscreen();
         }

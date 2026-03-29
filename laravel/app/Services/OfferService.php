@@ -14,7 +14,6 @@ use Illuminate\Http\JsonResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Helpers\Responses\ErrorResponse;
-use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class OfferService

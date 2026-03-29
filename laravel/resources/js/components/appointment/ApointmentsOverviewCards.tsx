@@ -5,7 +5,6 @@ import IconClock from "@/icons/IconClock";
 import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconPending from "@/icons/IconPending";
-import React from "react";
 
 
 type BuyerAppointmentsOverviewCardsType = {

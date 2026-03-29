@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Deal, PropertyDetail } from "@/types";
 // If InfoBlock is default export, change this import accordingly
 import { InfoBlock } from "@/components/InfoBlock";

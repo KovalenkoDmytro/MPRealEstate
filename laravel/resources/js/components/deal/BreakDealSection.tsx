@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
 import { TextField, Button, Box, Stack, Alert, Typography } from "@mui/material";

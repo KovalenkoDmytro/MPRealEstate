@@ -1,5 +1,5 @@
-import { router, Head } from "@inertiajs/react";
-import React, {useCallback, useMemo, useState} from "react";
+import { router } from "@inertiajs/react";
+import {useCallback, useMemo, useState} from "react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import type { PaginatedResponse, RealEstateListing } from "@/types";
 import { FilterForm } from "@/components/listings/FilterForm";
@@ -75,8 +75,6 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
         days_on_market: filters.days_on_market || "",
         keywords: filters.keywords || "",
     });
-
-    console.log(viewMode)
 
     const updateFilter = (key: string, value: string | number | boolean) => {
         setForm((prev) => ({ ...prev, [key]: value }));

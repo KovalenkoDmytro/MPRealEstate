@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react';
-import {Box, Grid, Typography, ThemeProvider, Stack} from '@mui/material';
-import { appointmentTheme } from './theme';
+import { useMemo } from 'react';
+import {Box, Grid, Typography, Stack} from '@mui/material';
 import DailyActivityChart from './DailyActivityChart';
 import { SellerStats } from "@/types/Appointments/sellerAppointmentsStat";
 import StatCard from "@/components/common/StatCard";

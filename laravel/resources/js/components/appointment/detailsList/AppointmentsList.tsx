@@ -84,8 +84,7 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             showNotification(response.message || "Appointment cancelled", "success");
             setCancelDialogOpen(false);
             window.location.reload();
-        } catch (err) {
-            console.error(err);
+        } catch {
             showNotification("Failed to cancel appointment", "error");
             setCancelDialogOpen(false);
         }
@@ -110,8 +109,7 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             showNotification(response.message || "Appointment approved", "success");
             setApproveDialogOpen(false);
             window.location.reload();
-        } catch (err) {
-            console.error(err);
+        } catch {
             showNotification("Failed to approve appointment", "error");
             setApproveDialogOpen(false);
         }
@@ -136,8 +134,7 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             showNotification(response.message || "Appointment rejected", "success");
             setRejectDialogOpen(false);
             window.location.reload();
-        } catch (err) {
-            console.error(err);
+        } catch {
             showNotification("Failed to reject appointment", "error");
             setRejectDialogOpen(false);
         }
