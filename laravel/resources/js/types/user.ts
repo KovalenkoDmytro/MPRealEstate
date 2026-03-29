@@ -1,4 +1,4 @@
-import { BaseEntity} from '@/types'
+import type { BaseEntity } from './baseEntity';
 
 /**
  * Represents the role of a user in the system

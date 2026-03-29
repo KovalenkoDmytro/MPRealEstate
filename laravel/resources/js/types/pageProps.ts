@@ -1,6 +1,6 @@
-import { User } from "@/types"
+import type { User } from "./user";
 
-interface NotificationItem {
+export interface NotificationItem {
     id: string
     title: string
     body: string
@@ -8,6 +8,15 @@ interface NotificationItem {
     read_at?: string | null
     created_at: string
 }
+
+export interface FlashMessages {
+    success: string | null
+    error: string | null
+    info: string | null
+    warning: string | null
+}
+
+export type PageErrorBag = Record<string, unknown>;
 
 export interface PageProps {
     [key: string]: unknown
@@ -17,13 +26,8 @@ export interface PageProps {
     }
     mustVerifyEmail? : boolean,
     status? : string|null,
-    errors: {}
-    flash: {
-        success: string | null
-        error: string | null
-        info: string | null
-        warning: string | null
-    }
+    errors: PageErrorBag
+    flash: FlashMessages
     notifications: {
         items: NotificationItem[]
         unread_count: number

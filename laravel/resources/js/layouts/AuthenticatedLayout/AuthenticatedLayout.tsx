@@ -1,4 +1,4 @@
-import { useState, PropsWithChildren } from 'react';
+import { useState, PropsWithChildren, ReactNode } from 'react';
 import { usePage } from '@inertiajs/react';
 import { Box, CssBaseline, Container } from '@mui/material';
 import Sidebar from "@/layouts/AuthenticatedLayout/Sidebar";
@@ -8,8 +8,8 @@ import TopBar from "@/layouts/AuthenticatedLayout/TopBar";
 const DRAWER_WIDTH = 280;
 
 type AuthenticatedLayoutProps = PropsWithChildren<{
-    header: string;
-    subHeader? : string;
+    header: ReactNode;
+    subHeader? : ReactNode;
 }>;
 
 export default function AuthenticatedLayout({ header, subHeader ,children }: AuthenticatedLayoutProps) {

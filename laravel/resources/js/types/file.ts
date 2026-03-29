@@ -1,4 +1,4 @@
-import {BaseEntity} from "@/types/baseEntity";
+import type { BaseEntity } from "./baseEntity";
 
 /**
  * Represents a file uploaded to the system
@@ -17,8 +17,4 @@ export interface DealFile extends BaseEntity {
     author_name: string;
     /** Email of the user who uploaded the file */
     author_email: string;
-
-    created_at: string;
-    updated_at: string;
 }
-

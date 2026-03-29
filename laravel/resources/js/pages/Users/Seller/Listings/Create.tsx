@@ -2,52 +2,16 @@ import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayo
 import { Head } from "@inertiajs/react";
 import React, { useState } from "react";
 import { listingService } from "@/services/listingService";
-import { PropertyStatus } from "@/types";
+import { GalleryImagePreview, ListingFormFieldValue, ListingFormValues, PropertyStatus, ValidationErrors } from "@/types";
 import { imageService } from "@/services/imageService";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
-import {ValidationErrors} from "@/types/validationErrors";
 import {useNotification} from "@/context/NotificationContext";
 import {Grid, Stack} from "@mui/material";
 import Button from "@/components/common/Button";
 
-type GalleryImagePreview = {
-    file?: File;
-    url: string;
-};
-
-type ListingFormData = {
-    title: string;
-    description: string;
-    price: number | null;
-    street_number: string;
-    street_name: string;
-    city: string;
-    province: string;
-    postal_code: string;
-    country: string;
-    latitude: number | null;
-    longitude: number | null;
-    bedrooms: number | null;
-    bathrooms: number | null;
-    square_feet: number | null;
-    lot_size: number | null;
-    property_type: string;
-    year_built: number | null;
-    has_garage: boolean;
-    garage_spaces: number | null;
-    has_basement: boolean;
-    hoa_fees: number | null;
-    property_taxes: number | null;
-    status: PropertyStatus;
-    price_reduced: boolean;
-    keywords: string[];
-    main_image: File | null;
-    gallery_images: File[];
-};
-
 export default function CreateListing() {
-    const [data, setData] = useState<ListingFormData>({
+    const [data, setData] = useState<ListingFormValues>({
         title: "",
         description: "",
         price: null,
@@ -86,7 +50,7 @@ export default function CreateListing() {
     const {showNotification, setRedirectNotification} = useNotification();
 
     /** Handle form inputs */
-    const handleChange = (name: string, value: string[] | string | number | boolean) => {
+    const handleChange = (name: string, value: ListingFormFieldValue) => {
         setData((prev) => ({...prev, [name]: value}));
     };
 
@@ -143,7 +107,7 @@ export default function CreateListing() {
     };
 
     /** Build FormData for submission */
-    const buildFormData = (data: ListingFormData): FormData => {
+    const buildFormData = (data: ListingFormValues): FormData => {
         const formData = new FormData();
 
         // Gallery images

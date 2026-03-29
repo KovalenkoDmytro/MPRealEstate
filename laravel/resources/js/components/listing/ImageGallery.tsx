@@ -14,7 +14,7 @@ import {formatCurrency} from "@/helpers/priceHelper";
 interface ImageGalleryProps {
     mainImage: { image_path: string } | null;
     images: Array<{ id: number; image_path: string }>;
-    price: string | number;
+    price?: string | number;
 }
 
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, price }) => {

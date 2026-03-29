@@ -10,34 +10,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import theme from "@/theme";
 import Button from "@/components/common/Button";
 import IconUpload from "@/icons/IconUpload";
+import { ListingImageHandlers, ListingImagesState } from "@/types";
 
-interface GalleryImagePreview {
-    id?: number;
-    file?: File;
-    url: string;
-}
-
-interface ImagesState {
-    previewMainImage: string | null;
-    previewGalleryImages: GalleryImagePreview[];
-    totalGalleryImages: number;
-}
-
-interface ImagesHandlers {
-    handleMainImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    removeMainImage: () => void;
-    handleGalleryImagesChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    removeGalleryImage: (index: number) => void;
-}
-
-interface Props {
-    images: ImagesState;
-    handlers: ImagesHandlers;
+interface ListingImagesSectionProps {
+    images: ListingImagesState;
+    handlers: ListingImageHandlers;
     disableGalleryUpload?: boolean;
     errors?: string;
 }
 
-export default function ListingImagesSection({images, handlers, disableGalleryUpload, errors}: Props) {
+export default function ListingImagesSection({images, handlers, disableGalleryUpload, errors}: ListingImagesSectionProps) {
     const {previewMainImage, previewGalleryImages, totalGalleryImages} = images;
     const {handleMainImageChange, handleGalleryImagesChange, removeGalleryImage,} = handlers;
 

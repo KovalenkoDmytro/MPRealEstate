@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Box, TextField, Chip } from "@mui/material";
 
-interface Props {
+interface KeywordsInputProps {
     value: string[];
     onChange: (keywords: string[]) => void;
 }
 
-export default function KeywordsInput({value, onChange}: Props) {
+export default function KeywordsInput({value, onChange}: KeywordsInputProps) {
     const [chips, setChips] = useState<string[]>(value || []);
     const [inputValue, setInputValue] = useState("");
 

@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { AppBar, Toolbar, IconButton, Box, Typography, Stack } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationBell from "@/layouts/AuthenticatedLayout/TopBar/NotificationBell";
 import UserMenu from './UserMenu';
 import theme from "@/theme";
+import type { User } from "@/types";
 
 interface TopBarProps {
     drawerWidth: number;
     handleDrawerToggle: () => void;
-    header: string;
-    subHeader?: string;
-    user: any;
+    header: ReactNode;
+    subHeader?: ReactNode;
+    user: User;
 }
 
 export default function TopBar({ drawerWidth, handleDrawerToggle, header, subHeader, user }: TopBarProps) {

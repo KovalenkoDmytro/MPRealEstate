@@ -1,7 +1,7 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { Head, Link } from "@inertiajs/react";
 import React, { useState } from "react";
-import { RealEstateListing, PropertyStatus } from "@/types";
+import { EditableListingFormValues, GalleryImagePreview, ListingFormFieldValue, PropertyStatus, RealEstateListing } from "@/types";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import { listingService } from "@/services/listingService";
@@ -9,46 +9,8 @@ import { imageService } from "@/services/imageService";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import {useNotification} from "@/context/NotificationContext";
 
-type GalleryImagePreview = {
-    id?: number;
-    file?: File;
-    url: string;
-};
-
-type ListingFormData = {
-    title: string;
-    description: string;
-    price: number|null;
-    bedrooms: number;
-    bathrooms: number;
-    square_feet: number|null;
-    lot_size: number|null;
-    property_type: string;
-    year_built: number;
-    has_garage: boolean;
-    garage_spaces: number|null;
-    has_basement: boolean;
-    hoa_fees: number|null;
-    property_taxes: number|null;
-    status: PropertyStatus;
-    price_reduced: boolean;
-    keywords: string[];
-    street_number: string;
-    street_name: string;
-    city: string;
-    province: string;
-    postal_code: string;
-    country: string;
-
-    // Upload-specific fields
-    main_image: File | null;
-    gallery_images: File[];
-    remove_images: number[];
-};
-
 export default function EditListing({ listing }: { listing: RealEstateListing }) {
-    console.log("Listing data:", listing);
-    const [data, setData] = useState<ListingFormData>({
+    const [data, setData] = useState<EditableListingFormValues>({
         title: listing.title || "",
         description: listing.description || "",
         price: listing.price || null,
@@ -72,11 +34,13 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         province: listing.province || "",
         postal_code: listing.postal_code || "",
         country: listing.country || "",
+        latitude: listing.latitude || null,
+        longitude: listing.longitude || null,
         main_image: null,
         gallery_images: [],
         remove_images: [],
     });
-    const [previewMainImage, setPreviewMainImage] = useState<string | null>(listing.main_image.image_path);
+    const [previewMainImage, setPreviewMainImage] = useState<string | null>(listing.main_image?.image_path ?? null);
     const initialGalleryImages: GalleryImagePreview[] =
         listing.images?.filter((img) => !img.is_main).map((img) => ({ id: img.id, url: img.image_path })) || [];
     const [previewGalleryImages, setPreviewGalleryImages] = useState<GalleryImagePreview[]>(initialGalleryImages);
@@ -87,7 +51,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
     const { showNotification, setRedirectNotification } = useNotification();
 
 
-    const handleChange = (name: string, value: string[] | string | number | boolean) => {
+    const handleChange = (name: string, value: ListingFormFieldValue) => {
         setData((prev) => ({ ...prev, [name]: value }));
     };
 
@@ -152,7 +116,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         setPreviewGalleryImages(updatedPreviews);
         setData((prev) => ({ ...prev, remove_images: updatedRemoveIds }));
     };
-    const buildFormData = (data: ListingFormData, removeMainImageFlag: boolean): FormData => {
+    const buildFormData = (data: EditableListingFormValues, removeMainImageFlag: boolean): FormData => {
         const formData = new FormData();
 
         // Gallery images

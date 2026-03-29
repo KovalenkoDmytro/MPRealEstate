@@ -1,4 +1,7 @@
-import {User, BaseEntity, RealEstateListing, DealFile} from '@/types';
+import type { BaseEntity } from './baseEntity';
+import type { DealFile } from './file';
+import type { RealEstateListing } from './realEstateListing';
+import type { User } from './user';
 /**
  * Represents a real estate deal between buyers and sellers
  */
@@ -9,6 +12,8 @@ import {User, BaseEntity, RealEstateListing, DealFile} from '@/types';
 export enum BreakStatus {
     /** Break is awaiting response */
     Pending = 'pending',
+    /** Break request was rejected */
+    Rejected = 'rejected',
 }
 
 export interface Deal extends BaseEntity {

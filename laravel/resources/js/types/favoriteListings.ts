@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from "@/types/pagination";
-import type { RealEstateListing } from "@/types/realEstateListing";
+import type { PaginatedResponse } from "./pagination";
+import type { RealEstateListing } from "./realEstateListing";
 
 export type FavoriteListings = PaginatedResponse<RealEstateListing>;

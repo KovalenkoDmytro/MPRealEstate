@@ -15,12 +15,12 @@ export interface MapboxAddressData {
     rawFeature: any;
 }
 
-interface Props {
+interface AddressAutocompleteProps {
     value?: string;
     onSelect: (place: MapboxAddressData) => void;
 }
 
-export default function AddressAutocomplete({ value, onSelect }: Props) {
+export default function AddressAutocomplete({ value, onSelect }: AddressAutocompleteProps) {
 
     const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || "YOUR_MAPBOX_ACCESS_TOKEN";
 

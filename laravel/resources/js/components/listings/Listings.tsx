@@ -9,14 +9,14 @@ import AppPagination from "@/components/common/AppPagination";
 import IconContainer from "@/components/common/IconContainer";
 import IconHome from "@/icons/IconHome";
 
-type ComponentProps = {
+type ListingsProps = {
     listings: PaginatedResponse<RealEstateListing>;
     favoriteListings: number[];
     viewMode: 'grid' | 'list' | 'map';
     isLoading?: boolean;
 };
 
-export default function Listings({ listings, favoriteListings, viewMode, isLoading = false }: ComponentProps) {
+export default function Listings({ listings, favoriteListings, viewMode, isLoading = false }: ListingsProps) {
     if (!listings.data || listings.data.length === 0) {
         return (
             <Box sx={{ mt: 4, position: "relative" }}>

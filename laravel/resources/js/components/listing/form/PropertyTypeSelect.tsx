@@ -9,14 +9,14 @@ const selectMenuProps = {
     },
 };
 
-interface Props {
+interface PropertyTypeSelectProps {
     value: string | undefined;
     onChange: (value: string) => void;
     error?: boolean;
     helperText? : string;
 }
 
-export default function PropertyTypeSelect({ value, onChange, error, helperText }: Props) {
+export default function PropertyTypeSelect({ value, onChange, error, helperText }: PropertyTypeSelectProps) {
     return (
         <FormControl fullWidth error={error}>
             <InputLabel id="property-type-select-label">Property Type</InputLabel>

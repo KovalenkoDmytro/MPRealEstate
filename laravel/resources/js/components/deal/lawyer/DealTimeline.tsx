@@ -8,14 +8,14 @@ import HomeIcon from "@mui/icons-material/Home";
 import { Deal } from "@/types";
 import { format } from "date-fns";
 
-type ComponentProps = {
+type DealTimelineItemProps = {
     label: string;
     timestamp: string;
     color: string;
     Icon: React.ElementType;
 }
 
-function TimelineItem({label, timestamp, color, Icon,}: ComponentProps ) {
+function TimelineItem({label, timestamp, color, Icon,}: DealTimelineItemProps ) {
     return (
         <Box sx={{ display: "flex", position: "relative" }}>
             {/* Icon Dot */}

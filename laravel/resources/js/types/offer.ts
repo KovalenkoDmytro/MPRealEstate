@@ -1,4 +1,6 @@
-import {User, RealEstateListing, BaseEntity} from '@/types'
+import type { BaseEntity } from './baseEntity';
+import type { RealEstateListing } from './realEstateListing';
+import type { User } from './user';
 
 /**
  * Represents the status of an offer on a real estate listing

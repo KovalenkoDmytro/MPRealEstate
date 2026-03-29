@@ -12,22 +12,21 @@ import YearBuiltField from "@/components/listing/form/YearBuiltField";
 import sanitizeField from "@/helpers/validationFieldsHelper";
 import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
 import KeywordsInput from "@/components/listing/form/KeywordsInput";
-import { ValidationErrors } from "@/types/validationErrors";
+import { ListingFormFieldValue, ListingFormValues, ValidationErrors } from "@/types";
 import AddressAutocomplete from "@/components/listing/form/AddressAutocomplete";
 import IconHome from "@/icons/IconHome";
 import IconContainer from "@/components/common/IconContainer";
 import IconAppointments from "@/icons/IconAppointments";
 import theme from "@/theme";
 
-interface Props {
-    data: any;
+interface ListingDetailsFormProps {
+    data: ListingFormValues;
     errors: ValidationErrors;
-    handleChange: (name: string, value: any) => void;
+    handleChange: (name: string, value: ListingFormFieldValue) => void;
 }
 
-export default function ListingDetails({ data, handleChange, errors }: Props) {
-    console.log(data)
-    const processChange = (name: string, value: any) => {
+export default function ListingDetails({ data, handleChange, errors }: ListingDetailsFormProps) {
+    const processChange = (name: string, value: ListingFormFieldValue) => {
         let localValue = value;
 
         if (typeof localValue === "string") {
@@ -37,13 +36,13 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
         handleChange(name, localValue);
     };
 
-    const getFullAddress = (data: any) => {
+    const getFullAddress = (listing: ListingFormValues) => {
         const parts = [
-            data.street_number && data.street_name ? `${data.street_number} ${data.street_name}` : null,
-            data.city,
-            data.province,
-            data.postal_code,
-            data.country
+            listing.street_number && listing.street_name ? `${listing.street_number} ${listing.street_name}` : null,
+            listing.city,
+            listing.province,
+            listing.postal_code,
+            listing.country
         ].filter(Boolean);
 
         return parts.join(", ");
@@ -86,15 +85,15 @@ export default function ListingDetails({ data, handleChange, errors }: Props) {
                         Address
                     </Typography>
 
-                    <AddressAutocomplete
-                        value={getFullAddress(data)}
-                        onSelect={(place) => {
-                            handleChange("street_number", place.streetNumber);
-                            handleChange("street_name", place.streetName);
-                            handleChange("city", place.city);
-                            handleChange("province", place.province);
-                            handleChange("postal_code", place.postalCode);
-                            handleChange("country", place.country);
+                        <AddressAutocomplete
+                            value={getFullAddress(data)}
+                            onSelect={(place) => {
+                            handleChange("street_number", place.streetNumber ?? "");
+                            handleChange("street_name", place.streetName ?? "");
+                            handleChange("city", place.city ?? "");
+                            handleChange("province", place.province ?? "");
+                            handleChange("postal_code", place.postalCode ?? "");
+                            handleChange("country", place.country ?? "");
                             handleChange("latitude", place.latitude);
                             handleChange("longitude", place.longitude);
                         }}

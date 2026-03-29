@@ -1,7 +1,6 @@
-import {Appointment} from "@/types/realEstateListing";
+import type { Appointment } from "./appointment";
 
-
-export type BuyerAppointmentsStat = {
+export interface BuyerAppointmentsStat {
     today_appointments: Appointment[]
     upcoming_appointments: Appointment[]
     canceled_appointments: Appointment[]
@@ -15,5 +14,4 @@ export type BuyerAppointmentsStat = {
 export interface BuyerAppointmentsPage extends BuyerAppointmentsStat {
     all_appointments: Appointment[];
 }
-
 

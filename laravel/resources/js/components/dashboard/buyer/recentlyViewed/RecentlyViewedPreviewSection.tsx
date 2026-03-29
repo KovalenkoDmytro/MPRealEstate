@@ -4,12 +4,12 @@ import type {RealEstateListing} from "@/types";
 import RecentlyViewedMiniCard from "@/components/dashboard/buyer/recentlyViewed/RecentlyViewedMiniCard";
 import theme from "@/theme";
 
-type ComponentProps = {
+type RecentlyViewedPreviewSectionProps = {
     recentlyViewedListings: RealEstateListing[]
     itemsToDisplay: number,
 }
 
-export function RecentlyViewedPreviewSection({recentlyViewedListings, itemsToDisplay}: ComponentProps) {
+export function RecentlyViewedPreviewSection({recentlyViewedListings, itemsToDisplay}: RecentlyViewedPreviewSectionProps) {
 
     return (
         <Paper
