@@ -1,8 +1,14 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { PageProps, type RealEstateListing } from '@/types';
 import React, { useState } from "react";
 import ListingCard from "@/components/listing_new/ListingCard";
+import Button from "@/components/common/Button";
+import theme from "@/theme";
+import { Box, Typography } from "@mui/material";
+import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
+import IconContainer from "@/components/common/IconContainer";
+import IconFavorite from "@/icons/IconFavorite";
 
 // ----------------------------------------------------------------------
 //  Main Page Component
@@ -33,15 +39,67 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
 
                     {/* Empty State */}
                     {localListings.length === 0 ? (
-                        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-center text-gray-500">
-                            <p className="text-lg mb-4">You haven't added any favorites yet.</p>
-                            <Link
-                                href={route('buyer.listings.favorites.index')}
-                                className="text-indigo-600 hover:underline"
-                            >
-                                Browse Listings
-                            </Link>
-                        </div>
+                        <Box
+                            sx={{
+                                mb: 3,
+                                p: { xs: 3, md: 4 },
+                                borderRadius: theme.shape.borderRadius,
+                                border: `1px solid ${theme.palette.border.main}`,
+                                background: `${theme.palette.background.white}`,
+                                display: 'flex',
+                                flexDirection: { xs: 'column', md: 'row' },
+                                alignItems: { xs: 'flex-start', md: 'center' },
+                                justifyContent: 'space-between',
+                                gap: 3,
+                                overflow: 'hidden',
+                                position: 'relative',
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2.5, position: 'relative', zIndex: 1 }}>
+                                <IconContainer bgColor={`${theme.palette.primary.main}12`}>
+                                    <IconFavorite color={`${theme.palette.primary.main}`}/>
+                                </IconContainer>
+
+                                <Box>
+                                    <Typography
+                                        variant="overline"
+                                        sx={{
+                                            letterSpacing: '0.14em',
+                                            color: theme.palette.primary.main,
+                                            fontWeight: 700,
+                                            display: 'block',
+                                            mb: 0.75,
+                                        }}
+                                    >
+                                        Saved Homes
+                                    </Typography>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{
+                                            color: theme.palette.text.primary,
+                                            fontWeight: 700,
+                                            mb: 1,
+                                        }}
+                                    >
+                                        You haven&apos;t added any favorites yet.
+                                    </Typography>
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            color: theme.palette.text.secondary,
+                                            maxWidth: 520,
+                                            lineHeight: 1.7,
+                                        }}
+                                    >
+                                        Start exploring properties and save the homes you want to revisit, compare, and follow more closely.
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            <Box sx={{ position: 'relative', zIndex: 1 }}>
+                                <Button text={"Browse Listings"} version="primary" link={true} href={route('listings.index')} />
+                            </Box>
+                        </Box>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {localListings.map((listing) => (
