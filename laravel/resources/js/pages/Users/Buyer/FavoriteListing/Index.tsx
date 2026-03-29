@@ -1,12 +1,11 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
-import { Link } from '@inertiajs/react';
 import { PageProps, type RealEstateListing } from '@/types';
 import React, { useState } from "react";
 import ListingCard from "@/components/listing_new/ListingCard";
 import Button from "@/components/common/Button";
 import theme from "@/theme";
-import { Box, Typography } from "@mui/material";
-import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
+import { Box, Pagination, Typography } from "@mui/material";
+import { router } from '@inertiajs/react';
 import IconContainer from "@/components/common/IconContainer";
 import IconFavorite from "@/icons/IconFavorite";
 
@@ -28,6 +27,15 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
 
     const handleRemoveItem = (id: number) => {
         setLocalListings((current) => current.filter(item => item.id !== id));
+    };
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+
+        router.get(window.location.pathname, { page: value }, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+
     };
 
     return (
@@ -112,23 +120,21 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
                                 />
                             ))}
                         </div>
+
                     )}
 
-                    {/* Pagination */}
-                    {favoriteListings.data.length > 0 && (
-                        <div className="mt-6 flex justify-center">
-                            {favoriteListings.links.map((link, key) => (
-                                <Link
-                                    key={key}
-                                    href={link.url || '#'}
-                                    className={`px-4 py-2 border rounded mx-1 ${
-                                        link.active ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700'
-                                    } ${!link.url ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
-                                />
-                            ))}
-                        </div>
-                    )}
+                    {localListings.length > 0 && <Box sx={{ mt: 5, display: 'flex', justifyContent: 'center' }}>
+                        <Pagination
+                            count={favoriteListings.last_page}
+                            page={favoriteListings.current_page}
+                            onChange={handlePageChange}
+                            color="primary"
+                            shape="rounded"
+                            size="large"
+                        />
+                    </Box>}
+
+
                 </div>
             </div>
         </AuthenticatedLayout>
