@@ -22,9 +22,21 @@ export default function DealShowPage({deal}: { deal: PropertyDetail }) {
 
             <DealPropertyDetails listing={deal.real_estate_listing}/>
 
-
-
             {seller && <DealPersonInfo person={seller}/>}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             {deal.security_deposit &&  <DepositSection deal={deal}/>}
 

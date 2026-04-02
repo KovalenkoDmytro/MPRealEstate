@@ -18,6 +18,7 @@ export default function DealPropertyDetails({ listing }: { listing: RealEstateLi
                 borderRadius: theme.shape.borderRadius,
                 bgcolor: theme.palette.background.white,
                 border: `1px solid ${theme.palette.border.main}`,
+                mb: 3,
             }}
         >
             {/* Header */}
