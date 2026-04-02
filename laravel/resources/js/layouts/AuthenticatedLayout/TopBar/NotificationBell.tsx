@@ -1,6 +1,4 @@
-import { Fragment, MouseEvent, useMemo, useState } from "react"
-import { usePage, router } from "@inertiajs/react"
-import { PageProps } from "@/types";
+import { Fragment, MouseEvent, useEffect, useState } from "react"
 import {
     IconButton,
     Badge,
@@ -17,28 +15,37 @@ import {
     Circle as CircleIcon
 } from "@mui/icons-material";
 import IconNotificationBell from "@/icons/IconNotificationBell";
+import { api } from "@/axios";
+import { NotificationItem } from "@/types";
+
+type NotificationSummary = {
+    unread_count: number;
+    items: NotificationItem[];
+};
 
 const NotificationBell = () => {
-    const { props } = usePage<PageProps>()
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-    // Initial state from props
-    // We keep local state for optimistic updates
-    const initialNotif = useMemo(() => {
-        return props.notifications ?? { unread_count: 0, items: [] }
-    }, [props.notifications])
-
-    // In a real optimistic scenario, we'd need a robust way to merge props + local state.
-    // For now, simpler: we blindly trust props but avoid full reloads (preserveScroll).
-    // The issue with router.reload is it might be slow.
-    // Ideally we update the UI *then* call the server.
-    // Since props are immutable, we can't "edit" initialNotif.
-    // We'll stick to router calls for now but with preserveState/preserveScroll.
-
-    const items = initialNotif.items || []
-    const unreadCount = initialNotif.unread_count || 0
+    const [notifications, setNotifications] = useState<NotificationSummary>({
+        unread_count: 0,
+        items: [],
+    });
 
     const open = Boolean(anchorEl);
+    const items = notifications.items;
+    const unreadCount = notifications.unread_count;
+
+    const loadNotifications = async () => {
+        try {
+            const response = await api.get<NotificationSummary>(route("notifications.index"));
+            setNotifications(response.data);
+        } catch {
+            setNotifications({ unread_count: 0, items: [] });
+        }
+    };
+
+    useEffect(() => {
+        void loadNotifications();
+    }, []);
 
     const handleClick = (event: MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -48,24 +55,31 @@ const NotificationBell = () => {
         setAnchorEl(null);
     };
 
-    const refresh = () => {
-        router.reload({ only: ["notifications"], preserveUrl: true })
-    }
+    const markOne = async (id: string) => {
+        try {
+            await api.post(route("notifications.readOne", id));
+            setNotifications((prev) => ({
+                unread_count: Math.max(0, prev.unread_count - 1),
+                items: prev.items.map((item) => (
+                    item.id === id ? { ...item, read_at: item.read_at ?? new Date().toISOString() } : item
+                )),
+            }));
+        } catch {
+            void loadNotifications();
+        }
+    };
 
-    const markOne = (id: string) => {
-        // Optimistic update could go here if we had local state for items
-        router.post(route("notifications.readOne", id), {}, {
-            preserveUrl: true,
-            onSuccess: refresh
-        })
-    }
-
-    const markAll = () => {
-        router.post(route("notifications.readAll"), {}, {
-            preserveUrl: true,
-            onSuccess: refresh
-        })
-    }
+    const markAll = async () => {
+        try {
+            await api.post(route("notifications.readAll"));
+            setNotifications((prev) => ({
+                unread_count: 0,
+                items: prev.items.map((item) => ({ ...item, read_at: item.read_at ?? new Date().toISOString() })),
+            }));
+        } catch {
+            void loadNotifications();
+        }
+    };
 
     return (
         <>

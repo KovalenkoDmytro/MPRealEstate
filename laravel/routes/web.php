@@ -72,6 +72,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::middleware(['auth', 'verified'])->group(function () {
+        Route::get('/notifications', [NotificationController::class, 'index'])
+            ->name('notifications.index');
+
         Route::post('/notifications/{id}/read', [NotificationController::class, 'read'])
             ->name('notifications.readOne');
 

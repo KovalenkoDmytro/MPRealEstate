@@ -28,7 +28,7 @@ export interface PageProps {
     status? : string|null,
     errors: PageErrorBag
     flash: FlashMessages
-    notifications: {
+    notifications?: {
         items: NotificationItem[]
         unread_count: number
     }

@@ -1,8 +1,8 @@
 <?php
 return [
-    'enabled' => env('DEBUGBAR_ENABLED', true),
+    'enabled' => env('DEBUGBAR_ENABLED', false),
     'storage' => [
-        'enabled' => true,
+        'enabled' => env('DEBUGBAR_STORAGE_ENABLED', false),
         'path' => storage_path('debugbar'),
     ],
     'collectors' => [
