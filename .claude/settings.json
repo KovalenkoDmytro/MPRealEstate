@@ -1,0 +1,26 @@
+{
+  "enabledMcpjsonServers": [
+    "context7",
+    "figma",
+    "github"
+  ],
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./laravel/.env)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd docker && docker compose exec php php artisan pint 2>/dev/null || true",
+            "statusMessage": "PHP code styles fixing (Pint)..."
+          }
+        ]
+      }
+    ]
+  }
+}
