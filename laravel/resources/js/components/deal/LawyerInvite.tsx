@@ -50,7 +50,7 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
                         <Typography variant="h6">Your Lawyer</Typography>
                     </Stack>
 
-                    <Stack spacing={1}>
+                    <Stack direction="row" spacing={2} sx={{ flexWrap: "wrap", m: 0, p: 0 }}>
                         <Typography variant="body2" color="text.secondary">
                             <strong>Name:</strong> {lawyer.name}
                         </Typography>
@@ -58,7 +58,7 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
                             <strong>Email:</strong> {lawyer.email}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            <strong>Lawyer Code:</strong> {lawyer.lawyer_number ?? "N/A"}
+                            <strong>Code:</strong> {lawyer.lawyer_number ?? "N/A"}
                         </Typography>
                     </Stack>
                 </CardContent>

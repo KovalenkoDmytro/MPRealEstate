@@ -1,21 +1,11 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import {
-    Box,
-    Typography,
-    Button,
-    LinearProgress,
-    List,
-    ListItem,
-    ListItemText,
-    IconButton,
-    Divider,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
+    Card, CardContent, CardActions,
+    Typography, LinearProgress,
+    List, ListItem, ListItemText,
+    IconButton, Divider, Stack, Box,
 } from "@mui/material";
-
+import { useTheme } from "@mui/material/styles";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 
@@ -24,45 +14,51 @@ import { filterFilesForUser } from "@/helpers/fileHelpers";
 import { PropertyDetail, DealFile } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotification } from "@/context/NotificationContext";
+import Button from "@/components/common/Button";
+import IconContainer from "@/components/common/IconContainer";
+import IconUpload from "@/icons/IconUpload";
+import IconDocument from "@/icons/IconDocument";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
-// Important: rename browser File to avoid type collisions
 type UploadFile = globalThis.File;
 
 export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
+    const theme = useTheme();
     const user = useAuth();
     const { showNotification } = useNotification();
 
     const [selectedFile, setSelectedFile] = useState<UploadFile | null>(null);
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
-
     const [uploadedFiles, setUploadedFiles] = useState<DealFile[]>(
         filterFilesForUser(deal.files || [], user, deal.users)
     );
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // DELETE dialog state
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [selectedForDeletion, setSelectedForDeletion] = useState<DealFile | null>(null);
 
-    // Normalize backend response
-    const extractUploadedFile = (response: any): DealFile | null => {
-        return response?.file || response?.data?.file || null;
+    const cardSx = {
+        mt: 3,
+        p: theme.shape.padding,
+        backgroundColor: theme.palette.background.white,
+        borderRadius: theme.shape.borderRadius,
+        border: `1px solid ${theme.palette.border.main}`,
     };
+
+    const extractUploadedFile = (response: any): DealFile | null =>
+        response?.file || response?.data?.file || null;
 
     const resetFileInput = () => {
         if (fileInputRef.current) fileInputRef.current.value = "";
     };
 
-    // File selection
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedFile(e.target.files?.[0] || null);
     };
 
-    // Upload file
-    const handleUpload = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleUpload = async () => {
         if (!selectedFile) return;
 
         setUploading(true);
@@ -70,20 +66,16 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
 
         try {
             const response = await fileService.upload(deal.id, selectedFile);
-
             const uploadedFile = extractUploadedFile(response);
             if (uploadedFile) {
                 setUploadedFiles((prev) => [...prev, uploadedFile]);
             }
-
             showNotification(response.message, response.status);
-
         } catch (err: any) {
             const message =
                 err?.response?.data?.errors?.file?.[0] ||
                 err?.response?.data?.message ||
                 "Upload failed. Please try again.";
-
             showNotification(message, "error");
         } finally {
             resetFileInput();
@@ -92,7 +84,6 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
         }
     };
 
-    // DELETE
     const requestDelete = (file: DealFile) => {
         setSelectedForDeletion(file);
         setDeleteDialogOpen(true);
@@ -100,32 +91,25 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
 
     const confirmDelete = async () => {
         if (!selectedForDeletion) return;
-
         try {
             await fileService.delete(selectedForDeletion.id);
-
-            setUploadedFiles(prev => prev.filter(f => f.id !== selectedForDeletion.id));
-
+            setUploadedFiles((prev) => prev.filter((f) => f.id !== selectedForDeletion.id));
             showNotification("File deleted successfully.", "success");
         } catch {
             showNotification("Delete failed. Try again.", "error");
         }
-
         setDeleteDialogOpen(false);
         setSelectedForDeletion(null);
     };
 
-    // Download file
     const handleDownload = async (id: number, name: string) => {
         try {
             const blob = await fileService.download(id);
             const url = URL.createObjectURL(blob);
-
             const link = document.createElement("a");
             link.href = url;
             link.download = name;
             link.click();
-
             URL.revokeObjectURL(url);
         } catch {
             showNotification("Download failed. Try again.", "error");
@@ -133,87 +117,124 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
     };
 
     return (
-        <Box mt={4} p={3} border="1px solid #E0E0E0" borderRadius={2}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-                Upload Deal Files
-            </Typography>
+        <Card variant="outlined" sx={cardSx}>
+            <CardContent sx={{ p: 0 }}>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+                    <IconContainer>
+                        <IconUpload />
+                    </IconContainer>
+                    <Typography variant="h6">Deal Files</Typography>
+                </Stack>
 
-            {/* Upload Form */}
-            <Box component="form" onSubmit={handleUpload} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                <input type="file" ref={fileInputRef} onChange={handleFileChange} />
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Upload documents related to this deal.
+                </Typography>
 
-                {uploading && (
-                    <LinearProgress variant="determinate" value={uploadProgress} />
-                )}
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        style={{
+                            padding: "8px",
+                            borderRadius: "8px",
+                            border: `1px solid ${theme.palette.border.main}`,
+                            color: theme.palette.text.secondary,
+                            width: "100%",
+                        }}
+                    />
 
-                <Button
-                    type="submit"
-                    variant="contained"
-                    disabled={!selectedFile || uploading}
-                >
-                    {uploading ? "Uploading..." : "Upload File"}
-                </Button>
-            </Box>
+                    {selectedFile && (
+                        <Typography variant="caption" color="text.secondary">
+                            Selected: {selectedFile.name}
+                        </Typography>
+                    )}
 
-            {/* File List */}
-            {uploadedFiles.length > 0 && (
-                <Box mt={3}>
-                    <Typography variant="h6" gutterBottom>
-                        Deal Files
-                    </Typography>
-
-                    <List>
-                        {uploadedFiles.map((file, index) => (
-                            <React.Fragment key={file.id}>
-                                <ListItem
-                                    secondaryAction={
-                                        <IconButton color="error" onClick={() => requestDelete(file)}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    }
-                                >
-                                    <ListItemText
-                                        primary={
-                                            <Button
-                                                onClick={() => handleDownload(file.id, file.file_name)}
-                                                startIcon={<DownloadIcon />}
-                                            >
-                                                {file.file_name}
-                                            </Button>
-                                        }
-                                        secondary={
-                                            file.created_at &&
-                                            `Uploaded: ${new Date(file.created_at).toLocaleString()} by ${file.author_name}`
-                                        }
-                                    />
-                                </ListItem>
-
-                                {index < uploadedFiles.length - 1 && <Divider />}
-                            </React.Fragment>
-                        ))}
-                    </List>
+                    {uploading && (
+                        <LinearProgress variant="determinate" value={uploadProgress} sx={{ borderRadius: 1 }} />
+                    )}
                 </Box>
-            )}
 
-            {/* Delete Confirmation Dialog */}
-            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-                <DialogTitle>Delete File</DialogTitle>
+                {uploadedFiles.length > 0 && (
+                    <Box mt={3}>
+                        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+                            <IconContainer>
+                                <IconDocument />
+                            </IconContainer>
+                            <Typography variant="h6">Uploaded Files</Typography>
+                        </Stack>
 
-                <DialogContent>
-                    <DialogContentText>
+                        <List disablePadding>
+                            {uploadedFiles.map((file, index) => (
+                                <>
+                                    <ListItem
+                                        key={file.id}
+                                        disablePadding
+                                        sx={{ py: 0.5 }}
+                                        secondaryAction={
+                                            <Stack direction="row" spacing={0.5}>
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={() => handleDownload(file.id, file.file_name)}
+                                                    title="Download"
+                                                >
+                                                    <DownloadIcon fontSize="small" />
+                                                </IconButton>
+                                                <IconButton
+                                                    size="small"
+                                                    color="error"
+                                                    onClick={() => requestDelete(file)}
+                                                    title="Delete"
+                                                >
+                                                    <DeleteIcon fontSize="small" />
+                                                </IconButton>
+                                            </Stack>
+                                        }
+                                    >
+                                        <ListItemText
+                                            primary={
+                                                <Typography variant="body2" fontWeight={500}>
+                                                    {file.file_name}
+                                                </Typography>
+                                            }
+                                            secondary={
+                                                file.created_at &&
+                                                `Uploaded: ${new Date(file.created_at).toLocaleString()} by ${file.author_name}`
+                                            }
+                                        />
+                                    </ListItem>
+
+                                    {index < uploadedFiles.length - 1 && <Divider />}
+                                </>
+                            ))}
+                        </List>
+                    </Box>
+                )}
+            </CardContent>
+
+            <CardActions sx={{ p: 0, mt: 2 }}>
+                <Button
+                    text={uploading ? "Uploading..." : "Upload File"}
+                    icon={<IconUpload />}
+                    disabled={!selectedFile || uploading}
+                    onClick={handleUpload}
+                />
+            </CardActions>
+
+            <ConfirmDialog
+                open={deleteDialogOpen}
+                onClose={() => setDeleteDialogOpen(false)}
+                title="Delete file?"
+                description={
+                    <Typography variant="body2" color="text.secondary">
                         Are you sure you want to delete{" "}
-                        <strong>{selectedForDeletion?.file_name}</strong>? This action cannot be undone.
-                    </DialogContentText>
-                </DialogContent>
-
-                <DialogActions>
-                    <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
-
-                    <Button onClick={confirmDelete} color="error" variant="contained">
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </Box>
+                        <strong>{selectedForDeletion?.file_name}</strong>? This cannot be undone.
+                    </Typography>
+                }
+                confirmLabel="Delete"
+                confirmColor="error"
+                onConfirm={confirmDelete}
+            />
+        </Card>
     );
 }
