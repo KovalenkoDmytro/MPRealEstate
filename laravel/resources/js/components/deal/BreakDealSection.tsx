@@ -1,24 +1,32 @@
 import { useMemo, useState } from "react";
 import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
-import { TextField, Button, Box, Stack, Alert, Typography } from "@mui/material";
+import {
+    Card, CardContent, CardActions,
+    TextField, Stack, Alert, Typography,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { useAuth } from "@/hooks/useAuth";
+import { useNotification } from "@/context/NotificationContext";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import Button from "@/components/common/Button";
+import IconContainer from "@/components/common/IconContainer";
+import IconCanceled from "@/icons/IconCanceled";
 
 type Props = { deal: Deal };
 
 export default function BreakDealSection({ deal }: Props) {
-    const user = useAuth(); // assumes it returns { id: string | number, role?: string, ... }
+    const theme = useTheme();
+    const user = useAuth();
+    const { showNotification } = useNotification();
+
     const [message, setMessage] = useState("");
     const [submitting, setSubmitting] = useState(false);
-
-    // single confirm state for all actions
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmKind, setConfirmKind] = useState<"request" | "approve" | "reject" | null>(null);
 
     const isInitiator = user?.id === deal.break_request?.initiator_id;
-    const status = deal.break_request?.status; // 'pending' | 'rejected' | 'approved' | undefined
-
+    const status = deal.break_request?.status;
     const canRequest = useMemo(() => message.trim().length > 0, [message]);
 
     const openConfirm = (kind: "request" | "approve" | "reject") => {
@@ -29,10 +37,8 @@ export default function BreakDealSection({ deal }: Props) {
 
     const onConfirm = async () => {
         if (!confirmKind) return;
-
         try {
             setSubmitting(true);
-
             if (confirmKind === "request") {
                 await DealService.breakTheDeal(deal.id, message.trim());
             } else if (confirmKind === "approve") {
@@ -40,11 +46,10 @@ export default function BreakDealSection({ deal }: Props) {
             } else if (confirmKind === "reject") {
                 await DealService.respondToBreakTheDeal(deal.id, "rejected");
             }
-
-            alert("Action completed successfully.");
+            showNotification("Action completed successfully.", "success");
             window.location.reload();
         } catch (error: any) {
-            alert(error?.message ?? "Action failed.");
+            showNotification(error?.message ?? "Action failed.", "error");
         } finally {
             setSubmitting(false);
             setConfirmOpen(false);
@@ -53,22 +58,15 @@ export default function BreakDealSection({ deal }: Props) {
     };
 
     const confirmTitle =
-        confirmKind === "request"
-            ? "Request to Break Deal?"
-            : confirmKind === "approve"
-                ? "Accept Break Request?"
-                : confirmKind === "reject"
-                    ? "Reject Break Request?"
-                    : "";
-
-    const confirmColor =
-        confirmKind === "request" || confirmKind === "approve" ? "error" : "primary";
+        confirmKind === "request" ? "Request to Break Deal?" :
+        confirmKind === "approve" ? "Accept Break Request?" :
+        confirmKind === "reject"  ? "Reject Break Request?" : "";
 
     const confirmDescription =
         confirmKind === "request" ? (
             <Stack spacing={0.75}>
                 <Typography variant="body2" color="text.secondary">
-                    You’re about to send a request to break this deal.
+                    You're about to send a request to break this deal.
                 </Typography>
                 <Typography variant="body2">
                     <strong>Reason:</strong> {message.trim()}
@@ -76,19 +74,35 @@ export default function BreakDealSection({ deal }: Props) {
             </Stack>
         ) : confirmKind === "approve" ? (
             <Typography variant="body2" color="text.secondary">
-                This will <strong>approve</strong> the other party’s request and end the deal workflow.
+                This will <strong>approve</strong> the other party's request and end the deal workflow.
             </Typography>
         ) : confirmKind === "reject" ? (
             <Typography variant="body2" color="text.secondary">
-                This will <strong>reject</strong> the other party’s request to break the deal.
+                This will <strong>reject</strong> the other party's request to break the deal.
             </Typography>
         ) : null;
 
     return (
-        <Box mt={4}>
-            {/* Request Break */}
-            {!deal.break_request && (
-                <Stack spacing={2}>
+        <Card
+            variant="outlined"
+            sx={{
+                mt: 3,
+                p: theme.shape.padding,
+                backgroundColor: theme.palette.background.white,
+                borderRadius: theme.shape.borderRadius,
+                border: `1px solid ${theme.palette.border.main}`,
+            }}
+        >
+            <CardContent sx={{ p: 0 }}>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+                    <IconContainer bgColor={theme.palette.error.main}>
+                        <IconCanceled />
+                    </IconContainer>
+                    <Typography variant="h6">Break Deal</Typography>
+                </Stack>
+
+                {/* Request form */}
+                {!deal.break_request && (
                     <TextField
                         name="break_deal_message"
                         label="Reason to break deal"
@@ -98,68 +112,64 @@ export default function BreakDealSection({ deal }: Props) {
                         minRows={3}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        required
                     />
-                    <Button
-                        variant="contained"
-                        color="error"
-                        disabled={!canRequest || submitting}
-                        onClick={() => openConfirm("request")}
-                    >
-                        {submitting ? "Submitting..." : "Request to Break Deal"}
-                    </Button>
-                </Stack>
-            )}
+                )}
 
-            {/* Waiting for Confirmation */}
-            {isInitiator && status === "pending" && (
-                <Alert severity="warning" sx={{ mt: 2 }}>
-                    ⏳ Waiting for seller confirmation to break the deal.
-                </Alert>
-            )}
-
-            {/* Rejected by Seller */}
-            {isInitiator && status === "rejected" && (
-                <Alert severity="error" sx={{ mt: 2 }}>
-                    Seller rejected your request to break the deal.
-                </Alert>
-            )}
-
-            {/* You Refused to Break */}
-            {!isInitiator && status === "rejected" && (
-                <Alert severity="info" sx={{ mt: 2 }}>
-                    ⏳ You have refused to break the deal.
-                </Alert>
-            )}
-
-            {/* Respond to Break Request */}
-            {!isInitiator && status === "pending" && (
-                <Box mt={2}>
-                    <Alert severity="warning" sx={{ mb: 2 }}>
-                        ⏳ The other party wants to break the deal. Please make a decision.
+                {/* Status alerts */}
+                {isInitiator && status === "pending" && (
+                    <Alert severity="warning">
+                        Waiting for the other party to confirm the break request.
                     </Alert>
-                    <Stack direction="row" spacing={2}>
+                )}
+
+                {isInitiator && status === "rejected" && (
+                    <Alert severity="error">
+                        The other party rejected your request to break the deal.
+                    </Alert>
+                )}
+
+                {!isInitiator && status === "rejected" && (
+                    <Alert severity="info">
+                        You have refused to break the deal.
+                    </Alert>
+                )}
+
+                {!isInitiator && status === "pending" && (
+                    <Alert severity="warning">
+                        The other party wants to break the deal. Please make a decision below.
+                    </Alert>
+                )}
+            </CardContent>
+
+            {/* Actions */}
+            {(!deal.break_request || (!isInitiator && status === "pending")) && (
+                <CardActions sx={{ p: 0, mt: 2, gap: 1 }}>
+                    {!deal.break_request && (
                         <Button
-                            variant="contained"
-                            color="error"
-                            disabled={submitting}
-                            onClick={() => openConfirm("approve")}
-                        >
-                            Accept
-                        </Button>
-                        <Button
-                            variant="outlined"
-                            color="error"
-                            disabled={submitting}
-                            onClick={() => openConfirm("reject")}
-                        >
-                            Reject
-                        </Button>
-                    </Stack>
-                </Box>
+                            text={submitting ? "Submitting..." : "Request to Break Deal"}
+                            disabled={!canRequest || submitting}
+                            onClick={() => openConfirm("request")}
+                        />
+                    )}
+
+                    {!isInitiator && status === "pending" && (
+                        <>
+                            <Button
+                                text={submitting ? "Submitting..." : "Accept"}
+                                disabled={submitting}
+                                onClick={() => openConfirm("approve")}
+                            />
+                            <Button
+                                text="Reject"
+                                version="outline"
+                                disabled={submitting}
+                                onClick={() => openConfirm("reject")}
+                            />
+                        </>
+                    )}
+                </CardActions>
             )}
 
-            {/* Confirmation Dialog (universal) */}
             <ConfirmDialog
                 open={confirmOpen}
                 onClose={() => setConfirmOpen(false)}
@@ -167,12 +177,12 @@ export default function BreakDealSection({ deal }: Props) {
                 description={confirmDescription}
                 confirmLabel={
                     confirmKind === "request" ? "Send Request" :
-                        confirmKind === "approve" ? "Accept" :
-                            confirmKind === "reject" ? "Reject" : "OK"
+                    confirmKind === "approve" ? "Accept" :
+                    confirmKind === "reject"  ? "Reject" : "OK"
                 }
-                confirmColor={confirmColor as any}
+                confirmColor={confirmKind === "reject" ? "primary" : "error"}
                 onConfirm={onConfirm}
             />
-        </Box>
+        </Card>
     );
 }
