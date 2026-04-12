@@ -1,41 +1,29 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Deal, User } from "@/types";
 import { DealService } from "@/services/dealService";
-import { Box, Typography, TextField, Button, Stack } from "@mui/material";
+import { Card, CardContent, CardActions, Typography, TextField, Stack } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { useAuth } from "@/hooks/useAuth";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import {useNotification} from "@/context/NotificationContext";
+import { useNotification } from "@/context/NotificationContext";
+import Button from "@/components/common/Button";
+import IconContainer from "@/components/common/IconContainer";
+import IconEnvelope from "@/icons/IconEnvelope";
+import IconUser from "@/icons/IconUser";
 
 export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: User }) {
+    const theme = useTheme();
     const [lawyerCode, setLawyerCode] = useState("");
     const [confirmOpen, setConfirmOpen] = useState(false);
     const user = useAuth();
+    const { setRedirectNotification } = useNotification();
 
     const roleKey =
         user?.role === "seller" ? "is_seller_lawyer" :
-            user?.role === "buyer"  ? "is_buyer_lawyer"  : null;
-
-    // If lawyer is already assigned, show details
-    if (roleKey && lawyer?.[roleKey]) {
-        return (
-            <Box mt={4} p={3} border="1px solid #e0e0e0" borderRadius={2} bgcolor="#e8f5e9">
-                <Typography variant="h6" fontWeight="bold" gutterBottom>📩 Your Lawyer</Typography>
-                <Typography><strong>Name:</strong> {lawyer.name}</Typography>
-                <Typography><strong>Email:</strong> {lawyer.email}</Typography>
-                <Typography><strong>Lawyer Code:</strong> {lawyer.lawyer_number || "N/A"}</Typography>
-            </Box>
-        );
-    }
+        user?.role === "buyer"  ? "is_buyer_lawyer"  : null;
 
     const code = lawyerCode.trim().toUpperCase();
     const isValid = useMemo(() => /^[A-Z0-9]{9}$/.test(code), [code]);
-    const {setRedirectNotification } = useNotification();
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!isValid) return;
-        setConfirmOpen(true);
-    };
 
     const sendInvite = async () => {
         const response = await DealService.inviteLawyer(deal.id, code);
@@ -43,31 +31,75 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
         window.location.reload();
     };
 
+    const cardSx = {
+        mt: 3,
+        p: theme.shape.padding,
+        backgroundColor: theme.palette.background.white,
+        borderRadius: theme.shape.borderRadius,
+        border: `1px solid ${theme.palette.border.main}`,
+    };
+
+    if (roleKey && lawyer?.[roleKey]) {
+        return (
+            <Card variant="outlined" sx={cardSx}>
+                <CardContent sx={{ p: 0, mb:0 }}>
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
+                        <IconContainer>
+                            <IconUser />
+                        </IconContainer>
+                        <Typography variant="h6">Your Lawyer</Typography>
+                    </Stack>
+
+                    <Stack spacing={1}>
+                        <Typography variant="body2" color="text.secondary">
+                            <strong>Name:</strong> {lawyer.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            <strong>Email:</strong> {lawyer.email}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            <strong>Lawyer Code:</strong> {lawyer.lawyer_number ?? "N/A"}
+                        </Typography>
+                    </Stack>
+                </CardContent>
+            </Card>
+        );
+    }
+
     return (
-        <Box mt={4} p={3} border="1px solid #e0e0e0" borderRadius={2}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-                📩 Invite a Lawyer
-            </Typography>
-
-            <Box component="form" onSubmit={handleSubmit} mt={2}>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                    <TextField
-                        value={lawyerCode}
-                        onChange={(e) => setLawyerCode(e.target.value)}
-                        label="Lawyer Code"
-                        placeholder="Enter 9-character code"
-                        slotProps={{htmlInput :{ maxLength: 9, pattern: "[A-Za-z0-9]{9}" }}}
-                        required
-                        fullWidth
-                        helperText="Letters & numbers only, 9 characters."
-                        error={lawyerCode.length > 0 && !isValid}
-                    />
-
-                    <Button type="submit" variant="contained" color="primary" disabled={!isValid}>
-                        Invite
-                    </Button>
+        <Card variant="outlined" sx={cardSx}>
+            <CardContent sx={{ p: 0 }}>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+                    <IconContainer>
+                        <IconEnvelope />
+                    </IconContainer>
+                    <Typography variant="h6">Invite a Lawyer</Typography>
                 </Stack>
-            </Box>
+
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Enter your lawyer's 9-character code to add them to this deal.
+                </Typography>
+
+                <TextField
+                    value={lawyerCode}
+                    onChange={(e) => setLawyerCode(e.target.value)}
+                    label="Lawyer Code"
+                    placeholder="Enter 9-character code"
+                    slotProps={{ htmlInput: { maxLength: 9, pattern: "[A-Za-z0-9]{9}" } }}
+                    fullWidth
+                    helperText={lawyerCode.length > 0 && !isValid ? "9 letters & numbers only." : " "}
+                    error={lawyerCode.length > 0 && !isValid}
+                />
+            </CardContent>
+
+            <CardActions sx={{ p: 0 }}>
+                <Button
+                    text="Send Invite"
+                    icon={<IconEnvelope />}
+                    disabled={!isValid}
+                    onClick={() => setConfirmOpen(true)}
+                />
+            </CardActions>
 
             <ConfirmDialog
                 open={confirmOpen}
@@ -76,7 +108,7 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
                 description={
                     <Stack spacing={0.5}>
                         <Typography variant="body2" color="text.secondary">
-                            You’re about to invite a lawyer to this deal.
+                            You're about to invite a lawyer to this deal.
                         </Typography>
                         <Typography variant="body2"><strong>Deal:</strong> #{deal.id}</Typography>
                         <Typography variant="body2"><strong>Your side:</strong> {user?.role ?? "—"}</Typography>
@@ -87,6 +119,6 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
                 confirmColor="primary"
                 onConfirm={sendInvite}
             />
-        </Box>
+        </Card>
     );
 }
