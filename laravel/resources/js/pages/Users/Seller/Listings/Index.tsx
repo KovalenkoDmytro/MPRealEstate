@@ -1,10 +1,10 @@
-import { Head } from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import type { PaginatedResponse, RealEstateListing } from "@/types";
 import Button from "@/components/common/Button";
 import SellerListingCard from "@/components/listings/seller/SellerListingCard";
-import {Stack} from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import AppPagination from "@/components/common/AppPagination";
+import theme from "@/theme";
 
 type ComponentProps = {
     listings: PaginatedResponse<RealEstateListing>;
@@ -12,23 +12,31 @@ type ComponentProps = {
 
 export default function Index({ listings }: ComponentProps) {
     return (
-        <AuthenticatedLayout
-            header="My Listings"
-        >
-            <Head title="My Listings"/>
+        <AuthenticatedLayout header="My Listings">
 
-            <div className="container mx-auto p-4">
-                <div className="flex justify-end items-center mb-4">
-                    <Button version={"primary"} link={true} text={"Add New Listing"} href={route('seller.listings.create')}/>
-                </div>
+            <Stack spacing={4}>
+                {listings.data.map((listing, index) => (
+                    <SellerListingCard listing={listing} key={index}/>
+                ))}
+            </Stack>
 
-                <Stack spacing={4}>
-                    {listings.data.map((listing, index) => (
-                        <SellerListingCard listing={listing} key={index}/>
-                    ))}
-                </Stack>
-                <AppPagination pagination={listings} />
-            </div>
+            <AppPagination pagination={listings} />
+
+            <Box
+                sx={{
+                    position: "fixed",
+                    bottom: 32,
+                    right: 32,
+                    zIndex: 1000,
+                    borderRadius: theme.shape.borderRadius,
+                    padding: 1,
+                    backgroundColor: theme.palette.background.white,
+                    boxShadow: 3,
+                    display: { xs: "none", md: "block" }
+                }} >
+                <Button version={"primary"} link={true} text={"Add New Listing"} href={route('seller.listings.create')}/>
+            </Box>
+
         </AuthenticatedLayout>
     );
 

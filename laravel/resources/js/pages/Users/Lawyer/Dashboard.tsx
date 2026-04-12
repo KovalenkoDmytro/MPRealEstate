@@ -1,5 +1,4 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
 import { User } from '@/types';
 import {
     Box,
@@ -16,8 +15,8 @@ export default function Dashboard({ auth, deals_detail }: { auth: { user: User }
     return (
         <AuthenticatedLayout
             header={<Typography variant="h5" fontWeight="bold">⚖️ Lawyer Dashboard</Typography>}
+            title="Lawyer Dashboard"
         >
-            <Head title="Lawyer Dashboard" />
 
             <Box sx={{ p: 3 }}>
                 {/* Profile Card */}

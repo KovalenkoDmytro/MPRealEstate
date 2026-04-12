@@ -1,5 +1,5 @@
 import React from "react";
-import {Head, Link} from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { ImageGallery } from "@/components/listing/ImageGallery";
 import { ListingDetails } from "@/components/listing/ListingDetails";
@@ -49,8 +49,7 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
 
 
     return (
-        <AuthenticatedLayout header="Dashboard">
-            <Head title={listing.title} />
+        <AuthenticatedLayout header="Dashboard" title={listing.title}>
 
             <Container className='listing-show-page'>
                 <Link href={route(`listings.index`)} style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', textDecoration: 'none', gap: '8px'   }}>

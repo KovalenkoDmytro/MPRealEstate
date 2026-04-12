@@ -1,4 +1,4 @@
-import { Head, Link } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 import { RealEstateListing, Offer } from "@/types";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import {
@@ -49,8 +49,8 @@ export default function ListingShowPage({ listing }: PageProps) {
     return (
         <AuthenticatedLayout
             header={<Typography variant="h5" fontWeight="bold">Listing</Typography>}
+            title="Listings"
         >
-            <Head title="Listings" />
 
             <Box p={3}>
                 {/* Title */}

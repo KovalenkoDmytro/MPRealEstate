@@ -1,4 +1,3 @@
-import {Head} from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import {PropertyDetail} from "@/types";
 import DealHeader from "@/components/deal/DealHeader";
@@ -27,9 +26,9 @@ export default function Show({deal}: {deal: PropertyDetail})
 
     return (
         <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Deal Details</h2>}
+            header="Deal Details"
+            title="Deal Details"
         >
-            <Head title="Deal Details"/>
             <DealHeader deal={deal} />
             <PropertyDetails listing={deal.real_estate_listing} />
             <DealPersonInfo person={buyer} />

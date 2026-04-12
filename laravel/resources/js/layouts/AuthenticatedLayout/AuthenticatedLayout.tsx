@@ -1,5 +1,5 @@
 import { useState, PropsWithChildren, ReactNode } from 'react';
-import { usePage } from '@inertiajs/react';
+import { usePage, Head } from '@inertiajs/react';
 import { Box, CssBaseline, Container } from '@mui/material';
 import Sidebar from "@/layouts/AuthenticatedLayout/Sidebar";
 import TopBar from "@/layouts/AuthenticatedLayout/TopBar";
@@ -9,10 +9,12 @@ const DRAWER_WIDTH = 280;
 
 type AuthenticatedLayoutProps = PropsWithChildren<{
     header: ReactNode;
-    subHeader? : ReactNode;
+    subHeader?: ReactNode;
+    title?: string;
 }>;
 
-export default function AuthenticatedLayout({ header, subHeader ,children }: AuthenticatedLayoutProps) {
+export default function AuthenticatedLayout({ header, subHeader, title, children }: AuthenticatedLayoutProps) {
+    const pageTitle = title ?? (typeof header === 'string' ? header : undefined);
     const user = usePage().props.auth.user;
     const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -21,6 +23,8 @@ export default function AuthenticatedLayout({ header, subHeader ,children }: Aut
     };
 
     return (
+        <>
+        {pageTitle && <Head title={pageTitle} />}
         <Box
             className="authenticated-layout"
             sx={{ display: 'flex', minHeight: '100vh',}}>
@@ -65,5 +69,6 @@ export default function AuthenticatedLayout({ header, subHeader ,children }: Aut
                 </Container>
             </Box>
         </Box>
+        </>
     );
 }
