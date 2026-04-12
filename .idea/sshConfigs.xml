@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig host="10.0.0.200" id="4629788c-435b-4cc7-b5ed-57989844c76d" keyPath="$USER_HOME$/.ssh/id_rsa" port="22" customName="m73-server" nameFormat="CUSTOM" username="malma" useOpenSSHConfig="true">
+        <option name="customName" value="m73-server" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>
