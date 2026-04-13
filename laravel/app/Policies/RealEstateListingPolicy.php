@@ -7,7 +7,7 @@ use App\Models\RealEstateListing;
 
 class RealEstateListingPolicy
 {
-    public function create(User $user): User|bool {
+    public function create(User $user): bool {
         return $user->hasRole('seller');
     }
 

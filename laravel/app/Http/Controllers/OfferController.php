@@ -1,11 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Helpers\Responses\ErrorResponse;
+use App\Helpers\Responses\JsonResponder;
+use App\Helpers\Responses\SuccessResponse;
 use App\Http\Requests\SubmitOfferRequest;
 use App\Http\Requests\UpdateOfferStatusRequest;
 use App\Models\Offer;
+use App\Models\RealEstateListing;
 use App\Services\OfferService;
+use App\Support\RoleViewResolver;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,37 +26,45 @@ class OfferController extends Controller
         $this->offerService = $offerService;
     }
 
-
     public function index(): Response
     {
-
         $user = auth()->user();
-        $offers = $this->offerService->getAllUserOffers($user);
-        $offers_stats = $this->offerService->getUserOfferStats($user);
 
-        $role = $user->getRoleNames()->first();
-
-        $viewPath = match ($role) {
+        return Inertia::render(RoleViewResolver::resolve([
             'seller' => 'Users/Seller/Offers/Index',
             'buyer'  => 'Users/Buyer/Offers/Index',
-            default => throw new \Exception('Unexpected match value'),
-        };
-
-        return Inertia::render($viewPath, [
-            'offers' => $offers,
-            'offers_stats' => $offers_stats,
+        ]), [
+            'offers'       => $this->offerService->getAllUserOffers($user),
+            'offers_stats' => $this->offerService->getUserOfferStats($user),
         ]);
-
     }
 
-    public function store(SubmitOfferRequest $request, $listing): JsonResponse
+    public function store(SubmitOfferRequest $request, RealEstateListing $listing): JsonResponse
     {
-        return $this->offerService->submitOffer($request, $listing);
+        $this->offerService->submitOffer(
+            amount: (float) $request->validated('amount'),
+            message: (string) $request->validated('message'),
+            buyer: $request->user(),
+            listing: $listing,
+        );
+
+        return JsonResponder::send(new SuccessResponse(__('offers.success.submitted')));
     }
 
     public function updateStatus(UpdateOfferStatusRequest $request, Offer $offer): JsonResponse
     {
-        return $this->offerService->updateStatus($request, $offer);
-    }
+        try {
+            $this->offerService->updateStatus(
+                status: (string) $request->validated('status'),
+                authorizer: $request->user(),
+                offer: $offer,
+            );
+        } catch (\RuntimeException $e) {
+            return JsonResponder::send(new ErrorResponse($e->getMessage()));
+        }
 
+        return JsonResponder::send(
+            new SuccessResponse(__('offers.success.status_updated'), ['status' => $offer->fresh()->status])
+        );
+    }
 }

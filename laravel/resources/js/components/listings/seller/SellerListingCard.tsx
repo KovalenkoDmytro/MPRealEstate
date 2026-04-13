@@ -30,10 +30,8 @@ type Props = {
 export default function SellerListingCard({ listing }: Props) {
     const mainImage = listing.main_image?.image_path || '/images/placeholder-house.jpg';
     const { showNotification } = useNotification();
-
     // Dialog state
     const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
-
     const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string | number | null }) => {
         if (!value) return null;
         return (
@@ -54,10 +52,6 @@ export default function SellerListingCard({ listing }: Props) {
     };
 
     const handleConfirmDeactivate = async () => {
-        // Here you would typically make an API call to deactivate the listing
-        // For example: await listingsService.deactivate(listing.id);
-
-        // Mock success for now
         showNotification("Listing deactivated successfully", "success");
         setDeactivateDialogOpen(false);
         // window.location.reload(); // Uncomment to refresh if needed

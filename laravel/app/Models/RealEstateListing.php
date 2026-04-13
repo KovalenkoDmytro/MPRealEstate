@@ -27,7 +27,7 @@ class RealEstateListing extends Model
     ];
 
     // A listing can have multiple offers
-    public function offers(): HasMany|RealEstateListing {
+    public function offers(): HasMany {
         return $this->hasMany(Offer::class, 'real_estate_listing_id');
     }
 
@@ -53,11 +53,11 @@ class RealEstateListing extends Model
     }
 
     // Get the main image
-    public function mainImage(): HasOne|RealEstateListing {
+    public function mainImage(): HasOne {
         return $this->hasOne(ListingImage::class)->where('is_main', true);
     }
 
-    public function appointments(): HasMany|RealEstateListing {
+    public function appointments(): HasMany {
         return $this->hasMany(Appointment::class, 'real_estate_listing_id');
     }
 

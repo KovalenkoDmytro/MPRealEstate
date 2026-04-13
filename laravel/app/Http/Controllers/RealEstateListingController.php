@@ -1,23 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Http\Requests\ListingFilterRequest;
+use App\Http\Requests\RealEstateListingRequest;
+use App\Models\RealEstateListing;
 use App\Models\User;
 use App\Services\BuyerService;
 use App\Services\RealEstateListingService;
-use App\Models\RealEstateListing;
 use App\Services\SellerService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Inertia\Inertia;
-use Inertia\Response;
-use App\Http\Requests\RealEstateListingRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class RealEstateListingController extends Controller {
     use AuthorizesRequests;
@@ -48,19 +50,20 @@ class RealEstateListingController extends Controller {
     }
 
     public function store(RealEstateListingRequest $request): JsonResponse {
-        try{
+        try {
             $this->authorize('create', RealEstateListing::class);
 
-            $this->listingService->createListing($request);
+            $this->listingService->createListing(
+                data: $request->safe()->except(['main_image', 'gallery_images', 'remove_images', 'remove_main_image']),
+                seller: $request->user(),
+                mainImage: $request->file('main_image'),
+                galleryImages: $request->file('gallery_images') ?? [],
+                removeImageIds: $request->input('remove_images', []),
+            );
 
-            return JsonResponder::send(
-                new SuccessResponse(__('listings.success.created'))
-            );
-        }
-        catch(Exception $e){
-            return JsonResponder::send(
-                new ErrorResponse($e->getMessage())
-            );
+            return JsonResponder::send(new SuccessResponse(__('listings.success.created')));
+        } catch (Exception $e) {
+            return JsonResponder::send(new ErrorResponse($e->getMessage()));
         }
     }
 
@@ -77,21 +80,21 @@ class RealEstateListingController extends Controller {
         ]);
     }
 
-    public function update(RealEstateListingRequest $request, RealEstateListing $listing):JsonResponse {
-        /** @var \App\Models\User $user */
+    public function update(RealEstateListingRequest $request, RealEstateListing $listing): JsonResponse {
         try {
             $this->authorize('update', $listing);
 
-            $this->listingService->updateListing($request, $listing);
+            $this->listingService->updateListing(
+                data: $request->safe()->except(['main_image', 'gallery_images', 'remove_images', 'remove_main_image']),
+                listing: $listing,
+                mainImage: $request->file('main_image'),
+                galleryImages: $request->file('gallery_images') ?? [],
+                removeImageIds: $request->input('remove_images', []),
+            );
 
-            return JsonResponder::send(
-                new SuccessResponse(__('listings.success.updated'))
-            );
-        }
-        catch (Exception $e) {
-            return JsonResponder::send(
-                new ErrorResponse($e->getMessage())
-            );
+            return JsonResponder::send(new SuccessResponse(__('listings.success.updated')));
+        } catch (Exception $e) {
+            return JsonResponder::send(new ErrorResponse($e->getMessage()));
         }
     }
 

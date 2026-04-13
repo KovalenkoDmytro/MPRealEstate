@@ -12,7 +12,7 @@ class Buyer extends User
 
     protected $table = 'users';
 
-    public function appointments(): Buyer|HasMany {
+    public function appointments(): HasMany {
         return $this->hasMany(Appointment::class, 'buyer_id');
     }
 

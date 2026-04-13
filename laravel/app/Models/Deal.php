@@ -52,7 +52,7 @@ class Deal extends Model
         return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
     }
 
-    public function files(): Deal|HasMany {
+    public function files(): HasMany {
         return $this->hasMany(DealFile::class);
     }
 
