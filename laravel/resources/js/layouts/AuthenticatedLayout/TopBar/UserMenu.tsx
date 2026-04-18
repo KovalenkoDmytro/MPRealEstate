@@ -11,7 +11,7 @@ import {
     Typography
 } from '@mui/material';
 import { Person, Logout, Settings } from '@mui/icons-material';
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import theme from "@/theme";
 
 interface User {
@@ -115,7 +115,7 @@ export default function UserMenu({ user }: UserMenuProps) {
                 </Box>
                 <Divider />
 
-                <MenuItem component={Link} href={route('profile.edit')}>
+                <MenuItem href={route('profile.edit')}>
                     <ListItemIcon>
                         <Person fontSize="small" />
                     </ListItemIcon>
@@ -130,9 +130,7 @@ export default function UserMenu({ user }: UserMenuProps) {
                 </MenuItem>
 
                 <MenuItem
-                    component={Link}
-                    href={route('logout')}
-                    as="button"
+                    onClick={() => router.post(route('logout'))}
                     sx={{ color: 'error.main' }}
                 >
                     <ListItemIcon>
