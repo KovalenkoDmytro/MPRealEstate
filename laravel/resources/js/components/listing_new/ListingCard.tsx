@@ -105,7 +105,7 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
             <div className="card-content">
                 <h3 className="card-title">{listing.title}</h3>
                 <div className="card-address">
-                    <IconLocationMark/>
+                    <IconLocationMark />
                     {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}, {listing.postal_code}
                 </div>
                 <div className="card-features">

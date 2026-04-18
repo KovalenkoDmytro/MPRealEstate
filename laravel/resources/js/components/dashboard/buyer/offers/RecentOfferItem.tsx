@@ -14,8 +14,6 @@ type RecentOfferItemProps = {
 };
 
 export default function RecentOfferItem({ offer }: RecentOfferItemProps) {
-    const offerUrl = '#';
-
     const isStrongOffer = offer.amount <= offer.listing.price;
     const percentage = Math.abs(((offer.amount - offer.listing.price) / offer.listing.price) * 100).toFixed(1);
 
@@ -76,15 +74,6 @@ export default function RecentOfferItem({ offer }: RecentOfferItemProps) {
                     </Typography>
                 </Box>
             </Box>
-
-
-            <Button
-                version="primary"
-                text="View Details"
-                link={true}
-                href={offerUrl}
-                icon={<ArrowForwardRoundedIcon fontSize="small" />}
-            />
         </Paper>
     );
 }

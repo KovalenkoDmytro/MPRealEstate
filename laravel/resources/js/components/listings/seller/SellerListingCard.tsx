@@ -22,6 +22,7 @@ import IconLotSpace from "@/icons/IconLotSpace";
 import IconEdit from "@/icons/IconEdit";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useNotification } from "@/context/NotificationContext";
+import IconContainer from "@/components/common/IconContainer";
 
 type Props = {
     listing: RealEstateListing;
@@ -96,7 +97,8 @@ export default function SellerListingCard({ listing }: Props) {
                             {listing.title}
                         </Typography>
                         <Stack direction="row" alignItems="center" gap={0.5} color="text.secondary" mt={0.5}>
-                            <IconLocationMark />
+                            <IconLocationMark/>
+
                             <Typography variant="body2" noWrap>
                                 {listing.street_number} {listing.street_name}, {listing.city}, {listing.province}
                             </Typography>
