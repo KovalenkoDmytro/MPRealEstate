@@ -8,6 +8,8 @@ import { listingService } from "@/services/listingService";
 import { imageService } from "@/services/imageService";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import {useNotification} from "@/context/NotificationContext";
+import Button from "@/components/common/Button";
+import {Stack} from "@mui/material";
 
 export default function EditListing({ listing }: { listing: RealEstateListing }) {
     const [data, setData] = useState<EditableListingFormValues>({
@@ -193,38 +195,39 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
                 />
 
                 {/* Submit Button */}
-                <div className="text-end mt-8">
-                    <button
-                        onClick={submit}
-                        disabled={processing}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
-                    >
-                        {processing ? "Saving..." : "Save Changes"}
-                    </button>
-                    <button
+                <Stack direction="row" justifyContent="flex-end" spacing={2}>
+                    <Button
+                        text={processing ? "Deleting..." : "Delete listing"}
                         onClick={() => setConfirmOpen(true)}
                         disabled={processing}
-                        className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
-                    >
-                        {processing ? "Deleting..." : "Delete listing"}
-                    </button>
-
-                    <ConfirmDialog
-                        open={confirmOpen}
-                        title="Deactivate this listing?"
-                        description={
-                            <>
-                                This will <b>archive</b> the listing (soft delete) and remove non-main gallery images.
-                                You can restore it later from the admin if needed.
-                            </>
-                        }
-                        confirmLabel="Deactivate"
-                        cancelLabel="Cancel"
-                        confirmColor="error"
-                        onClose={() => setConfirmOpen(false)}
-                        onConfirm={handleDeactivateListing} // dialog will await this and close on success
+                        version="outline"
                     />
-                </div>
+
+                    <Button
+                        text={processing ? "Saving..." : "Save Changes"}
+                        onClick={submit}
+                        disabled={processing}
+                    />
+
+
+
+                </Stack>
+
+                <ConfirmDialog
+                    open={confirmOpen}
+                    title="Deactivate this listing?"
+                    description={
+                        <>
+                            This will <b>archive</b> the listing (soft delete) and remove non-main gallery images.
+                            You can restore it later from the admin if needed.
+                        </>
+                    }
+                    confirmLabel="Deactivate"
+                    cancelLabel="Cancel"
+                    confirmColor="error"
+                    onClose={() => setConfirmOpen(false)}
+                    onConfirm={handleDeactivateListing} // dialog will await this and close on success
+                />
             </div>
         </AuthenticatedLayout>
     );

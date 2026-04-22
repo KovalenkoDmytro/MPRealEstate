@@ -99,8 +99,6 @@ export default function SellerListingCard({ listing }: Props) {
                 </Box>
 
                 <CardContent sx={{ flexGrow: 1, p: 3 }}>
-
-                    {/* Header: Price & Title */}
                     <Box mb={3}>
                         <Typography variant="h5" fontWeight={800} color="text.primary" gutterBottom>
                             {formatCurrency(listing.price)}
@@ -117,7 +115,6 @@ export default function SellerListingCard({ listing }: Props) {
                         </Stack>
                     </Box>
 
-                    {/* Content Columns */}
                     <Grid container spacing={4}>
 
                         {/* Column 1: Details */}
