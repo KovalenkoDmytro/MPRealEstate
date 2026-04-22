@@ -45,11 +45,11 @@ class Deal extends Model
 
     // Relationship with RealEstateListing
     public function realEstateListing(): BelongsTo {
-        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
+        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id')->withTrashed();
     }
 
     public function listing(): BelongsTo {
-        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
+        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id')->withTrashed();
     }
 
     public function files(): HasMany {

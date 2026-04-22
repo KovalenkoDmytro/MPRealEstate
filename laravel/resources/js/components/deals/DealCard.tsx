@@ -26,10 +26,10 @@ interface DealCardProps {
 
 export const DealCard: React.FC<DealCardProps> = ({deal }) => {
     const user = useAuth();
-    const listing = deal.real_estate_listing;
-    const counterparty: User = user.role === 'buyer'
-        ? deal.users.find(u => u.role === 'seller')!
-        : deal.users.find(u => u.role === 'buyer')!;
+    const listing = deal.real_estate_listing ?? null;
+    const counterparty: User | undefined = user.role === 'buyer'
+        ? deal.users.find(u => u.role === 'seller')
+        : deal.users.find(u => u.role === 'buyer');
 
     const getStatusBadge = () => {
         if (deal.is_broken) return { label: "Deal Broken", color: "#B91C1C", bg: "#FEE2E2" };
@@ -58,7 +58,7 @@ export const DealCard: React.FC<DealCardProps> = ({deal }) => {
             <Stack spacing={2} >
                 <Box
                     component="img"
-                    src={listing.main_image?.image_path ?? "/api/placeholder/400/320"}
+                    src={listing?.main_image?.image_path ?? "/images/placeholder-house.jpg"}
                     sx={{
                         width: 225,
                         height: 225,
@@ -68,7 +68,7 @@ export const DealCard: React.FC<DealCardProps> = ({deal }) => {
                     }}
                 />
                 <Stack direction="row" spacing={1}>
-                    {listing.images?.slice(0, 3).map((img, i) => (
+                    {listing?.images?.slice(0, 3).map((img, i) => (
                         <Box
                             key={i}
                             component="img"
@@ -103,7 +103,7 @@ export const DealCard: React.FC<DealCardProps> = ({deal }) => {
 
                 >
                     <Typography variant="h5" fontWeight={600} sx={{ color: theme.palette.text.primary }}>
-                        {listing.title}
+                        {listing?.title ?? deal.name ?? "Listing unavailable"}
                     </Typography>
                     <Badge text={status.label} version={"notification"}/>
 
@@ -111,27 +111,35 @@ export const DealCard: React.FC<DealCardProps> = ({deal }) => {
 
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                     <IconLocationMark />
-                    {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}
+                    {listing
+                        ? `${listing.street_number}, ${listing.street_name}, ${listing.city}, ${listing.province}`
+                        : "Property listing is no longer available"}
                 </Typography>
 
                 <Typography variant="body2" sx={{ color: theme.palette.primary.main,  mb: 3, lineClamp: 2, display: '-webkit-box', overflow: 'hidden', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2 }}>
-                    {listing.description}
+                    {listing?.description ?? "Deal details remain available even though listing details are unavailable."}
                 </Typography>
 
-                <Stack direction="row" spacing={3} mb={3}>
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <IconBed />
-                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>{listing.bedrooms} Beds</Typography>
+                {listing ? (
+                    <Stack direction="row" spacing={3} mb={3}>
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            <IconBed />
+                            <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>{listing.bedrooms} Beds</Typography>
+                        </Stack>
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            <IconBath />
+                            <Typography variant="body2" sx={{ color: theme.palette.text.primary }}> {listing.bathrooms} Baths</Typography>
+                        </Stack>
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            <IconSqft />
+                            <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>{listing.square_feet.toLocaleString()} sq ft</Typography>
+                        </Stack>
                     </Stack>
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <IconBath />
-                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}> {listing.bathrooms} Baths</Typography>
-                    </Stack>
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <IconSqft />
-                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>{listing.square_feet.toLocaleString()} sq ft</Typography>
-                    </Stack>
-                </Stack>
+                ) : (
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                        Property attributes (beds, baths, size) are unavailable.
+                    </Typography>
+                )}
 
                 <Divider sx={{ mb: 2 }} />
 
@@ -142,7 +150,9 @@ export const DealCard: React.FC<DealCardProps> = ({deal }) => {
                     </Box>
                     <Box>
                         <Typography variant="caption" sx={{ letterSpacing: 0.5,  color: theme.palette.primary.main, }}>ORIGINAL PRICE</Typography>
-                        <Typography variant="h5" fontWeight={800} sx={{  color: theme.palette.text.primary  }}>{formatCurrency(listing.price)}</Typography>
+                        <Typography variant="h5" fontWeight={800} sx={{  color: theme.palette.text.primary  }}>
+                            {listing ? formatCurrency(listing.price) : "N/A"}
+                        </Typography>
                     </Box>
                 </Stack>
             </Box>
@@ -150,14 +160,16 @@ export const DealCard: React.FC<DealCardProps> = ({deal }) => {
             {/* 3. Right Section: Counterparty & Progress */}
             <Box sx={{ p: 3, pt: 0, width: { md: 350 }, display: 'flex', flexDirection: 'column' }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-                    <Typography variant="caption">{counterparty.role}</Typography>
+                    <Typography variant="caption">{counterparty?.role ?? "Counterparty"}</Typography>
                 </Stack>
 
                 <Stack direction="row" spacing={1.5} alignItems="center" mb={2}>
                     <Avatar sx={{ bgcolor: '#572A4D1A', color: '#718096', width: 40, height: 40 }}>
-                        {counterparty?.name.charAt(0)}
+                        {counterparty?.name?.charAt(0) ?? "?"}
                     </Avatar>
-                    <Typography variant="subtitle1" fontWeight={700} sx={{ color: theme.palette.text.primary }}>{counterparty?.name}</Typography>
+                    <Typography variant="subtitle1" fontWeight={700} sx={{ color: theme.palette.text.primary }}>
+                        {counterparty?.name ?? "Unknown user"}
+                    </Typography>
                 </Stack>
 
                 <Stack direction="row" spacing={4} mb={3}>
