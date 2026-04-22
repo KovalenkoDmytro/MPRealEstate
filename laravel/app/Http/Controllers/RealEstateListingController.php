@@ -102,8 +102,11 @@ class RealEstateListingController extends Controller {
         $this->authorize('delete', $listing);
 
 
-        // 2. Check if any deal exists and is not completed
-        $hasActiveDeal = $listing->deal()->where('is_completed', false)->exists();
+        // 2. Block only if deal is truly active (not completed and not broken)
+        $hasActiveDeal = $listing->deal()
+            ->where('is_completed', false)
+            ->where('is_broken', false)
+            ->exists();
 
         if ($hasActiveDeal) {
             return JsonResponder::send(
