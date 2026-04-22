@@ -21,6 +21,7 @@ export default function BreakDealSection({ deal }: Props) {
     const { showNotification } = useNotification();
 
     const [message, setMessage] = useState("");
+    const [responseMessage, setResponseMessage] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmKind, setConfirmKind] = useState<"request" | "approve" | "reject" | null>(null);
@@ -36,24 +37,32 @@ export default function BreakDealSection({ deal }: Props) {
     };
 
     const onConfirm = async () => {
-        if (!confirmKind) return;
+        if (!confirmKind) return false;
+
+        if ((confirmKind === "approve" || confirmKind === "reject") && responseMessage.trim().length === 0) {
+            showNotification("Please provide your response message.", "error");
+            return false;
+        }
+
         try {
             setSubmitting(true);
             if (confirmKind === "request") {
                 await DealService.breakTheDeal(deal.id, message.trim());
             } else if (confirmKind === "approve") {
-                await DealService.respondToBreakTheDeal(deal.id, "approved");
+                await DealService.respondToBreakTheDeal(deal.id, "approved", responseMessage.trim());
             } else if (confirmKind === "reject") {
-                await DealService.respondToBreakTheDeal(deal.id, "rejected");
+                await DealService.respondToBreakTheDeal(deal.id, "rejected", responseMessage.trim());
             }
             showNotification("Action completed successfully.", "success");
+            setConfirmKind(null);
+            setResponseMessage("");
             window.location.reload();
+            return true;
         } catch (error: any) {
             showNotification(error?.message ?? "Action failed.", "error");
+            return false;
         } finally {
             setSubmitting(false);
-            setConfirmOpen(false);
-            setConfirmKind(null);
         }
     };
 
@@ -73,13 +82,37 @@ export default function BreakDealSection({ deal }: Props) {
                 </Typography>
             </Stack>
         ) : confirmKind === "approve" ? (
-            <Typography variant="body2" color="text.secondary">
-                This will <strong>approve</strong> the other party's request and end the deal workflow.
-            </Typography>
+            <Stack spacing={1}>
+                <Typography variant="body2" color="text.secondary">
+                    This will <strong>approve</strong> the other party's request and end the deal workflow.
+                </Typography>
+                <TextField
+                    name="break_deal_response_message_approve"
+                    label="Your response message"
+                    placeholder="Write your response"
+                    fullWidth
+                    multiline
+                    minRows={3}
+                    value={responseMessage}
+                    onChange={(e) => setResponseMessage(e.target.value)}
+                />
+            </Stack>
         ) : confirmKind === "reject" ? (
-            <Typography variant="body2" color="text.secondary">
-                This will <strong>reject</strong> the other party's request to break the deal.
-            </Typography>
+            <Stack spacing={1}>
+                <Typography variant="body2" color="text.secondary">
+                    This will <strong>reject</strong> the other party's request to break the deal.
+                </Typography>
+                <TextField
+                    name="break_deal_response_message_reject"
+                    label="Your response message"
+                    placeholder="Write your response"
+                    fullWidth
+                    multiline
+                    minRows={3}
+                    value={responseMessage}
+                    onChange={(e) => setResponseMessage(e.target.value)}
+                />
+            </Stack>
         ) : null;
 
     return (
@@ -172,7 +205,11 @@ export default function BreakDealSection({ deal }: Props) {
 
             <ConfirmDialog
                 open={confirmOpen}
-                onClose={() => setConfirmOpen(false)}
+                onClose={() => {
+                    setConfirmOpen(false);
+                    setConfirmKind(null);
+                    setResponseMessage("");
+                }}
                 title={confirmTitle}
                 description={confirmDescription}
                 confirmLabel={

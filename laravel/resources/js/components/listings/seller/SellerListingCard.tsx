@@ -23,6 +23,8 @@ import IconEdit from "@/icons/IconEdit";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useNotification } from "@/context/NotificationContext";
 import IconContainer from "@/components/common/IconContainer";
+import { listingService } from "@/services/listingService";
+import { router } from "@inertiajs/react";
 
 type Props = {
     listing: RealEstateListing;
@@ -53,9 +55,19 @@ export default function SellerListingCard({ listing }: Props) {
     };
 
     const handleConfirmDeactivate = async () => {
-        showNotification("Listing deactivated successfully", "success");
-        setDeactivateDialogOpen(false);
-        // window.location.reload(); // Uncomment to refresh if needed
+        try {
+            const result = await listingService.deactivateListing(listing.id);
+
+            if (!result?.success) {
+                showNotification(result?.message || "Failed to deactivate listing", "error");
+                return;
+            }
+
+            showNotification(result.message || "Listing deactivated successfully", "success");
+            router.reload({ only: ["listings"] });
+        } catch {
+            showNotification("Failed to deactivate listing", "error");
+        }
     };
 
     return (

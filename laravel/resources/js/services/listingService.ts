@@ -58,9 +58,21 @@ export const listingService = {
 
     async deactivateListing(listingId: number) {
         try {
-            const response = await api.delete(route("seller.listings.deactivate", listingId));
-            return response.data;
-        } catch {
+            const response = await api.delete(route("seller.listings.deactivate", listingId, false), {
+                headers: { Accept: "application/json" },
+            });
+
+            return { success: true, data: response.data, message: response.data.message };
+        } catch (err: any) {
+            if (err.response?.status === 422 || err.response?.status === 403) {
+                return {
+                    success: false,
+                    errors: err.response.data.errors ?? {},
+                    message: err.response.data.message ?? "Unable to deactivate listing.",
+                };
+            }
+
+            throw new Error(err.message || "Unexpected error occurred");
         }
     }
 };

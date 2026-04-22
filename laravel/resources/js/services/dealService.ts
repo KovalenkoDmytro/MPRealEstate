@@ -81,11 +81,24 @@ export const DealService = {
 
     async respondToBreakTheDeal(
         dealId: number,
-        responseAnswer: "approved" | "rejected"
+        response: "approved" | "rejected",
+        message?: string
     ): Promise<ApiResponseBase> {
-        const { data } = await api.post(route("deals.break.request", dealId, false), {
+        const payload: {
+            action: "respond";
+            response: "approved" | "rejected";
+            message?: string;
+        } = {
             action: "respond",
-            responseAnswer,
+            response,
+        };
+
+        if (message?.trim()) {
+            payload.message = message.trim();
+        }
+
+        const { data } = await api.post(route("deals.break.request", dealId, false), {
+            ...payload,
         });
         return data;
     },

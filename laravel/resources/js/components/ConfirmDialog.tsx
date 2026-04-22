@@ -16,7 +16,7 @@ type ConfirmDialogProps = {
     confirmLabel?: string;
     cancelLabel?: string;
     onClose: () => void;                 // closes the dialog (parent controls `open`)
-    onConfirm: () => Promise<void> | void; // do the thing (can be async)
+    onConfirm: () => Promise<void | boolean> | void | boolean; // return false to keep dialog open
     confirmColor?: "primary" | "secondary" | "success" | "error" | "info" | "warning";
 };
 
@@ -36,8 +36,10 @@ export default function ConfirmDialog({
         if (submitting) return;
         try {
             setSubmitting(true);
-            await onConfirm();
-            onClose(); // close after success (or move to parent if you want finer control)
+            const shouldClose = await onConfirm();
+            if (shouldClose !== false) {
+                onClose(); // close after success (or move to parent if you want finer control)
+            }
         } finally {
             setSubmitting(false);
         }
