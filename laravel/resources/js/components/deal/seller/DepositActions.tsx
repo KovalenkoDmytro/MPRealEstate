@@ -44,7 +44,7 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
     }, [deal.id, depositDateTime]);
 
     return (
-        <Box mt={3}>
+        < >
             {/* banner always on top */}
             <DealStatusBanner deal={deal} role="seller" feature="deposit" />
 
@@ -114,6 +114,6 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
                     />
                 </Card>
             )}
-        </Box>
+        </>
     );
 }

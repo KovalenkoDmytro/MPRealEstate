@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
-import { Box, TextField, Button, Typography, Paper } from "@mui/material";
+import {TextField,Typography, Paper } from "@mui/material";
+import Button from "@/components/common/Button";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import {useNotification} from "@/context/NotificationContext";
+import theme from "@/theme";
 
 export default function SetDepositForm({ deal }: { deal: Deal }) {
     const [depositAmount, setDepositAmount] = useState<number | ''>('');
@@ -32,7 +34,14 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
         <Paper
             component="form"
             onSubmit={handleSubmit}
-            sx={{ mt: 4, p: 4, borderRadius: 2, backgroundColor: "#f9fafb" }}
+            sx={{
+                p: theme.shape.padding,
+                borderRadius: theme.shape.borderRadius,
+                bgcolor: theme.palette.background.white,
+                border: `1px solid ${theme.palette.border.main}`,
+                mb: 3,
+                boxShadow: 0,
+            }}
         >
             <Typography variant="subtitle2" sx={{ mb: 2 }}>
                 Set Security Deposit Amount
@@ -44,11 +53,10 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
                 fullWidth
                 variant="outlined"
                 required
-                slotProps={{htmlInput :{ step: "0.01", min: "0" }}}
+                slotProps={{htmlInput :{ step: "50", min: "0" }}}
                 value={depositAmount}
                 onChange={(e) => {
                     const v = e.target.value;
-                    // allow empty while typing
                     if (v === "") return setDepositAmount("");
                     const n = parseFloat(v);
                     if (Number.isNaN(n)) return;
@@ -64,11 +72,12 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
                 helperText={depositAmount !== "" && !canSubmit ? "Amount must be greater than 0." : " "}
             />
 
-            <Box mt={2}>
-                <Button type="submit" variant="contained" color="primary" disabled={!canSubmit}>
-                    Save Deposit
-                </Button>
-            </Box>
+            <Button
+                type="submit"
+                version='secondary'
+                disabled={!canSubmit}
+                text={"Save Deposit"}
+            />
 
             <ConfirmDialog
                 open={confirmOpen}

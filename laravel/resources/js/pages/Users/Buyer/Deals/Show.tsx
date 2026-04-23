@@ -24,21 +24,10 @@ export default function DealShowPage({deal}: { deal: PropertyDetail }) {
 
             {seller && <DealPersonInfo person={seller}/>}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             {deal.security_deposit &&  <DepositSection deal={deal}/>}
+
+
+
 
             <ConditionDayForm deal={deal}/>
 
