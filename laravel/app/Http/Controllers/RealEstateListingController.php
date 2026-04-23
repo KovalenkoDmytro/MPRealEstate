@@ -46,7 +46,9 @@ class RealEstateListingController extends Controller {
     }
 
     public function create(): Response {
-        return Inertia::render('Users/Seller/Listings/Create');
+        return Inertia::render('Users/Seller/Listings/Create', [
+            'listingImageMaxBytes' => $this->resolveEffectiveListingImageMaxBytes(),
+        ]);
     }
 
     public function store(RealEstateListingRequest $request): JsonResponse {
@@ -77,6 +79,7 @@ class RealEstateListingController extends Controller {
 
         return Inertia::render('Users/Seller/Listings/Edit', [
             'listing' => $listing->load('mainImage', 'images'),
+            'listingImageMaxBytes' => $this->resolveEffectiveListingImageMaxBytes(),
         ]);
     }
 
@@ -158,6 +161,42 @@ class RealEstateListingController extends Controller {
             ->get();
 
         return response()->json($listings);
+    }
+
+    private function resolveEffectiveListingImageMaxBytes(): int
+    {
+        $validationLimitBytes = RealEstateListingRequest::MAX_IMAGE_SIZE_KB * 1024;
+        $uploadMaxBytes = $this->iniSizeToBytes((string) ini_get('upload_max_filesize'));
+        $postMaxBytes = $this->iniSizeToBytes((string) ini_get('post_max_size'));
+
+        $candidates = array_filter(
+            [$validationLimitBytes, $uploadMaxBytes, $postMaxBytes],
+            static fn (int $value): bool => $value > 0
+        );
+
+        if ($candidates === []) {
+            return $validationLimitBytes;
+        }
+
+        return (int) min($candidates);
+    }
+
+    private function iniSizeToBytes(string $size): int
+    {
+        $value = trim($size);
+        if ($value === '') {
+            return 0;
+        }
+
+        $unit = strtolower(substr($value, -1));
+        $number = (float) $value;
+
+        return match ($unit) {
+            'g' => (int) ($number * 1024 * 1024 * 1024),
+            'm' => (int) ($number * 1024 * 1024),
+            'k' => (int) ($number * 1024),
+            default => (int) $number,
+        };
     }
 
 }

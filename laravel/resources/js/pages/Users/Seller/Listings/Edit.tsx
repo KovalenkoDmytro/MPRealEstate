@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import { useState } from "react";
+import React, { useState } from "react";
 import { EditableListingFormValues, GalleryImagePreview, ListingFormFieldValue, PropertyStatus, RealEstateListing } from "@/types";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
@@ -10,8 +10,20 @@ import {useNotification} from "@/context/NotificationContext";
 import Button from "@/components/common/Button";
 import {Grid, Stack} from "@mui/material";
 import BackToButton from "@/components/common/BackToButton";
+import {
+    MAX_GALLERY_IMAGES,
+    resolveMaxImageSizeBytes,
+    validateImageFile,
+    validateImageFiles,
+} from "@/helpers/imageUploadValidationHelper";
 
-export default function EditListing({ listing }: { listing: RealEstateListing }) {
+type EditListingProps = {
+    listing: RealEstateListing;
+    listingImageMaxBytes?: number;
+};
+
+export default function EditListing({ listing, listingImageMaxBytes }: EditListingProps) {
+    const maxImageSizeBytes = resolveMaxImageSizeBytes(listingImageMaxBytes);
     const [data, setData] = useState<EditableListingFormValues>({
         title: listing.title || "",
         description: listing.description || "",
@@ -75,10 +87,23 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
     }
     const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            setData((prev) => ({ ...prev, main_image: file }));
-            setPreviewMainImage(URL.createObjectURL(file));
+        if (!file) return;
+
+        const message = validateImageFile(file, maxImageSizeBytes, "Main image");
+        if (message) {
+            showNotification(message, "error");
+            setErrors((prev) => ({ ...prev, main_image: [message] }));
+            e.target.value = "";
+            return;
         }
+
+        setErrors((prev) => {
+            const next = { ...prev };
+            delete next.main_image;
+            return next;
+        });
+        setData((prev) => ({ ...prev, main_image: file }));
+        setPreviewMainImage(URL.createObjectURL(file));
     };
     const removeMainImage = () => {
         if (previewMainImage) imageService.revokePreview(previewMainImage);
@@ -90,10 +115,17 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         if (!e.target.files) return;
 
         const newFiles = Array.from(e.target.files);
+        const message = validateImageFiles(newFiles, maxImageSizeBytes, "Each gallery image");
+        if (message) {
+            showNotification(message, "error");
+            e.target.value = "";
+            return;
+        }
 
         // Validate count
-        if (!imageService.canAddImages(previewGalleryImages.length, newFiles.length)) {
-            alert("You can only upload up to 7 images total.");
+        if (!imageService.canAddImages(previewGalleryImages.length, newFiles.length, MAX_GALLERY_IMAGES)) {
+            showNotification(`You can only upload up to ${MAX_GALLERY_IMAGES} images total.`, "error");
+            e.target.value = "";
             return;
         }
 
@@ -106,6 +138,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         // Add previews
         const newPreviews = imageService.createPreviews(newFiles);
         setPreviewGalleryImages((prev) => [...prev, ...newPreviews]);
+        e.target.value = "";
     };
     const removeGalleryImage = (index: number) => {
         const { updatedPreviews, updatedRemoveIds } = imageService.removeGalleryImage(
@@ -167,7 +200,11 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
             window.location.href = "/listings";
         } else {
             setErrors(result.errors);
-            showNotification(result.message,"error");
+            const errorMap = (result.errors ?? {}) as Record<string, string[]>;
+            const mainImageError = result.errors?.main_image?.[0];
+            const galleryError = Object.entries(errorMap)
+                .find(([key]) => key.startsWith("gallery_images"))?.[1]?.[0];
+            showNotification(mainImageError || galleryError || result.message, "error");
         }
         setProcessing(false);
     };
@@ -189,7 +226,8 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
                 <ImagesSection
                     images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
                     handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
-                    disableGalleryUpload={data.gallery_images.length >= 7}
+                    disableGalleryUpload={data.gallery_images.length >= MAX_GALLERY_IMAGES}
+                    errors={errors?.main_image?.[0]}
                 />
 
                 {/* Submit Button */}

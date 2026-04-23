@@ -8,8 +8,20 @@ import ListingDetails from "@/components/listing/editing/ListingDetails";
 import {useNotification} from "@/context/NotificationContext";
 import {Stack} from "@mui/material";
 import Button from "@/components/common/Button";
+import {
+    MAX_GALLERY_IMAGES,
+    resolveMaxImageSizeBytes,
+    validateImageFile,
+    validateImageFiles,
+} from "@/helpers/imageUploadValidationHelper";
 
-export default function CreateListing() {
+type CreateListingProps = {
+    listingImageMaxBytes?: number;
+};
+
+export default function CreateListing({ listingImageMaxBytes }: CreateListingProps) {
+    const maxImageSizeBytes = resolveMaxImageSizeBytes(listingImageMaxBytes);
+
     const [data, setData] = useState<ListingFormValues>({
         title: "",
         description: "",
@@ -57,10 +69,18 @@ export default function CreateListing() {
     /** Handle main image upload */
     const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            setData((prev) => ({...prev, main_image: file}));
-            setPreviewMainImage(URL.createObjectURL(file));
+        if (!file) return;
+        const message = validateImageFile(file, maxImageSizeBytes, "Main image");
+        if (message) {
+            showNotification(message, "error");
+            setErrors((prev) => ({ ...prev, main_image: [message] }));
+            e.target.value = "";
+            return;
         }
+
+        setErrors((prev) => ({ ...prev, main_image: undefined }));
+        setData((prev) => ({...prev, main_image: file}));
+        setPreviewMainImage(URL.createObjectURL(file));
     };
 
     /** Remove main image preview */
@@ -75,10 +95,17 @@ export default function CreateListing() {
         if (!e.target.files) return;
 
         const newFiles = Array.from(e.target.files);
+        const message = validateImageFiles(newFiles, maxImageSizeBytes, "Each gallery image");
+        if (message) {
+            showNotification(message, "error");
+            e.target.value = "";
+            return;
+        }
 
         // Validate count
-        if (!imageService.canAddImages(previewGalleryImages.length, newFiles.length)) {
-            alert("You can only upload up to 5 images total.");
+        if (!imageService.canAddImages(previewGalleryImages.length, newFiles.length, MAX_GALLERY_IMAGES)) {
+            showNotification(`You can only upload up to ${MAX_GALLERY_IMAGES} images total.`, "error");
+            e.target.value = "";
             return;
         }
 
@@ -91,6 +118,7 @@ export default function CreateListing() {
         // Add previews
         const newPreviews = imageService.createPreviews(newFiles);
         setPreviewGalleryImages((prev) => [...prev, ...newPreviews]);
+        e.target.value = "";
     };
 
     /** Remove gallery image by index */
@@ -149,7 +177,11 @@ export default function CreateListing() {
             window.location.href = "/listings";
         } else {
             setErrors(result.errors);
-            showNotification(result.message, "error")
+            const errorMap = (result.errors ?? {}) as Record<string, string[]>;
+            const mainImageError = result.errors?.main_image?.[0];
+            const galleryError = Object.entries(errorMap)
+                .find(([key]) => key.startsWith("gallery_images"))?.[1]?.[0];
+            showNotification(mainImageError || galleryError || result.message, "error");
         }
 
         setProcessing(false);
@@ -163,7 +195,7 @@ export default function CreateListing() {
                 <ImagesSection
                     images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
                     handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
-                    disableGalleryUpload={data.gallery_images.length >= 5}
+                    disableGalleryUpload={data.gallery_images.length >= MAX_GALLERY_IMAGES}
                     errors={errors?.main_image?.[0]}
                 />
 
