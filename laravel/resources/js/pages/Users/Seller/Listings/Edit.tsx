@@ -1,5 +1,4 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import { Link } from "@inertiajs/react";
 import { useState } from "react";
 import { EditableListingFormValues, GalleryImagePreview, ListingFormFieldValue, PropertyStatus, RealEstateListing } from "@/types";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
@@ -10,6 +9,7 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import {useNotification} from "@/context/NotificationContext";
 import Button from "@/components/common/Button";
 import {Stack} from "@mui/material";
+import BackToButton from "@/components/common/BackToButton";
 
 export default function EditListing({ listing }: { listing: RealEstateListing }) {
     const [data, setData] = useState<EditableListingFormValues>({
@@ -179,9 +179,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
 
             <div className="container mx-auto p-4">
                 <div className="mt-4">
-                    <Link href={route("listings.index")} className="text-blue-500">
-                        🔙 Back to Listings
-                    </Link>
+                    <BackToButton label="Listings" fallbackHref={route("listings.index")} />
                 </div>
 
                 {/* Property, Financial & Features */}
