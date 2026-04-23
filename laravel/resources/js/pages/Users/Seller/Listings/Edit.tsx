@@ -218,7 +218,6 @@ export default function EditListing({ listing, listingImageMaxBytes }: EditListi
 
                 <BackToButton label="Listings" fallbackHref={route("listings.index")} />
 
-
                 {/* Property, Financial & Features */}
                 <ListingDetails data={data} errors={errors} handleChange={handleChange} />
 

@@ -12,10 +12,11 @@ import sanitizeField from "@/helpers/validationFieldsHelper";
 import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
 import KeywordsInput from "@/components/listing/form/KeywordsInput";
 import { ListingFormFieldValue, ListingFormValues, ValidationErrors } from "@/types";
-import AddressAutocomplete from "@/components/listing/form/AddressAutocomplete";
+import AddressAutocomplete, { type MapboxAddressData } from "@/components/listing/form/AddressAutocomplete";
 import IconHome from "@/icons/IconHome";
 import IconContainer from "@/components/common/IconContainer";
 import theme from "@/theme";
+import ListingAddressMapPicker from "@/components/maps/ListingAddressMapPicker";
 
 interface ListingDetailsFormProps {
     data: ListingFormValues;
@@ -24,6 +25,7 @@ interface ListingDetailsFormProps {
 }
 
 export default function ListingDetails({ data, handleChange, errors }: ListingDetailsFormProps) {
+
     const processChange = (name: string, value: ListingFormFieldValue) => {
         let localValue = value;
 
@@ -44,6 +46,17 @@ export default function ListingDetails({ data, handleChange, errors }: ListingDe
         ].filter(Boolean);
 
         return parts.join(", ");
+    };
+
+    const applySelectedAddress = (place: MapboxAddressData) => {
+        handleChange("street_number", place.streetNumber ?? data.street_number ?? "");
+        handleChange("street_name", place.streetName ?? data.street_name ?? "");
+        handleChange("city", place.city ?? data.city ?? "");
+        handleChange("province", place.province ?? data.province ?? "");
+        handleChange("postal_code", place.postalCode ?? data.postal_code ?? "");
+        handleChange("country", place.country ?? data.country ?? "");
+        handleChange("latitude", place.latitude);
+        handleChange("longitude", place.longitude);
     };
 
     return (
@@ -86,18 +99,18 @@ export default function ListingDetails({ data, handleChange, errors }: ListingDe
                         Address
                     </Typography>
 
-                        <AddressAutocomplete
-                            value={getFullAddress(data)}
-                            onSelect={(place) => {
-                            handleChange("street_number", place.streetNumber ?? "");
-                            handleChange("street_name", place.streetName ?? "");
-                            handleChange("city", place.city ?? "");
-                            handleChange("province", place.province ?? "");
-                            handleChange("postal_code", place.postalCode ?? "");
-                            handleChange("country", place.country ?? "");
-                            handleChange("latitude", place.latitude);
-                            handleChange("longitude", place.longitude);
-                        }}
+                    <AddressAutocomplete
+                        value={getFullAddress(data)}
+                        onSelect={applySelectedAddress}
+                    />
+                </Grid>
+
+                <Grid size={{ xs: 12 }}>
+                    <ListingAddressMapPicker
+                        latitude={data.latitude}
+                        longitude={data.longitude}
+                        fullAddress={getFullAddress(data)}
+                        onSelect={applySelectedAddress}
                     />
                 </Grid>
 
