@@ -32,6 +32,7 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
             backgroundColor: theme.palette.background.white,
             borderRadius: theme.shape.borderRadius,
             border: `1px solid ${theme.palette.border.main}`,
+            width: "100%",
         }}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
                 Images
@@ -46,7 +47,6 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
                         {errors}
                     </Alert>
                 }
-                Upload Main Image
 
                 <input
                     ref={inputMainImageRef}

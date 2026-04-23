@@ -8,7 +8,7 @@ import { imageService } from "@/services/imageService";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import {useNotification} from "@/context/NotificationContext";
 import Button from "@/components/common/Button";
-import {Stack} from "@mui/material";
+import {Grid, Stack} from "@mui/material";
 import BackToButton from "@/components/common/BackToButton";
 
 export default function EditListing({ listing }: { listing: RealEstateListing }) {
@@ -177,10 +177,10 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
     return (
         <AuthenticatedLayout header="Edit Listing">
 
-            <div className="container mx-auto p-4">
-                <div className="mt-4">
-                    <BackToButton label="Listings" fallbackHref={route("listings.index")} />
-                </div>
+            <Grid container spacing={4}>
+
+                <BackToButton label="Listings" fallbackHref={route("listings.index")} />
+
 
                 {/* Property, Financial & Features */}
                 <ListingDetails data={data} errors={errors} handleChange={handleChange} />
@@ -193,7 +193,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
                 />
 
                 {/* Submit Button */}
-                <Stack direction="row" justifyContent="flex-end" spacing={2}>
+                <Stack direction="row" justifyContent="flex-end" spacing={2} width={"100%"} >
                     <Button
                         text={processing ? "Deleting..." : "Delete listing"}
                         onClick={() => setConfirmOpen(true)}
@@ -206,8 +206,6 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
                         onClick={submit}
                         disabled={processing}
                     />
-
-
 
                 </Stack>
 
@@ -226,7 +224,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
                     onClose={() => setConfirmOpen(false)}
                     onConfirm={handleDeactivateListing} // dialog will await this and close on success
                 />
-            </div>
+            </Grid>
         </AuthenticatedLayout>
     );
 }
