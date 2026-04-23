@@ -14,7 +14,7 @@ class Offer extends Model
 
     // Each offer belongs to one listing
     public function listing(): BelongsTo {
-        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
+        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id')->withTrashed();
     }
 
     // Each offer belongs to one buyer (user)

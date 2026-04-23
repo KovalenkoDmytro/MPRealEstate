@@ -17,7 +17,6 @@ export default function RecentOfferItem({ offer }: RecentOfferItemProps) {
     const isStrongOffer = offer.amount <= offer.listing.price;
     const percentage = Math.abs(((offer.amount - offer.listing.price) / offer.listing.price) * 100).toFixed(1);
 
-
     return (
         <Paper
             elevation={0}
