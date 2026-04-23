@@ -1,4 +1,5 @@
 import { SearchBox } from "@mapbox/search-js-react";
+import theme from "@/theme";
 
 // Normalized address data to replace the old Google Place object
 export interface MapboxAddressData {
@@ -48,7 +49,7 @@ export default function AddressAutocomplete({ value, onSelect }: AddressAutocomp
     };
 
     return (
-        <div className="w-full border rounded border-gray-300 bg-white">
+        <div className="w-full bg-white">
             <SearchBox
                 accessToken={MAPBOX_TOKEN}
                 value={value}
@@ -64,8 +65,19 @@ export default function AddressAutocomplete({ value, onSelect }: AddressAutocomp
                         padding: '0.5em',
                         borderRadius: '8px',
                         boxShadow: 'none',
-                        border: 'none',
-                    }
+                        border: `1px solid ${theme.palette.border.main}`,
+                    },
+                    cssText: `
+                        .MapboxSearch {
+                            border: 1px solid ${theme.palette.border.main};
+                            border-radius: 8px;
+                            background: ${theme.palette.background.white};
+                        }
+                        .MapboxSearch:focus-within {
+                            border-color: ${theme.palette.primary.main};
+                            box-shadow: 0 0 0 1px ${theme.palette.primary.main};
+                        }
+                    `,
                 }}
             />
         </div>

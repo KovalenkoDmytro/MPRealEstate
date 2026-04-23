@@ -1,5 +1,4 @@
 import React from "react";
-import {Head, Link} from "@inertiajs/react";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import { ImageGallery } from "@/components/listing/ImageGallery";
 import { ListingDetails } from "@/components/listing/ListingDetails";
@@ -12,12 +11,12 @@ import {
     Stack, Typography, Box, Container, Grid
 } from "@mui/material";
 import SetAppointmentForm from "@/components/listing/appointments/SetAppointmentForm";
-import IconArrowLeft from "@/icons/IconArrowLeft";
 import { UserOfferStatus } from "./UserOfferStatus";
 import { MakeOfferPrompt } from "./MakeOfferPrompt";
 import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
 import IconLocationMark from "@/icons/IconLocationMark";
 import {ListingLocationMap} from "@/components/maps/ListingLocationMap";
+import BackToButton from "@/components/common/BackToButton";
 
 type PageProps = {
     listing: RealEstateListing;
@@ -49,14 +48,10 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
 
 
     return (
-        <AuthenticatedLayout header="Dashboard">
-            <Head title={listing.title} />
+        <AuthenticatedLayout header="Dashboard" title={listing.title}>
 
             <Container className='listing-show-page'>
-                <Link href={route(`listings.index`)} style={{ display: 'flex', alignItems: 'center', marginBottom: '16px', textDecoration: 'none', gap: '8px'   }}>
-                    <IconArrowLeft/>
-                    <Typography> Back to Listings</Typography>
-                </Link>
+                <BackToButton label="Listings" fallbackHref={route("listings.index")} />
 
                 <Stack spacing={4}>
 

@@ -22,6 +22,9 @@ import IconLotSpace from "@/icons/IconLotSpace";
 import IconEdit from "@/icons/IconEdit";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useNotification } from "@/context/NotificationContext";
+import IconContainer from "@/components/common/IconContainer";
+import { listingService } from "@/services/listingService";
+import { router } from "@inertiajs/react";
 
 type Props = {
     listing: RealEstateListing;
@@ -30,10 +33,8 @@ type Props = {
 export default function SellerListingCard({ listing }: Props) {
     const mainImage = listing.main_image?.image_path || '/images/placeholder-house.jpg';
     const { showNotification } = useNotification();
-
     // Dialog state
     const [deactivateDialogOpen, setDeactivateDialogOpen] = useState(false);
-
     const DetailItem = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string | number | null }) => {
         if (!value) return null;
         return (
@@ -54,13 +55,19 @@ export default function SellerListingCard({ listing }: Props) {
     };
 
     const handleConfirmDeactivate = async () => {
-        // Here you would typically make an API call to deactivate the listing
-        // For example: await listingsService.deactivate(listing.id);
+        try {
+            const result = await listingService.deactivateListing(listing.id);
 
-        // Mock success for now
-        showNotification("Listing deactivated successfully", "success");
-        setDeactivateDialogOpen(false);
-        // window.location.reload(); // Uncomment to refresh if needed
+            if (!result?.success) {
+                showNotification(result?.message || "Failed to deactivate listing", "error");
+                return;
+            }
+
+            showNotification(result.message || "Listing deactivated successfully", "success");
+            router.reload({ only: ["listings"] });
+        } catch {
+            showNotification("Failed to deactivate listing", "error");
+        }
     };
 
     return (
@@ -92,8 +99,6 @@ export default function SellerListingCard({ listing }: Props) {
                 </Box>
 
                 <CardContent sx={{ flexGrow: 1, p: 3 }}>
-
-                    {/* Header: Price & Title */}
                     <Box mb={3}>
                         <Typography variant="h5" fontWeight={800} color="text.primary" gutterBottom>
                             {formatCurrency(listing.price)}
@@ -102,14 +107,14 @@ export default function SellerListingCard({ listing }: Props) {
                             {listing.title}
                         </Typography>
                         <Stack direction="row" alignItems="center" gap={0.5} color="text.secondary" mt={0.5}>
-                            <IconLocationMark />
+                            <IconLocationMark/>
+
                             <Typography variant="body2" noWrap>
                                 {listing.street_number} {listing.street_name}, {listing.city}, {listing.province}
                             </Typography>
                         </Stack>
                     </Box>
 
-                    {/* Content Columns */}
                     <Grid container spacing={4}>
 
                         {/* Column 1: Details */}

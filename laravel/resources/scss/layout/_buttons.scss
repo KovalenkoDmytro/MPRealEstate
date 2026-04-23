@@ -13,6 +13,8 @@
     justify-content: center;
     gap: 10px;
     width: 100%;
+    border: none;
+    cursor: pointer;
 
     &.btn-primary {
         @include primary-btn;

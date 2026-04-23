@@ -1,7 +1,5 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
 
-import { Head } from '@inertiajs/react';
-
 export default function Edit() {
     return (
         <AuthenticatedLayout
@@ -10,8 +8,8 @@ export default function Edit() {
                     Profile
                 </h2>
             }
+            title="Profile"
         >
-            <Head title="Profile" />
 
             //todo must be done in feature
         </AuthenticatedLayout>

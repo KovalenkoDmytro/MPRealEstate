@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RealEstateListingRequest extends FormRequest
 {
+    public const MAX_IMAGE_SIZE_KB = 4096;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -29,6 +31,8 @@ class RealEstateListingRequest extends FormRequest
      */
     public function rules(): array
     {
+        $effectiveImageMaxKb = $this->resolveEffectiveImageMaxKb();
+
         return [
             // Core Info
             'title' => ['required', 'string', 'max:255'],
@@ -65,11 +69,11 @@ class RealEstateListingRequest extends FormRequest
 
             // Media
             'main_image' => $this->removeMainImageRequired()
-                ? ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096']
-                : ['sometimes', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096'],
+                ? ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:' . $effectiveImageMaxKb]
+                : ['sometimes', 'image', 'mimes:jpeg,png,jpg,webp', 'max:' . $effectiveImageMaxKb],
 
             'gallery_images' => ['sometimes', 'array', 'max:5'],
-            'gallery_images.*' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:4096'],
+            'gallery_images.*' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:' . $effectiveImageMaxKb],
             'keywords'      => ['sometimes', 'array'],
             'keywords.*'    => ['sometimes', 'string', 'distinct', 'min:1', 'max:50'],
         ];
@@ -78,6 +82,44 @@ class RealEstateListingRequest extends FormRequest
     private function removeMainImageRequired(): bool
     {
         return $this->isMethod('post') || ($this->isMethod('put') && $this->boolean('remove_main_image') === true);
+    }
+
+    private function resolveEffectiveImageMaxKb(): int
+    {
+        $validationLimitBytes = self::MAX_IMAGE_SIZE_KB * 1024;
+        $uploadMaxBytes = $this->iniSizeToBytes((string) ini_get('upload_max_filesize'));
+        $postMaxBytes = $this->iniSizeToBytes((string) ini_get('post_max_size'));
+
+        $candidates = array_filter(
+            [$validationLimitBytes, $uploadMaxBytes, $postMaxBytes],
+            static fn (int $value): bool => $value > 0
+        );
+
+        if ($candidates === []) {
+            return self::MAX_IMAGE_SIZE_KB;
+        }
+
+        $effectiveBytes = (int) min($candidates);
+
+        return max(1, (int) floor($effectiveBytes / 1024));
+    }
+
+    private function iniSizeToBytes(string $size): int
+    {
+        $value = trim($size);
+        if ($value === '' || $value === '-1') {
+            return 0;
+        }
+
+        $unit = strtolower(substr($value, -1));
+        $number = (float) $value;
+
+        return match ($unit) {
+            'g' => (int) ($number * 1024 * 1024 * 1024),
+            'm' => (int) ($number * 1024 * 1024),
+            'k' => (int) ($number * 1024),
+            default => (int) $number,
+        };
     }
 
     /**
@@ -90,9 +132,11 @@ class RealEstateListingRequest extends FormRequest
             'main_image.image' => __('validation.realEstateListingRequest.main_image_image'),
             'main_image.mimes' => __('validation.realEstateListingRequest.main_image_mimes'),
             'main_image.max' => __('validation.realEstateListingRequest.main_image_max'),
+            'main_image.uploaded' => __('validation.realEstateListingRequest.main_image_uploaded'),
             'gallery_images.*.image' => __('validation.realEstateListingRequest.gallery_images_image'),
             'gallery_images.*.mimes' => __('validation.realEstateListingRequest.gallery_images_mimes'),
             'gallery_images.*.max' => __('validation.realEstateListingRequest.gallery_images_size_max'),
+            'gallery_images.*.uploaded' => __('validation.realEstateListingRequest.gallery_images_uploaded'),
             'gallery_images.max' => __('validation.realEstateListingRequest.gallery_images_amount_max'),
         ];
     }

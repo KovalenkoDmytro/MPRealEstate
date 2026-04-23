@@ -1,8 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Foundation\Application;
 use Inertia\Inertia;
+use App\Models\Deal;
+use App\Models\User;
+use App\Models\RealEstateListing;
 use App\Http\Controllers\{NotificationController,
     OfferController,
     ProfileController,
@@ -13,14 +17,23 @@ use App\Http\Controllers\{NotificationController,
 use App\Http\Controllers\AppointmentController;
 
 // Public Home Route
-Route::get('/', static fn () =>
-Inertia::render('Welcome', [
-    'canLogin'       => Route::has('login'),
-    'canRegister'    => Route::has('register'),
-    'laravelVersion' => Application::VERSION,
-    'phpVersion'     => PHP_VERSION,
-])
-)->name('home');
+Route::get('/', static function () {
+    $stats = Cache::remember('welcome.stats', now()->addMinutes(15), static function (): array {
+        return [
+            'users' => User::count(),
+            'listings' => RealEstateListing::count(),
+            'deals' => Deal::where('is_broken', false)->count(),
+        ];
+    });
+
+    return Inertia::render('Welcome', [
+        'canLogin'       => Route::has('login'),
+        'canRegister'    => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion'     => PHP_VERSION,
+        'stats'          => $stats,
+    ]);
+})->name('home');
 
 // Shared Authenticated Routes
 Route::middleware(['auth', 'verified'])->group(function () {

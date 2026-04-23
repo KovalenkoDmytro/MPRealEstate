@@ -1,23 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
 use App\Http\Requests\ListingFilterRequest;
+use App\Http\Requests\RealEstateListingRequest;
+use App\Models\RealEstateListing;
 use App\Models\User;
 use App\Services\BuyerService;
 use App\Services\RealEstateListingService;
-use App\Models\RealEstateListing;
 use App\Services\SellerService;
 use Exception;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Inertia\Inertia;
-use Inertia\Response;
-use App\Http\Requests\RealEstateListingRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class RealEstateListingController extends Controller {
     use AuthorizesRequests;
@@ -44,23 +46,26 @@ class RealEstateListingController extends Controller {
     }
 
     public function create(): Response {
-        return Inertia::render('Users/Seller/Listings/Create');
+        return Inertia::render('Users/Seller/Listings/Create', [
+            'listingImageMaxBytes' => $this->resolveEffectiveListingImageMaxBytes(),
+        ]);
     }
 
     public function store(RealEstateListingRequest $request): JsonResponse {
-        try{
+        try {
             $this->authorize('create', RealEstateListing::class);
 
-            $this->listingService->createListing($request);
+            $this->listingService->createListing(
+                data: $request->safe()->except(['main_image', 'gallery_images', 'remove_images', 'remove_main_image']),
+                seller: $request->user(),
+                mainImage: $request->file('main_image'),
+                galleryImages: $request->file('gallery_images') ?? [],
+                removeImageIds: $request->input('remove_images', []),
+            );
 
-            return JsonResponder::send(
-                new SuccessResponse(__('listings.success.created'))
-            );
-        }
-        catch(Exception $e){
-            return JsonResponder::send(
-                new ErrorResponse($e->getMessage())
-            );
+            return JsonResponder::send(new SuccessResponse(__('listings.success.created')));
+        } catch (Exception $e) {
+            return JsonResponder::send(new ErrorResponse($e->getMessage()));
         }
     }
 
@@ -74,24 +79,25 @@ class RealEstateListingController extends Controller {
 
         return Inertia::render('Users/Seller/Listings/Edit', [
             'listing' => $listing->load('mainImage', 'images'),
+            'listingImageMaxBytes' => $this->resolveEffectiveListingImageMaxBytes(),
         ]);
     }
 
-    public function update(RealEstateListingRequest $request, RealEstateListing $listing):JsonResponse {
-        /** @var \App\Models\User $user */
+    public function update(RealEstateListingRequest $request, RealEstateListing $listing): JsonResponse {
         try {
             $this->authorize('update', $listing);
 
-            $this->listingService->updateListing($request, $listing);
+            $this->listingService->updateListing(
+                data: $request->safe()->except(['main_image', 'gallery_images', 'remove_images', 'remove_main_image']),
+                listing: $listing,
+                mainImage: $request->file('main_image'),
+                galleryImages: $request->file('gallery_images') ?? [],
+                removeImageIds: $request->input('remove_images', []),
+            );
 
-            return JsonResponder::send(
-                new SuccessResponse(__('listings.success.updated'))
-            );
-        }
-        catch (Exception $e) {
-            return JsonResponder::send(
-                new ErrorResponse($e->getMessage())
-            );
+            return JsonResponder::send(new SuccessResponse(__('listings.success.updated')));
+        } catch (Exception $e) {
+            return JsonResponder::send(new ErrorResponse($e->getMessage()));
         }
     }
 
@@ -99,8 +105,11 @@ class RealEstateListingController extends Controller {
         $this->authorize('delete', $listing);
 
 
-        // 2. Check if any deal exists and is not completed
-        $hasActiveDeal = $listing->deal()->where('is_completed', false)->exists();
+        // 2. Block only if deal is truly active (not completed and not broken)
+        $hasActiveDeal = $listing->deal()
+            ->where('is_completed', false)
+            ->where('is_broken', false)
+            ->exists();
 
         if ($hasActiveDeal) {
             return JsonResponder::send(
@@ -152,6 +161,42 @@ class RealEstateListingController extends Controller {
             ->get();
 
         return response()->json($listings);
+    }
+
+    private function resolveEffectiveListingImageMaxBytes(): int
+    {
+        $validationLimitBytes = RealEstateListingRequest::MAX_IMAGE_SIZE_KB * 1024;
+        $uploadMaxBytes = $this->iniSizeToBytes((string) ini_get('upload_max_filesize'));
+        $postMaxBytes = $this->iniSizeToBytes((string) ini_get('post_max_size'));
+
+        $candidates = array_filter(
+            [$validationLimitBytes, $uploadMaxBytes, $postMaxBytes],
+            static fn (int $value): bool => $value > 0
+        );
+
+        if ($candidates === []) {
+            return $validationLimitBytes;
+        }
+
+        return (int) min($candidates);
+    }
+
+    private function iniSizeToBytes(string $size): int
+    {
+        $value = trim($size);
+        if ($value === '') {
+            return 0;
+        }
+
+        $unit = strtolower(substr($value, -1));
+        $number = (float) $value;
+
+        return match ($unit) {
+            'g' => (int) ($number * 1024 * 1024 * 1024),
+            'm' => (int) ($number * 1024 * 1024),
+            'k' => (int) ($number * 1024),
+            default => (int) $number,
+        };
     }
 
 }

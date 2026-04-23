@@ -1,6 +1,5 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import { Link } from "@inertiajs/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { EditableListingFormValues, GalleryImagePreview, ListingFormFieldValue, PropertyStatus, RealEstateListing } from "@/types";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
@@ -8,8 +7,23 @@ import { listingService } from "@/services/listingService";
 import { imageService } from "@/services/imageService";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import {useNotification} from "@/context/NotificationContext";
+import Button from "@/components/common/Button";
+import {Grid, Stack} from "@mui/material";
+import BackToButton from "@/components/common/BackToButton";
+import {
+    MAX_GALLERY_IMAGES,
+    resolveMaxImageSizeBytes,
+    validateImageFile,
+    validateImageFiles,
+} from "@/helpers/imageUploadValidationHelper";
 
-export default function EditListing({ listing }: { listing: RealEstateListing }) {
+type EditListingProps = {
+    listing: RealEstateListing;
+    listingImageMaxBytes?: number;
+};
+
+export default function EditListing({ listing, listingImageMaxBytes }: EditListingProps) {
+    const maxImageSizeBytes = resolveMaxImageSizeBytes(listingImageMaxBytes);
     const [data, setData] = useState<EditableListingFormValues>({
         title: listing.title || "",
         description: listing.description || "",
@@ -73,10 +87,23 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
     }
     const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            setData((prev) => ({ ...prev, main_image: file }));
-            setPreviewMainImage(URL.createObjectURL(file));
+        if (!file) return;
+
+        const message = validateImageFile(file, maxImageSizeBytes, "Main image");
+        if (message) {
+            showNotification(message, "error");
+            setErrors((prev) => ({ ...prev, main_image: [message] }));
+            e.target.value = "";
+            return;
         }
+
+        setErrors((prev) => {
+            const next = { ...prev };
+            delete next.main_image;
+            return next;
+        });
+        setData((prev) => ({ ...prev, main_image: file }));
+        setPreviewMainImage(URL.createObjectURL(file));
     };
     const removeMainImage = () => {
         if (previewMainImage) imageService.revokePreview(previewMainImage);
@@ -88,10 +115,17 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         if (!e.target.files) return;
 
         const newFiles = Array.from(e.target.files);
+        const message = validateImageFiles(newFiles, maxImageSizeBytes, "Each gallery image");
+        if (message) {
+            showNotification(message, "error");
+            e.target.value = "";
+            return;
+        }
 
         // Validate count
-        if (!imageService.canAddImages(previewGalleryImages.length, newFiles.length)) {
-            alert("You can only upload up to 7 images total.");
+        if (!imageService.canAddImages(previewGalleryImages.length, newFiles.length, MAX_GALLERY_IMAGES)) {
+            showNotification(`You can only upload up to ${MAX_GALLERY_IMAGES} images total.`, "error");
+            e.target.value = "";
             return;
         }
 
@@ -104,6 +138,7 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
         // Add previews
         const newPreviews = imageService.createPreviews(newFiles);
         setPreviewGalleryImages((prev) => [...prev, ...newPreviews]);
+        e.target.value = "";
     };
     const removeGalleryImage = (index: number) => {
         const { updatedPreviews, updatedRemoveIds } = imageService.removeGalleryImage(
@@ -165,7 +200,11 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
             window.location.href = "/listings";
         } else {
             setErrors(result.errors);
-            showNotification(result.message,"error");
+            const errorMap = (result.errors ?? {}) as Record<string, string[]>;
+            const mainImageError = result.errors?.main_image?.[0];
+            const galleryError = Object.entries(errorMap)
+                .find(([key]) => key.startsWith("gallery_images"))?.[1]?.[0];
+            showNotification(mainImageError || galleryError || result.message, "error");
         }
         setProcessing(false);
     };
@@ -175,12 +214,9 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
     return (
         <AuthenticatedLayout header="Edit Listing">
 
-            <div className="container mx-auto p-4">
-                <div className="mt-4">
-                    <Link href={route("listings.index")} className="text-blue-500">
-                        🔙 Back to Listings
-                    </Link>
-                </div>
+            <Grid container spacing={4}>
+
+                <BackToButton label="Listings" fallbackHref={route("listings.index")} />
 
                 {/* Property, Financial & Features */}
                 <ListingDetails data={data} errors={errors} handleChange={handleChange} />
@@ -189,43 +225,43 @@ export default function EditListing({ listing }: { listing: RealEstateListing })
                 <ImagesSection
                     images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
                     handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
-                    disableGalleryUpload={data.gallery_images.length >= 7}
+                    disableGalleryUpload={data.gallery_images.length >= MAX_GALLERY_IMAGES}
+                    errors={errors?.main_image?.[0]}
                 />
 
                 {/* Submit Button */}
-                <div className="text-end mt-8">
-                    <button
-                        onClick={submit}
-                        disabled={processing}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
-                    >
-                        {processing ? "Saving..." : "Save Changes"}
-                    </button>
-                    <button
+                <Stack direction="row" justifyContent="flex-end" spacing={2} width={"100%"} >
+                    <Button
+                        text={processing ? "Deleting..." : "Delete listing"}
                         onClick={() => setConfirmOpen(true)}
                         disabled={processing}
-                        className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600"
-                    >
-                        {processing ? "Deleting..." : "Delete listing"}
-                    </button>
-
-                    <ConfirmDialog
-                        open={confirmOpen}
-                        title="Deactivate this listing?"
-                        description={
-                            <>
-                                This will <b>archive</b> the listing (soft delete) and remove non-main gallery images.
-                                You can restore it later from the admin if needed.
-                            </>
-                        }
-                        confirmLabel="Deactivate"
-                        cancelLabel="Cancel"
-                        confirmColor="error"
-                        onClose={() => setConfirmOpen(false)}
-                        onConfirm={handleDeactivateListing} // dialog will await this and close on success
+                        version="outline"
                     />
-                </div>
-            </div>
+
+                    <Button
+                        text={processing ? "Saving..." : "Save Changes"}
+                        onClick={submit}
+                        disabled={processing}
+                    />
+
+                </Stack>
+
+                <ConfirmDialog
+                    open={confirmOpen}
+                    title="Deactivate this listing?"
+                    description={
+                        <>
+                            This will <b>archive</b> the listing (soft delete) and remove non-main gallery images.
+                            You can restore it later from the admin if needed.
+                        </>
+                    }
+                    confirmLabel="Deactivate"
+                    cancelLabel="Cancel"
+                    confirmColor="error"
+                    onClose={() => setConfirmOpen(false)}
+                    onConfirm={handleDeactivateListing} // dialog will await this and close on success
+                />
+            </Grid>
         </AuthenticatedLayout>
     );
 }

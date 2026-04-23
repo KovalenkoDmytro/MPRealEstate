@@ -122,9 +122,11 @@
     "validation.realEstateListingRequest.main_image_required": "Please upload a main image.",
     "validation.realEstateListingRequest.main_image_image": "The main image must be a valid image file.",
     "validation.realEstateListingRequest.main_image_mimes": "Main image must be a JPEG, PNG, JPG, or WEBP file.",
-    "validation.realEstateListingRequest.main_image_max": "Main image must not exceed 2MB.",
+    "validation.realEstateListingRequest.main_image_max": "Main image must not exceed 4MB.",
+    "validation.realEstateListingRequest.main_image_uploaded": "Main image upload failed. This usually means the file is too large for server upload limits or the upload was interrupted. Try a smaller image and upload again.",
     "validation.realEstateListingRequest.gallery_images_image": "Each gallery image must be a valid image file.",
     "validation.realEstateListingRequest.gallery_images_mimes": "Gallery images must be JPEG, PNG, JPG, or WEBP files.",
-    "validation.realEstateListingRequest.gallery_images_size_max": "Each gallery image must not exceed 2MB.",
-    "validation.realEstateListingRequest.gallery_images_amount_max": "You can upload a maximum of 7 gallery images."
+    "validation.realEstateListingRequest.gallery_images_size_max": "Each gallery image must not exceed 4MB.",
+    "validation.realEstateListingRequest.gallery_images_uploaded": "One or more gallery images failed to upload. This usually means a file exceeded server upload limits or the upload was interrupted. Try smaller files and upload again.",
+    "validation.realEstateListingRequest.gallery_images_amount_max": "You can upload a maximum of 5 gallery images."
 }

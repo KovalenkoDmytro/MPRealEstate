@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Helpers\Responses\ErrorResponse;
 use App\Helpers\Responses\JsonResponder;
 use App\Helpers\Responses\SuccessResponse;
-use App\Helpers\Responses\ErrorResponse;
-use App\Http\Requests\Appointments\AppointmentStoreRequest;
 use App\Http\Requests\Appointments\AppointmentActionRequest;
+use App\Http\Requests\Appointments\AppointmentStoreRequest;
 use App\Models\Appointment;
 use App\Services\AppointmentService;
+use App\Support\RoleViewResolver;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
@@ -22,16 +25,17 @@ class AppointmentController extends Controller
         $this->service = $service;
     }
 
-    public function store(AppointmentStoreRequest $request): JsonResponse {
-        $this->service->create($request->validated());
+    public function store(AppointmentStoreRequest $request): JsonResponse
+    {
+        $this->service->create($request->validated(), $request->user());
 
         return JsonResponder::send(
             new SuccessResponse(__('notifications.appointments.request.success'))
         );
     }
 
-    public function handle(AppointmentActionRequest $request): JsonResponse {
-
+    public function handle(AppointmentActionRequest $request): JsonResponse
+    {
         $appointment = Appointment::with('buyer')
             ->where('id', $request->appointment_id)
             ->firstOrFail();
@@ -57,46 +61,33 @@ class AppointmentController extends Controller
 
     public function index(): Response
     {
-
-        $user_role = auth()->user()->role;
-
-        $all_appointments = $this->service->getAllAppointments();
-        $today_appointments = $this->service->getTodayAppointments();
-        $upcoming_appointments = $this->service->getUpcomingAppointments();
-        $past_appointments = $this->service->getPastAppointments();
-        $accepted_appointments = $this->service->getAcceptedAppointments();
-        $pending_appointments = $this->service->getPendingAppointments();
-        $canseled_appointments = $this->service->getCanceledAppointments();
-
-        if($user_role === 'buyer '){
-            $rejected_appointments = $this->service->getRejectedAppointments();
-        }
+        $user = auth()->user();
+        $user_role = $user->role;
 
         $data = [
-            'all_appointments' => $all_appointments,
-            'today_appointments' => $today_appointments,
-            'upcoming_appointments' => $upcoming_appointments,
-            'past_appointments' => $past_appointments,
-            'accepted_appointments' => $accepted_appointments,
-            'pending_appointments' => $pending_appointments,
-            'canceled_appointments' => $canseled_appointments,
+            'all_appointments'      => $this->service->getAllAppointments($user),
+            'today_appointments'    => $this->service->getTodayAppointments($user),
+            'upcoming_appointments' => $this->service->getUpcomingAppointments($user),
+            'past_appointments'     => $this->service->getPastAppointments($user),
+            'accepted_appointments' => $this->service->getAcceptedAppointments($user),
+            'pending_appointments'  => $this->service->getPendingAppointments($user),
+            'canceled_appointments' => $this->service->getCanceledAppointments($user),
         ];
+
         if ($user_role === 'buyer') {
-            $data['rejected_appointments'] = $this->service->getRejectedAppointments();
+            $data['rejected_appointments'] = $this->service->getRejectedAppointments($user);
         }
 
-        if($user_role === 'buyer'){
-            return inertia('Users/Buyer/Appointments/Index', $data);
-        }
-
-        return inertia('Users/Seller/Appointments/Index', $data);
-
+        return inertia(RoleViewResolver::resolve([
+            'buyer'  => 'Users/Buyer/Appointments/Index',
+            'seller' => 'Users/Seller/Appointments/Index',
+        ]), $data);
     }
 
-    public function buyerCancel(Request $request): JsonResponse {
-
+    public function buyerCancel(Request $request): JsonResponse
+    {
         $appointment = resolve(Appointment::class)->findOrFail($request->appointment_id);
-        $this->service->buyerCancel($appointment);
+        $this->service->buyerCancel($appointment, auth()->user());
 
         return JsonResponder::send(
             new SuccessResponse(__('notifications.appointments.cancelled_by_buyer.success'))

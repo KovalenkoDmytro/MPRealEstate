@@ -31,7 +31,7 @@ class Lawyer extends User
 
     public function getAllDeals(): Collection
     {
-        return $this->lawyer->deals()
+        return $this->deals()
             ->with(['users', 'realEstateListing.mainImage', 'realEstateListing.images', 'files'])
             ->get();
     }

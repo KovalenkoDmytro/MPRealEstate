@@ -1,6 +1,5 @@
-
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import {PropertyDetail} from "@/types";
+import { PropertyDetail } from "@/types";
 import DealHeader from "@/components/deal/DealHeader";
 import DealPersonInfo from "@/components/deal/DealPersonInfo";
 import DepositSection from "@/components/deal/DepositSection";
@@ -10,35 +9,32 @@ import LawyerInvite from "@/components/deal/LawyerInvite";
 import FileUploadSection from "@/components/deal/FileUploadSection";
 import BreakDealSection from "@/components/deal/BreakDealSection";
 import DealPropertyDetails from "@/components/deal/DealPropertyDetails";
+import DealInactiveNotice from "@/components/deal/DealInactiveNotice";
 
-export default function DealShowPage({deal}: { deal: PropertyDetail }) {
+export default function DealShowPage({ deal }: { deal: PropertyDetail }) {
     const seller = deal.users.find((user) => user.role === "seller");
     const lawyer = deal.users.find((user) => user.role === "lawyer" && user.is_buyer_lawyer);
+    const isDealBroken = deal.is_broken;
 
     return (
         <AuthenticatedLayout header="Deal Details">
+            {isDealBroken && <DealInactiveNotice deal={deal} />}
+            <DealHeader deal={deal} />
 
-            <DealHeader deal={deal}/>
+            <DealPropertyDetails listing={deal.real_estate_listing} />
 
-            <DealPropertyDetails listing={deal.real_estate_listing}/>
+            {!isDealBroken && seller && <DealPersonInfo person={seller} />}
 
-            {seller && <DealPersonInfo person={seller}/>}
-
-            {deal.security_deposit &&  <DepositSection deal={deal}/>}
-
-
-
-
-            <ConditionDayForm deal={deal}/>
-
-            {deal.condition_day &&  <PossessionDayForm deal={deal}/>}
-
-            <LawyerInvite deal={deal} lawyer={lawyer}/>
-
-            <FileUploadSection deal={deal}/>
-
-            <BreakDealSection deal={deal}/>
-
+            {!isDealBroken && (
+                <>
+                    {deal.security_deposit && <DepositSection deal={deal} />}
+                    <ConditionDayForm deal={deal} />
+                    {deal.condition_day && <PossessionDayForm deal={deal} />}
+                    <LawyerInvite deal={deal} lawyer={lawyer} />
+                    <FileUploadSection deal={deal} />
+                    <BreakDealSection deal={deal} />
+                </>
+            )}
         </AuthenticatedLayout>
     );
 }

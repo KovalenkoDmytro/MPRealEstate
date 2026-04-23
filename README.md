@@ -1,238 +1,160 @@
-# Laravel Project with React and TypeScript Integration
+# MPRealEstate
 
-This project is a Laravel application with React and TypeScript integrated for front-end development. It uses Laravel Mix for asset compilation, including React, TypeScript, and SCSS.
+A real estate platform built with **Laravel 12**, **React 19**, **TypeScript**, and **Inertia.js v3**. Role-based access for Buyers, Sellers, Lawyers, and Admins with a full deal workflow (Offer → Deposit → Condition Day → Possession Day).
 
-## Features
+---
 
-- **Laravel Framework**: Powerful backend development with Laravel.
-- **React Support**: Build dynamic and interactive front-end components.
-- **TypeScript Support**: Write strongly-typed JavaScript for your front-end.
-- **SCSS Support**: Easily manage and compile styles with SCSS.
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Laravel 12, PHP 8.3, Inertia.js v3 |
+| Frontend | React 19, TypeScript, Inertia.js v3, MUI v7, Vite 6 |
+| Database | MySQL 8.2 |
+| Cache / Queue | Redis 7 + Laravel Horizon |
+| Maps | Mapbox GL + `@mapbox/search-js-react` |
+| Auth / Roles | Laravel Breeze + `spatie/laravel-permission` |
+| Dev Server | Docker + nginx (port 8000) |
 
 ---
 
 ## Requirements
 
-- PHP >= v8.3
-- Composer
-- Node >= v23  & NVM
 - Docker Desktop
+- Node.js 20+ & npm
+- PHP 8.3+ (inside Docker — no local install needed for running)
 
 ---
 
-## Installation
-1. Build the Docker containers:
-   ```bash
-   cd ./docker/
-   ```
-    ```bash
-    docker-compose build
-    ```
+## Project Structure
 
-2. Create a new Laravel project using Docker Compose:
-   ```bash
-   cd ..
-   ```
-   ```bash
-   laravel new laravel
-   ```
- 
-3. Install Node.js dependencies:
-   
-    for iOS  
-   ```bash
-   cd .\laravel\ 
-    ```
-   for Windows
-   ```bash
-   cd ./laravel/ 
-    ```
+```
+MPRealEstate/
+├── laravel/          ← Laravel 12 app (PHP backend + React/TS frontend)
+│   ├── app/
+│   ├── resources/js/ ← React 19 + TypeScript + Inertia.js pages & components
+│   └── ...
+├── docker/           ← Docker Compose configuration
+│   └── docker-compose.yaml
+└── README.md
+```
 
-   ```bash
-   nvm use 23
-   ```
-   
-    ```bash
-   npm install
-   ```
-
-4. Update the `.env` file with the following database configuration:
-
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=mysql
-   DB_PORT=3306
-   DB_DATABASE=laravel_db
-   DB_USERNAME=laravel
-   DB_PASSWORD=password
-   ```
-
-5. Start the Docker containers in detached mode:
-
-    ```bash
-    docker-compose up -d
-    ```
-6. Run migrations using Docker Compose:
-   ```bash
-   cd ../docker/
-   ```
-   ```bash
-   docker-compose exec php php /var/www/laravel/artisan migrate --seed
-   
-   docker compose exec php php artisan migrate:fresh --seed
-   ```
 ---
 
-## React and TypeScript Configuration
-### Install TypeScript
-- Production build:
+## Docker Services
+
+| Service | Container | Purpose | Port |
+|---|---|---|---|
+| `php` | mprealestate-php | Laravel app + PHP-FPM | — |
+| `nginx` | mprealestate-nginx | Web server | 8000 |
+| `mysql` | mprealestate-mysql | MySQL 8.2 | 3316 |
+| `redis` | mprealestate-redis | Cache + queues | 6379 |
+
+---
+
+## Setup
 
 ```bash
-  npm install --save-dev typescript @types/react @types/react-dom @inertiajs/inertia @inertiajs/react
-```
-  
-- Rename Main File:
-```bash
-   mv resources/js/app.jsx resources/js/app.tsx
-```
+# 1. Copy environment file
+cp laravel/.env.example laravel/.env
 
-update vite.config.js
-```js
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import react from '@vitejs/plugin-react';
+# 2. Start Docker services
+cd docker && docker compose up -d
 
-export default defineConfig({
-   plugins: [
-      laravel({
-         input: ['resources/js/app.tsx', 'resources/css/app.scss'],
-         refresh: true,
-      }),
-      react(),
-   ],
-});
+# 3. Install PHP dependencies
+docker compose exec php composer install
+
+# 4. Generate app key
+docker compose exec php php artisan key:generate
+
+# 5. Run migrations with seeders
+docker compose exec php php artisan migrate --seed
+
+# 6. Install Node dependencies and start dev server
+cd ../laravel && npm install && npm run dev
 ```
 
-Create a tsconfig.json File
-```bash
-  npx tsc --init
-```
+Open **http://localhost:8000** in your browser.
 
-Then, open the generated tsconfig.json and modify these settings:
-```json
-{
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "jsx": "preserve",
-    "strict": true,
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["resources/js/*"]
-    },
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
-  }
-}
-```
+---
 
-Update resources/js/app.tsx
-```tsx
-import '../css/app.css';
-import '../scss/app.scss';
-import './bootstrap';
-
-import { createInertiaApp } from '@inertiajs/react';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createRoot } from 'react-dom/client';
-
-const appName: string = import.meta.env.VITE_APP_NAME || 'Laravel';
-
-(async () => {
-   await createInertiaApp({
-      title: (title: string) => `${title} - ${appName}`,
-      resolve: (name) =>
-              resolvePageComponent(
-                      `./Pages/${name}.tsx`, // Ensure Pages use .tsx
-                      import.meta.glob('./Pages/**/*.tsx'),
-              ),
-      setup({ el, App, props }) {
-         const root = createRoot(el);
-         root.render(<App {...props} />);
-      },
-      progress: {
-         color: '#4B5563',
-      },
-   });
-})();
-```
-
-Rename All .jsx Files to .tsx
+## Common Commands
 
 ```bash
-  find resources/js -name "*.jsx" -exec bash -c 'mv "$0" "${0%.jsx}.tsx"' {} \;
-```
+# Start services
+cd docker && docker compose up -d
 
+# Stop services
+cd docker && docker compose down
 
-### Blade Template Update
-Ensure your Blade template has a `resources/css/app.scss`  in your main layout or template file:
+# Artisan
+cd docker && docker compose exec php php artisan <command>
 
-```html
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-   <meta charset="utf-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
+# Composer
+cd docker && docker compose exec php composer <command>
 
-   <title inertia>{{ config('app.name', 'Laravel') }}</title>
+# Run migrations
+cd docker && docker compose exec php php artisan migrate
 
-   <!-- Fonts -->
-   <link rel="preconnect" href="https://fonts.bunny.net">
-   <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+# Fresh migrations with seeders
+cd docker && docker compose exec php php artisan migrate:fresh --seed
 
-   <!-- Scripts -->
-   @routes
-   @viteReactRefresh
-   @vite(['resources/js/app.tsx', "resources/js/Pages/{$page['component']}.tsx", 'resources/css/app.scss'])
-   @inertiaHead
-</head>
-<body class="font-sans antialiased">
-@inertia
-</body>
-</html>
+# Run tests (Pest)
+cd docker && docker compose exec php php artisan test
 
+# Fix code style (Pint)
+cd docker && docker compose exec php ./vendor/bin/pint
 
+# Frontend dev server (run from laravel/)
+cd laravel && npm run dev
 
+# Frontend build
+cd laravel && npm run build
 ```
 
 ---
 
-## Install Sass and Required Dependencies
-```bash 
-  npm install --save-dev sass
-```
+## Queue Workers
 
-Import SCSS in Your React TypeScript Files
-```tsx
-import '../scss/app.scss';
+Notifications are processed asynchronously via **Redis queues**.
+
+```bash
+# Start the queue worker
+cd docker && docker compose exec php php artisan queue:work
+
+# List failed jobs
+docker compose exec php php artisan queue:failed
+
+# Retry all failed
+docker compose exec php php artisan queue:retry all
+
+# Clear failed queue
+docker compose exec php php artisan queue:flush
 ```
 
 ---
 
-## Usage
+## Environment — Key Variables
 
-Visit your application at `http://localhost:8000`.
+```env
+APP_URL=http://localhost:8000
 
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel_db
+DB_USERNAME=laravel
+DB_PASSWORD=password
+
+REDIS_HOST=redis
+QUEUE_CONNECTION=redis
+
+VITE_APP_NAME=MPRealEstate
+VITE_MAPBOX_TOKEN=your_mapbox_token
+```
 
 ---
-
 
 ## License
 
-This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-docker exec -it docker-php-1 php artisan migrate --force
-
-
+MIT

@@ -11,6 +11,13 @@ import theme from "@/theme";
 import Button from "@/components/common/Button";
 import IconUpload from "@/icons/IconUpload";
 import { ListingImageHandlers, ListingImagesState } from "@/types";
+import { usePage } from "@inertiajs/react";
+import type { PageProps } from "@/types/pageProps";
+import {
+    formatMaxImageSizeLabel,
+    MAX_GALLERY_IMAGES,
+    resolveMaxImageSizeBytes,
+} from "@/helpers/imageUploadValidationHelper";
 
 interface ListingImagesSectionProps {
     images: ListingImagesState;
@@ -22,6 +29,9 @@ interface ListingImagesSectionProps {
 export default function ListingImagesSection({images, handlers, disableGalleryUpload, errors}: ListingImagesSectionProps) {
     const {previewMainImage, previewGalleryImages, totalGalleryImages} = images;
     const {handleMainImageChange, handleGalleryImagesChange, removeGalleryImage,} = handlers;
+    const { listingImageMaxBytes } = usePage<PageProps & { listingImageMaxBytes?: number }>().props;
+    const maxImageBytes = resolveMaxImageSizeBytes(listingImageMaxBytes);
+    const maxImageMbLabel = formatMaxImageSizeLabel(maxImageBytes);
 
     const inputMainImageRef = useRef<HTMLInputElement>(null);
     const inputGlleryImagesRef = useRef<HTMLInputElement>(null);
@@ -32,6 +42,7 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
             backgroundColor: theme.palette.background.white,
             borderRadius: theme.shape.borderRadius,
             border: `1px solid ${theme.palette.border.main}`,
+            width: "100%",
         }}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
                 Images
@@ -46,7 +57,6 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
                         {errors}
                     </Alert>
                 }
-                Upload Main Image
 
                 <input
                     ref={inputMainImageRef}
@@ -67,7 +77,7 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
 
                 {/* --- ADDED HELPER TEXT FOR MAIN IMAGE --- */}
                 <Typography variant="caption" color="textSecondary" sx={{display: "block", mt: 1}}>
-                    Must be a JPG, PNG, or WEBP file. Max size: 4MB.
+                    Must be a JPG, PNG, or WEBP file. Max size: {maxImageMbLabel}.
                 </Typography>
                 {/* --- END HELPER TEXT --- */}
 
@@ -91,7 +101,7 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
 
             <Box >
                 <Typography variant="subtitle2" gutterBottom>
-                    Gallery Images ({totalGalleryImages}/5)
+                    Gallery Images ({totalGalleryImages}/{MAX_GALLERY_IMAGES})
                 </Typography>
                 <input
                     type="file"
@@ -105,15 +115,15 @@ export default function ListingImagesSection({images, handlers, disableGalleryUp
                     version="outline"
                     text="Upload Gallery Images"
                     icon={<IconUpload/>}
-                    disabled={disableGalleryUpload || previewGalleryImages.length >= 5}
+                    disabled={disableGalleryUpload || previewGalleryImages.length >= MAX_GALLERY_IMAGES}
                     onClick={() => {inputGlleryImagesRef.current?.click()}}
                 >
                 </Button>
 
                 <Typography variant="caption" color="textSecondary" sx={{display: "block", mt: 1}}>
-                    You can upload a maximum of 5 images.
+                    You can upload a maximum of {MAX_GALLERY_IMAGES} images.
                     <br/>
-                    Each file must be a JPG, PNG, or WEBP, and no larger than 4MB.
+                    Each file must be a JPG, PNG, or WEBP, and no larger than {maxImageMbLabel}.
                 </Typography>
 
 

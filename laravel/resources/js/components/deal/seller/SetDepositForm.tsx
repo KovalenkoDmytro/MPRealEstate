@@ -1,28 +1,31 @@
 import React, { useMemo, useState } from "react";
 import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
-import {TextField,Typography, Paper } from "@mui/material";
+import {
+    Card, CardContent, CardActions,
+    TextField, Typography, Stack,
+} from "@mui/material";
 import Button from "@/components/common/Button";
+import { useTheme } from "@mui/material/styles";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import {useNotification} from "@/context/NotificationContext";
-import theme from "@/theme";
+import { useNotification } from "@/context/NotificationContext";
+import IconContainer from "@/components/common/IconContainer";
+import IconDollar from "@/icons/IconDollar";
 
 export default function SetDepositForm({ deal }: { deal: Deal }) {
-    const [depositAmount, setDepositAmount] = useState<number | ''>('');
+    const theme = useTheme();
+    const [depositAmount, setDepositAmount] = useState<number | "">("");
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const { setRedirectNotification } = useNotification();
 
-    const amountNumber = typeof depositAmount === "number" ? depositAmount : parseFloat(depositAmount || "0");
-    const canSubmit = useMemo(() => !Number.isNaN(amountNumber) && amountNumber > 0, [amountNumber]);
-    const {setRedirectNotification } = useNotification();
+    const amountNumber = typeof depositAmount === "number"
+        ? depositAmount
+        : parseFloat(depositAmount || "0");
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!canSubmit) {
-            alert("Please enter a valid deposit amount greater than 0.");
-            return;
-        }
-        setConfirmOpen(true);
-    };
+    const canSubmit = useMemo(
+        () => !Number.isNaN(amountNumber) && amountNumber > 0,
+        [amountNumber],
+    );
 
     const save = async () => {
         const response = await DealService.setDeposit(deal.id, Number(amountNumber.toFixed(2)));
@@ -31,68 +34,73 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
     };
 
     return (
-        <Paper
-            component="form"
-            onSubmit={handleSubmit}
+        <Card
+            variant="outlined"
             sx={{
+                mt: 3,
                 p: theme.shape.padding,
+                backgroundColor: theme.palette.background.white,
                 borderRadius: theme.shape.borderRadius,
-                bgcolor: theme.palette.background.white,
                 border: `1px solid ${theme.palette.border.main}`,
-                mb: 3,
-                boxShadow: 0,
             }}
         >
-            <Typography variant="subtitle2" sx={{ mb: 2 }}>
-                Set Security Deposit Amount
-            </Typography>
+            <CardContent sx={{ p: 0 }}>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+                    <IconContainer>
+                        <IconDollar/>
+                    </IconContainer>
+                    <Typography variant="h6">Set Security Deposit</Typography>
+                </Stack>
 
-            <TextField
-                type="number"
-                label="Enter deposit amount"
-                fullWidth
-                variant="outlined"
-                required
-                slotProps={{htmlInput :{ step: "50", min: "0" }}}
-                value={depositAmount}
-                onChange={(e) => {
-                    const v = e.target.value;
-                    if (v === "") return setDepositAmount("");
-                    const n = parseFloat(v);
-                    if (Number.isNaN(n)) return;
-                    setDepositAmount(n);
-                }}
-                onBlur={(e) => {
-                    const v = e.target.value;
-                    if (v === "") return;
-                    const n = parseFloat(v);
-                    if (!Number.isNaN(n)) setDepositAmount(Number(n.toFixed(2)));
-                }}
-                error={depositAmount !== "" && !canSubmit}
-                helperText={depositAmount !== "" && !canSubmit ? "Amount must be greater than 0." : " "}
-            />
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Enter the required security deposit amount for this deal.
+                </Typography>
 
-            <Button
-                type="submit"
-                version='secondary'
-                disabled={!canSubmit}
-                text={"Save Deposit"}
-            />
+                <TextField
+                    type="number"
+                    label="Deposit amount"
+                    fullWidth
+                    slotProps={{ htmlInput: { step: "0.01", min: "0" } }}
+                    value={depositAmount}
+                    onChange={(e) => {
+                        const v = e.target.value;
+                        if (v === "") return setDepositAmount("");
+                        const n = parseFloat(v);
+                        if (!Number.isNaN(n)) setDepositAmount(n);
+                    }}
+                    onBlur={(e) => {
+                        const v = e.target.value;
+                        if (v === "") return;
+                        const n = parseFloat(v);
+                        if (!Number.isNaN(n)) setDepositAmount(Number(n.toFixed(2)));
+                    }}
+                    error={depositAmount !== "" && !canSubmit}
+                    helperText={depositAmount !== "" && !canSubmit ? "Amount must be greater than 0." : " "}
+                />
+            </CardContent>
+
+            <CardActions sx={{ p: 0 }}>
+                <Button
+                    text="Set Deposit"
+                    disabled={!canSubmit}
+                    onClick={() => setConfirmOpen(true)}
+                />
+            </CardActions>
 
             <ConfirmDialog
                 open={confirmOpen}
                 onClose={() => setConfirmOpen(false)}
-                title="Confirm Deposit Amount?"
+                title="Set security deposit?"
                 description={
                     <Typography variant="body2" color="text.secondary">
-                        You’re about to set the security deposit to{" "}
-                        <strong>${amountNumber.toFixed(2)}</strong>. Continue?
+                        You're about to set the security deposit to{" "}
+                        <strong>${amountNumber.toFixed(2)}</strong>. The buyer will be notified.
                     </Typography>
                 }
                 confirmLabel="Confirm"
                 confirmColor="primary"
                 onConfirm={save}
             />
-        </Paper>
+        </Card>
     );
 }

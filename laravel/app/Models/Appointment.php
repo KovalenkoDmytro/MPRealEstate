@@ -3,6 +3,7 @@
 namespace App\Models;
 
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -28,6 +29,15 @@ class Appointment extends Model
         'buyer_cancelled_at' => 'datetime',
     ];
 
+    public function scopeForUser(Builder $query, \App\Models\User $user): Builder
+    {
+        return match ($user->role) {
+            'seller' => $query->where('seller_id', $user->id),
+            'buyer'  => $query->where('buyer_id', $user->id),
+            default  => $query->whereRaw('1 = 0'),
+        };
+    }
+
     public function buyer(): BelongsTo {
         return $this->belongsTo(User::class, 'buyer_id');
     }
@@ -37,6 +47,6 @@ class Appointment extends Model
     }
 
     public function listing(): BelongsTo {
-        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
+        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id')->withTrashed();
     }
 }

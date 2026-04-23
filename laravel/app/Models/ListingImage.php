@@ -17,6 +17,6 @@ class ListingImage extends Model
     protected $guarded = [];
 
     public function listing(): BelongsTo {
-        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id');
+        return $this->belongsTo(RealEstateListing::class, 'real_estate_listing_id')->withTrashed();
     }
 }
