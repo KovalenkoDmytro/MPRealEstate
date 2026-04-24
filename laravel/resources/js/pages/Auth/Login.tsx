@@ -115,9 +115,12 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                             label={<Typography variant="body2" sx={{ color: '#6B7280' }}>Remember me</Typography>}
                         />
                         {canResetPassword && (
-                            <MuiLink component={Link} href={route('password.request')} variant="body2" sx={{ color: '#522B47', fontWeight: 600, textDecoration: 'none' }}>
+                            <Link
+                                href={route('password.request')}
+                                style={{ color: '#522B47', fontWeight: 600, textDecoration: 'none', fontSize: '0.875rem' }}
+                            >
                                 Forgot Password?
-                            </MuiLink>
+                            </Link>
                         )}
                     </Box>
 
@@ -132,9 +135,12 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                     {/* Footer Link */}
                     <Typography variant="body2" align="center" sx={{ color: '#6B7280' }}>
                         Don't have an account?{' '}
-                        <MuiLink component={Link} href={route('register')} sx={{ color: '#522B47', fontWeight: 700, textDecoration: 'none' }}>
+                        <Link
+                            href={route('register')}
+                            style={{ color: '#522B47', fontWeight: 700, textDecoration: 'none' }}
+                        >
                             Sign up for free
-                        </MuiLink>
+                        </Link>
                     </Typography>
                 </Stack>
             </form>

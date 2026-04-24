@@ -11,6 +11,10 @@ export default defineConfig({
         }),
         react(), // required for React + TSX
     ],
+    build: {
+        outDir: 'public/build',
+        emptyOutDir: true,
+    },
     server: {
         host: '0.0.0.0', // allows Docker or LAN access
         port: 5173,

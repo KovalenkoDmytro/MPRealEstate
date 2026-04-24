@@ -35,21 +35,19 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
             {/* Top Navigation: Back to Sign In */}
             <Box sx={{ mb: 4 }}>
-                <MuiLink
-                    component={Link}
+                <Link
                     href={route('login')}
-                    sx={{
+                    style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        color: theme.palette.text.primary,
+                        color: theme.palette.text.primary as string,
                         fontWeight: 600,
                         textDecoration: 'none',
-                        '&:hover': { color: theme.palette.primary.main }
                     }}
                 >
                     <ArrowBack sx={{ fontSize: 18, mr: 1 }} />
                     Back to Sign In
-                </MuiLink>
+                </Link>
             </Box>
 
             {/* Success Message (if sent) */}
@@ -108,13 +106,16 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     {/* Footer: Sign in instead */}
                     <Typography variant="body2" align="center" sx={{ color: theme.palette.text.secondary, mt: 2 }}>
                         Remember your password?{' '}
-                        <MuiLink
-                            component={Link}
+                        <Link
                             href={route('login')}
-                            sx={{ color: theme.palette.primary.main, fontWeight: 700, textDecoration: 'none' }}
+                            style={{
+                                color: theme.palette.primary.main,
+                                fontWeight: 700,
+                                textDecoration: 'none',
+                            }}
                         >
                             Sign in instead
-                        </MuiLink>
+                        </Link>
                     </Typography>
                 </Stack>
             </form>

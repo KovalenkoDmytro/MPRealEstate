@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "build": "tsc && vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "build:watch": "npm run build -- --watch"
     },
     "devDependencies": {
         "@inertiajs/react": "^3.0.3",

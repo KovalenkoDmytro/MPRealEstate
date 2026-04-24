@@ -27,3 +27,33 @@ declare global {
 declare module '@inertiajs/core' {
     interface PageProps extends InertiaPageProps, AppPageProps {}
 }
+
+declare module 'swiper/css' {
+    const styles: string;
+    export default styles;
+}
+
+declare module 'swiper/css/free-mode' {
+    const styles: string;
+    export default styles;
+}
+
+declare module 'swiper/css/navigation' {
+    const styles: string;
+    export default styles;
+}
+
+declare module 'swiper/css/pagination' {
+    const styles: string;
+    export default styles;
+}
+
+declare module 'swiper/css/thumbs' {
+    const styles: string;
+    export default styles;
+}
+
+declare module '*.css' {
+    const styles: string;
+    export default styles;
+}

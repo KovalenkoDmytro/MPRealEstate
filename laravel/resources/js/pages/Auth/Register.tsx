@@ -284,13 +284,16 @@ export default function Register({ roles }: { roles: string[] }) {
                     {/* Footer Link */}
                     <Typography variant="body2" align="center" sx={{ color: theme.palette.text.secondary }}>
                         Already have an account?{' '}
-                        <MuiLink
-                            component={Link}
+                        <Link
                             href={route('login')}
-                            sx={{ color: theme.palette.primary.main, fontWeight: 700, textDecoration: 'none' }}
+                            style={{
+                                color: theme.palette.primary.main,
+                                fontWeight: 700,
+                                textDecoration: 'none',
+                            }}
                         >
                             Sign in
-                        </MuiLink>
+                        </Link>
                     </Typography>
                 </Stack>
             </form>

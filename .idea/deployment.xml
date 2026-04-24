@@ -2,18 +2,18 @@
 <project version="4">
   <component name="PublishConfigData" autoUpload="Always" serverName="m73-server" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
+      <paths name="forceautostyling">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="m73-server">
         <serverdata>
           <mappings>
-            <mapping deploy="/var/www/MPRealEstate" local="$PROJECT_DIR$/laravel" web="/" />
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
-          <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/laravel/vendor" />
-            <excludedPath local="true" path="$PROJECT_DIR$/laravel/.env" />
-            <excludedPath local="true" path="$PROJECT_DIR$/laravel/storage/logs" />
-            <excludedPath local="true" path="$PROJECT_DIR$/.idea" />
-            <excludedPath local="true" path="$PROJECT_DIR$/laravel/node_modules" />
-          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>

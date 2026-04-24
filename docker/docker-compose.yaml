@@ -13,6 +13,7 @@ services:
     depends_on:
       - php
       - mysql
+      - node
 
   php:
     build:
@@ -26,6 +27,20 @@ services:
       APP_DEBUG: "true"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  node:
+    image: node:22-alpine
+    container_name: mprealestate-node
+    working_dir: /var/www/laravel
+    volumes:
+      - "../laravel:/var/www/laravel"
+      - node_modules:/var/www/laravel/node_modules
+    command: >
+      sh -lc "
+      rm -f public/hot &&
+      npm ci &&
+      npm run build:watch
+      "
 
   mysql:
     image: mysql:8.2
@@ -47,3 +62,4 @@ services:
 volumes:
   db_data:
   redis_data:
+  node_modules:

@@ -1,5 +1,11 @@
 # SOLID Refactoring Plan
 
+## Inertia Bootstrap Fix (small batch)
+- [x] Fix `createInertiaApp` typing/build blocker in `laravel/resources/js/app.tsx`
+- [x] Add missing frontend style module declarations in `laravel/resources/js/types/global.d.ts`
+- [x] Rebuild frontend assets without `public/hot` and verify Inertia boot
+- [x] Document result in Review section
+
 ## Batches (ordered by impact, ≤3 files each)
 
 ### Batch 1 — Quick targeted fixes (bugs + type correctness)
@@ -47,3 +53,5 @@
 
 ## Review
 _To be filled after each batch._
+
+- Inertia bootstrap issue addressed by restoring valid React/Inertia page resolution, moving CSS declarations into a dedicated `css.d.ts`, removing stale `public/hot`, and producing a successful Vite production build. Verified `/login` now serves `data-page` plus `public/build` assets instead of dev-server assets.
