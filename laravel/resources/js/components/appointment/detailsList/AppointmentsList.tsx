@@ -5,6 +5,7 @@ import {
     Tabs,
     Tab,
     Chip,
+    Stack,
     Dialog,
     DialogTitle,
     DialogContent,
@@ -26,6 +27,64 @@ type FilterType = 'all' | 'today' | 'upcoming' | 'past' | 'accepted' | 'pending'
 interface AppointmentsListProps {
     appointments: AppointmentWithListingSeller[] | AppointmentWithListingBuyer[];
 }
+
+const dialogPaperSx = {
+    borderRadius: 5,
+    overflow: 'hidden',
+    border: `1px solid ${theme.palette.border.main}`,
+    boxShadow: '0px 24px 60px rgba(27, 21, 37, 0.18)',
+    backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(250,247,249,1) 100%)',
+};
+
+const dialogTitleSx = {
+    px: 3,
+    pt: 3,
+    pb: 1.5,
+    background: 'linear-gradient(135deg, rgba(87, 42, 77, 0.09) 0%, rgba(208, 118, 105, 0.12) 100%)',
+    borderBottom: `1px solid ${theme.palette.border.main}`,
+};
+
+const dialogContentSx = {
+    px: 3,
+    py: 3,
+};
+
+const dialogActionsSx = {
+    px: 3,
+    pb: 3,
+    pt: 0,
+    gap: 1.5,
+};
+
+const secondaryActionSx = {
+    minWidth: 140,
+    borderRadius: 999,
+    px: 2.5,
+    py: 1.1,
+    border: `1px solid ${theme.palette.border.main}`,
+    color: theme.palette.text.primary,
+    fontWeight: 700,
+    textTransform: 'none',
+    backgroundColor: theme.palette.background.white,
+};
+
+const primaryActionSx = {
+    minWidth: 140,
+    borderRadius: 999,
+    px: 2.5,
+    py: 1.1,
+    boxShadow: 'none',
+    fontWeight: 700,
+    textTransform: 'none',
+};
+
+const dialogFieldSx = {
+    mt: 0.5,
+    '& .MuiOutlinedInput-root': {
+        borderRadius: 3,
+        backgroundColor: theme.palette.background.white,
+    },
+};
 
 export default function AppointmentsList({ appointments }: AppointmentsListProps) {
     const [currentTab, setCurrentTab] = useState<FilterType>('upcoming');
@@ -247,19 +306,30 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             <Dialog
                 open={cancelDialogOpen}
                 onClose={() => setCancelDialogOpen(false)}
-                PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
+                fullWidth
+                maxWidth="xs"
+                PaperProps={{ sx: dialogPaperSx }}
             >
-                <DialogTitle sx={{ fontWeight: 700 }}>
-                    Cancel Appointment?
+                <DialogTitle sx={dialogTitleSx}>
+                    <Typography variant="overline" sx={{ color: theme.palette.primary.main, fontWeight: 800, letterSpacing: '0.12em' }}>
+                        Appointment Update
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 800, color: theme.palette.text.primary }}>
+                        Cancel Appointment?
+                    </Typography>
                 </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
+                <DialogContent sx={dialogContentSx}>
+                    <DialogContentText sx={{ color: theme.palette.text.secondary, lineHeight: 1.7 }}>
                         Are you sure you want to cancel this appointment? This action cannot be undone.
                     </DialogContentText>
                 </DialogContent>
-                <DialogActions sx={{ p: 2, pt: 0 }}>
-                    <Button onClick={() => setCancelDialogOpen(false)} color="inherit" sx={{ fontWeight: 600 }}>Keep Appointment</Button>
-                    <Button onClick={confirmCancel} variant="contained" color="error" sx={{ fontWeight: 600, borderRadius: 2 }}>Yes, Cancel</Button>
+                <DialogActions sx={dialogActionsSx}>
+                    <Button onClick={() => setCancelDialogOpen(false)} sx={secondaryActionSx}>
+                        Keep Appointment
+                    </Button>
+                    <Button onClick={confirmCancel} variant="contained" color="error" sx={primaryActionSx}>
+                        Yes, Cancel
+                    </Button>
                 </DialogActions>
             </Dialog>
 
@@ -267,16 +337,41 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             <Dialog
                 open={approveDialogOpen}
                 onClose={() => setApproveDialogOpen(false)}
-                PaperProps={{ sx: { borderRadius: 3, p: 1, minWidth: 400 } }}
+                fullWidth
+                maxWidth="sm"
+                PaperProps={{ sx: dialogPaperSx }}
             >
-                <DialogTitle sx={{ fontWeight: 700 }}>Approve Appointment</DialogTitle>
-                <DialogContent>
-                    <DialogContentText sx={{ mb: 2 }}>Please provide an access code.</DialogContentText>
-                    <TextField autoFocus margin="dense" label="Access Code" fullWidth value={accessCode} onChange={(e) => setAccessCode(e.target.value)} />
+                <DialogTitle sx={dialogTitleSx}>
+                    <Typography variant="overline" sx={{ color: theme.palette.primary.main, fontWeight: 800, letterSpacing: '0.12em' }}>
+                        Seller Approval
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 800, color: theme.palette.text.primary }}>
+                        Approve Appointment
+                    </Typography>
+                </DialogTitle>
+                <DialogContent sx={dialogContentSx}>
+                    <Stack spacing={2}>
+                        <DialogContentText sx={{ color: theme.palette.text.secondary, lineHeight: 1.7 }}>
+                            Add the access code the buyer should use for the showing.
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            label="Access Code"
+                            fullWidth
+                            placeholder="Enter showing access code"
+                            value={accessCode}
+                            onChange={(e) => setAccessCode(e.target.value)}
+                            sx={dialogFieldSx}
+                        />
+                    </Stack>
                 </DialogContent>
-                <DialogActions sx={{ p: 2, pt: 0 }}>
-                    <Button onClick={() => setApproveDialogOpen(false)} color="inherit">Cancel</Button>
-                    <Button onClick={confirmApprove} variant="contained" color="primary">Approve</Button>
+                <DialogActions sx={dialogActionsSx}>
+                    <Button onClick={() => setApproveDialogOpen(false)} sx={secondaryActionSx}>
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmApprove} variant="contained" color="primary" sx={primaryActionSx}>
+                        Approve
+                    </Button>
                 </DialogActions>
             </Dialog>
 
@@ -284,16 +379,43 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             <Dialog
                 open={rejectDialogOpen}
                 onClose={() => setRejectDialogOpen(false)}
-                PaperProps={{ sx: { borderRadius: 3, p: 1, minWidth: 400 } }}
+                fullWidth
+                maxWidth="sm"
+                PaperProps={{ sx: dialogPaperSx }}
             >
-                <DialogTitle sx={{ fontWeight: 700 }}>Reject Appointment</DialogTitle>
-                <DialogContent>
-                    <DialogContentText sx={{ mb: 2 }}>Please provide a reason.</DialogContentText>
-                    <TextField autoFocus margin="dense" label="Reason" fullWidth multiline minRows={3} value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} />
+                <DialogTitle sx={dialogTitleSx}>
+                    <Typography variant="overline" sx={{ color: theme.palette.primary.main, fontWeight: 800, letterSpacing: '0.12em' }}>
+                        Seller Response
+                    </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 800, color: theme.palette.text.primary }}>
+                        Reject Appointment
+                    </Typography>
+                </DialogTitle>
+                <DialogContent sx={dialogContentSx}>
+                    <Stack spacing={2}>
+                        <DialogContentText sx={{ color: theme.palette.text.secondary, lineHeight: 1.7 }}>
+                            Share a short reason so the buyer understands why this request could not be approved.
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            label="Reason"
+                            fullWidth
+                            multiline
+                            minRows={4}
+                            placeholder="Add a short explanation"
+                            value={rejectionReason}
+                            onChange={(e) => setRejectionReason(e.target.value)}
+                            sx={dialogFieldSx}
+                        />
+                    </Stack>
                 </DialogContent>
-                <DialogActions sx={{ p: 2, pt: 0 }}>
-                    <Button onClick={() => setRejectDialogOpen(false)} color="inherit">Cancel</Button>
-                    <Button onClick={confirmReject} variant="contained" color="error">Reject</Button>
+                <DialogActions sx={dialogActionsSx}>
+                    <Button onClick={() => setRejectDialogOpen(false)} sx={secondaryActionSx}>
+                        Cancel
+                    </Button>
+                    <Button onClick={confirmReject} variant="contained" color="error" sx={primaryActionSx}>
+                        Reject
+                    </Button>
                 </DialogActions>
             </Dialog>
         </Box>
