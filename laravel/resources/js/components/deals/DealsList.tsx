@@ -25,7 +25,6 @@ export const DealsList = ({ deals }: DealsListProps) => {
         }, { active: 0, pending: 0, closed: 0, broken: 0 });
     }, [deals]);
 
-    console.log(deals)
     return (
         <Stack spacing={2}>
 
@@ -34,7 +33,6 @@ export const DealsList = ({ deals }: DealsListProps) => {
                 pending={dealStats.pending}
                 closed={dealStats.closed}
             />
-
 
             {deals.map((deal) => (
                 <DealCard key={deal.id} deal={deal} />

@@ -20,7 +20,7 @@ export default function DealsOverviewCards({active, pending, closed}: DealsOverv
                     label="Active Deals"
                     value={active}
                     icon={<IconTrendingUpBig/>}
-                    iconBgColor="#572A4D1A"
+                    iconBgColor="#c6959a"
                 />
             </Grid>
 
@@ -29,7 +29,7 @@ export default function DealsOverviewCards({active, pending, closed}: DealsOverv
                     label="Pending Offers"
                     value={pending}
                     icon={<IconClock/>}
-                    iconBgColor="#D076691A"
+                    iconBgColor={theme.colors.warning}
                 />
             </Grid>
 
@@ -38,7 +38,7 @@ export default function DealsOverviewCards({active, pending, closed}: DealsOverv
                     label="Closed Deals"
                     value={closed}
                     icon={<IconConfirm/>}
-                    iconBgColor={theme.palette.primary.main}
+                    iconBgColor={theme.colors.success}
                 />
             </Grid>
         </Grid>

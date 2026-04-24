@@ -15,7 +15,15 @@ const colors = {
     info: '#3B82F6',
 };
 
+type AppColors = typeof colors;
+
 declare module '@mui/material/styles' {
+    interface Theme {
+        colors: AppColors;
+    }
+    interface ThemeOptions {
+        colors?: AppColors;
+    }
     interface TypeBackground {
         sidebar?: string;
         white?: string;
@@ -50,6 +58,7 @@ declare module '@mui/material/styles' {
 }
 
 const theme = createTheme({
+    colors,
     palette: {
         primary: {
             main: colors.maroon,
