@@ -1,3 +1,49 @@
+## Unverified Email Login Flow (2026-04-24)
+
+### Batch 1 — Redirect unverified users to resend verification screen
+- [x] Add a regression test for login with an existing unverified email account
+- [x] Redirect unverified login attempts to `verify-email?resendVerificationEmail=...` instead of returning non-clickable HTML inside a validation error
+
+## Review
+- Added feature regression tests that prove:
+  an existing unverified user is redirected to the resend verification screen on login
+  an existing unverified account is reused on registration and receives a fresh verification notification instead of triggering a hard duplicate-email dead end
+- Updated the login flow to redirect unverified users directly to `verify-email` with the email prefilled in the resend form.
+- Updated registration validation/service flow so verified emails still remain unique, while existing unverified emails are handled by resending verification rather than attempting to create a duplicate account.
+- Verified with:
+  `docker compose exec php php artisan test tests/Feature/Auth/UnverifiedEmailLoginTest.php`
+- Known remaining gap outside this batch:
+  mail transport failures themselves are still possible and are separate from this resend/redirect UX fix.
+
+## Deals Empty State (2026-04-24)
+
+### Batch 1 — Deals page empty state
+- [x] Add a dedicated empty-state section in `laravel/resources/js/components/deals/DealsList.tsx` when the deals list is empty
+- [x] Keep the existing overview cards and deal cards unchanged when deals exist
+
+## Review
+- Replaced the empty deals list with a full empty-state section in `DealsList`, so buyer, seller, and lawyer deal index pages all inherit the same behavior.
+- Added role-aware helper copy and CTA:
+  buyer → `Browse Listings`
+  seller → `My Listings`
+  lawyer → informational state without CTA
+- Verification:
+  `npm exec tsc --noEmit` was attempted, but the run is still blocked by unrelated pre-existing `swiper/css` side-effect import type errors in other files, not by the deals empty-state change.
+
+## Offers Empty State (2026-04-24)
+
+### Batch 1 — Offers page empty state
+- [x] Replace plain `No offers available.` text with a dedicated empty-state section in `laravel/resources/js/components/offers/OffersGrid/OffersGrid.tsx`
+- [x] Keep the existing offers grid and pagination behavior unchanged when offers exist
+
+## Review
+- Replaced the plain `No offers available.` line in `OffersGrid` with a full empty-state section styled consistently with the seller dashboard empty states.
+- Added role-aware helper copy and CTA:
+  buyer → `Browse Listings`
+  seller → `Add New Listing`
+- Verification:
+  `npm exec tsc --noEmit` was attempted, but the run is currently blocked by unrelated pre-existing `swiper/css` side-effect import type errors in other files, not by the offers empty-state change.
+
 # SOLID Refactoring Plan
 
 ## Batches (ordered by impact, ≤3 files each)

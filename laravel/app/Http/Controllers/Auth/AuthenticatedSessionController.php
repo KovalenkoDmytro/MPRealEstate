@@ -46,13 +46,8 @@ class AuthenticatedSessionController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            // Redirect back to the login page with a specific error message.
-            return redirect()->route('login')->withErrors([
-                'email' => 'You must verify your email address before you can log in.
-                            <a href="' . route('verification.notice', ['resendVerificationEmail' => $user->email]) . '"
-                               class="underline text-blue-600 hover:text-blue-800">
-                               Resend verification link
-                            </a>',
+            return redirect()->route('verification.notice', [
+                'resendVerificationEmail' => $user->email,
             ]);
         }
 

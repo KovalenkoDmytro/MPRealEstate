@@ -24,7 +24,20 @@ class RegisterUserRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'phone_number' => ['required', 'string', 'max:30', 'regex:/^[0-9+\-\s()]+$/'],
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                static function (string $attribute, mixed $value, \Closure $fail): void {
+                    $existingUser = User::query()->where('email', $value)->first();
+
+                    if ($existingUser?->hasVerifiedEmail()) {
+                        $fail('The email has already been taken.');
+                    }
+                },
+            ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|string|in:buyer,seller,lawyer',
         ];

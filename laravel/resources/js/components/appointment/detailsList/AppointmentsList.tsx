@@ -5,17 +5,12 @@ import {
     Tabs,
     Tab,
     Chip,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-    Button,
-    TextField
+    TextField,
 } from '@mui/material';
 import { CalendarMonth } from '@mui/icons-material';
 import { isToday, isFuture, isPast, parseISO } from 'date-fns';
 import AppointmentItem from './AppointmentItem';
+import ConfirmDialog from '@/components/ConfirmDialog';
 import { useNotification } from '@/context/NotificationContext';
 import { AppointmentWithListingSeller, AppointmentWithListingBuyer } from "@/types";
 import { appointmentService } from "@/services/appointmentService";
@@ -82,11 +77,10 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
         try {
             const response = await appointmentService.buyerCancel({ appointment_id: selectedApptId });
             showNotification(response.message || "Appointment cancelled", "success");
-            setCancelDialogOpen(false);
             window.location.reload();
-        } catch {
-            showNotification("Failed to cancel appointment", "error");
-            setCancelDialogOpen(false);
+        } catch (err: any) {
+            showNotification(err?.response?.data?.message || "Failed to cancel appointment", "error");
+            return false;
         }
     };
 
@@ -104,14 +98,13 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             const response = await appointmentService.handle({
                 appointment_id: selectedApptId,
                 action: 'approve',
-                access_code: accessCode
+                access_code: accessCode,
             });
             showNotification(response.message || "Appointment approved", "success");
-            setApproveDialogOpen(false);
             window.location.reload();
-        } catch {
-            showNotification("Failed to approve appointment", "error");
-            setApproveDialogOpen(false);
+        } catch (err: any) {
+            showNotification(err?.response?.data?.message || "Failed to approve appointment", "error");
+            return false;
         }
     };
 
@@ -129,14 +122,13 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             const response = await appointmentService.handle({
                 appointment_id: selectedApptId,
                 action: 'reject',
-                rejection_reason: rejectionReason
+                rejection_reason: rejectionReason,
             });
             showNotification(response.message || "Appointment rejected", "success");
-            setRejectDialogOpen(false);
             window.location.reload();
-        } catch {
-            showNotification("Failed to reject appointment", "error");
-            setRejectDialogOpen(false);
+        } catch (err: any) {
+            showNotification(err?.response?.data?.message || "Failed to reject appointment", "error");
+            return false;
         }
     };
 
@@ -243,59 +235,64 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                 )}
             </Box>
 
-            {/* Cancel Confirmation Dialog */}
-            <Dialog
+            <ConfirmDialog
                 open={cancelDialogOpen}
+                title="Cancel Appointment?"
+                description="Are you sure you want to cancel this appointment? This action cannot be undone."
+                confirmLabel="Yes, Cancel"
+                cancelLabel="Keep Appointment"
+                confirmColor="error"
                 onClose={() => setCancelDialogOpen(false)}
-                PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
-            >
-                <DialogTitle sx={{ fontWeight: 700 }}>
-                    Cancel Appointment?
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Are you sure you want to cancel this appointment? This action cannot be undone.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions sx={{ p: 2, pt: 0 }}>
-                    <Button onClick={() => setCancelDialogOpen(false)} color="inherit" sx={{ fontWeight: 600 }}>Keep Appointment</Button>
-                    <Button onClick={confirmCancel} variant="contained" color="error" sx={{ fontWeight: 600, borderRadius: 2 }}>Yes, Cancel</Button>
-                </DialogActions>
-            </Dialog>
+                onConfirm={confirmCancel}
+            />
 
-            {/* Approve Dialog */}
-            <Dialog
+            <ConfirmDialog
                 open={approveDialogOpen}
+                title="Approve Appointment"
+                description={
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            Please provide an access code for the visitor.
+                        </Typography>
+                        <TextField
+                            autoFocus
+                            fullWidth
+                            label="Access Code"
+                            value={accessCode}
+                            onChange={(e) => setAccessCode(e.target.value)}
+                        />
+                    </Box>
+                }
+                confirmLabel="Approve"
+                confirmColor="primary"
                 onClose={() => setApproveDialogOpen(false)}
-                PaperProps={{ sx: { borderRadius: 3, p: 1, minWidth: 400 } }}
-            >
-                <DialogTitle sx={{ fontWeight: 700 }}>Approve Appointment</DialogTitle>
-                <DialogContent>
-                    <DialogContentText sx={{ mb: 2 }}>Please provide an access code.</DialogContentText>
-                    <TextField autoFocus margin="dense" label="Access Code" fullWidth value={accessCode} onChange={(e) => setAccessCode(e.target.value)} />
-                </DialogContent>
-                <DialogActions sx={{ p: 2, pt: 0 }}>
-                    <Button onClick={() => setApproveDialogOpen(false)} color="inherit">Cancel</Button>
-                    <Button onClick={confirmApprove} variant="contained" color="primary">Approve</Button>
-                </DialogActions>
-            </Dialog>
+                onConfirm={confirmApprove}
+            />
 
-            {/* Reject Dialog */}
-            <Dialog
+            <ConfirmDialog
                 open={rejectDialogOpen}
+                title="Reject Appointment"
+                description={
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            Please provide a reason for rejecting this appointment.
+                        </Typography>
+                        <TextField
+                            autoFocus
+                            fullWidth
+                            multiline
+                            minRows={3}
+                            label="Rejection Reason"
+                            value={rejectionReason}
+                            onChange={(e) => setRejectionReason(e.target.value)}
+                        />
+                    </Box>
+                }
+                confirmLabel="Reject"
+                confirmColor="error"
                 onClose={() => setRejectDialogOpen(false)}
-                PaperProps={{ sx: { borderRadius: 3, p: 1, minWidth: 400 } }}
-            >
-                <DialogTitle sx={{ fontWeight: 700 }}>Reject Appointment</DialogTitle>
-                <DialogContent>
-                    <DialogContentText sx={{ mb: 2 }}>Please provide a reason.</DialogContentText>
-                    <TextField autoFocus margin="dense" label="Reason" fullWidth multiline minRows={3} value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} />
-                </DialogContent>
-                <DialogActions sx={{ p: 2, pt: 0 }}>
-                    <Button onClick={() => setRejectDialogOpen(false)} color="inherit">Cancel</Button>
-                    <Button onClick={confirmReject} variant="contained" color="error">Reject</Button>
-                </DialogActions>
-            </Dialog>
+                onConfirm={confirmReject}
+            />
         </Box>
     );
 }

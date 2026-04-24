@@ -1,5 +1,5 @@
 import { useState, FormEvent, useMemo } from "react";
-import { Box, Typography, Alert, Paper, Chip } from "@mui/material";
+import { Box, Typography, Alert, Paper, Chip, CircularProgress } from "@mui/material";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -17,6 +17,7 @@ const isActive = (status: Appointment['status']) =>
 export default function SetAppointmentForm({ listing }: { listing: RealEstateListing }) {
     const [scheduledAt, setScheduledAt] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const { showNotification } = useNotification();
 
     const appointments = listing.appointments || [];
@@ -35,11 +36,12 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
         return rejected.sort((a, b) => b.id - a.id)[0] || null;
     }, [appointments, activeAppointment]);
 
-    // Disable form only if there is an ACTIVE appointment or we just submitted
-    const isDisabled = !!activeAppointment || isSubmitted;
+    // Disable form only if there is an ACTIVE appointment, we just submitted, or loading
+    const isDisabled = !!activeAppointment || isSubmitted || isLoading;
 
     const submit = async (e: FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
             const response = await appointmentService.create({
                 listing_id: listing.id,
@@ -51,11 +53,27 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
         } catch (err: any) {
             const errorMsg = extractErrorMessage(err.response);
             showNotification(errorMsg, "error");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <Paper variant="outlined" sx={{ p: theme.shape.padding, borderRadius: theme.shape.borderRadius }}>
+        <Paper variant="outlined" sx={{ p: theme.shape.padding, borderRadius: theme.shape.borderRadius, position: "relative" }}>
+            {isLoading && (
+                <Box sx={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "rgba(255, 255, 255, 0.75)",
+                    borderRadius: "inherit",
+                    zIndex: 1,
+                }}>
+                    <CircularProgress />
+                </Box>
+            )}
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <Box
                     component="form"
