@@ -4,7 +4,7 @@ import { useState } from "react";
 import ListingCard from "@/components/listing_new/ListingCard";
 import Button from "@/components/common/Button";
 import theme from "@/theme";
-import { Box, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import IconContainer from "@/components/common/IconContainer";
 import IconFavorite from "@/icons/IconFavorite";
 import AppPagination from "@/components/common/AppPagination";
@@ -25,13 +25,8 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
     };
 
     return (
-        <AuthenticatedLayout
-            header="My Favorites"
-        >
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-                    {/* Empty State */}
+        <AuthenticatedLayout header="My Favorites">
+            {/* Empty State */}
                     {localListings.length === 0 ? (
                         <Box
                             sx={{
@@ -95,25 +90,21 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
                             </Box>
                         </Box>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <Grid container spacing={3}>
                             {localListings.map((listing) => (
-                                <ListingCard
-                                    key={listing.id}
-                                    listing={listing}
-                                    isFavorite={true}
-                                    isDisplayStatus={true}
-                                    onRemove={handleRemoveItem}
-                                />
+                                <Grid key={listing.id} size={{ xs: 12, md: 6, xl: 4 }}>
+                                    <ListingCard
+                                        listing={listing}
+                                        isFavorite={true}
+                                        isDisplayStatus={true}
+                                        onRemove={handleRemoveItem}
+                                    />
+                                </Grid>
                             ))}
-                        </div>
-
+                        </Grid>
                     )}
 
                     {favoriteListings.last_page > 1 && <AppPagination pagination={favoriteListings} />}
-
-
-                </div>
-            </div>
         </AuthenticatedLayout>
     );
 }
