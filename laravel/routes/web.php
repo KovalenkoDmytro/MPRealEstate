@@ -76,6 +76,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // This endpoint returns lightweight JSON specifically for the 5000+ map pins
     Route::get('/api/map-listings', [RealEstateListingController::class, 'mapData'])->name('api.map-listings');
 
+    // Role-specific routes (loaded before wildcards so specific paths like /listings/favorites match first)
+    require __DIR__.'/seller.php';
+    require __DIR__.'/buyer.php';
+
     // Role-dispatched routes (same URL for buyer and seller, different handler)
     Route::middleware(['role:buyer|seller'])->group(function () {
         Route::get('/deals', function () {
@@ -118,7 +122,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Laravel Breeze Auth Routes
 require __DIR__.'/auth.php';
-require __DIR__.'/seller.php';
-require __DIR__.'/buyer.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/lawyer.php';
