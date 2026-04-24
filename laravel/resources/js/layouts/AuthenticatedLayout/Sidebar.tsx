@@ -18,14 +18,14 @@ const ROLE_MENUS: Record<string, Array<{ label: string; route: string; icon: Rea
     ],
     buyer: [
         { label: 'Listings', route: 'listings.index', icon: <IconMyListings/> },
-        { label: 'Favorite Listings', route: 'buyer.listings.favorites.index', icon: <IconFavorite/> },
-        { label: 'My Deals', route: 'buyer.deals.index', icon: <IconMyDeals /> },
-        { label: 'Appointments', route: 'buyer.appointments.index', icon: <IconAppointments /> },
+        { label: 'Favorite Listings', route: 'listings.favorites.index', icon: <IconFavorite/> },
+        { label: 'My Deals', route: 'deals.index', icon: <IconMyDeals /> },
+        { label: 'Appointments', route: 'appointments.index', icon: <IconAppointments /> },
     ],
     seller: [
         { label: 'My Listings', route: 'listings.index', icon: <IconMyListings /> },
-        { label: 'My Deals', route: 'seller.deals.index', icon: <IconMyDeals /> },
-        { label: 'Appointments', route: 'seller.appointments.index', icon: <IconAppointments /> },
+        { label: 'My Deals', route: 'deals.index', icon: <IconMyDeals /> },
+        { label: 'Appointments', route: 'appointments.index', icon: <IconAppointments /> },
     ],
     admin: [
         { label: 'Admin Dashboard', route: 'admin.dashboard', icon: <IconDashboard /> },

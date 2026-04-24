@@ -40,7 +40,7 @@ class AppointmentCancelledByBuyerNotification extends Notification implements Sh
             'body'  => __('notifications.appointments.cancelled_by_buyer.body', [
                 'listing' => $this->appointment->real_estate_listing_id,
             ]),
-            'url'   => route('seller.appointments.index'),
+            'url'   => route('appointments.index'),
         ];
     }
 }

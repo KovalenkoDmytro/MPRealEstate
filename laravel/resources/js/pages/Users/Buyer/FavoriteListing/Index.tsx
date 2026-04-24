@@ -51,7 +51,7 @@ export default function ListingFavoritesPage({ favoriteListings }: Props) {
                         >
                             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2.5, position: 'relative', zIndex: 1 }}>
                                 <IconContainer bgColor={`${theme.palette.primary.main}`}>
-                                    <IconFavorite color={`${theme.palette.primary.main}`}/>
+                                    <IconFavorite />
                                 </IconContainer>
 
                                 <Box>

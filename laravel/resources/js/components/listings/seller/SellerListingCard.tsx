@@ -192,7 +192,7 @@ export default function SellerListingCard({ listing }: Props) {
                             text="Edit Listing"
                             icon={<IconEdit />}
                             link={true}
-                            href={route('seller.listings.edit', listing.id)}
+                            href={route('listings.edit', listing.id)}
                         />
                     </Stack>
                 </CardContent>

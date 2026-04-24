@@ -108,7 +108,7 @@ export default function ListingShowPage({ listing }: PageProps) {
                 {/* Navigation Links */}
                 <Stack direction="row" spacing={2} mb={2}>
                     {listing.offers?.length === 0 && (
-                        <Link href={route("seller.listings.edit", listing.id)}>
+                        <Link href={route("listings.edit", listing.id)}>
                             <Button variant="outlined">✏️ Edit Listing</Button>
                         </Link>
                     )}

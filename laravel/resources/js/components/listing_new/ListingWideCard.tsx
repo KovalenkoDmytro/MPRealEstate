@@ -74,7 +74,7 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
     };
 
     const formattedSqft = new Intl.NumberFormat('en-US').format(listing.square_feet);
-    const detailUrl = route("buyer.listings.show", listing.id) ;
+    const detailUrl = route("listings.show", listing.id) ;
 
     return (
         <Paper

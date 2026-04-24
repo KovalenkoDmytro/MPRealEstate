@@ -36,7 +36,7 @@ const PopupContent = ({ listings, theme }: { listings: MapListing[], theme: any 
     const imageUrl = listing.main_image?.image_path || '/images/placeholder-house.jpg';
 
     // @ts-ignore
-    const detailUrl = typeof route === 'function' ? route("buyer.listings.show", listing.id) : `/listings/${listing.id}`;
+    const detailUrl = typeof route === 'function' ? route("listings.show", listing.id) : `/listings/${listing.id}`;
 
     return (
         <Box sx={{ p: 0.5, textAlign: 'center', width: '100%', position: 'relative', fontFamily: 'sans-serif' }}>

@@ -28,12 +28,12 @@ export const appointmentService = {
     },
 
     async handle(data: AppointmentActionData) {
-        const response = await api.post(route('seller.appointments.handle'), data);
+        const response = await api.post(route('appointments.handle'), data);
         return response.data;
     },
 
     async buyerCancel(data: { appointment_id: number }) {
-        const response = await api.post(route('buyer.appointments.cancel'), data);
+        const response = await api.post(route('appointments.cancel'), data);
         return response.data;
     },
 

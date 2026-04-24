@@ -62,7 +62,7 @@ function getRoleAction(user: User): ActionLink {
     if (user.role === UserRole.Seller) {
         return {
             label: "Create listing",
-            href: route("seller.listings.create"),
+            href: route("listings.create"),
             variant: "primary",
         };
     }
@@ -369,7 +369,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                                                     {currentUser?.role === UserRole.Seller
                                                         ? renderActionLink({
                                                               label: "Publish new listing",
-                                                              href: route("seller.listings.create"),
+                                                              href: route("listings.create"),
                                                               variant: "secondary",
                                                           })
                                                         : canRegister &&

@@ -13,6 +13,8 @@ use App\Http\Controllers\{NotificationController,
     DashboardController,
     DealFileController,
     DealController,
+    BuyerController,
+    SellerController,
     RealEstateListingController};
 use App\Http\Controllers\AppointmentController;
 
@@ -73,6 +75,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // This endpoint returns lightweight JSON specifically for the 5000+ map pins
     Route::get('/api/map-listings', [RealEstateListingController::class, 'mapData'])->name('api.map-listings');
+
+    // Role-dispatched routes (same URL for buyer and seller, different handler)
+    Route::middleware(['role:buyer|seller'])->group(function () {
+        Route::get('/deals', function () {
+            return auth()->user()->hasRole('buyer')
+                ? app(BuyerController::class)->showAllDeals()
+                : app(SellerController::class)->showAllDeals();
+        })->name('deals.index');
+
+        Route::get('/listings/{listing}', function (RealEstateListing $listing) {
+            return auth()->user()->hasRole('buyer')
+                ? app(BuyerController::class)->showListing($listing)
+                : app(SellerController::class)->showListing($listing);
+        })->name('listings.show');
+
+        Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    });
 
 
     //Appointment confirmation

@@ -112,7 +112,7 @@ export default function AppointmentItem({ appointment, onCancel, onApprove, onRe
                 {/* Header Row */}
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px'}} >
-                        <Link href={route('buyer.listings.show', listing.id)} className="hover:underline">
+                        <Link href={route('listings.show', listing.id)} className="hover:underline">
                             <Typography variant="h5" fontWeight={600} sx={{ color: theme.palette.text.primary }}>
                                 {listing.title}
                             </Typography>

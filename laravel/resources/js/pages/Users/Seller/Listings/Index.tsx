@@ -34,7 +34,7 @@ export default function Index({ listings }: ComponentProps) {
                     boxShadow: 3,
                     display: { xs: "none", md: "block" }
                 }} >
-                <Button version={"primary"} link={true} text={"Add New Listing"} href={route('seller.listings.create')}/>
+                <Button version={"primary"} link={true} text={"Add New Listing"} href={route('listings.create')}/>
             </Box>
 
         </AuthenticatedLayout>

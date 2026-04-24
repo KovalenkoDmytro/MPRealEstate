@@ -26,7 +26,7 @@ export const listingService = {
         formData.append("_method", "PUT");
         try {
             const response = await api.post(
-                route("seller.listings.update", { listing: listingId }, false),
+                route("listings.update", { listing: listingId }, false),
                 formData,
                 { headers: { Accept: "application/json"} } // let Axios set multipart boundary
             );
@@ -43,7 +43,7 @@ export const listingService = {
     async createListing(formData: FormData) {
         try {
             const response = await api.post(
-                route("seller.listings.store", [], false),
+                route("listings.store", [], false),
                 formData,
                 { headers: { Accept: "application/json" } }
             );
@@ -58,7 +58,7 @@ export const listingService = {
 
     async deactivateListing(listingId: number) {
         try {
-            const response = await api.delete(route("seller.listings.deactivate", listingId, false), {
+            const response = await api.delete(route("listings.deactivate", listingId, false), {
                 headers: { Accept: "application/json" },
             });
 
