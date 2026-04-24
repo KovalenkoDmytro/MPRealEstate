@@ -26,6 +26,7 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
     const isValid = useMemo(() => /^[A-Z0-9]{9}$/.test(code), [code]);
 
     const sendInvite = async () => {
+        setConfirmOpen(false);
         const response = await DealService.inviteLawyer(deal.id, code);
         setRedirectNotification(response.message, response.status);
         window.location.reload();

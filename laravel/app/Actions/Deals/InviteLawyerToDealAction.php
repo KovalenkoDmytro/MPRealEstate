@@ -21,7 +21,7 @@ class InviteLawyerToDealAction
             ->first();
 
         if (! $lawyer) {
-            throw new \RuntimeException(__('deals.errors.no_lawyer_found'));
+            return;
         }
 
         if ($deal->users->contains($lawyer->getKey())) {
