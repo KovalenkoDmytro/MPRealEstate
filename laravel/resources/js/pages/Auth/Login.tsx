@@ -7,11 +7,10 @@ import {
     InputAdornment,
     TextField,
     Typography,
-    Link as MuiLink,
     Stack,
 } from '@mui/material';
 import {Visibility, VisibilityOff, ArrowForward,} from '@mui/icons-material';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { Link as InertiaLink, useForm, usePage } from '@inertiajs/react';
 import Button from "@/components/common/Button";
 import { useNotification } from "@/context/NotificationContext";
 import GuestLayout from '@/layouts/GuestLayout';
@@ -115,9 +114,9 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                             label={<Typography variant="body2" sx={{ color: '#6B7280' }}>Remember me</Typography>}
                         />
                         {canResetPassword && (
-                            <MuiLink component={Link} href={route('password.request')} variant="body2" sx={{ color: '#522B47', fontWeight: 600, textDecoration: 'none' }}>
+                            <InertiaLink href={route('password.request')} style={{ color: '#522B47', fontWeight: 600, textDecoration: 'none', fontSize: '0.875rem' }}>
                                 Forgot Password?
-                            </MuiLink>
+                            </InertiaLink>
                         )}
                     </Box>
 
@@ -132,9 +131,9 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                     {/* Footer Link */}
                     <Typography variant="body2" align="center" sx={{ color: '#6B7280' }}>
                         Don't have an account?{' '}
-                        <MuiLink component={Link} href={route('register')} sx={{ color: '#522B47', fontWeight: 700, textDecoration: 'none' }}>
+                        <InertiaLink href={route('register')} style={{ color: '#522B47', fontWeight: 700, textDecoration: 'none' }}>
                             Sign up for free
-                        </MuiLink>
+                        </InertiaLink>
                     </Typography>
                 </Stack>
             </form>

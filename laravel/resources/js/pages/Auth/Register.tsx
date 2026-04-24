@@ -17,8 +17,9 @@ import {
     Visibility,
     VisibilityOff,
     ArrowForward,
+    Phone,
 } from '@mui/icons-material';
-import { Link } from '@inertiajs/react';
+import { Link as InertiaLink } from '@inertiajs/react';
 import GuestLayout from '@/layouts/GuestLayout';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -32,9 +33,21 @@ import IconLock from "@/icons/IconLock";
 import IconUser from "@/icons/IconUser";
 
 export default function Register({ roles }: { roles: string[] }) {
+    const defaultPublicRoles = ["seller", "buyer", "lawyer"] as const;
+    const roleLabelMap: Record<string, string> = {
+        seller: "Seller",
+        buyer: "Buyer",
+        lawyer: "Lawyer",
+    };
+
+    const availableRoles = (roles && roles.length > 0 ? roles : [...defaultPublicRoles])
+        .filter((role) => role !== "admin")
+        .filter((role, index, array) => array.indexOf(role) === index);
+
     // State for form data
     const [data, setData] = useState<RegisterData>({
         name: '',
+        phone_number: '',
         email: '',
         password: '',
         password_confirmation: '',
@@ -110,6 +123,32 @@ export default function Register({ roles }: { roles: string[] }) {
                                     startAdornment: (
                                         <InputAdornment position="start">
                                             <IconUser/>
+                                        </InputAdornment>
+                                    ),
+                                }
+                            }}
+                        />
+                    </Box>
+
+                    {/* Email Address */}
+                    <Box>
+                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: theme.palette.text.primary }}>
+                            Phone Number
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            name="phone_number"
+                            type="tel"
+                            placeholder="+1 403 555 1234"
+                            value={data.phone_number}
+                            onChange={handleInputChange}
+                            error={!!errors.phone_number}
+                            helperText={errors.phone_number}
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <Phone fontSize="small" />
                                         </InputAdornment>
                                     ),
                                 }
@@ -225,7 +264,7 @@ export default function Register({ roles }: { roles: string[] }) {
                                 if (!selected) {
                                     return <Typography color="text.secondary">Select your role</Typography>;
                                 }
-                                return selected.charAt(0).toUpperCase() + selected.slice(1);
+                                return roleLabelMap[selected] ?? (selected.charAt(0).toUpperCase() + selected.slice(1));
                             }}
                             sx={{
                                 '& .MuiSelect-select': {
@@ -233,11 +272,10 @@ export default function Register({ roles }: { roles: string[] }) {
                                 }
                             }}
                         >
-                            {roles
-                                .filter((role) => role !== "admin")
+                            {availableRoles
                                 .map((role) => (
                                     <MenuItem key={role} value={role}>
-                                        {role.charAt(0).toUpperCase() + role.slice(1)}
+                                        {roleLabelMap[role] ?? (role.charAt(0).toUpperCase() + role.slice(1))}
                                     </MenuItem>
                                 ))}
                         </Select>
@@ -284,13 +322,9 @@ export default function Register({ roles }: { roles: string[] }) {
                     {/* Footer Link */}
                     <Typography variant="body2" align="center" sx={{ color: theme.palette.text.secondary }}>
                         Already have an account?{' '}
-                        <MuiLink
-                            component={Link}
-                            href={route('login')}
-                            sx={{ color: theme.palette.primary.main, fontWeight: 700, textDecoration: 'none' }}
-                        >
+                        <InertiaLink href={route('login')} style={{ color: theme.palette.primary.main, fontWeight: 700, textDecoration: 'none' }}>
                             Sign in
-                        </MuiLink>
+                        </InertiaLink>
                     </Typography>
                 </Stack>
             </form>

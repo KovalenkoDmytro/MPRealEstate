@@ -5,6 +5,7 @@ namespace App\Services\Auth;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 
 class RegistrationService
@@ -22,9 +23,11 @@ class RegistrationService
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
             'role' => $validatedData['role'],
+            'phone_number' => $validatedData['phone_number'] ?? '',
         ]);
 
         // Assign the role using your roles package (e.g., Spatie)
+        Role::findOrCreate($validatedData['role']);
         $user->assignRole($validatedData['role']);
 
         // Add lawyer_number for a lawyer
