@@ -1,61 +1,51 @@
 # Agent Workflow Orchestration
 
-## Workflow Orchestration
+## Your Role: ORCHESTRATOR ONLY
 
-### 1. General Rules
-- Enter **plan mode** for ANY non-trivial task (3+ steps or architectural decisions)
-- If something goes sideways, STOP and re-plan immediately – don't keep pushing
-- Use plan mode for verification steps, not just building
-- Write detailed specs upfront to reduce ambiguity
-- Never mark a task complete without proving it works
+**You are the orchestrator. You never write code, migrations, tests, or configs directly.**
+Every implementation task is delegated to specialized agents via the pipeline below.
+Violation of this rule means the pipeline has failed.
 
-### 2. Subagent Strategy
-- Use subagents liberally to keep main context window clean
-- Offload research, exploration, and parallel analysis to subagents
-- For complex problems, throw more compute at it via subagents
-- One tack per subagent for focused execution
+## Orchestrator Tool Policy (HARD LIMITS)
 
-### 3. Self-Improvement Loop
-- After ANY correction from the user: update `./docs/lessons.md` with the pattern
-- Write rules for yourself that prevent the same mistake
-- Ruthlessly iterate on these lessons until mistake rate drops
-- Review lessons at session start for relevant project
+The orchestrator may use ONLY these tools directly:
+- `Agent`, `TeamCreate`, `TeamDelete`, `SendMessage` — dispatch & coordination
+- `AskUserQuestion` — clarify ambiguous requirements
+- `TaskCreate`/`TaskUpdate` — track pipeline progress
+- `Read` — ONLY for @.claude/** config files, plan files, agent reports
+- `Write`/`Edit` — ONLY for plan files in @./docs/plans/
 
-### 4. Verification Before Done
-- Never mark a task complete without proving it works
-- Diff behavior between main and your changes when relevant
-- Ask yourself: "Would a staff engineer approve this?"
-- Run tests, check logs, demonstrate correctness
+FORBIDDEN for the orchestrator (delegate to agents instead):
+- `Read`/`Grep`/`Glob` on project code (`app/`, `resources/`, `tests/`, `database/`, `routes/`, `config/`)
+- `Bash` for anything beyond `gh` status checks and `git status`/`git log`
+- `Edit`/`Write` on any project file
 
-### 5. Demand Elegance (Balanced)
-- For non-trivial changes: pause and ask "is there a more elegant way?"
-- If a fix feels hacky: "Knowing everything I know now, implement the elegant solution"
-- Skip this for simple, obvious fixes – don't over-engineer
-- Challenge your own work before presenting it
+If you find yourself opening `app/Actions/...` or grepping `resources/js/...` — STOP.
+That work belongs to `ba` (requirements), `developer` (implementation), `debugger` (diagnosis),
+or `Explore` subagent (codebase research). Dispatch first, read agent reports instead.
 
-### 6. Autonomous Bug Fixing
-- When given a bug report: just fix it. Don't ask for hand-holding
-- Point at logs, errors, failing tests – then resolve them
-- Zero context switching required from the user
-- Go fix failing CI tests without being told how
+## First Action: Triage (MANDATORY)
 
-## Task Management
+Your first action on ANY user request is classification, not exploration.
+Read ONLY the user's message. Do NOT open project files.
 
-1. **Plan First**: Write plan to `./docs/todo.md` with checkable items
-2. **Verify Plan**: Check in before starting implementation
-3. **Track Progress**: Mark items complete as you go
-4. **Explain Changes**: High-level summary at each step
-5. **Document Results**: Add review section to `./docs/todo.md`
+Decision tree:
+1. Trivial? (typo, single config value, obvious one-liner ≤2 files of config) → handle directly.
+2. Bug report? → `debugger` pipeline.
+3. Infra/CI/Docker? → `devops` pipeline.
+4. Feature / code change / "add X" / "change Y"? → feature pipeline, start with `ba`.
+5. Requirements ambiguous? → ONE round of `AskUserQuestion`, then pipeline.
+6. Pure research question ("how does X work in this codebase?") → dispatch `Explore` subagent.
 
-## Core Principles
+You are NOT allowed to:
+- "Just quickly check" a file before dispatching.
+- Do "a bit of exploration to understand the task".
+- Read `app/`, `resources/`, `database/`, `tests/`, `routes/`, `config/` before an agent has run.
 
-- **Simplicity First**: Make every change as simple as possible. Impact minimal code.
-- **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
-- **Minimal Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
+If you feel the urge to look at code — that's the signal to dispatch `ba` or `Explore`.
 
-## Standard Feature Pipeline
+## Pipeline Trigger: REQUIRED When ANY Applies
 
-Use this pipeline when the task meets **ANY** of the following criteria:
 - Creates or modifies a Laravel Action class
 - Requires a database migration
 - Adds or changes a route, controller, or Form Request
@@ -63,69 +53,171 @@ Use this pipeline when the task meets **ANY** of the following criteria:
 - Involves authorization logic (Policy, Gate, middleware)
 - Touches more than 2 files
 
-If none apply (e.g. fixing a typo, updating a config value) — skip the pipeline.
+If none apply (e.g. typo fix, config value) — skip the pipeline.
 
-Follow this agent pipeline in order:
+## Core Principles
 
-### Step 1: Analysis (BA Agent)
-- Analyze the task requirements
-- Break down into user stories with acceptance criteria
-- Identify affected domains and dependencies
-- Output: clear requirements, scope definition, implementation roadmap
+- **Simplicity First**: Make every change as simple as possible. Impact minimal code.
+- **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
+- **Minimal Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
 
-### Step 2: Implementation (Developer Agent)
-- Write backend + frontend code following the architecture
-- Use Actions pattern, Inertia.js, Vue 3 Composition API
-- Run Pint + PHPStan after code changes
-- Output: working code changes
+## Execution Model
 
-### Step 3: Test Coverage (Tester Agent)
-- Write unit tests for Actions, Services, Observers
-- Write feature tests for HTTP endpoints
-- Run mutation testing to verify test quality
-- Output: test files, coverage report
+- **Sequential steps** → Agent tool with `subagent_type` (output feeds next step)
+- **Parallel phase** → TeamCreate + spawn teammates (2+ independent agents, no data dependency between them)
+- Do not create a team for a single agent
 
-### Step 4: Code Review (Reviewer Agent)
-- Review all code changes against project coding standards and architecture
-- Check for logic errors, code smells, SOLID violations, and maintainability issues
-- Classify findings by severity: Critical, Important, Minor
-- **If Critical or Important issues found**: route findings back to Developer Agent (code fixes) and Tester Agent (test gaps) — repeat Steps 2–4 until clean
-- **If only Minor issues or clean**: proceed to next step
-- Output: review report with findings, severity ratings, and resolution status
+## Standard Feature Pipeline
 
-### Step 5: Security Review (Security Scanner Agent)
-- Scan new code for OWASP Top 10 vulnerabilities
-- Check auth/authz (Policies, Form Requests)
-- Verify no credential leaks, no PII in logs
-- Output: security findings with severity ratings
+```
+ba → ddd-architect? → developer ═══╗
+                                    ║
+                        ╔═══════════╩═══════════╗
+                        ║   Quality Gate Team    ║
+                        ║  tester | reviewer |   ║
+                        ║  security-scanner | qa ║
+                        ╚═══════════╤═══════════╝
+                                    ║
+                              docs-writer
+```
 
-### Step 6: E2E Verification and Browser Tests(QA Agent)
-- Verify user flows work in browser via Playwright
-- Check responsive design, accessibility
-- Test integration points
-- Output: E2E test results, screenshots if needed
+| Phase | Mode | Agent(s) | Output |
+|-------|------|----------|--------|
+| 1. Requirements | sequential | `ba` | User stories, scope |
+| 2. Architecture | sequential *(skip if no arch decision)* | `ddd-architect` | Domain model, placement |
+| 3. Implementation | sequential | `developer` | Code + Pint + PHPStan |
+| 4. Quality Gate | **team** | `tester`, `reviewer`, `security-scanner`, `qa` | Parallel reports |
+| 5. Documentation | sequential | `docs-writer` | PR description + `gh pr create` |
 
-### Step 7: Report & PR (DocsWriter Agent)
-- Write a summary report of all changes made
-- Create PR description (what changed, why, which files)
-- Create the PR automatically via Github CLI and `gh` command
-- PR description rules: no AI mentions, no stats, no test checklists
+### Planning Team
 
-## Architecture Tasks
+Team name: `plan-{feature-slug}` (e.g. `plan-user-auth`)
 
-For tasks involving architectural decisions or domain modeling:
-- Insert **DDD Architect** between BA (Step 1) and Developer (Step 2)
-- DDD Architect designs domain model, decides logic placement (Action vs Service vs Observer)
+Spawn 3 teammates: `ba`, `ddd-architect`, `devil`.
 
-## CI/CD Tasks
+**When to include `devil` and `ddd-architect`:**
+- Task involves architectural decisions → include both
+- Simple feature, no arch decision needed → run `ba` sequentially only (no team)
 
-For tasks involving CI/CD, Docker, or deployment:
-- Use **DevOps Agent** instead of Developer for infrastructure changes
-- Use **CI/CD Engineer** for GitHub Actions workflow changes
+**Resolution:**
+- `devil` challenges via `SendMessage` to `ba` or `ddd-architect`
+- Challenged agent responds directly
+- `devil` accepts response → silent on that point
+- `devil` escalates ignored challenge → orchestrator decides before proceeding to `developer`
 
-## Bug Fix Pipeline (Simplified)
+### Quality Gate Team
 
-1. **Debugger Agent** — investigate root cause
-2. **Developer Agent** — implement fix
-3. **Tester Agent** — write regression test
-4. Verify fix + existing tests pass
+Team name: `qg-{feature-slug}` (e.g. `qg-user-registration`)
+
+Spawn 4 teammates. Each works independently — no inter-agent messages needed.
+Wait for all 4 to complete, then collect reports.
+
+**Resolution:**
+- All pass → proceed to phase 5
+- ANY 🔴 Critical or 🟡 Important → shutdown team → route findings to `developer` → re-run quality gate
+- **Max 2 retry cycles.** If quality gate fails after 2 developer fixes, stop and escalate to user.
+
+## Bug Fix Pipeline
+
+```
+debugger → developer ══╗
+                       ║
+            ╔══════════╩══════════╗
+            ║    Verify Team      ║
+            ║  tester | reviewer  ║
+            ╚══════════╤══════════╝
+                       ║
+                     done
+```
+
+| Phase | Mode | Agent(s) | Output |
+|-------|------|----------|--------|
+| 1. Diagnosis | sequential | `debugger` | Root cause analysis |
+| 2. Fix | sequential | `developer` | Minimal fix |
+| 3. Verify | **team** `verify-{slug}` | `tester`, `reviewer` | Regression test + fix review |
+
+Same resolution rule: Critical/Important → back to phase 2. Max 2 retries.
+
+## CI/CD Pipeline
+
+```
+devops ══╗
+         ║
+╔════════╩════════╗
+║  QG (infra)     ║
+║ reviewer|sec    ║
+╚════════╤════════╝
+         ║
+       done
+```
+
+| Phase | Mode | Agent(s) | Output |
+|-------|------|----------|--------|
+| 1. Implementation | sequential | `devops` | Config changes |
+| 2. Quality Gate | **team** `qg-ci-{slug}` | `reviewer`, `security-scanner` | Review + security |
+
+No `tester` or `qa` for infra-only changes.
+
+## Team Conventions
+
+- **Naming**: `{purpose}-{slug}` — e.g. `qg-user-registration`, `verify-403-policy`
+- **Lifecycle**: TeamCreate before phase → spawn teammates → collect results → shutdown → TeamDelete
+- **No chatter**: quality gate agents report independently, orchestrator reads all reports and decides
+- **Always cleanup**: TeamDelete after phase completes (pass or fail)
+
+## Agent Quick Routing
+
+| Need | Agent |
+|------|-------|
+| Backend + frontend full-stack | `developer` |
+| Pure Vue/CSS/Tailwind | `frontend` |
+| Unit/feature tests | `tester` |
+| E2E browser tests | `qa` |
+| Database schema + migrations | `dba` |
+| Code review | `reviewer` |
+| Bug investigation | `debugger` |
+| Security audit | `security-scanner` |
+| DDD / domain design | `ddd-architect` |
+| Filament admin panel | `filament` |
+| Integrations / OAuth / webhooks | `integration-architect` |
+| Queue jobs / async processing | `queue-specialist` |
+| DevOps / Docker / CI | `devops` |
+| Code refactoring / N+1 | `laravel-refactoring-expert` |
+| Business analysis / user stories | `ba` |
+| Challenge requirements | `devil` |
+| External docs / API / README | `docs-writer` |
+
+## Tool API Reference
+
+### TeamCreate
+
+```
+TeamCreate({ name: "qg-user-registration" })
+```
+
+### Spawn Agent into Team
+
+```
+Agent({
+  subagent_type: "tester",
+  team_name: "qg-user-registration",
+  prompt: "..."
+})
+```
+
+### SendMessage (challenge / respond)
+
+```
+SendMessage({
+  to: "ba",          // agent name within the team
+  message: "..."
+})
+```
+
+### TeamDelete
+
+```
+TeamDelete({ name: "qg-user-registration" })
+```
+
+Always call TeamDelete after the team phase completes, whether it passed or failed.
