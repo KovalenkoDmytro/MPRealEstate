@@ -48,8 +48,8 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
 
             switch (currentTab) {
                 case 'all': return true;
-                case 'today': return isToday(aptDate);
-                case 'upcoming': return isFuture(aptDate) && !isToday(aptDate);
+                case 'today': return isToday(aptDate) && apt.status !== 'rejected' && apt.status !== 'cancelled by buyer';
+                case 'upcoming': return isFuture(aptDate) && !isToday(aptDate) && apt.status !== 'rejected' && apt.status !== 'cancelled by buyer';
                 case 'past': return isPast(aptDate) && !isToday(aptDate);
                 case 'accepted': return apt.status === 'accepted';
                 case 'pending': return apt.status === 'pending';

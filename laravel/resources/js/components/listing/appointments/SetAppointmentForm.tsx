@@ -18,6 +18,7 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
     const [scheduledAt, setScheduledAt] = useState("");
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [slotError, setSlotError] = useState<string | null>(null);
     const { showNotification } = useNotification();
 
     const appointments = listing.appointments || [];
@@ -42,6 +43,7 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
     const submit = async (e: FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
+        setSlotError(null);
         try {
             const response = await appointmentService.create({
                 listing_id: listing.id,
@@ -51,8 +53,13 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
             showNotification(response.message, response.status);
             setIsSubmitted(true);
         } catch (err: any) {
-            const errorMsg = extractErrorMessage(err.response);
-            showNotification(errorMsg, "error");
+            const fieldError = err.response?.data?.errors?.scheduled_at?.[0];
+            if (fieldError) {
+                setSlotError(fieldError);
+            } else {
+                const errorMsg = extractErrorMessage(err.response);
+                showNotification(errorMsg, "error");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -150,16 +157,26 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
                         disabled={isDisabled}
                         value={scheduledAt ? new Date(scheduledAt) : null}
                         disablePast
-                        onChange={(value) =>
-                            setScheduledAt(value ? formatWithTimezone(value) : "")
-                        }
+                        timeSteps={{ minutes: 30 }}
+                        onChange={(value) => {
+                            setScheduledAt(value ? formatWithTimezone(value) : "");
+                            setSlotError(null);
+                        }}
                         slotProps={{
                             textField: {
                                 fullWidth: true,
                                 required: true,
+                                error: !!slotError,
+                                helperText: slotError ?? undefined,
                             }
                         }}
                     />
+
+                    {slotError && (
+                        <Alert severity="error">
+                            <strong>Time slot unavailable.</strong> {slotError}
+                        </Alert>
+                    )}
 
                     <Button
                         version="primary"

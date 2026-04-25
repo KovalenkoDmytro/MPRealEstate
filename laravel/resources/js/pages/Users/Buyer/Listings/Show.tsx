@@ -3,7 +3,7 @@ import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayo
 import { ImageGallery } from "@/components/listing/ImageGallery";
 import { ListingDetails } from "@/components/listing/ListingDetails";
 import { OfferForm } from "@/components/listing/OfferForm";
-import { RealEstateListing, Offer } from "@/types";
+import { RealEstateListing, Offer, OfferStatus } from "@/types";
 import { offerService } from "@/services/offerService";
 import { useNotification } from "@/context/NotificationContext";
 import {
@@ -81,10 +81,14 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
                             <Stack spacing={3}>
 
                                 {/* 1. Offer Section */}
-                                {userOffer ? (
+                                {userOffer && (
                                     <UserOfferStatus offer={userOffer} />
-                                ) : (
-                                    <MakeOfferPrompt onMakeOffer={() => setDialogOpen(true)} />
+                                )}
+                                {(!userOffer || userOffer.status === OfferStatus.Rejected) && (
+                                    <MakeOfferPrompt
+                                        onMakeOffer={() => setDialogOpen(true)}
+                                        reOffer={userOffer?.status === OfferStatus.Rejected}
+                                    />
                                 )}
 
                                 {/* 2. Appointment Section */}

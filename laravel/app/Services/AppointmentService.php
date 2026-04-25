@@ -93,6 +93,7 @@ class AppointmentService
         return Appointment::query()
             ->forUser($user)
             ->whereDate('scheduled_at', Carbon::today())
+            ->whereNotIn('status', ['rejected', 'cancelled by buyer'])
             ->orderBy('scheduled_at', 'asc')
             ->get();
     }
@@ -123,6 +124,7 @@ class AppointmentService
                 Carbon::tomorrow()->startOfDay(),
                 Carbon::today()->addDays($days)->endOfDay(),
             ])
+            ->whereNotIn('status', ['rejected', 'cancelled by buyer'])
             ->orderBy('scheduled_at', 'asc')
             ->get();
     }
