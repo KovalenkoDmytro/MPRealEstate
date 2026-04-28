@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\Deal;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
@@ -31,7 +33,7 @@ class UserSeeder extends Seeder
             $user = User::updateOrCreate(
                 ['email' => $userData['email']],
                 [
-                    'phone_number' => fake('phone_number'),
+                    'phone_number' => fake()->numerify('403555####'),
                     'email_verified_at'=> now(),
                     'name' => $userData['name'],
                     'password' => Hash::make('password'),
@@ -80,4 +82,3 @@ class UserSeeder extends Seeder
 
 
 }
-
