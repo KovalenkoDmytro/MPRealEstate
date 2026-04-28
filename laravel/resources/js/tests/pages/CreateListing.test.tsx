@@ -189,6 +189,7 @@ describe('CreateListing', () => {
     it('calls listingService.createListing when button is clicked', async () => {
         vi.mocked(listingService.createListing).mockResolvedValue({
             success: true,
+            data: {},
             message: SUCCESS_MESSAGE,
         });
 
@@ -206,7 +207,7 @@ describe('CreateListing', () => {
     });
 
     it('shows "Creating..." and disables button while processing', async () => {
-        let resolveCreate: ((value: { success: boolean; message: string }) => void) | undefined;
+        let resolveCreate: ((value: Awaited<ReturnType<typeof listingService.createListing>>) => void) | undefined;
         vi.mocked(listingService.createListing).mockImplementation(
             () =>
                 new Promise((resolve) => {
@@ -233,7 +234,7 @@ describe('CreateListing', () => {
 
         // Resolve so React doesn't leak the pending promise
         await act(async () => {
-            resolveCreate?.({ success: true, message: SUCCESS_MESSAGE });
+            resolveCreate?.({ success: true, data: {}, message: SUCCESS_MESSAGE });
         });
     });
 
@@ -242,6 +243,7 @@ describe('CreateListing', () => {
 
         vi.mocked(listingService.createListing).mockResolvedValue({
             success: true,
+            data: {},
             message: SUCCESS_MESSAGE,
         });
 
@@ -271,6 +273,7 @@ describe('CreateListing', () => {
     it('redirects to /listings on success', async () => {
         vi.mocked(listingService.createListing).mockResolvedValue({
             success: true,
+            data: {},
             message: SUCCESS_MESSAGE,
         });
 

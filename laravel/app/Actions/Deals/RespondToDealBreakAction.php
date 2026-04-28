@@ -59,6 +59,10 @@ class RespondToDealBreakAction
 
         $deal->save();
 
+        if ($deal->realEstateListing && ! $deal->realEstateListing->trashed()) {
+            $deal->realEstateListing->update(['status' => 'available']);
+        }
+
         $breakRequest->status = 'accepted';
         $breakRequest->save();
 

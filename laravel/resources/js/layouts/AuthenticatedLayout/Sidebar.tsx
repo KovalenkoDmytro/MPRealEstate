@@ -49,12 +49,13 @@ type SidebarProps = {
 
 export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: SidebarProps) {
     const theme = useTheme();
+    const bottomLinks = userRole === 'lawyer' ? [] : COMMON_BOTTOM_LINKS;
 
     // Combine common links + role specific links + bottom links
     const menuItems = [
         ...(ROLE_MENUS.common || []),
         ...(ROLE_MENUS[userRole] || []),
-        ...COMMON_BOTTOM_LINKS
+        ...bottomLinks
     ];
 
     const drawerContent = (
