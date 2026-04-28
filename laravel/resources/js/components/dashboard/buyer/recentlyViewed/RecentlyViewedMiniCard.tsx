@@ -1,64 +1,106 @@
-import {useEffect, useRef } from 'react';
 import { RealEstateListing } from '@/types';
 import Button from '@/components/common/Button';
 import Badge from "@/components/common/Badge";
-import {formatCurrency} from "@/helpers/priceHelper";
+import { formatCurrency } from "@/helpers/priceHelper";
 import IconLocationMark from "@/icons/IconLocationMark";
+import IconBed from "@/icons/IconBed";
+import IconBath from "@/icons/IconBath";
+import IconSqft from "@/icons/IconSqft";
+import { Paper, Box, Typography, Stack, Divider } from '@mui/material';
+import theme from '@/theme';
 
 type ListingCardProps = {
     listing: RealEstateListing;
 };
 
-export default function RecentlyViewedMiniCard({listing}: ListingCardProps) {
-    const isMounted = useRef(true);
-
-    useEffect(() => {
-        return () => { isMounted.current = false; };
-    }, []);
-
+export default function RecentlyViewedMiniCard({ listing }: ListingCardProps) {
     const formattedSqft = new Intl.NumberFormat('en-US').format(listing.square_feet);
     const detailUrl = typeof route === 'function' ? route("listings.show", listing.id) : `/listings/${listing.id}`;
     const mainImage = listing.main_image?.image_path || '/images/placeholder-house.jpg';
 
     return (
-        <div className={`listing-card --${listing.status}`}>
+        <Paper
+            elevation={0}
+            sx={{
+                border: '1px solid',
+                borderColor: '#e2e8f0',
+                borderRadius: theme.shape.borderRadius,
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                bgcolor: theme.palette.background.white,
+                width: '100%',
+            }}
+        >
+            {/* Image */}
+            <Box sx={{ position: 'relative' }}>
+                <Box
+                    component="img"
+                    src={mainImage}
+                    alt={listing.title}
+                    sx={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }}
+                />
+                <Box sx={{ position: 'absolute', top: 8, left: 8 }}>
+                    <Badge text={listing.status} version="primary" />
+                </Box>
+            </Box>
 
-            <div className="card-image-wrapper">
-                <img className="card-image" src={mainImage} alt={listing.title} />
-                    <div className="card-badges">
-                        <Badge text={listing.status} version={"primary"}/>
-                    </div>
-            </div>
+            {/* Content */}
+            <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                <Typography
+                    variant="subtitle1"
+                    fontWeight={700}
+                    sx={{ color: theme.palette.text.primary, mb: 0.5, lineHeight: 1.3 }}
+                >
+                    {listing.title}
+                </Typography>
 
-
-            <div className="card-content">
-                <h3 className="card-title">{listing.title}</h3>
-                <div className="card-address">
-                    <IconLocationMark/>
+                <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1.5 }}
+                >
+                    <IconLocationMark />
                     {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}, {listing.postal_code}
-                </div>
-                <div className="card-features">
-                    <div className="feature-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 4v16M22 4v16M2 8h20M2 10h20M6 14v4M18 14v4"/></svg>
-                        <span>{listing.bedrooms}</span> Beds
-                    </div>
-                    <div className="feature-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 20v-6h6v6M4 20h16M2 8h20v12H2z"/></svg>
-                        <span>{listing.bathrooms}</span> Baths
-                    </div>
-                    <div className="feature-item">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3h18v18H3zM9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
-                        <span>{formattedSqft}</span> sqft
-                    </div>
-                </div>
-                <div className="card-footer">
-                    <div>
-                        <span className="price-label">Price</span>
-                        <div className="price-value">{formatCurrency(listing.price)}</div>
-                    </div>
-                    <Button version="primary" text="View Details" link={true} href={detailUrl} />
-                </div>
-            </div>
-        </div>
+                </Typography>
+
+                <Stack direction="row" spacing={2} mb={1.5}>
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                        <IconBed />
+                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
+                            <Typography component="span" fontWeight={700}>{listing.bedrooms}</Typography> Beds
+                        </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                        <IconBath />
+                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
+                            <Typography component="span" fontWeight={700}>{listing.bathrooms}</Typography> Baths
+                        </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                        <IconSqft />
+                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
+                            <Typography component="span" fontWeight={700}>{formattedSqft}</Typography> sqft
+                        </Typography>
+                    </Stack>
+                </Stack>
+
+                <Divider sx={{ mb: 1.5 }} />
+
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 'auto', width: '100%' }}>
+                    <Box>
+                        <Typography variant="caption" sx={{ color: theme.palette.primary.main, letterSpacing: 0.5 }}>
+                            Price
+                        </Typography>
+                        <Typography variant="h6" fontWeight={800} sx={{ color: theme.palette.text.primary, lineHeight: 1.2 }}>
+                            {formatCurrency(listing.price)}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ width: 'fit-content' }}>
+                        <Button version="primary" text="View Details" link={true} href={detailUrl} />
+                    </Box>
+                </Stack>
+            </Box>
+        </Paper>
     );
 }

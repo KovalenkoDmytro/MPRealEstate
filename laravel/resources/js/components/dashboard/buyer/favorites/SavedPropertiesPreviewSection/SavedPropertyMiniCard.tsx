@@ -2,70 +2,107 @@ import { RealEstateListing } from '@/types';
 import Button from '@/components/common/Button';
 import Badge from '@/components/common/Badge';
 import IconLocationMark from "@/icons/IconLocationMark";
+import IconBed from "@/icons/IconBed";
+import IconBath from "@/icons/IconBath";
+import IconSqft from "@/icons/IconSqft";
+import { Paper, Box, Typography, Stack, Divider } from '@mui/material';
+import theme from '@/theme';
+import { formatCurrency } from '@/helpers/priceHelper';
 
 type SavedListingMiniCardProps = {
     listing: RealEstateListing;
 };
 
 export default function SavedListingMiniCard({ listing }: SavedListingMiniCardProps) {
-    const formattedPrice = new Intl.NumberFormat('en-US', {
-        style: 'currency', currency: 'CAD', maximumFractionDigits: 0,
-    }).format(listing.price);
     const formattedSqft = new Intl.NumberFormat('en-US').format(listing.square_feet);
     const detailUrl = typeof route === 'function'
         ? route("listings.show", listing.id)
         : `/listings/${listing.id}`;
     const mainImage = listing.main_image?.image_path || '/images/placeholder-house.jpg';
-    const statusClass = listing.status === 'sold'
-        ? '--sold'
-        : listing.status === 'pending' ? '--pending' : '';
 
     return (
-        <div className={`saved-listing-mini-card ${statusClass}`}>
-
-            <div className="mini-card-image-wrapper">
-                <img src={mainImage} alt={listing.title} />
-
-                <div className="mini-card-badges">
+        <Paper
+            elevation={0}
+            sx={{
+                border: '1px solid',
+                borderColor: '#e2e8f0',
+                borderRadius: theme.shape.borderRadius,
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                bgcolor: theme.palette.background.white,
+                width: '100%',
+            }}
+        >
+            {/* Image */}
+            <Box sx={{ position: 'relative' }}>
+                <Box
+                    component="img"
+                    src={mainImage}
+                    alt={listing.title}
+                    sx={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }}
+                />
+                <Box sx={{ position: 'absolute', top: 8, left: 8 }}>
                     <Badge text={listing.status} version="primary" />
-                </div>
-            </div>
+                </Box>
+            </Box>
 
-            <div className="mini-card-content">
-                <h3 className="mini-card-title">{listing.title}</h3>
+            {/* Content */}
+            <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                <Typography
+                    variant="subtitle1"
+                    fontWeight={700}
+                    sx={{ color: theme.palette.text.primary, mb: 0.5, lineHeight: 1.3 }}
+                >
+                    {listing.title}
+                </Typography>
 
-                <div className="mini-card-address">
-                    <IconLocationMark/>
+                <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1.5 }}
+                >
+                    <IconLocationMark />
                     {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}, {listing.postal_code}
-                </div>
+                </Typography>
 
-                <div className="mini-card-features">
-                    <div className="feature-item">
-                        <span>{listing.bedrooms}</span> Beds
-                    </div>
-                    <div className="feature-item">
-                        <span>{listing.bathrooms}</span> Baths
-                    </div>
-                    <div className="feature-item">
-                        <span>{formattedSqft}</span> sqft
-                    </div>
-                </div>
+                <Stack direction="row" spacing={2} mb={1.5}>
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                        <IconBed />
+                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
+                            <Typography component="span" fontWeight={700}>{listing.bedrooms}</Typography> Beds
+                        </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                        <IconBath />
+                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
+                            <Typography component="span" fontWeight={700}>{listing.bathrooms}</Typography> Baths
+                        </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" spacing={0.5}>
+                        <IconSqft />
+                        <Typography variant="body2" sx={{ color: theme.palette.text.primary }}>
+                            <Typography component="span" fontWeight={700}>{formattedSqft}</Typography> sqft
+                        </Typography>
+                    </Stack>
+                </Stack>
 
-                <div className="mini-card-footer">
-                    <div>
-                        <span className="price-label">Price</span>
-                        <div className="price-value">{formattedPrice}</div>
-                    </div>
+                <Divider sx={{ mb: 1.5 }} />
 
-
-                    <Button
-                        version="primary"
-                        text="Details"
-                        link={true}
-                        href={detailUrl}
-                    />
-                </div>
-            </div>
-        </div>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 'auto', width: '100%' }}>
+                    <Box>
+                        <Typography variant="caption" sx={{ color: theme.palette.primary.main, letterSpacing: 0.5 }}>
+                            Price
+                        </Typography>
+                        <Typography variant="h6" fontWeight={800} sx={{ color: theme.palette.text.primary, lineHeight: 1.2 }}>
+                            {formatCurrency(listing.price)}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ width: 'fit-content' }}>
+                        <Button version="primary" text="Details" link={true} href={detailUrl} />
+                    </Box>
+                </Stack>
+            </Box>
+        </Paper>
     );
 }
