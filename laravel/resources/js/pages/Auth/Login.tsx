@@ -20,10 +20,13 @@ import theme from "@/theme";
 
 export default function Login({ canResetPassword }: { canResetPassword: boolean; }) {
     const [showPassword, setShowPassword] = useState(false);
+    const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const initialEmail = params?.get('email') ?? '';
+    const initialPassword = params?.get('password') ?? '';
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
-        remember: false,
+        email: initialEmail,
+        password: initialPassword,
+        remember: false as boolean,
     });
 
     const { showNotification } = useNotification();

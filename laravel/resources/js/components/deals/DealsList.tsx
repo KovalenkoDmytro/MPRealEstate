@@ -25,11 +25,11 @@ export const DealsList = ({ deals }: DealsListProps) => {
             } else if (deal.is_broken) {
                 acc.broken += 1;
             } else {
-                acc.active += 1;
+                acc.pending += 1;
             }
 
             return acc;
-        }, { active: 0, pending: 0, closed: 0, broken: 0 });
+        }, { pending: 0, closed: 0, broken: 0 });
     }, [deals]);
 
     if (!hasDeals) {
@@ -123,7 +123,6 @@ export const DealsList = ({ deals }: DealsListProps) => {
         <Stack spacing={2}>
 
             <DealsOverviewCards
-                active={dealStats.active}
                 pending={dealStats.pending}
                 closed={dealStats.closed}
             />

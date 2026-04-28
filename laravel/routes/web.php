@@ -18,6 +18,9 @@ use App\Http\Controllers\{NotificationController,
     RealEstateListingController};
 use App\Http\Controllers\AppointmentController;
 
+// Public Demo Route
+Route::get('/demo', \App\Actions\Demo\ShowDemoPage::class)->name('demo');
+
 // Public Home Route
 Route::get('/', static function () {
     $stats = Cache::remember('welcome.stats', now()->addMinutes(15), static function (): array {

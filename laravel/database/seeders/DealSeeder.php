@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Appointment;
-use Illuminate\Database\Seeder;
+use App\Models\Buyer;
 use App\Models\Deal;
+use App\Models\ListingView;
 use App\Models\Offer;
-use App\Models\User;
 use App\Models\RealEstateListing;
+use App\Models\User;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 
 class DealSeeder extends Seeder
@@ -25,6 +27,7 @@ class DealSeeder extends Seeder
 
         if (! $seller || ! $sellerTwo || ! $buyer || ! $buyerTwo) {
             $this->command?->warn('Demo users are missing. Skipping DealSeeder presentation scenarios.');
+
             return;
         }
 
@@ -49,6 +52,9 @@ class DealSeeder extends Seeder
             lawyer: $lawyer,
             listings: $presentationListings,
         );
+
+        $this->seedSellerAppointmentVolume();
+        $this->seedListingEngagement();
     }
 
     private function resolvePresentationListings(Collection $sellers, int $requiredCount): Collection
@@ -130,6 +136,53 @@ class DealSeeder extends Seeder
                 'real_estate_listing_id' => $cancelledListing->id,
                 'scheduled_at' => CarbonImmutable::now()->addDays(4)->setTime(13, 0),
             ]);
+    }
+
+    private function seedSellerAppointmentVolume(): void
+    {
+        $seller = User::query()->where('email', 'seller@example.com')->first();
+
+        if (! $seller) {
+            return;
+        }
+
+        $listingIds = RealEstateListing::query()
+            ->where('seller_id', $seller->getKey())
+            ->pluck('id');
+
+        if ($listingIds->isEmpty()) {
+            return;
+        }
+
+        $buyers = User::query()
+            ->whereIn('email', ['buyer@example.com', 'buyer2@example.com'])
+            ->get();
+
+        if ($buyers->isEmpty()) {
+            return;
+        }
+
+        $scenarios = [
+            ['state' => 'pending', 'count' => 200, 'scheduled_at' => fn () => now()->addDays(rand(1, 30))->addHours(rand(0, 23))->addMinutes(rand(0, 59))],
+            ['state' => 'accepted', 'count' => 150, 'scheduled_at' => fn () => rand(0, 1) ? now()->subDays(rand(1, 30))->addHours(rand(0, 23)) : now()->addDays(rand(1, 14))->addHours(rand(0, 23))],
+            ['state' => 'rejected', 'count' => 100, 'scheduled_at' => fn () => now()->subDays(rand(5, 60))->addHours(rand(0, 23))->addMinutes(rand(0, 59))],
+            ['state' => 'cancelledByBuyer', 'count' => 50, 'scheduled_at' => fn () => now()->subDays(rand(1, 45))->addHours(rand(0, 23))->addMinutes(rand(0, 59))],
+        ];
+
+        foreach ($scenarios as $scenario) {
+            for ($i = 0; $i < $scenario['count']; $i++) {
+                $buyer = $buyers->random();
+
+                Appointment::factory()
+                    ->{$scenario['state']}()
+                    ->create([
+                        'buyer_id' => $buyer->getKey(),
+                        'seller_id' => $seller->getKey(),
+                        'real_estate_listing_id' => $listingIds->random(),
+                        'scheduled_at' => ($scenario['scheduled_at'])(),
+                    ]);
+            }
+        }
     }
 
     private function seedDealShowcase(
@@ -297,5 +350,72 @@ class DealSeeder extends Seeder
         }
 
         $brokenDeal->users()->syncWithoutDetaching($brokenParticipants);
+    }
+
+    private function seedListingEngagement(): void
+    {
+        $seller = User::query()->where('email', 'seller@example.com')->first();
+
+        if (! $seller) {
+            return;
+        }
+
+        $listings = RealEstateListing::query()
+            ->where('seller_id', $seller->getKey())
+            ->get();
+
+        $buyers = Buyer::query()
+            ->whereIn('email', ['buyer@example.com', 'buyer2@example.com'])
+            ->get();
+
+        if ($listings->isEmpty() || $buyers->isEmpty()) {
+            return;
+        }
+
+        $now = CarbonImmutable::now();
+
+        foreach ($listings as $listing) {
+            $totalViews = random_int(40, 80);
+            $recentViews = (int) round($totalViews * 0.3);
+            $olderViews = $totalViews - $recentViews;
+
+            $viewRows = [];
+
+            for ($i = 0; $i < $olderViews; $i++) {
+                $viewedAt = $now->subDays(random_int(8, 90))
+                    ->subHours(random_int(0, 23))
+                    ->subMinutes(random_int(0, 59));
+
+                $viewRows[] = [
+                    'real_estate_listing_id' => $listing->getKey(),
+                    'user_id' => $buyers->random()->getKey(),
+                    'viewed_at' => $viewedAt,
+                    'created_at' => $viewedAt,
+                    'updated_at' => $viewedAt,
+                ];
+            }
+
+            for ($i = 0; $i < $recentViews; $i++) {
+                $viewedAt = $now->subDays(random_int(0, 6))
+                    ->subHours(random_int(0, 23))
+                    ->subMinutes(random_int(0, 59));
+
+                $viewRows[] = [
+                    'real_estate_listing_id' => $listing->getKey(),
+                    'user_id' => $buyers->random()->getKey(),
+                    'viewed_at' => $viewedAt,
+                    'created_at' => $viewedAt,
+                    'updated_at' => $viewedAt,
+                ];
+            }
+
+            ListingView::query()->insert($viewRows);
+
+            $favoriteBuyers = $buyers->random(random_int(1, min(2, $buyers->count())));
+
+            foreach ($favoriteBuyers as $buyer) {
+                $listing->favoriteByBuyer()->syncWithoutDetaching([$buyer->getKey()]);
+            }
+        }
     }
 }

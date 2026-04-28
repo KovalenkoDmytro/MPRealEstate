@@ -493,15 +493,23 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                             <Typography variant="body2" color="text.secondary">
                                 © {new Date().getFullYear()} EstateHub. Built for direct buyer-seller transactions.
                             </Typography>
-                            {!currentUser && canRegister && (
+                            <Stack direction="row" spacing={2} alignItems="center">
                                 <Link
-                                    href={route("register")}
-                                    className="btn btn-primary"
-                                    style={actionLinkStyle}
+                                    href={route("demo")}
+                                    style={{ fontSize: "0.875rem", color: theme.palette.text.secondary, textDecoration: "none" }}
                                 >
-                                    Join now
+                                    Try demo
                                 </Link>
-                            )}
+                                {!currentUser && canRegister && (
+                                    <Link
+                                        href={route("register")}
+                                        className="btn btn-primary"
+                                        style={actionLinkStyle}
+                                    >
+                                        Join now
+                                    </Link>
+                                )}
+                            </Stack>
                         </Box>
                     </Box>
                 </Container>
