@@ -216,13 +216,20 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            bgcolor: 'background.paper',
-                            borderRadius: 4,
+                            bgcolor: theme.palette.background.white,
+                            color: theme.palette.primary.main,
+                            padding: theme.shape.padding,
+                            borderRadius: theme.shape.borderRadius,
                             border: '1px dashed',
                             borderColor: 'divider'
                         }}
                     >
-                        <Box sx={{ p: 2, bgcolor: 'grey.50', borderRadius: '50%', mb: 2 }}>
+                        <Box sx={{
+                            bgcolor: theme.palette.background.white,
+                            color: theme.palette.primary.main,
+                            borderRadius: theme.shape.borderRadius,
+                            padding: theme.shape.padding,
+                        }}>
                             <CalendarMonth sx={{ fontSize: 40, color: 'text.disabled' }} />
                         </Box>
                         <Typography variant="h6" color="text.secondary" gutterBottom>

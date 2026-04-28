@@ -117,7 +117,6 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
                     </Stack>
                 }
                 confirmLabel="Send Invite"
-                confirmColor="primary"
                 onConfirm={sendInvite}
             />
         </Card>

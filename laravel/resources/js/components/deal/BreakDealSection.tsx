@@ -217,7 +217,6 @@ export default function BreakDealSection({ deal }: Props) {
                     confirmKind === "approve" ? "Accept" :
                     confirmKind === "reject"  ? "Reject" : "OK"
                 }
-                confirmColor={confirmKind === "reject" ? "primary" : "error"}
                 onConfirm={onConfirm}
             />
         </Card>

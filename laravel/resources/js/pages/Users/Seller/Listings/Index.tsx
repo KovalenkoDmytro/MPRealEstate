@@ -2,7 +2,7 @@ import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayo
 import type { PaginatedResponse, RealEstateListing } from "@/types";
 import Button from "@/components/common/Button";
 import SellerListingCard from "@/components/listings/seller/SellerListingCard";
-import { Stack, Box, Typography } from "@mui/material";
+import { Grid, Box, Typography } from "@mui/material";
 import AppPagination from "@/components/common/AppPagination";
 import theme from "@/theme";
 import IconContainer from "@/components/common/IconContainer";
@@ -19,11 +19,13 @@ export default function Index({ listings }: ComponentProps) {
         <AuthenticatedLayout header="My Listings">
 
             {hasListings ? (
-                <Stack spacing={4}>
+                <Grid container spacing={3}>
                     {listings.data.map((listing, index) => (
-                        <SellerListingCard listing={listing} key={index}/>
+                        <Grid size={{ xs: 12, md: 6, lg: 4 }} key={index}>
+                            <SellerListingCard listing={listing} />
+                        </Grid>
                     ))}
-                </Stack>
+                </Grid>
             ) : (
                 <Box
                     sx={{
