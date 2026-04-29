@@ -164,6 +164,52 @@ These listings are seeded with titles that start with `Presentation - ` so they 
 
 ---
 
+## Server Deployment Scripts
+
+The `scripts/` directory contains bash scripts for managing the server deployment at `/var/www/MPRealEstate`.
+
+### Update project
+
+Pulls the latest changes from the current branch and reinstalls PHP dependencies:
+
+```bash
+/var/www/MPRealEstate/scripts/update.sh
+```
+
+What it does: `git pull` → `composer install --optimize-autoloader`
+
+> Migrations are intentionally excluded from the script. Run them manually after reviewing what changed:
+> ```bash
+> php artisan migrate:status
+> php artisan migrate --force
+> ```
+
+### Rebuild frontend + optimize backend
+
+Reinstalls Node dependencies, builds frontend assets, clears and rebuilds the Laravel cache:
+
+```bash
+/var/www/MPRealEstate/scripts/rebuild.sh
+```
+
+What it does: `npm ci` → `npm run build` → `php artisan optimize:clear` → `php artisan optimize`
+
+### Typical deployment flow
+
+```bash
+# 1. Pull latest code + update PHP deps
+/var/www/MPRealEstate/scripts/update.sh
+
+# 2. Check and apply migrations (if any)
+php artisan migrate:status
+php artisan migrate --force
+
+# 3. Rebuild frontend and optimize backend
+/var/www/MPRealEstate/scripts/rebuild.sh
+```
+
+---
+
 ## Queue Workers
 
 Notifications are processed asynchronously via **Redis queues**.
