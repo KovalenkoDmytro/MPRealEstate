@@ -68,7 +68,7 @@ export const DealCard: React.FC<DealCardProps> = ({deal }) => {
                                 component="img"
                                 src={listing?.main_image?.image_path ?? "/images/placeholder-house.jpg"}
                                 sx={{
-                                    width: 225,
+                                    width: { xs: '100%', md: '225px' },
                                     height: 225,
                                     borderRadius: theme.shape.borderRadius,
                                     boxShadow: theme.shape.boxShadow,

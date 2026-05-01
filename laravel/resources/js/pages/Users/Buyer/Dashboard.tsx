@@ -32,7 +32,7 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
             header="Dashboard"
             subHeader="Welcome back, manage your properties"
         >
-            <Box sx={{ p: { xs: 2, md: 3 } }}>
+            <Box sx={{ p: { xs: 0, md: 3 } }}>
 
                 <Grid container spacing={3}>
 

@@ -10,8 +10,6 @@ import IconAppointments from "@/icons/IconAppointments";
 import IconOffers from "@/icons/IconOffers";
 import IconFavorite from "@/icons/IconFavorite";
 
-// --- Configuration ---
-// This makes adding new roles/links easy without touching the JSX
 const ROLE_MENUS: Record<string, Array<{ label: string; route: string; icon: React.ReactNode }>> = {
     common: [
         { label: 'Dashboard', route: 'dashboard', icon: <IconDashboard /> },
@@ -39,7 +37,7 @@ const COMMON_BOTTOM_LINKS = [
     { label: 'Offers', route: 'offers.index', icon: <IconOffers /> }
 ];
 
-// --- Props ---
+
 type SidebarProps = {
     mobileOpen: boolean;
     onClose: () => void;
@@ -64,7 +62,6 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
             sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
 
             <Toolbar sx={{ justifyContent: 'center', py: 3, minHeight: '80px !important' }}>
-
                 <Box sx={{ display: 'flex', gap: '20px', alignItems: 'center', width: '100%' }}>
 
                     <Link href={route('home')}>
@@ -107,9 +104,7 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
                     </Box>
 
                 </Box>
-
             </Toolbar>
-
 
             <Divider sx={{ mb: 2, mx: 3 }} />
 
@@ -144,7 +139,14 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
                 ModalProps={{ keepMounted: true }}
                 sx={{
                     display: { xs: 'block', md: 'none' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                    '& .MuiDrawer-paper': {
+                        boxSizing: 'border-box',
+                        width: drawerWidth,
+                        borderRight: '1px dashed',
+                        borderColor: 'divider',
+                        bgcolor: 'background.sidebar',
+                        color: 'text.tan',
+                    },
                 }}
             >
                 {drawerContent}
