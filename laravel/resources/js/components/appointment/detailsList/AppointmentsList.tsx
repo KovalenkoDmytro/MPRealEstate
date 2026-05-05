@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import type { SyntheticEvent } from 'react';
 import {
     Box,
     Typography,
@@ -6,6 +7,7 @@ import {
     Tab,
     Chip,
     TextField,
+    useMediaQuery,
 } from '@mui/material';
 import { CalendarMonth } from '@mui/icons-material';
 import { isToday, isFuture, isPast, parseISO } from 'date-fns';
@@ -25,6 +27,7 @@ interface AppointmentsListProps {
 export default function AppointmentsList({ appointments }: AppointmentsListProps) {
     const [currentTab, setCurrentTab] = useState<FilterType>('upcoming');
     const { showNotification } = useNotification();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     // Dialog State
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -35,7 +38,7 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
     const [accessCode, setAccessCode] = useState("");
     const [rejectionReason, setRejectionReason] = useState("");
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: FilterType) => {
+    const handleTabChange = (_event: SyntheticEvent, newValue: FilterType) => {
         setCurrentTab(newValue);
     };
 
@@ -134,18 +137,28 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
 
     return (
         <Box
-            sx={{ width: '100%',
+            sx={{
+                width: '100%',
+                minWidth: 0,
                 backgroundColor: theme.palette.background.white,
-                padding: theme.shape.padding,
+                p: { xs: 2, md: theme.shape.padding },
                 borderRadius: theme.shape.borderRadius,
                 border: `1px solid ${theme.palette.border.main}`
 
             }}>
 
             {/* Header & Tabs */}
-            <Box sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                    <Typography variant="h5" fontWeight={700}>
+            <Box sx={{ mb: { xs: 2.5, md: 4 } }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: { xs: 'flex-start', sm: 'center' },
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        gap: 1.5,
+                        mb: { xs: 2, md: 3 },
+                    }}
+                >
+                    <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
                         All Appointments
                     </Typography>
                     <Chip
@@ -158,17 +171,36 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                 <Tabs
                     value={currentTab}
                     onChange={handleTabChange}
-                    variant="scrollable"
-                    scrollButtons="auto"
+                    variant={isMobile ? 'standard' : 'scrollable'}
+                    scrollButtons={isMobile ? false : 'auto'}
                     textColor="primary"
                     indicatorColor="primary"
                     sx={{
                         borderBottom: 1,
                         borderColor: 'divider',
+                        maxWidth: '100%',
+                        '& .MuiTabs-scroller': {
+                            overflow: { xs: 'visible !important', sm: 'auto !important' },
+                        },
+                        '& .MuiTabs-list': {
+                            flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                            gap: { xs: 1, sm: 0 },
+                        },
+                        '& .MuiTabs-indicator': {
+                            display: { xs: 'none', sm: 'block' },
+                        },
                         '& .MuiTab-root': {
                             textTransform: 'none',
                             fontWeight: 600,
-                            minHeight: 48,
+                            minHeight: { xs: 42, md: 48 },
+                            minWidth: { xs: 'auto', sm: 90 },
+                            px: { xs: 1.25, sm: 2 },
+                            fontSize: { xs: '0.8125rem', sm: '0.875rem' },
+                            borderRadius: { xs: '999px', sm: 0 },
+                            border: { xs: `1px solid ${theme.palette.border.main}`, sm: 'none' },
+                        },
+                        '& .MuiTab-root.Mui-selected': {
+                            bgcolor: { xs: 'rgba(87, 42, 77, 0.08)', sm: 'transparent' },
                         }
                     }}
                 >
@@ -186,9 +218,9 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             {/* List Container */}
             <Box
                 sx={{
-                    maxHeight: '750px',
-                    overflowY: 'auto',
-                    pr: 1, // Padding right to prevent scrollbar overlapping content
+                    maxHeight: { xs: 'none', md: '750px' },
+                    overflowY: { xs: 'visible', md: 'auto' },
+                    pr: { xs: 0, md: 1 },
                     '&::-webkit-scrollbar': {
                         width: '6px',
                     },
@@ -212,13 +244,13 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                     /* Empty State */
                     <Box
                         sx={{
-                            p: 8,
+                            p: { xs: 3, md: 8 },
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
+                            textAlign: 'center',
                             bgcolor: theme.palette.background.white,
                             color: theme.palette.primary.main,
-                            padding: theme.shape.padding,
                             borderRadius: theme.shape.borderRadius,
                             border: '1px dashed',
                             borderColor: 'divider'

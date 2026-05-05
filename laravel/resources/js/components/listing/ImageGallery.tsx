@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode, Navigation, Thumbs } from "swiper/modules";
+import { FreeMode, Navigation, Pagination, Thumbs } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import Badge from "@/components/common/Badge";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 import "swiper/css/thumbs";
 import theme from "@/theme";
 import {formatCurrency} from "@/helpers/priceHelper";
@@ -19,6 +20,12 @@ interface ImageGalleryProps {
 
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, price }) => {
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
+    const [mounted, setMounted] = useState(false);
+    const muiTheme = useTheme();
+    const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
+    const effectiveIsMobile = mounted ? isMobile : false;
+
+    useEffect(() => setMounted(true), []);
 
     // Combine main image and gallery images for the slider
     const allImages = mainImage ? [mainImage, ...images] : images;
@@ -36,25 +43,50 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, p
             className="listing-gallery"
             sx={{ width: "100%",
                 position: "relative",
-                mb: 4 ,
+                mb: { xs: 3, md: 4 },
                 borderRadius: theme.shape.borderRadius,
                 backgroundColor: theme.palette.background.white,
                 border: `1px solid ${theme.palette.border.main}`,
+                overflow: "hidden",
+                '& .main-listing-slider': {
+                    height: { xs: 260, sm: 420, md: 550 },
+                    minHeight: { xs: 260, sm: 420, md: 550 },
+                    borderRadius: '16px',
+                    borderBottomLeftRadius: 0,
+                    borderBottomRightRadius: 0,
+                },
+                '& .main-listing-slider .swiper-button-next, & .main-listing-slider .swiper-button-prev': {
+                    width: { xs: 36, sm: 40 },
+                    height: { xs: 36, sm: 40 },
+                    display: { xs: 'none', sm: 'flex' },
+                },
+                '& .main-listing-slider .swiper-button-next:after, & .main-listing-slider .swiper-button-prev:after': {
+                    fontSize: { xs: '16px', sm: '20px' },
+                },
+                '& .main-listing-slider .swiper-pagination': {
+                    bottom: { xs: '10px', sm: '16px' },
+                },
+                '& .main-listing-slider .swiper-pagination-bullet': {
+                    width: 8,
+                    height: 8,
+                    bgcolor: 'rgba(255, 255, 255, 0.55)',
+                    opacity: 1,
+                },
+                '& .main-listing-slider .swiper-pagination-bullet-active': {
+                    bgcolor: theme.palette.background.white,
+                },
         }}>
             {/* Main Slider */}
             <Swiper
                 spaceBetween={10}
-                navigation={true}
-                thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
-                modules={[FreeMode, Navigation, Thumbs]}
+                navigation={!effectiveIsMobile && allImages.length > 1}
+                pagination={effectiveIsMobile && allImages.length > 1 ? { clickable: true } : false}
+                thumbs={{ swiper: !effectiveIsMobile && thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+                modules={[FreeMode, Navigation, Pagination, Thumbs]}
+                observer={true}
+                observeParents={true}
+                onInit={(swiper) => { setTimeout(() => swiper.update(), 0); }}
                 className="main-listing-slider"
-                style={{
-                    borderRadius: '16px',
-                    overflow: 'hidden',
-                    height: '550px',
-                    borderBottomLeftRadius: 0,
-                    borderBottomRightRadius: 0,
-                }}
             >
                 {allImages.map((img, index) => (
                     <SwiperSlide key={index}>
@@ -71,8 +103,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, p
                     <Box
                         sx={{
                             position: "absolute",
-                            top: 20,
-                            right: 20,
+                            top: { xs: 12, sm: 20 },
+                            right: { xs: 12, sm: 20 },
+                            zIndex: 2,
                         }}
                     >
                     <Badge version="primary" text={formatCurrency(price)}/>
@@ -81,18 +114,19 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, p
             </Swiper>
 
             {/* Thumbnails Slider */}
-            <Box sx={{ p: 2}}>
+            {!effectiveIsMobile && (
+            <Box sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Swiper
                     onSwiper={setThumbsSwiper}
-                    spaceBetween={15}
-                    slidesPerView={6}
+                    spaceBetween={isMobile ? 10 : 15}
+                    slidesPerView={isMobile ? 4 : 6}
                     freeMode={true}
                     watchSlidesProgress={true}
-                    modules={[FreeMode, Navigation, Thumbs]}
-                    style={{ height: '100px'}}
+                    modules={[FreeMode, Navigation, Pagination, Thumbs]}
+                    style={{ height: isMobile ? '72px' : '100px', minWidth: 0 }}
                 >
                     {allImages.map((img, index) => (
-                        <SwiperSlide key={`thumb-${index}`} style={{ cursor: 'pointer' }}>
+                        <SwiperSlide key={`thumb-${index}`} style={{ cursor: 'pointer', minWidth: 0 }}>
                             <Box
                                 sx={{
                                     height: '100%',
@@ -111,6 +145,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, p
                     ))}
                 </Swiper>
             </Box>
+            )}
 
         </Box>
     );

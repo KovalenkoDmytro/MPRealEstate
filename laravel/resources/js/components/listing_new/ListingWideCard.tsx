@@ -171,13 +171,32 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
             <Box
                 sx={{
                     flexGrow: 1,
-                    p: 3,
+                    p: { xs: 2, sm: 3 },
                     display: 'flex',
                     flexDirection: 'column',
+                    minWidth: 0,
                 }}
             >
-                <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1}>
-                    <Typography variant="h5" fontWeight={600} sx={{ color: theme.palette.text.primary }}>
+                <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="flex-start"
+                    spacing={1.5}
+                    mb={1}
+                    sx={{ minWidth: 0 }}
+                >
+                    <Typography
+                        variant="h5"
+                        fontWeight={600}
+                        sx={{
+                            color: theme.palette.text.primary,
+                            fontSize: { xs: '1.125rem', sm: '1.5rem' },
+                            lineHeight: 1.25,
+                            overflowWrap: 'anywhere',
+                            minWidth: 0,
+                            flexGrow: 1,
+                        }}
+                    >
                         {listing.title}
                     </Typography>
                     <IconButton
@@ -192,16 +211,42 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
                     </IconButton>
                 </Stack>
 
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <IconLocationMark />
+                <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                        mb: 2,
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 1,
+                        overflowWrap: 'anywhere',
+                    }}
+                >
+                    <Box component="span" sx={{ display: 'inline-flex', flexShrink: 0, mt: 0.25 }}>
+                        <IconLocationMark />
+                    </Box>
                     {listing.street_number} {listing.street_name}, {listing.city}, {listing.province}
                 </Typography>
 
-                <Typography variant="body2" sx={{ color: theme.palette.primary.main, mb: 3, lineClamp: 2, display: '-webkit-box', overflow: 'hidden', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2 }}>
+                <Typography
+                    variant="body2"
+                    sx={{
+                        color: theme.palette.primary.main,
+                        mb: 3,
+                        display: '-webkit-box',
+                        overflow: 'hidden',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: { xs: 3, sm: 2 },
+                    }}
+                >
                     {listing.description}
                 </Typography>
 
-                <Stack direction="row" spacing={3} mb="auto">
+                <Stack
+                    direction={{ xs: 'column', sm: 'row' }}
+                    spacing={{ xs: 1.25, sm: 3 }}
+                    mb="auto"
+                >
                     <Stack direction="row" alignItems="center" spacing={1}>
                         <IconBed />
                         <Typography variant="body2" fontWeight={500}>{listing.bedrooms} Beds</Typography>
@@ -218,7 +263,12 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
 
                 <Divider sx={{ my: 2 }} />
 
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack
+                    direction={{ xs: 'column', sm: 'row' }}
+                    justifyContent="space-between"
+                    alignItems={{ xs: 'stretch', sm: 'center' }}
+                    spacing={{ xs: 2, sm: 3 }}
+                >
                     <Box>
                         <Typography variant="caption" sx={{ letterSpacing: 0.5, color: theme.palette.primary.main, textTransform: 'uppercase' }}>
                             List Price
@@ -228,7 +278,7 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
                         </Typography>
                     </Box>
 
-                    <Box width={150}>
+                    <Box sx={{ width: { xs: '100%', sm: 150 } }}>
                         <Button
                             version="outline"
                             text="View Details"

@@ -49,27 +49,47 @@ export default function ShowListing({ listing, userOffer }: PageProps) {
 
     return (
         <AuthenticatedLayout header="Dashboard" title={listing.title}>
+            <Container className='listing-show-page' sx={{ px: { xs: 0, sm: 3 }, py: { xs: 2, sm: 3 } }}>
+                <BackToButton
+                    label="Listings"
+                    fallbackHref={route("listings.index")}
+                    sx={{ mb: { xs: 2, sm: 3 } }}
+                />
 
-            <Container className='listing-show-page'>
-                <BackToButton label="Listings" fallbackHref={route("listings.index")} />
-
-                <Stack spacing={4}>
+                <Stack spacing={{ xs: 3, md: 4 }}>
 
                     <ImageGallery mainImage={listing.main_image} images={listing.images || []}  price={listing.price}/>
 
-                    <Box mb={4}>
-                        <Typography variant="h4" fontWeight="bold" gutterBottom>
+                    <Box mb={{ xs: 3, md: 4 }}>
+                        <Typography
+                            variant="h4"
+                            fontWeight="bold"
+                            gutterBottom
+                            sx={{
+                                fontSize: { xs: '2rem', sm: '2.5rem' },
+                                lineHeight: 1.15,
+                                overflowWrap: 'anywhere',
+                            }}
+                        >
                             {listing.title}
                         </Typography>
-                        <Stack direction="row" spacing={1} alignItems="center" color="text.secondary">
-                            <IconLocationMark/>
-                            <Typography variant="body1">
+                        <Stack
+                            direction="row"
+                            spacing={1}
+                            alignItems="flex-start"
+                            color="text.secondary"
+                            sx={{ maxWidth: '100%' }}
+                        >
+                            <Box component="span" sx={{ display: 'inline-flex', flexShrink: 0, mt: 0.25 }}>
+                                <IconLocationMark/>
+                            </Box>
+                            <Typography variant="body1" sx={{ overflowWrap: 'anywhere' }}>
                                 {`${listing.street_number} ${listing.street_name}, ${listing.city}, ${listing.province} ${listing.postal_code}`}
                             </Typography>
                         </Stack>
                     </Box>
 
-                    <Grid container spacing={3}>
+                    <Grid container spacing={{ xs: 2.5, md: 3 }}>
 
 
                         <Grid size={{ xs: 12, md: 8 }}>

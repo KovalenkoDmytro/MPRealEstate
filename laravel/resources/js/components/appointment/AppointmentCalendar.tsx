@@ -136,13 +136,22 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
     const calendarStyles = {
         margin: 0,
         width: '100%',
+        maxWidth: '100%',
+        minWidth: 0,
         '& .MuiPickersCalendarHeader-root': {
-            paddingLeft: 0,
-            paddingRight: 0,
+            paddingLeft: { xs: 0, sm: 1 },
+            paddingRight: { xs: 0, sm: 1 },
         },
         '& .MuiDayCalendar-weekDayLabel': {
             color: 'text.secondary',
             fontWeight: 600,
+            width: { xs: 34, sm: 36 },
+            height: { xs: 34, sm: 36 },
+        },
+        '& .MuiPickersDay-root': {
+            width: { xs: 34, sm: 36 },
+            height: { xs: 34, sm: 36 },
+            margin: { xs: '0 1px', sm: '0 2px' },
         },
         '& .MuiPickersArrowSwitcher-root': {
             display: 'none',
@@ -164,9 +173,11 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
                 borderRadius: theme.shape.borderRadius,
                 bgcolor: theme.palette.background.white,
                 border: `1px solid ${theme.palette.border.main}`,
-                p: theme.shape.padding,
+                p: { xs: 2, md: theme.shape.padding },
                 maxWidth: 680,
+                width: '100%',
                 margin: '0 auto',
+                overflow: 'hidden',
             }}
         >
             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -174,7 +185,7 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
                     sx={{
                         display: 'flex',
                         flexDirection: { xs: 'column', md: 'row' },
-                        gap: 1.5,
+                        gap: { xs: 1, md: 1.5 },
                         justifyContent: 'center'
                     }}
                 >
@@ -210,8 +221,8 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
             </LocalizationProvider>
 
             {/* Legend Section */}
-            <Box sx={{ px: 2, pb: 0, mt: 2, borderTop: '1px solid', borderColor: 'divider', pt: 2 }}>
-                <Box sx={{ display: 'flex', gap: 3, justifyContent: 'center' }}>
+            <Box sx={{ px: { xs: 0, sm: 2 }, pb: 0, mt: { xs: 1.5, md: 2 }, borderTop: '1px solid', borderColor: 'divider', pt: 2 }}>
+                <Box sx={{ display: 'flex', gap: { xs: 1.5, sm: 3 }, justifyContent: 'center', flexWrap: 'wrap' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <LegendDot bgcolor="transparent" border={`1px solid ${maroon}`} />
                         <Typography variant="body2" color="text.secondary">
