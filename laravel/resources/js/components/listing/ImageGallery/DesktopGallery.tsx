@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import { ZoomIn } from "@mui/icons-material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Thumbs } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
@@ -40,6 +41,8 @@ export const DesktopGallery: React.FC<DesktopGalleryProps> = ({ images, price, o
                     borderTopLeftRadius: theme.shape.borderRadius,
                     borderTopRightRadius: theme.shape.borderRadius,
                     position: "relative",
+                    cursor: "pointer",
+                    "&:hover .zoom-hint": { opacity: 1 },
                 }}
             >
                 <Swiper
@@ -62,6 +65,30 @@ export const DesktopGallery: React.FC<DesktopGalleryProps> = ({ images, price, o
                         </SwiperSlide>
                     ))}
                 </Swiper>
+
+                <Box
+                    className="zoom-hint"
+                    sx={{
+                        position: "absolute",
+                        bottom: 12,
+                        left: 12,
+                        zIndex: 2,
+                        opacity: 0,
+                        transition: "opacity 0.2s",
+                        bgcolor: "rgba(0,0,0,0.5)",
+                        borderRadius: "6px",
+                        px: 1,
+                        py: 0.5,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0.5,
+                        color: "white",
+                        pointerEvents: "none",
+                    }}
+                >
+                    <ZoomIn fontSize="small" />
+                    <Typography variant="caption" color="white">View photos</Typography>
+                </Box>
 
                 {price && (
                     <Box

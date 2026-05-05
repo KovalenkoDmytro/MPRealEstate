@@ -123,7 +123,6 @@ export const OfferForm: React.FC<OfferFormProps> = ({onSubmit, onCancel, process
                     </Stack>
                 }
                 confirmLabel="Send Offer"
-                confirmColor="primary"
                 onConfirm={handleConfirm}
             />
         </Stack>

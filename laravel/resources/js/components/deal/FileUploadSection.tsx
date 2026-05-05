@@ -232,7 +232,6 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
                     </Typography>
                 }
                 confirmLabel="Delete"
-                confirmColor="error"
                 onConfirm={confirmDelete}
             />
         </Card>

@@ -92,7 +92,6 @@ export default function ConditionDayForm({ deal }: { deal: Deal }) {
                         </Typography>
                     }
                     confirmLabel="Set Day"
-                    confirmColor="success"
                     onConfirm={save}
                 />
             )}

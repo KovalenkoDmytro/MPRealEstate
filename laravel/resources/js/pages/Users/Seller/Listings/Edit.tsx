@@ -257,7 +257,6 @@ export default function EditListing({ listing, listingImageMaxBytes }: EditListi
                     }
                     confirmLabel="Deactivate"
                     cancelLabel="Cancel"
-                    confirmColor="error"
                     onClose={() => setConfirmOpen(false)}
                     onConfirm={handleDeactivateListing} // dialog will await this and close on success
                 />

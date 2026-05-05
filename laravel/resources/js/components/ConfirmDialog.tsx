@@ -17,8 +17,6 @@ type ConfirmDialogProps = {
     cancelLabel?: string;
     onClose: () => void;                 // closes the dialog (parent controls `open`)
     onConfirm: () => Promise<void | boolean> | void | boolean; // return false to keep dialog open
-    /** @deprecated styling is handled by the Button component */
-    confirmColor?: string;
 };
 
 export default function ConfirmDialog({

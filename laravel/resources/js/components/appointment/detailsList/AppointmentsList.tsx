@@ -280,7 +280,6 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                 description="Are you sure you want to cancel this appointment? This action cannot be undone."
                 confirmLabel="Yes, Cancel"
                 cancelLabel="Keep Appointment"
-                confirmColor="error"
                 onClose={() => setCancelDialogOpen(false)}
                 onConfirm={confirmCancel}
             />
@@ -303,7 +302,6 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                     </Box>
                 }
                 confirmLabel="Approve"
-                confirmColor="primary"
                 onClose={() => setApproveDialogOpen(false)}
                 onConfirm={confirmApprove}
             />
@@ -328,7 +326,6 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                     </Box>
                 }
                 confirmLabel="Reject"
-                confirmColor="error"
                 onClose={() => setRejectDialogOpen(false)}
                 onConfirm={confirmReject}
             />

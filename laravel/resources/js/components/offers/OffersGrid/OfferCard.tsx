@@ -260,7 +260,6 @@ export default function OfferCard({ offer, role }: OfferCardProps) {
                             : "Are you sure you want to reject this offer? This action cannot be undone."
                     }
                     confirmLabel={actionType === 'accepted' ? "Accept" : "Reject"}
-                    confirmColor={actionType === 'accepted' ? "success" : "error"}
                     onClose={() => setDialogOpen(false)}
                     onConfirm={handleConfirmAction}
                 />
