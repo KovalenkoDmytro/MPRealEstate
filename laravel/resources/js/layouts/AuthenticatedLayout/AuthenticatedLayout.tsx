@@ -56,7 +56,7 @@ export default function AuthenticatedLayout({ header, subHeader, title, children
                 sx={{
                     flexGrow: 1,
                     p: { xs: 0, md: 3 },
-                    width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
+                    width: '100%',
                     mt: { xs: '120px', md: '70px' },
                     mb: { xs: '40px' },
                     transition: 'width 0.2s ease',
