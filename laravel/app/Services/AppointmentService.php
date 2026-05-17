@@ -147,6 +147,9 @@ class AppointmentService
     public function getAcceptedAppointments(User $user): Collection
     {
         return Appointment::query()
+            ->with([
+                'listing:id,title,unit_number,street_number,street_name,city'
+            ])
             ->forUser($user)
             ->where('status', 'accepted')
             ->orderBy('scheduled_at', 'asc')

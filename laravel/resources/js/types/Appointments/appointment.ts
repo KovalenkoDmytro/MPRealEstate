@@ -1,4 +1,4 @@
-import type { RealEstateListing } from "../realEstateListing";
+import type { RealEstateListing } from "@/types";
 
 export type AppointmentStatus =
     | "pending"

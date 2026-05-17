@@ -347,6 +347,7 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
                 >
                     <Stack spacing={1.5} mt={2}>
                         {selectedAppointments.map((appointment) => {
+
                             const scheduledDate = parseISO(appointment.scheduled_at);
 
                             return (
@@ -363,15 +364,19 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1.5, alignItems: 'flex-start', flexWrap: 'wrap' }}>
                                         <Box>
                                             <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.text.primary }}>
-                                                {appointment.listing?.title || appointment.listing?.street_name || 'Property appointment'}
+                                                {appointment.listing.title}
                                             </Typography>
                                             <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 0.5 }}>
                                                 {format(scheduledDate, 'p')}
                                             </Typography>
-                                            {appointment.listing?.street_name && (
+                                            {appointment.listing.street_name && (
                                                 <Typography variant="caption" sx={{ color: theme.palette.text.secondary, display: 'block', mt: 0.75 }}>
-                                                    {appointment.listing.street_name}
-                                                    {appointment.listing.city ? `, ${appointment.listing.city}` : ''}
+                                                    {appointment.listing.unit_number
+                                                        ? `${appointment.listing.unit_number} - `
+                                                        : ''}
+                                                    {appointment.listing.street_number},{' '}
+                                                    {appointment.listing.street_name},{' '}
+                                                    {appointment.listing.city}
                                                 </Typography>
                                             )}
                                         </Box>

@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
-import ApointmentsOverviewCards from "@/components/appointment/ApointmentsOverviewCards";
+import AppointmentsOverviewCards from "@/components/appointment/ApointmentsOverviewCards";
 import AppointmentCalendar from "@/components/appointment/AppointmentCalendar";
 import AppointmentsList from "@/components/appointment/detailsList/AppointmentsList";
 import type { BuyerAppointmentsPage } from "@/types/Appointments/buyerAppointmentsStat";
@@ -9,16 +9,14 @@ export default function BuyerAppointmentsIndex(appointments: BuyerAppointmentsPa
 
     const calendarData = () => {
         return [
-            ...appointments.upcoming_appointments,
-            ...appointments.today_appointments,
-            ...appointments.past_appointments,
+            ...appointments.accepted_appointments
         ]
     }
 
     return (
         <AuthenticatedLayout header="My Appointments">
 
-            <ApointmentsOverviewCards
+            <AppointmentsOverviewCards
                 todayCount={appointments.today_appointments.length}
                 upcomingCount={appointments.upcoming_appointments.length}
                 acceptedCount={appointments.accepted_appointments.length}

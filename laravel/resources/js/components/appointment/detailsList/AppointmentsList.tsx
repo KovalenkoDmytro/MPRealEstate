@@ -25,7 +25,7 @@ interface AppointmentsListProps {
 }
 
 export default function AppointmentsList({ appointments }: AppointmentsListProps) {
-    const [currentTab, setCurrentTab] = useState<FilterType>('upcoming');
+    const [currentTab, setCurrentTab] = useState<FilterType>('today');
     const { showNotification } = useNotification();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 

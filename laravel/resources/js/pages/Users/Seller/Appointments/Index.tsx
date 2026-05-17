@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayout";
 import type {SellerAppointmentsPage} from "@/types/Appointments/sellerAppointmentsStat";
-import ApointmentsOverviewCards from "@/components/appointment/ApointmentsOverviewCards";
+import AppointmentsOverviewCards from "@/components/appointment/ApointmentsOverviewCards";
 import AppointmentCalendar from "@/components/appointment/AppointmentCalendar";
 import AppointmentsList from "@/components/appointment/detailsList/AppointmentsList";
 import { Grid } from "@mui/material";
@@ -10,9 +10,7 @@ export default function SellerAppointmentsPage(appointments: SellerAppointmentsP
 
     const calendarData = ()=>{
         return[
-            ...appointments.upcoming_appointments,
-            ...appointments.today_appointments,
-            ...appointments.past_appointments,
+            ...appointments.accepted_appointments,
         ]
     }
 
@@ -20,7 +18,7 @@ export default function SellerAppointmentsPage(appointments: SellerAppointmentsP
     return (
         <AuthenticatedLayout header="My Appointments">
 
-            <ApointmentsOverviewCards
+            <AppointmentsOverviewCards
                 todayCount={appointments.today_appointments.length}
                 upcomingCount={appointments.upcoming_appointments.length}
                 acceptedCount={appointments.accepted_appointments.length}

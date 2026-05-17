@@ -1,4 +1,4 @@
-import type { Appointment } from "./appointment";
+import type { Appointment } from "@/types";
 
 export interface DailyStat {
     date: string;
