@@ -22,7 +22,6 @@ import IconLotSpace from "@/icons/IconLotSpace";
 import IconEdit from "@/icons/IconEdit";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useNotification } from "@/context/NotificationContext";
-import IconContainer from "@/components/common/IconContainer";
 import { listingService } from "@/services/listingService";
 import { router } from "@inertiajs/react";
 
@@ -192,7 +191,7 @@ export default function SellerListingCard({ listing }: Props) {
                             text="Edit Listing"
                             icon={<IconEdit />}
                             link={true}
-                            href={route('seller.listings.edit', listing.id)}
+                            href={route('listings.edit', listing.id)}
                         />
                     </Stack>
                 </CardContent>
@@ -203,7 +202,6 @@ export default function SellerListingCard({ listing }: Props) {
                 title="Deactivate Listing?"
                 description="Are you sure you want to deactivate this listing? It will no longer be visible to buyers."
                 confirmLabel="Deactivate"
-                confirmColor="error"
                 onClose={() => setDeactivateDialogOpen(false)}
                 onConfirm={handleConfirmDeactivate}
             />

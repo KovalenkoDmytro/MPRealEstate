@@ -102,7 +102,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
 
                 {/* --- GROUP 1: PRICE (Reverted to Text Fields) --- */}
                 <Grid size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <TextField
                             fullWidth
                             label="Min Price"
@@ -124,7 +124,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
 
                 {/* --- GROUP 2: SIZE (SqFt) (Updated to Selectors) --- */}
                 <Grid size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <FormControl fullWidth variant="outlined">
                             <InputLabel>Min SqFt</InputLabel>
                             <Select
@@ -162,7 +162,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
                 </Grid>
 
                 {/* Beds & Baths (Selectors) */}
-                <Grid size={{ xs: 6, sm: 3 }}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <FormControl fullWidth variant="outlined">
                         <InputLabel>Min Beds</InputLabel>
                         <Select
@@ -180,7 +180,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid size={{ xs: 6, sm: 3 }}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                     <FormControl fullWidth variant="outlined">
                         <InputLabel>Min Baths</InputLabel>
                         <Select
@@ -201,7 +201,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
 
                 {/* --- GROUP 4: YEAR BUILT --- */}
                 <Grid size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <Box sx={{ flex: 1 }}>
                             <YearBuiltField
                                 value={form.year_built_min ?? ''}
@@ -238,7 +238,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
 
                 {/* --- GROUP 5: PROPERTY TAX --- */}
                 <Grid size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <FormControl fullWidth variant="outlined">
                             <InputLabel>Min Tax / Year</InputLabel>
                             <Select
@@ -277,7 +277,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
 
                 {/* --- GROUP 6: MAINTENANCE FEES --- */}
                 <Grid size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
                         <FormControl fullWidth variant="outlined">
                             <InputLabel>Min Maint Fee</InputLabel>
                             <Select
@@ -316,7 +316,7 @@ export const FilterForm: React.FC<FilterFormProps> = ({
 
                 {/* Checkboxes */}
                 <Grid size={{ xs: 12 }}>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, flexWrap: 'wrap', gap: 1 }}>
                         <FormControlLabel
                             control={<Checkbox checked={form.has_garage} onChange={(e) => updateFilter('has_garage', e.target.checked)} />}
                             label="Garage"

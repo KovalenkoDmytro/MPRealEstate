@@ -5,6 +5,7 @@ import IconClock from "@/icons/IconClock";
 import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconPending from "@/icons/IconPending";
+import theme from "@/theme";
 
 
 type BuyerAppointmentsOverviewCardsType = {
@@ -25,7 +26,7 @@ export default function ApointmentsOverviewCards({todayCount = 0, acceptedCount=
                     label="Todays"
                     value={todayCount}
                     icon={<IconClock/>}
-                    iconBgColor="#D076691A"
+                    iconBgColor="#D07669"
                 />
             </Grid>
 
@@ -34,6 +35,7 @@ export default function ApointmentsOverviewCards({todayCount = 0, acceptedCount=
                     label="Accepted"
                     value={acceptedCount}
                     icon={<IconConfirm/>}
+                    iconBgColor={theme.colors.success}
                 />
             </Grid>
 
@@ -42,7 +44,7 @@ export default function ApointmentsOverviewCards({todayCount = 0, acceptedCount=
                     label="Pending"
                     value={pendingCount}
                     icon={<IconPending/>}
-                    iconBgColor="#2C233E1A"
+                    iconBgColor={theme.colors.warning}
                 />
             </Grid>
 
@@ -52,7 +54,7 @@ export default function ApointmentsOverviewCards({todayCount = 0, acceptedCount=
                         label="Rejected"
                         value={rejectedCount}
                         icon={<IconClose/>}
-                        iconBgColor="#4A5565"
+                        iconBgColor={theme.colors.error}
                     />
                 </Grid> }
 
@@ -63,7 +65,7 @@ export default function ApointmentsOverviewCards({todayCount = 0, acceptedCount=
                     label="Upcoming"
                     value={upcomingCount}
                     icon={<IconCalendarToday/>}
-                    iconBgColor="#572A4D1A"
+                    iconBgColor="#572A4D"
                 />
             </Grid>
 
@@ -72,7 +74,7 @@ export default function ApointmentsOverviewCards({todayCount = 0, acceptedCount=
                     label="Cancelled"
                     value={cancelledCount}
                     icon={<IconClose/>}
-                    iconBgColor="#4A5565"
+                    iconBgColor={theme.colors.error}
                 />
             </Grid>
         </Grid>

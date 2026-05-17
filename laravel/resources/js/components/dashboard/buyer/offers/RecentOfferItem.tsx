@@ -3,11 +3,9 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import TrendingDownRoundedIcon from '@mui/icons-material/TrendingDownRounded';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
-import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import { Offer } from '@/types/offer';
 import { formatCurrency } from "@/helpers/priceHelper";
 import OfferStatusChip from "@/components/dashboard/buyer/offers/OfferStatusChip";
-import Button from "@/components/common/Button";
 
 type RecentOfferItemProps = {
     offer: Offer;
@@ -23,15 +21,42 @@ export default function RecentOfferItem({ offer }: RecentOfferItemProps) {
             sx={{
                 border: '1px solid #eaecf0',
                 borderRadius: '16px',
-                padding: 3,
+                p: { xs: 2, sm: 3 },
                 backgroundColor: '#fff',
-                marginBottom: 2
+                marginBottom: 2,
+                minWidth: 0,
             }}
         >
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: '#101828' }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    gap: { xs: 1.5, sm: 2 },
+                    mb: { xs: 2, sm: 3 },
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 1,
+                        minWidth: 0,
+                    }}
+                >
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            fontWeight: 700,
+                            color: '#101828',
+                            fontSize: { xs: '1rem', sm: '1.25rem' },
+                            lineHeight: 1.3,
+                            overflowWrap: 'anywhere',
+                        }}
+                    >
                         {offer.listing.title}
                     </Typography>
 
@@ -44,18 +69,27 @@ export default function RecentOfferItem({ offer }: RecentOfferItemProps) {
                     <Typography
                         component="span"
                         variant="body2"
-                        sx={{ fontWeight: 700 }}
+                        sx={{ fontWeight: 700, whiteSpace: 'nowrap' }}
                     >
                         {isStrongOffer ? '-' : '+'}{percentage}%
                     </Typography>
                 </Box>
 
-                <OfferStatusChip status={offer.status} />
+                <Box sx={{ flexShrink: 0 }}>
+                    <OfferStatusChip status={offer.status} />
+                </Box>
             </Box>
 
 
-            <Box sx={{ display: 'flex', gap: 6, mb: 3 }}>
-                <Box>
+            <Box
+                sx={{
+                    display: 'grid',
+                    gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))' },
+                    gap: { xs: 2, sm: 3 },
+                    mb: { xs: 1, sm: 3 },
+                }}
+            >
+                <Box sx={{ minWidth: 0 }}>
                     <Typography variant="caption" display="block" sx={{ color: '#667085', mb: 0.5 }}>
                         Listing Price
                     </Typography>
@@ -64,7 +98,7 @@ export default function RecentOfferItem({ offer }: RecentOfferItemProps) {
                     </Typography>
                 </Box>
 
-                <Box>
+                <Box sx={{ minWidth: 0 }}>
                     <Typography variant="caption" display="block" sx={{ color: '#667085', mb: 0.5 }}>
                         Your Offer
                     </Typography>

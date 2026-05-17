@@ -7,6 +7,7 @@ import {OfferStats} from "@/types/models";
 import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconClock from "@/icons/IconClock";
+import theme from "@/theme";
 
 type OffersIndexPageProps = {
     offers: PaginatedResponse<Offer>;
@@ -26,7 +27,8 @@ export default function OffersIndexPage({ offers, offers_stats }: OffersIndexPag
                         label="Pending"
                         value={offers_stats.pending}
                         icon={<IconClock/>}
-                        iconBgColor="#D076691A"
+                        iconBgColor={theme.colors.warning}
+
                     />
                 </Grid>
 
@@ -35,6 +37,7 @@ export default function OffersIndexPage({ offers, offers_stats }: OffersIndexPag
                         label="Accepted"
                         value={offers_stats.accepted}
                         icon={<IconConfirm/>}
+                        iconBgColor={theme.colors.success}
                     />
                 </Grid>
 
@@ -43,7 +46,7 @@ export default function OffersIndexPage({ offers, offers_stats }: OffersIndexPag
                         label="Rejected"
                         value={offers_stats.rejected}
                         icon={<IconClose/>}
-                        iconBgColor="#4A5565"
+                        iconBgColor={theme.colors.error}
                     />
                 </Grid>
             </Grid>

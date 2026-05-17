@@ -98,7 +98,6 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
                     </Typography>
                 }
                 confirmLabel="Confirm"
-                confirmColor="primary"
                 onConfirm={save}
             />
         </Card>

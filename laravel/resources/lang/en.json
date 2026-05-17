@@ -35,6 +35,7 @@
     "deals.success.possession_day_set": "Possession day has been set successfully.",
     "deals.success.possession_day_confirmed": "Possession day has confirmed.",
     "deals.success.lawyer_invited": "Lawyer invited successfully.",
+    "deals.success.lawyer_invite_sent": "An invitation will be sent if a lawyer with this code exists in the system.",
     "deals.success.break_request_sent": "Break request sent successfully.",
     "deals.success.break_confirmed": "Deal break confirmed. The deal has been broken.",
     "deals.success.break_rejected": "Deal break request rejected.",

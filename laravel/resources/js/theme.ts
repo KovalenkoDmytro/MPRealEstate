@@ -13,12 +13,22 @@ const colors = {
     error: '#EF4444',
     warning: '#FFAB00',
     info: '#3B82F6',
+    gradient: 'linear-gradient(135deg, #572a4d08 0%, #ffffff 60%, #2c233e10 100%)'
 };
 
+type AppColors = typeof colors;
+
 declare module '@mui/material/styles' {
+    interface Theme {
+        colors: AppColors;
+    }
+    interface ThemeOptions {
+        colors?: AppColors;
+    }
     interface TypeBackground {
         sidebar?: string;
         white?: string;
+        gradient?: string;
     }
     interface TypeText {
         tan?: string;
@@ -50,6 +60,7 @@ declare module '@mui/material/styles' {
 }
 
 const theme = createTheme({
+    colors,
     palette: {
         primary: {
             main: colors.maroon,
@@ -71,6 +82,7 @@ const theme = createTheme({
             paper: colors.white,
             sidebar: colors.charcoal,
             white: colors.white,
+            gradient: colors.gradient,
         },
         success: {
             main: colors.success,

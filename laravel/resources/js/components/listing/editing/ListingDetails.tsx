@@ -75,9 +75,6 @@ export default function ListingDetails({ data, handleChange, errors }: ListingDe
                     Property & Financial Details
                 </Typography>
             </Box>
-            <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 3 }}>
-                Accepted characters: A-Z, a-z, 0-9 (spaces are also allowed).
-            </Typography>
 
             <Grid container spacing={4} sx={{ width: "100%" }}>
                 {/* Title */}

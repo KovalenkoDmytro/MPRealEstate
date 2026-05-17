@@ -7,15 +7,11 @@ use App\Http\Controllers\RealEstateListingController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\DealController;
 
-// Seller Dashboard & Listings
-Route::prefix('seller')->middleware(['auth', 'role:seller'])->name('seller.')->group(function () {
-    Route::get('deals', [SellerController::class, 'showAllDeals'])->name('deals.index');
-
+Route::middleware(['auth', 'role:seller'])->group(function () {
     Route::prefix('listings')->name('listings.')->group(function () {
         Route::post('/', [RealEstateListingController::class, 'store'])->name('store');
         Route::get('create', [RealEstateListingController::class, 'create'])->name('create');
         Route::put('{listing}', [RealEstateListingController::class, 'update'])->name('update');
-        Route::get('{listing}', [SellerController::class, 'showListing'])->name('show');
         Route::delete('{listing}/deactivate', [RealEstateListingController::class, 'softDelete'])->name('deactivate');
         Route::get('{listing}/edit', [RealEstateListingController::class, 'edit'])->name('edit');
     });
@@ -32,7 +28,6 @@ Route::prefix('seller')->middleware(['auth', 'role:seller'])->name('seller.')->g
     });
 
     Route::prefix('appointments')->name('appointments.')->group(function () {
-        Route::get('/', [AppointmentController::class, 'index'])->name('index');
-        Route::post('/', [AppointmentController::class, 'handle'])->name('handle');
+        Route::post('/handle', [AppointmentController::class, 'handle'])->name('handle');
     });
 });

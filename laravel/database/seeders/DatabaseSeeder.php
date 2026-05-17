@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RealEstateListingSeeder::class,
             OfferSeeder::class,
             DealSeeder::class,
+            PresentationScenarioSeeder::class,
         ]);
     }
 }

@@ -4,12 +4,11 @@ import {
     TextField,
     Typography,
     InputAdornment,
-    Link as MuiLink,
     Stack,
     Alert,
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
-import { Link, useForm } from '@inertiajs/react';
+import { Link as InertiaLink, useForm } from '@inertiajs/react';
 import GuestLayout from '@/layouts/GuestLayout';
 import Button from "@/components/common/Button"; // Assuming you want to reuse your custom button
 import IconEnvelope from "@/icons/IconEnvelope"; // Your custom icon
@@ -35,19 +34,19 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
             {/* Top Navigation: Back to Sign In */}
             <Box sx={{ mb: 4 }}>
-                <Link
+                <InertiaLink
                     href={route('login')}
                     style={{
                         display: 'inline-flex',
                         alignItems: 'center',
-                        color: theme.palette.text.primary as string,
+                        color: theme.palette.text.primary,
                         fontWeight: 600,
-                        textDecoration: 'none',
+                        textDecoration: 'none'
                     }}
                 >
                     <ArrowBack sx={{ fontSize: 18, mr: 1 }} />
                     Back to Sign In
-                </Link>
+                </InertiaLink>
             </Box>
 
             {/* Success Message (if sent) */}
@@ -106,16 +105,12 @@ export default function ForgotPassword({ status }: { status?: string }) {
                     {/* Footer: Sign in instead */}
                     <Typography variant="body2" align="center" sx={{ color: theme.palette.text.secondary, mt: 2 }}>
                         Remember your password?{' '}
-                        <Link
+                        <InertiaLink
                             href={route('login')}
-                            style={{
-                                color: theme.palette.primary.main,
-                                fontWeight: 700,
-                                textDecoration: 'none',
-                            }}
+                            style={{ color: theme.palette.primary.main, fontWeight: 700, textDecoration: 'none' }}
                         >
                             Sign in instead
-                        </Link>
+                        </InertiaLink>
                     </Typography>
                 </Stack>
             </form>

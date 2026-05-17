@@ -38,7 +38,7 @@ class OfferConfirmation extends Notification implements ShouldQueue
             'body'  => __('notifications.offerConfirmation.body', [
                 'listing' => $this->listing->title,
             ]),
-            'url'   => route('buyer.listings.show', $this->listing),
+            'url'   => route('listings.show', $this->listing),
         ];
     }
 }

@@ -27,7 +27,10 @@ export default function AuthenticatedLayout({ header, subHeader, title, children
         {pageTitle && <Head title={pageTitle} />}
         <Box
             className="authenticated-layout"
-            sx={{ display: 'flex', minHeight: '100vh',}}>
+            sx={{
+                display: 'flex',
+                minHeight: '100vh',
+            }}>
             <CssBaseline />
 
             {/* 1. Header Area */}
@@ -52,16 +55,17 @@ export default function AuthenticatedLayout({ header, subHeader, title, children
                 component="main"
                 sx={{
                     flexGrow: 1,
-                    p: 3,
-                    width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
-                    mt: '70px', // Matches TopBar height
+                    p: { xs: 0, md: 3 },
+                    width: '100%',
+                    mt: { xs: '120px', md: '70px' },
+                    mb: { xs: '40px' },
                     transition: 'width 0.2s ease',
                 }}
             >
                 <Container
                     maxWidth="xl"
                     sx={{
-                        py: { xs: 2, md: 4 },
+                        py: { xs: 0, md: 4 },
                         flexGrow: 1
                     }}
                 >

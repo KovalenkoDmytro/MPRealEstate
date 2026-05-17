@@ -10,22 +10,20 @@ import IconAppointments from "@/icons/IconAppointments";
 import IconOffers from "@/icons/IconOffers";
 import IconFavorite from "@/icons/IconFavorite";
 
-// --- Configuration ---
-// This makes adding new roles/links easy without touching the JSX
 const ROLE_MENUS: Record<string, Array<{ label: string; route: string; icon: React.ReactNode }>> = {
     common: [
         { label: 'Dashboard', route: 'dashboard', icon: <IconDashboard /> },
     ],
     buyer: [
         { label: 'Listings', route: 'listings.index', icon: <IconMyListings/> },
-        { label: 'Favorite Listings', route: 'buyer.listings.favorites.index', icon: <IconFavorite/> },
-        { label: 'My Deals', route: 'buyer.deals.index', icon: <IconMyDeals /> },
-        { label: 'Appointments', route: 'buyer.appointments.index', icon: <IconAppointments /> },
+        { label: 'Favorite Listings', route: 'listings.favorites.index', icon: <IconFavorite/> },
+        { label: 'My Deals', route: 'deals.index', icon: <IconMyDeals /> },
+        { label: 'Appointments', route: 'appointments.index', icon: <IconAppointments /> },
     ],
     seller: [
         { label: 'My Listings', route: 'listings.index', icon: <IconMyListings /> },
-        { label: 'My Deals', route: 'seller.deals.index', icon: <IconMyDeals /> },
-        { label: 'Appointments', route: 'seller.appointments.index', icon: <IconAppointments /> },
+        { label: 'My Deals', route: 'deals.index', icon: <IconMyDeals /> },
+        { label: 'Appointments', route: 'appointments.index', icon: <IconAppointments /> },
     ],
     admin: [
         { label: 'Admin Dashboard', route: 'admin.dashboard', icon: <IconDashboard /> },
@@ -39,7 +37,7 @@ const COMMON_BOTTOM_LINKS = [
     { label: 'Offers', route: 'offers.index', icon: <IconOffers /> }
 ];
 
-// --- Props ---
+
 type SidebarProps = {
     mobileOpen: boolean;
     onClose: () => void;
@@ -49,12 +47,13 @@ type SidebarProps = {
 
 export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: SidebarProps) {
     const theme = useTheme();
+    const bottomLinks = userRole === 'lawyer' ? [] : COMMON_BOTTOM_LINKS;
 
     // Combine common links + role specific links + bottom links
     const menuItems = [
         ...(ROLE_MENUS.common || []),
         ...(ROLE_MENUS[userRole] || []),
-        ...COMMON_BOTTOM_LINKS
+        ...bottomLinks
     ];
 
     const drawerContent = (
@@ -63,7 +62,6 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
             sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
 
             <Toolbar sx={{ justifyContent: 'center', py: 3, minHeight: '80px !important' }}>
-
                 <Box sx={{ display: 'flex', gap: '20px', alignItems: 'center', width: '100%' }}>
 
                     <Link href={route('home')}>
@@ -106,9 +104,7 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
                     </Box>
 
                 </Box>
-
             </Toolbar>
-
 
             <Divider sx={{ mb: 2, mx: 3 }} />
 
@@ -143,7 +139,14 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
                 ModalProps={{ keepMounted: true }}
                 sx={{
                     display: { xs: 'block', md: 'none' },
-                    '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                    '& .MuiDrawer-paper': {
+                        boxSizing: 'border-box',
+                        width: drawerWidth,
+                        borderRight: '1px dashed',
+                        borderColor: 'divider',
+                        bgcolor: 'background.sidebar',
+                        color: 'text.tan',
+                    },
                 }}
             >
                 {drawerContent}

@@ -23,28 +23,6 @@ interface PageProps {
 }
 
 export default function ListingShowPage({ listing }: PageProps) {
-    // const handleUpdateStatus = async (offerId: number, status: "accepted" | "rejected") => {
-    //
-    //         const response = await offerService.updateOfferStatus(offerId, status);
-    //
-    //         if (response.status === "success") {
-    //             showNotification(response.message, response.status );
-    //             const updatedStatus = response.data.status;
-    //
-    //             setOffers(prev =>
-    //                 prev.map(offer =>
-    //                     offer.id === offerId
-    //                         ? ({ ...offer, status: updatedStatus } as Offer)
-    //                         : offer
-    //                 )
-    //             );
-    //         }else {
-    //             showNotification(response.message, "error");}
-    //
-    //
-    //
-    //
-    // };
 
     return (
         <AuthenticatedLayout
@@ -53,7 +31,7 @@ export default function ListingShowPage({ listing }: PageProps) {
         >
 
             <Box p={3}>
-                {/* Title */}
+
                 <Typography variant="h4" fontWeight="bold" gutterBottom>
                     {listing.title}
                 </Typography>
@@ -65,7 +43,7 @@ export default function ListingShowPage({ listing }: PageProps) {
                     sx={{ mt: 1, mb: 3, color: 'text.secondary' }}
                     divider={<Divider orientation="vertical" flexItem sx={{ height: 16, alignSelf: 'center' }} />}
                 >
-                    {/* Total Views */}
+
                     <Tooltip title="Total times this listing was viewed">
                         <Box display="flex" alignItems="center" gap={0.5}>
                             <Visibility fontSize="small" sx={{ color: '#6B7280' }} />
@@ -75,7 +53,7 @@ export default function ListingShowPage({ listing }: PageProps) {
                         </Box>
                     </Tooltip>
 
-                    {/* Unique Viewers */}
+
                     <Tooltip title="Distinct users who viewed this listing">
                         <Box display="flex" alignItems="center" gap={0.5}>
                             <PersonOutline fontSize="small" sx={{ color: '#6B7280' }} />
@@ -85,7 +63,7 @@ export default function ListingShowPage({ listing }: PageProps) {
                         </Box>
                     </Tooltip>
 
-                    {/* Favorites Count */}
+
                     <Tooltip title="Number of buyers who saved this listing">
                         <Box display="flex" alignItems="center" gap={0.5}>
                             <FavoriteBorder fontSize="small" sx={{ color: '#EC4899' }} /> {/* Pink/Red Icon */}
@@ -99,22 +77,21 @@ export default function ListingShowPage({ listing }: PageProps) {
                 <ImageGallery mainImage={listing.main_image} images={listing.images} />
 
 
-                {/* Property Details */}
                 <ListingDetails listing={listing} role={'seller'}/>
 
 
                 <Divider sx={{ my: 3 }} />
 
-                {/* Navigation Links */}
+
                 <Stack direction="row" spacing={2} mb={2}>
                     {listing.offers?.length === 0 && (
-                        <Link href={route("seller.listings.edit", listing.id)}>
+                        <Link href={route("listings.edit", listing.id)}>
                             <Button variant="outlined">✏️ Edit Listing</Button>
                         </Link>
                     )}
                 </Stack>
 
-                {/* Offers Section */}
+
                 <Card variant="outlined">
                     <CardContent>
                         <Typography variant="h6" fontWeight="bold" gutterBottom>

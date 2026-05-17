@@ -65,7 +65,7 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
     };
 
     const formattedSqft = new Intl.NumberFormat('en-US').format(listing.square_feet);
-    const detailUrl = typeof route === 'function' ? route("buyer.listings.show", listing.id) : `/listings/${listing.id}`;
+    const detailUrl = typeof route === 'function' ? route("listings.show", listing.id) : `/listings/${listing.id}`;
     const mainImage = listing.main_image?.image_path || '/images/placeholder-house.jpg';
 
     return (

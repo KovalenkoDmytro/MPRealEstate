@@ -4,9 +4,10 @@ import Button from "@/components/common/Button";
 
 type MakeOfferPromptProps = {
     onMakeOffer: () => void;
+    reOffer?: boolean;
 };
 
-export const MakeOfferPrompt = ({ onMakeOffer }: MakeOfferPromptProps) => {
+export const MakeOfferPrompt = ({ onMakeOffer, reOffer = false }: MakeOfferPromptProps) => {
     return (
         <Stack
             sx={{
@@ -18,15 +19,16 @@ export const MakeOfferPrompt = ({ onMakeOffer }: MakeOfferPromptProps) => {
             direction="column" justifyContent="space-between" alignItems="center" gap={2}>
             <Box>
                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    No Offer Yet
+                    {reOffer ? 'Submit New Offer' : 'No Offer Yet'}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    Make an offer to show your interest in this property
+                    {reOffer
+                        ? 'Your previous offer was declined. You may submit a new one.'
+                        : 'Make an offer to show your interest in this property'}
                 </Typography>
             </Box>
 
-            <Button version="primary" onClick={onMakeOffer} text="Make an Offer"/>
-
+            <Button version="primary" onClick={onMakeOffer} text={reOffer ? 'Make New Offer' : 'Make an Offer'} />
 
         </Stack>
     );

@@ -16,7 +16,7 @@ import IconLocationMark from "@/icons/IconLocationMark";
 import IconCalendarToday from "@/icons/IconCalendarToday";
 import IconClock from "@/icons/IconClock";
 import {useAuth} from "@/hooks/useAuth";
-import { Email } from "@mui/icons-material";
+import { Email, Phone } from "@mui/icons-material";
 
 
 type Props = {
@@ -83,13 +83,14 @@ export default function AppointmentItem({ appointment, onCancel, onApprove, onRe
             elevation={0}
             variant="outlined"
             sx={{
-                p: theme.shape.padding,
+                p: { xs: 2, md: theme.shape.padding },
                 mb: 2,
                 borderRadius: theme.shape.borderRadius,
                 borderColor: theme.palette.border.main,
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },
-                gap: 3,
+                gap: { xs: 2, md: 3 },
+                minWidth: 0,
             }}
         >
             {/* --- Left: Image --- */}
@@ -99,36 +100,74 @@ export default function AppointmentItem({ appointment, onCancel, onApprove, onRe
                 alt={listing?.title || 'Property'}
                 sx={{
                     width: { xs: '100%', md: 240 },
-                    height: { xs: 200, md: 'auto' },
-                    minHeight: 200,
+                    height: { xs: 180, sm: 220, md: 'auto' },
+                    minHeight: { xs: 180, md: 200 },
                     borderRadius: theme.shape.borderRadius,
                     objectFit: 'cover',
                 }}
             />
 
             {/* --- Right: Details --- */}
-            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
 
                 {/* Header Row */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px'}} >
-                        <Link href={route('buyer.listings.show', listing.id)} className="hover:underline">
-                            <Typography variant="h5" fontWeight={600} sx={{ color: theme.palette.text.primary }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        gap: { xs: 1.5, sm: 2 },
+                        mb: 1,
+                        minWidth: 0,
+                    }}
+                >
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: 0 }} >
+                        <Link href={route('listings.show', listing.id)} className="hover:underline">
+                            <Typography
+                                variant="h5"
+                                fontWeight={600}
+                                sx={{
+                                    color: theme.palette.text.primary,
+                                    fontSize: { xs: '1.125rem', md: '1.5rem' },
+                                    lineHeight: 1.25,
+                                    overflowWrap: 'anywhere',
+                                }}
+                            >
                                 {listing.title}
                             </Typography>
                         </Link>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <IconLocationMark />
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{
+                                mb: { xs: 1, md: 2 },
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: 1,
+                                overflowWrap: 'anywhere',
+                            }}
+                        >
+                            <Box component="span" sx={{ display: 'inline-flex', flexShrink: 0, mt: 0.25 }}>
+                                <IconLocationMark />
+                            </Box>
                             {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}
                         </Typography>
                     </Box>
 
 
-                    {renderStatusBadge(appointment.status)}
+                    <Box sx={{ flexShrink: 0 }}>
+                        {renderStatusBadge(appointment.status)}
+                    </Box>
                 </Box>
 
                 {/* Date & Time Row */}
-                <Stack direction="row" alignItems="center" gap={3} sx={{ mt: 2, mb: 3 }}>
+                <Stack
+                    direction={{ xs: 'column', sm: 'row' }}
+                    alignItems={{ xs: 'flex-start', sm: 'center' }}
+                    gap={{ xs: 1.25, sm: 3 }}
+                    sx={{ mt: { xs: 1, md: 2 }, mb: { xs: 2, md: 3 } }}
+                >
                     <Stack direction="row" alignItems="center" gap={1}>
                         <IconCalendarToday/>
                         <Typography variant="body1" fontWeight={600} color="text.primary">
@@ -164,11 +203,24 @@ export default function AppointmentItem({ appointment, onCancel, onApprove, onRe
                                 </Typography>
                             </Stack>
 
-                            <Stack direction="row" alignItems="center" gap={2} color="text.secondary">
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Stack
+                                direction={{ xs: 'column', sm: 'row' }}
+                                alignItems={{ xs: 'flex-start', sm: 'center' }}
+                                gap={{ xs: 0.75, sm: 2 }}
+                                color="text.secondary"
+                                sx={{ minWidth: 0 }}
+                            >
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0 }}>
                                     <Email sx={{ fontSize: 16 }} />
-                                    <Typography variant="caption">{appointment.buyer.email}</Typography>
-                                    <Typography variant="caption">{appointment.buyer.phone_number}</Typography>
+                                    <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>
+                                        {appointment.buyer.email}
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0 }}>
+                                    <Phone sx={{ fontSize: 16 }} />
+                                    <Typography variant="caption" sx={{ overflowWrap: 'anywhere' }}>
+                                        {appointment.buyer.phone_number}
+                                    </Typography>
                                 </Box>
                             </Stack>
                         </Stack>
@@ -178,10 +230,19 @@ export default function AppointmentItem({ appointment, onCancel, onApprove, onRe
 
 
                 {/* Footer: Notes & Actions */}
-                <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 2 }}>
+                <Box
+                    sx={{
+                        mt: 'auto',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: { xs: 'stretch', sm: 'flex-end' },
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        gap: 2,
+                    }}
+                >
 
                     {/* Information / Notes Area */}
-                    <Box sx={{ maxWidth: '65%' }}>
+                    <Box sx={{ maxWidth: { xs: '100%', sm: '65%' }, minWidth: 0 }}>
                         {appointment.access_code && appointment.status === 'accepted' && (
                             <>
                                 <Typography variant="caption" color="text.secondary" fontWeight={600}>
@@ -198,7 +259,7 @@ export default function AppointmentItem({ appointment, onCancel, onApprove, onRe
                                 <Typography variant="caption" color="error.main" fontWeight={600}>
                                     REJECTION REASON
                                 </Typography>
-                                <Typography variant="body2" color="text.primary">
+                                <Typography variant="body2" color="text.primary" sx={{ overflowWrap: 'anywhere' }}>
                                     {appointment.rejection_reason}
                                 </Typography>
                             </>
@@ -206,7 +267,19 @@ export default function AppointmentItem({ appointment, onCancel, onApprove, onRe
                     </Box>
 
 
-                    <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: { xs: 'column', sm: 'row' },
+                            gap: 1.5,
+                            width: { xs: '100%', sm: 'auto' },
+                            '& .btn': {
+                                width: { xs: '100%', sm: 'auto' },
+                                minWidth: { sm: 120 },
+                                whiteSpace: 'nowrap',
+                            },
+                        }}
+                    >
                         {showCancelButton && (
                             <Button
                                 version={"outline"}

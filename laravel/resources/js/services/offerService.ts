@@ -20,21 +20,21 @@ export const offerService = {
         formData.append("message", payload.message);
 
         const response = await api.post(
-            route("buyer.listings.makeOffer", listingId, false), formData, {headers: {Accept: "application/json"}}
+            route("listings.makeOffer", listingId, false), formData, {headers: {Accept: "application/json"}}
         );
 
         return response.data;
     },
 
     // async getUserOffers<T = any>(listingId: number): Promise<updateOfferStatusResponse> {
-    //     const response = await api.get(route("buyer.listings.userOffers", listingId, false), {
+    //     const response = await api.get(route("listings.userOffers", listingId, false), {
     //         headers: {Accept: "application/json"},
     //     });
     //     return response.data;
     // },
 
     async updateOfferStatus(offerId: number, status: "accepted" | "rejected"): Promise<updateOfferStatusResponse>{
-        const response = await api.patch(route('seller.offers.updateStatus', offerId),
+        const response = await api.patch(route('offers.updateStatus', offerId),
             {status},
             {headers: {Accept: "application/json"}}
         );

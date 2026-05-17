@@ -114,6 +114,102 @@ cd laravel && npm run build
 
 ---
 
+## Presentation Demo Data
+
+Use this when you want a clean, presentation-ready database with visible listings, offers, appointments, deals, and workflow stages.
+
+```bash
+# Reset the database and seed the full demo dataset
+cd docker && docker compose exec php php artisan migrate:fresh --seed
+
+# Re-apply only the named showcase scenarios
+cd docker && docker compose exec php php artisan db:seed --class=PresentationScenarioSeeder
+```
+
+### Demo Accounts
+
+All demo accounts use password: `password`
+
+| Role | Email |
+|---|---|
+| Admin | `admin@example.com` |
+| Buyer | `buyer@example.com` |
+| Buyer | `buyer2@example.com` |
+| Seller | `seller@example.com` |
+| Seller | `seller2@example.com` |
+| Lawyer | `lawyer@example.com` |
+
+### Named Showcase Scenarios
+
+These listings are seeded with titles that start with `Presentation - ` so they are easy to find in the UI and database.
+
+| Listing Title | What It Demonstrates |
+|---|---|
+| `Presentation - Viewing Request Pending` | Buyer appointment request waiting for seller approval |
+| `Presentation - Viewing Approved` | Approved appointment with access code |
+| `Presentation - Offer Negotiation` | Multiple offers on one listing, including pending and rejected |
+| `Presentation - Deal Started` | Accepted offer with a newly opened deal |
+| `Presentation - Deposit In Progress` | Security deposit requested and marked as paid |
+| `Presentation - Condition Day Stage` | Deposit confirmed and condition day selected |
+| `Presentation - Break Request Pending` | Active deal with a pending break request |
+| `Presentation - Broken Deal Reopened` | Broken deal with the property returned to `available` |
+| `Presentation - Closed Sale` | Fully completed deal with the listing marked `sold` |
+
+### Demo Notes
+
+- `buyer@example.com` and `buyer2@example.com` are the best accounts for showing listings, offers, appointments, and deal progress from the buyer side.
+- `seller@example.com` and `seller2@example.com` are the best accounts for showing inbound offers, appointment management, and seller-side deal actions.
+- `lawyer@example.com` is attached to the showcase deal records so you can demo lawyer deal views and timeline activity.
+- The seed also creates additional non-showcase data, so the app looks populated beyond the named presentation scenarios.
+
+---
+
+## Server Deployment Scripts
+
+The `scripts/` directory contains bash scripts for managing the server deployment at `/var/www/MPRealEstate`.
+
+### Update project
+
+Pulls the latest changes from the current branch and reinstalls PHP dependencies:
+
+```bash
+/var/www/MPRealEstate/scripts/update.sh
+```
+
+What it does: `git pull` → `composer install --optimize-autoloader`
+
+> Migrations are intentionally excluded from the script. Run them manually after reviewing what changed:
+> ```bash
+> php artisan migrate:status
+> php artisan migrate --force
+> ```
+
+### Rebuild frontend + optimize backend
+
+Reinstalls Node dependencies, builds frontend assets, clears and rebuilds the Laravel cache:
+
+```bash
+/var/www/MPRealEstate/scripts/rebuild.sh
+```
+
+What it does: `npm ci` → `npm run build` → `php artisan optimize:clear` → `php artisan optimize`
+
+### Typical deployment flow
+
+```bash
+# 1. Pull latest code + update PHP deps
+/var/www/MPRealEstate/scripts/update.sh
+
+# 2. Check and apply migrations (if any)
+php artisan migrate:status
+php artisan migrate --force
+
+# 3. Rebuild frontend and optimize backend
+/var/www/MPRealEstate/scripts/rebuild.sh
+```
+
+---
+
 ## Queue Workers
 
 Notifications are processed asynchronously via **Redis queues**.

@@ -18,14 +18,14 @@ export interface ApiResponseBase {
  */
 export const DealService = {
     async setDeposit(dealId: number, securityDeposit: number): Promise<ApiResponseBase> {
-        const { data } = await api.patch(route("seller.deals.setDeposit", dealId, false), {
+        const { data } = await api.patch(route("deals.setDeposit", dealId, false), {
             security_deposit: securityDeposit,
         });
         return data;
     },
 
     async markDepositMade(dealId: number, depositDateTime: Date): Promise<ApiResponseBase> {
-        const { data } = await api.patch(route("buyer.deals.markDepositMade", dealId, false), {
+        const { data } = await api.patch(route("deals.markDepositMade", dealId, false), {
             is_security_deposit_made: true,
             security_deposit_made_at: depositDateTime,
         });
@@ -33,7 +33,7 @@ export const DealService = {
     },
 
     async confirmDeposit(dealId: number, depositDateTime: Date): Promise<ApiResponseBase> {
-        const { data } = await api.patch(route("seller.deals.confirmDeposit", dealId, false), {
+        const { data } = await api.patch(route("deals.confirmDeposit", dealId, false), {
             is_security_deposit_confirmed: true,
             security_deposit_confirmed_at: depositDateTime,
         });
@@ -41,26 +41,26 @@ export const DealService = {
     },
 
     async setConditionDay(dealId: number, conditionDay: string): Promise<ApiResponseBase> {
-        const { data } = await api.patch(route("buyer.deals.setConditionDay", dealId, false), {
+        const { data } = await api.patch(route("deals.setConditionDay", dealId, false), {
             condition_day: conditionDay,
         });
         return data;
     },
 
     async confirmConditionDay(dealId: number): Promise<ApiResponseBase> {
-        const { data } = await api.patch(route("seller.deals.confirmConditionDay", dealId, false), {});
+        const { data } = await api.patch(route("deals.confirmConditionDay", dealId, false), {});
         return data;
     },
 
     async setPossessionDay(dealId: number, possessionDay: string): Promise<ApiResponseBase> {
-        const { data } = await api.patch(route("buyer.deals.setPossessionDay", dealId, false), {
+        const { data } = await api.patch(route("deals.setPossessionDay", dealId, false), {
             possession_day: possessionDay,
         });
         return data;
     },
 
     async confirmPossessionDay(dealId: number): Promise<ApiResponseBase> {
-        const { data } = await api.patch(route("seller.deals.confirmPossessionDay", dealId, false), {});
+        const { data } = await api.patch(route("deals.confirmPossessionDay", dealId, false), {});
         return data;
     },
 

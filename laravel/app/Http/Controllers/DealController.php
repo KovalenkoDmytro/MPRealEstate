@@ -156,17 +156,13 @@ class DealController extends Controller
         /** @var \App\Models\User $user */
         $user = $request->user();
 
-        try {
-            InviteLawyerToDealAction::run(
-                (string) $request->lawyer_code,
-                (string) $user->getRoleNames()->first(),
-                $deal,
-            );
+        InviteLawyerToDealAction::run(
+            (string) $request->lawyer_code,
+            (string) $user->getRoleNames()->first(),
+            $deal,
+        );
 
-            return JsonResponder::send(new SuccessResponse(__('deals.success.lawyer_invited')));
-        } catch (\RuntimeException $e) {
-            return JsonResponder::send(new ErrorResponse($e->getMessage()));
-        }
+        return JsonResponder::send(new SuccessResponse(__('deals.success.lawyer_invite_sent')));
     }
 
     public function breakDeal(DealBreakRequest $request, Deal $deal): JsonResponse

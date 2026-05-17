@@ -40,7 +40,7 @@ class AppointmentRequestNotification extends Notification implements ShouldQueue
             'body'  => __('notifications.appointments.request.body', [
                 'listing' => $this->appointment->real_estate_listing_id,
             ]),
-            'url'   => route('seller.appointments.index'),
+            'url'   => route('appointments.index'),
         ];
     }
 }

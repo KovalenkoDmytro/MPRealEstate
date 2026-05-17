@@ -41,7 +41,7 @@ class OfferSubmitted extends Notification implements ShouldQueue
             'body'  => __('notifications.offerSubmitted.body', [
                 'listing' => $this->listing->title,
             ]),
-            'url'   => route('seller.listings.show', $this->listing),
+            'url'   => route('listings.show', $this->listing),
         ];
     }
 }

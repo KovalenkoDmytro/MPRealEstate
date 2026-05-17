@@ -1,44 +1,28 @@
 import React from "react";
-import { Box, Stack, Typography } from "@mui/material";
-import LockIcon from "@mui/icons-material/Lock";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import EventIcon from "@mui/icons-material/Event";
-import HomeIcon from "@mui/icons-material/Home";
+import { Box, Paper, Stack, Typography } from "@mui/material";
+import theme from "@/theme";
+import IconContainer from "@/components/common/IconContainer";
+import IconLock from "@/icons/IconLock";
+import IconDollar from "@/icons/IconDollar";
+import IconConfirm from "@/icons/IconConfirm";
+import IconCalendarToday from "@/icons/IconCalendarToday";
+import IconHome from "@/icons/IconHome";
 import { Deal } from "@/types";
 import { format } from "date-fns";
 
-type DealTimelineItemProps = {
+type TimelineItemProps = {
     label: string;
     timestamp: string;
-    color: string;
-    Icon: React.ElementType;
-}
+    icon: React.ReactNode;
+};
 
-function TimelineItem({label, timestamp, color, Icon,}: DealTimelineItemProps ) {
+function TimelineItem({ label, timestamp, icon }: TimelineItemProps) {
     return (
-        <Box sx={{ display: "flex", position: "relative" }}>
-            {/* Icon Dot */}
-            <Box
-                sx={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: "50%",
-                    backgroundColor: color,
-                    position: "absolute",
-                    left: -8,
-                    top: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#fff",
-                }}
-            >
-                <Icon fontSize="small" />
-            </Box>
-
-            {/* Content */}
-            <Box sx={{ ml: 5 }}>
+        <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+            <IconContainer>
+                {icon}
+            </IconContainer>
+            <Box>
                 <Typography variant="body1" fontWeight={600}>
                     {label}
                 </Typography>
@@ -52,77 +36,77 @@ function TimelineItem({label, timestamp, color, Icon,}: DealTimelineItemProps ) 
 
 export default function DealTimeline({ deal }: { deal: Deal }) {
     return (
-        <Box mt={6}>
-            <Typography variant="h5" fontWeight="bold" gutterBottom>
+        <Paper
+            elevation={0}
+            sx={{
+                mt: 3,
+                p: theme.shape.padding,
+                borderRadius: theme.shape.borderRadius,
+                bgcolor: theme.palette.background.white,
+                border: `1px solid ${theme.palette.border.main}`,
+            }}
+        >
+            <Typography variant="h6" fontWeight="bold" sx={{ mb: 3 }}>
                 Deal Timeline
             </Typography>
 
-            <Box sx={{ position: "relative", pl: 3 }}>
-                <Stack spacing={4}>
-                    {deal.security_deposit && deal.security_deposit_set_at && (
-                        <TimelineItem
-                            label={`Set Required Security Deposit: $${Number(deal.security_deposit).toLocaleString()}`}
-                            timestamp={deal.security_deposit_set_at}
-                            color="#1976d2"
-                            Icon={LockIcon}
-                        />
-                    )}
+            <Stack spacing={3}>
+                {deal.security_deposit && deal.security_deposit_set_at && (
+                    <TimelineItem
+                        label={`Set Required Security Deposit: $${Number(deal.security_deposit).toLocaleString()}`}
+                        timestamp={deal.security_deposit_set_at}
+                        icon={<IconLock />}
+                    />
+                )}
 
-                    {deal.is_security_deposit_made && deal.security_deposit_made_at && (
-                        <TimelineItem
-                            label="Security Deposit sent by buyer"
-                            timestamp={deal.security_deposit_made_at}
-                            color="#2e7d32"
-                            Icon={AttachMoneyIcon}
-                        />
-                    )}
+                {deal.is_security_deposit_made && deal.security_deposit_made_at && (
+                    <TimelineItem
+                        label="Security Deposit sent by buyer"
+                        timestamp={deal.security_deposit_made_at}
+                        icon={<IconDollar />}
+                    />
+                )}
 
-                    {deal.is_security_deposit_confirmed && deal.security_deposit_confirmed_at && (
-                        <TimelineItem
-                            label="Seller confirmed the security deposit"
-                            timestamp={deal.security_deposit_confirmed_at}
-                            color="#2e7d32"
-                            Icon={CheckCircleIcon}
-                        />
-                    )}
+                {deal.is_security_deposit_confirmed && deal.security_deposit_confirmed_at && (
+                    <TimelineItem
+                        label="Seller confirmed the security deposit"
+                        timestamp={deal.security_deposit_confirmed_at}
+                        icon={<IconConfirm />}
+                    />
+                )}
 
-                    {deal.condition_day && deal.condition_day_selected_at && (
-                        <TimelineItem
-                            label={`Buyer selected Condition Day: ${format(deal.condition_day, "MMMM do, yyyy")}`}
-                            timestamp={deal.condition_day_selected_at}
-                            color="#2e7d32"
-                            Icon={EventIcon}
-                        />
-                    )}
+                {deal.condition_day && deal.condition_day_selected_at && (
+                    <TimelineItem
+                        label={`Buyer selected Condition Day: ${format(deal.condition_day, "MMMM do, yyyy")}`}
+                        timestamp={deal.condition_day_selected_at}
+                        icon={<IconCalendarToday />}
+                    />
+                )}
 
-                    {deal.is_condition_day_confirmed && deal.condition_day_confirmed_at && (
-                        <TimelineItem
-                            label="Seller confirmed Condition Day"
-                            timestamp={deal.condition_day_confirmed_at}
-                            color="#2e7d32"
-                            Icon={CheckCircleIcon}
-                        />
-                    )}
+                {deal.is_condition_day_confirmed && deal.condition_day_confirmed_at && (
+                    <TimelineItem
+                        label="Seller confirmed Condition Day"
+                        timestamp={deal.condition_day_confirmed_at}
+                        icon={<IconConfirm />}
+                    />
+                )}
 
-                    {deal.possession_day && deal.possession_day_selected_at && (
-                        <TimelineItem
-                            label={`Buyer selected Possession Day: ${format(deal.possession_day, "MMMM do, yyyy")}`}
-                            timestamp={deal.possession_day_selected_at}
-                            color="#2e7d32"
-                            Icon={HomeIcon}
-                        />
-                    )}
+                {deal.possession_day && deal.possession_day_selected_at && (
+                    <TimelineItem
+                        label={`Buyer selected Possession Day: ${format(deal.possession_day, "MMMM do, yyyy")}`}
+                        timestamp={deal.possession_day_selected_at}
+                        icon={<IconCalendarToday />}
+                    />
+                )}
 
-                    {deal.is_possession_day_confirmed && deal.possession_day_confirmed_at && (
-                        <TimelineItem
-                            label="Seller confirmed Possession Day"
-                            timestamp={deal.possession_day_confirmed_at}
-                            color="#2e7d32"
-                            Icon={CheckCircleIcon}
-                        />
-                    )}
-                </Stack>
-            </Box>
-        </Box>
+                {deal.is_possession_day_confirmed && deal.possession_day_confirmed_at && (
+                    <TimelineItem
+                        label="Seller confirmed Possession Day"
+                        timestamp={deal.possession_day_confirmed_at}
+                        icon={<IconConfirm />}
+                    />
+                )}
+            </Stack>
+        </Paper>
     );
 }

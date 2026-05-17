@@ -5,9 +5,9 @@ import {
     DialogContent,
     DialogActions,
     Typography,
-    Button,
     CircularProgress,
 } from "@mui/material";
+import Button from "@/components/common/Button";
 
 type ConfirmDialogProps = {
     open: boolean;
@@ -17,7 +17,6 @@ type ConfirmDialogProps = {
     cancelLabel?: string;
     onClose: () => void;                 // closes the dialog (parent controls `open`)
     onConfirm: () => Promise<void | boolean> | void | boolean; // return false to keep dialog open
-    confirmColor?: "primary" | "secondary" | "success" | "error" | "info" | "warning";
 };
 
 export default function ConfirmDialog({
@@ -28,7 +27,6 @@ export default function ConfirmDialog({
                                           cancelLabel = "Cancel",
                                           onClose,
                                           onConfirm,
-                                          confirmColor = "primary",
                                       }: ConfirmDialogProps) {
     const [submitting, setSubmitting] = useState(false);
 
@@ -58,16 +56,19 @@ export default function ConfirmDialog({
                 </DialogContent>
             )}
             <DialogActions sx={{ p: 2 }}>
-                <Button onClick={onClose} disabled={submitting}>{cancelLabel}</Button>
                 <Button
-                    onClick={handleConfirm}
-                    variant="contained"
-                    color={confirmColor}
+                    version="outline"
+                    text={cancelLabel}
+                    onClick={onClose}
                     disabled={submitting}
-                    startIcon={submitting ? <CircularProgress size={18} /> : undefined}
-                >
-                    {submitting ? "Working…" : confirmLabel}
-                </Button>
+                />
+                <Button
+                    version="primary"
+                    text={submitting ? "Working…" : confirmLabel}
+                    onClick={handleConfirm}
+                    disabled={submitting}
+                    icon={submitting ? <CircularProgress size={18} /> : undefined}
+                />
             </DialogActions>
         </Dialog>
     );

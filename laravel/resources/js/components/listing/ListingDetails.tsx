@@ -55,19 +55,19 @@ export const ListingDetails = ({ listing }: ListingDetailsProps) => {
                     position: "relative",
                     borderRadius: theme.shape.borderRadius,
                     border: `1px solid ${theme.palette.border.main}`,
-                    padding: theme.shape.padding,
+                    p: { xs: 2, sm: 3, md: theme.shape.padding },
                     backgroundColor: theme.palette.background.white,
                 }}>
 
                 {/* --- PROPERTY DETAILS HEADER --- */}
 
 
-                <Box sx={{ mb: 3 }}>
+                <Box sx={{ mb: { xs: 2.5, md: 3 } }}>
                     <Typography variant="h6" fontWeight="bold" gutterBottom >
                         Property Description
                     </Typography>
 
-                    <Typography>
+                    <Typography sx={{ lineHeight: 1.7 }}>
                         {listing.description}
                     </Typography>
                 </Box>
@@ -80,8 +80,8 @@ export const ListingDetails = ({ listing }: ListingDetailsProps) => {
                 <Box
                     sx={{
                         display: 'grid',
-                        gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
-                        gap: 4
+                        gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))', md: 'repeat(4, minmax(0, 1fr))' },
+                        gap: { xs: 2, sm: 3, md: 4 }
                     }}
                 >
 
@@ -148,8 +148,8 @@ export const ListingDetails = ({ listing }: ListingDetailsProps) => {
                     />
 
                 </Box>
-                <Divider sx={{ my: 4 }} />
-                <Box mb={4}>
+                <Divider sx={{ my: { xs: 3, md: 4 } }} />
+                <Box mb={{ xs: 0, md: 1 }}>
                     <Stack direction="row" alignItems="center" spacing={1} mb={2}>
                         <IconKeywords/>
                         <Typography variant="body1" fontWeight="bold">

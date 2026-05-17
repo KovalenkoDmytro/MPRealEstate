@@ -94,7 +94,6 @@ export default function PossessionDayForm({ deal }: { deal: Deal }) {
                         </Typography>
                     }
                     confirmLabel="Set Day"
-                    confirmColor="success"
                     onConfirm={save}
                 />
             )}

@@ -135,20 +135,34 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                 sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
+                    alignItems: { xs: 'stretch', md: 'center' },
+                    flexDirection: { xs: 'column', md: 'row' },
                     mb: 3,
-                    flexWrap: 'wrap', // Responsive wrapping
+                    flexWrap: 'wrap',
                     gap: 2
                 }}
             >
-                {/* Left: Total Count */}
-                <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 500 }}>
+                <Typography
+                    variant="h6"
+                    sx={{
+                        color: 'text.secondary',
+                        fontWeight: 500,
+                        fontSize: { xs: '1rem', sm: '1.25rem' },
+                    }}
+                >
                     {listings.total} Properties Found
                 </Typography>
 
-                {/* Right: Controls */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                    {/* View Mode Toggles */}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: { xs: 'stretch', sm: 'center' },
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        justifyContent: 'space-between',
+                        gap: { xs: 1.5, sm: 2 },
+                        width: { xs: '100%', md: 'auto' },
+                    }}
+                >
                     <ToggleButtonGroup
                         value={viewMode}
                         exclusive
@@ -158,9 +172,12 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                         sx={{
                             height: 40,
                             bgcolor: 'background.paper',
+                            width: { xs: '100%', sm: 'auto' },
+                            justifyContent: { xs: 'space-between', sm: 'flex-start' },
                             '& .MuiToggleButton-root': {
                                 border: '1px solid #e0e0e0',
                                 color: 'text.secondary',
+                                flex: { xs: 1, sm: 'initial' },
                                 '&.Mui-selected': {
                                     bgcolor: 'primary.main',
                                     color: 'white',
@@ -180,23 +197,30 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                         </ToggleButton>
                     </ToggleButtonGroup>
 
-                    {/* Filter Toggle Button */}
                     <Box
                         onClick={handleToggleFilters}
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 0.5,
                             cursor: 'pointer',
                             color: 'primary.main',
                             '&:hover': { opacity: 0.8 },
-                            userSelect: 'none'
+                            userSelect: 'none',
+                            width: { xs: '100%', sm: 'auto' },
+                            minHeight: 40,
+                            px: 1.5,
+                            borderRadius: '999px',
+                            border: `1px solid ${theme.palette.border.main}`,
+                            backgroundColor: theme.palette.background.paper,
                         }}
                     >
-                        <FilterListIcon sx={{ mr: 1 }} />
-                        <Typography variant="button" sx={{ fontWeight: 600 }}>
+                        <FilterListIcon sx={{ fontSize: 18 }} />
+                        <Typography variant="button" sx={{ fontWeight: 600, fontSize: '0.875rem' }}>
                             {showFilters ? 'Hide Filters' : 'Show Filters'}
                         </Typography>
-                        <IconButton size="small" color="primary">
+                        <IconButton size="small" color="primary" sx={{ ml: 0.25 }}>
                             {showFilters ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                         </IconButton>
                     </Box>
@@ -206,7 +230,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
             {/* Collapsible Filter Section */}
             <Collapse in={showFilters} timeout="auto" unmountOnExit>
                 <Box sx={{
-                    p: theme.shape.padding,
+                    p: { xs: 2, md: theme.shape.padding },
                     background: `${theme.palette.background.white}`,
                     borderRadius: theme.shape.borderRadius,
                     mb: 3,

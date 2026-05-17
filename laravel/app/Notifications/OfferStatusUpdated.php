@@ -41,7 +41,7 @@ class OfferStatusUpdated extends Notification implements ShouldQueue
             'type'  => __('notifications.offerStatusUpdated.type'),
             'title' => __('notifications.offerStatusUpdated.title'),
             'body'  => $body,
-            'url'   => route('buyer.listings.show', $this->listing),
+            'url'   => route('listings.show', $this->listing),
         ];
     }
 }

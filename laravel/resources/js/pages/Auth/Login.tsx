@@ -7,11 +7,10 @@ import {
     InputAdornment,
     TextField,
     Typography,
-    Link as MuiLink,
     Stack,
 } from '@mui/material';
 import {Visibility, VisibilityOff, ArrowForward,} from '@mui/icons-material';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { Link as InertiaLink, useForm, usePage } from '@inertiajs/react';
 import Button from "@/components/common/Button";
 import { useNotification } from "@/context/NotificationContext";
 import GuestLayout from '@/layouts/GuestLayout';
@@ -21,10 +20,13 @@ import theme from "@/theme";
 
 export default function Login({ canResetPassword }: { canResetPassword: boolean; }) {
     const [showPassword, setShowPassword] = useState(false);
+    const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const initialEmail = params?.get('email') ?? '';
+    const initialPassword = params?.get('password') ?? '';
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
-        remember: false,
+        email: initialEmail,
+        password: initialPassword,
+        remember: false as boolean,
     });
 
     const { showNotification } = useNotification();
@@ -115,12 +117,9 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                             label={<Typography variant="body2" sx={{ color: '#6B7280' }}>Remember me</Typography>}
                         />
                         {canResetPassword && (
-                            <Link
-                                href={route('password.request')}
-                                style={{ color: '#522B47', fontWeight: 600, textDecoration: 'none', fontSize: '0.875rem' }}
-                            >
+                            <InertiaLink href={route('password.request')} style={{ color: '#522B47', fontWeight: 600, textDecoration: 'none', fontSize: '0.875rem' }}>
                                 Forgot Password?
-                            </Link>
+                            </InertiaLink>
                         )}
                     </Box>
 
@@ -135,12 +134,9 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                     {/* Footer Link */}
                     <Typography variant="body2" align="center" sx={{ color: '#6B7280' }}>
                         Don't have an account?{' '}
-                        <Link
-                            href={route('register')}
-                            style={{ color: '#522B47', fontWeight: 700, textDecoration: 'none' }}
-                        >
+                        <InertiaLink href={route('register')} style={{ color: '#522B47', fontWeight: 700, textDecoration: 'none' }}>
                             Sign up for free
-                        </Link>
+                        </InertiaLink>
                     </Typography>
                 </Stack>
             </form>

@@ -1,22 +1,18 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import type { SyntheticEvent } from 'react';
 import {
     Box,
     Typography,
     Tabs,
     Tab,
     Chip,
-    Stack,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions,
-    Button,
-    TextField
+    TextField,
+    useMediaQuery,
 } from '@mui/material';
 import { CalendarMonth } from '@mui/icons-material';
 import { isToday, isFuture, isPast, parseISO } from 'date-fns';
 import AppointmentItem from './AppointmentItem';
+import ConfirmDialog from '@/components/ConfirmDialog';
 import { useNotification } from '@/context/NotificationContext';
 import { AppointmentWithListingSeller, AppointmentWithListingBuyer } from "@/types";
 import { appointmentService } from "@/services/appointmentService";
@@ -28,67 +24,10 @@ interface AppointmentsListProps {
     appointments: AppointmentWithListingSeller[] | AppointmentWithListingBuyer[];
 }
 
-const dialogPaperSx = {
-    borderRadius: 5,
-    overflow: 'hidden',
-    border: `1px solid ${theme.palette.border.main}`,
-    boxShadow: '0px 24px 60px rgba(27, 21, 37, 0.18)',
-    backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(250,247,249,1) 100%)',
-};
-
-const dialogTitleSx = {
-    px: 3,
-    pt: 3,
-    pb: 1.5,
-    background: 'linear-gradient(135deg, rgba(87, 42, 77, 0.09) 0%, rgba(208, 118, 105, 0.12) 100%)',
-    borderBottom: `1px solid ${theme.palette.border.main}`,
-};
-
-const dialogContentSx = {
-    px: 3,
-    py: 3,
-};
-
-const dialogActionsSx = {
-    px: 3,
-    pb: 3,
-    pt: 0,
-    gap: 1.5,
-};
-
-const secondaryActionSx = {
-    minWidth: 140,
-    borderRadius: 999,
-    px: 2.5,
-    py: 1.1,
-    border: `1px solid ${theme.palette.border.main}`,
-    color: theme.palette.text.primary,
-    fontWeight: 700,
-    textTransform: 'none',
-    backgroundColor: theme.palette.background.white,
-};
-
-const primaryActionSx = {
-    minWidth: 140,
-    borderRadius: 999,
-    px: 2.5,
-    py: 1.1,
-    boxShadow: 'none',
-    fontWeight: 700,
-    textTransform: 'none',
-};
-
-const dialogFieldSx = {
-    mt: 0.5,
-    '& .MuiOutlinedInput-root': {
-        borderRadius: 3,
-        backgroundColor: theme.palette.background.white,
-    },
-};
-
 export default function AppointmentsList({ appointments }: AppointmentsListProps) {
     const [currentTab, setCurrentTab] = useState<FilterType>('upcoming');
     const { showNotification } = useNotification();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     // Dialog State
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -99,7 +38,7 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
     const [accessCode, setAccessCode] = useState("");
     const [rejectionReason, setRejectionReason] = useState("");
 
-    const handleTabChange = (event: React.SyntheticEvent, newValue: FilterType) => {
+    const handleTabChange = (_event: SyntheticEvent, newValue: FilterType) => {
         setCurrentTab(newValue);
     };
 
@@ -112,8 +51,8 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
 
             switch (currentTab) {
                 case 'all': return true;
-                case 'today': return isToday(aptDate);
-                case 'upcoming': return isFuture(aptDate) && !isToday(aptDate);
+                case 'today': return isToday(aptDate) && apt.status !== 'rejected' && apt.status !== 'cancelled by buyer';
+                case 'upcoming': return isFuture(aptDate) && !isToday(aptDate) && apt.status !== 'rejected' && apt.status !== 'cancelled by buyer';
                 case 'past': return isPast(aptDate) && !isToday(aptDate);
                 case 'accepted': return apt.status === 'accepted';
                 case 'pending': return apt.status === 'pending';
@@ -141,11 +80,10 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
         try {
             const response = await appointmentService.buyerCancel({ appointment_id: selectedApptId });
             showNotification(response.message || "Appointment cancelled", "success");
-            setCancelDialogOpen(false);
             window.location.reload();
-        } catch {
-            showNotification("Failed to cancel appointment", "error");
-            setCancelDialogOpen(false);
+        } catch (err: any) {
+            showNotification(err?.response?.data?.message || "Failed to cancel appointment", "error");
+            return false;
         }
     };
 
@@ -163,14 +101,13 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             const response = await appointmentService.handle({
                 appointment_id: selectedApptId,
                 action: 'approve',
-                access_code: accessCode
+                access_code: accessCode,
             });
             showNotification(response.message || "Appointment approved", "success");
-            setApproveDialogOpen(false);
             window.location.reload();
-        } catch {
-            showNotification("Failed to approve appointment", "error");
-            setApproveDialogOpen(false);
+        } catch (err: any) {
+            showNotification(err?.response?.data?.message || "Failed to approve appointment", "error");
+            return false;
         }
     };
 
@@ -188,31 +125,40 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             const response = await appointmentService.handle({
                 appointment_id: selectedApptId,
                 action: 'reject',
-                rejection_reason: rejectionReason
+                rejection_reason: rejectionReason,
             });
             showNotification(response.message || "Appointment rejected", "success");
-            setRejectDialogOpen(false);
             window.location.reload();
-        } catch {
-            showNotification("Failed to reject appointment", "error");
-            setRejectDialogOpen(false);
+        } catch (err: any) {
+            showNotification(err?.response?.data?.message || "Failed to reject appointment", "error");
+            return false;
         }
     };
 
     return (
         <Box
-            sx={{ width: '100%',
+            sx={{
+                width: '100%',
+                minWidth: 0,
                 backgroundColor: theme.palette.background.white,
-                padding: theme.shape.padding,
+                p: { xs: 2, md: theme.shape.padding },
                 borderRadius: theme.shape.borderRadius,
                 border: `1px solid ${theme.palette.border.main}`
 
             }}>
 
             {/* Header & Tabs */}
-            <Box sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                    <Typography variant="h5" fontWeight={700}>
+            <Box sx={{ mb: { xs: 2.5, md: 4 } }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: { xs: 'flex-start', sm: 'center' },
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        gap: 1.5,
+                        mb: { xs: 2, md: 3 },
+                    }}
+                >
+                    <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
                         All Appointments
                     </Typography>
                     <Chip
@@ -225,17 +171,36 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                 <Tabs
                     value={currentTab}
                     onChange={handleTabChange}
-                    variant="scrollable"
-                    scrollButtons="auto"
+                    variant={isMobile ? 'standard' : 'scrollable'}
+                    scrollButtons={isMobile ? false : 'auto'}
                     textColor="primary"
                     indicatorColor="primary"
                     sx={{
                         borderBottom: 1,
                         borderColor: 'divider',
+                        maxWidth: '100%',
+                        '& .MuiTabs-scroller': {
+                            overflow: { xs: 'visible !important', sm: 'auto !important' },
+                        },
+                        '& .MuiTabs-list': {
+                            flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                            gap: { xs: 1, sm: 0 },
+                        },
+                        '& .MuiTabs-indicator': {
+                            display: { xs: 'none', sm: 'block' },
+                        },
                         '& .MuiTab-root': {
                             textTransform: 'none',
                             fontWeight: 600,
-                            minHeight: 48,
+                            minHeight: { xs: 42, md: 48 },
+                            minWidth: { xs: 'auto', sm: 90 },
+                            px: { xs: 1.25, sm: 2 },
+                            fontSize: { xs: '0.8125rem', sm: '0.875rem' },
+                            borderRadius: { xs: '999px', sm: 0 },
+                            border: { xs: `1px solid ${theme.palette.border.main}`, sm: 'none' },
+                        },
+                        '& .MuiTab-root.Mui-selected': {
+                            bgcolor: { xs: 'rgba(87, 42, 77, 0.08)', sm: 'transparent' },
                         }
                     }}
                 >
@@ -253,9 +218,9 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             {/* List Container */}
             <Box
                 sx={{
-                    maxHeight: '750px',
-                    overflowY: 'auto',
-                    pr: 1, // Padding right to prevent scrollbar overlapping content
+                    maxHeight: { xs: 'none', md: '750px' },
+                    overflowY: { xs: 'visible', md: 'auto' },
+                    pr: { xs: 0, md: 1 },
                     '&::-webkit-scrollbar': {
                         width: '6px',
                     },
@@ -279,17 +244,24 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                     /* Empty State */
                     <Box
                         sx={{
-                            p: 8,
+                            p: { xs: 3, md: 8 },
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            bgcolor: 'background.paper',
-                            borderRadius: 4,
+                            textAlign: 'center',
+                            bgcolor: theme.palette.background.white,
+                            color: theme.palette.primary.main,
+                            borderRadius: theme.shape.borderRadius,
                             border: '1px dashed',
                             borderColor: 'divider'
                         }}
                     >
-                        <Box sx={{ p: 2, bgcolor: 'grey.50', borderRadius: '50%', mb: 2 }}>
+                        <Box sx={{
+                            bgcolor: theme.palette.background.white,
+                            color: theme.palette.primary.main,
+                            borderRadius: theme.shape.borderRadius,
+                            padding: theme.shape.padding,
+                        }}>
                             <CalendarMonth sx={{ fontSize: 40, color: 'text.disabled' }} />
                         </Box>
                         <Typography variant="h6" color="text.secondary" gutterBottom>
@@ -302,122 +274,61 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                 )}
             </Box>
 
-            {/* Cancel Confirmation Dialog */}
-            <Dialog
+            <ConfirmDialog
                 open={cancelDialogOpen}
+                title="Cancel Appointment?"
+                description="Are you sure you want to cancel this appointment? This action cannot be undone."
+                confirmLabel="Yes, Cancel"
+                cancelLabel="Keep Appointment"
                 onClose={() => setCancelDialogOpen(false)}
-                fullWidth
-                maxWidth="xs"
-                PaperProps={{ sx: dialogPaperSx }}
-            >
-                <DialogTitle sx={dialogTitleSx}>
-                    <Typography variant="overline" sx={{ color: theme.palette.primary.main, fontWeight: 800, letterSpacing: '0.12em' }}>
-                        Appointment Update
-                    </Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: theme.palette.text.primary }}>
-                        Cancel Appointment?
-                    </Typography>
-                </DialogTitle>
-                <DialogContent sx={dialogContentSx}>
-                    <DialogContentText sx={{ color: theme.palette.text.secondary, lineHeight: 1.7 }}>
-                        Are you sure you want to cancel this appointment? This action cannot be undone.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions sx={dialogActionsSx}>
-                    <Button onClick={() => setCancelDialogOpen(false)} sx={secondaryActionSx}>
-                        Keep Appointment
-                    </Button>
-                    <Button onClick={confirmCancel} variant="contained" color="error" sx={primaryActionSx}>
-                        Yes, Cancel
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                onConfirm={confirmCancel}
+            />
 
-            {/* Approve Dialog */}
-            <Dialog
+            <ConfirmDialog
                 open={approveDialogOpen}
-                onClose={() => setApproveDialogOpen(false)}
-                fullWidth
-                maxWidth="sm"
-                PaperProps={{ sx: dialogPaperSx }}
-            >
-                <DialogTitle sx={dialogTitleSx}>
-                    <Typography variant="overline" sx={{ color: theme.palette.primary.main, fontWeight: 800, letterSpacing: '0.12em' }}>
-                        Seller Approval
-                    </Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: theme.palette.text.primary }}>
-                        Approve Appointment
-                    </Typography>
-                </DialogTitle>
-                <DialogContent sx={dialogContentSx}>
-                    <Stack spacing={2}>
-                        <DialogContentText sx={{ color: theme.palette.text.secondary, lineHeight: 1.7 }}>
-                            Add the access code the buyer should use for the showing.
-                        </DialogContentText>
+                title="Approve Appointment"
+                description={
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            Please provide an access code for the visitor.
+                        </Typography>
                         <TextField
                             autoFocus
-                            label="Access Code"
                             fullWidth
-                            placeholder="Enter showing access code"
+                            label="Access Code"
                             value={accessCode}
                             onChange={(e) => setAccessCode(e.target.value)}
-                            sx={dialogFieldSx}
                         />
-                    </Stack>
-                </DialogContent>
-                <DialogActions sx={dialogActionsSx}>
-                    <Button onClick={() => setApproveDialogOpen(false)} sx={secondaryActionSx}>
-                        Cancel
-                    </Button>
-                    <Button onClick={confirmApprove} variant="contained" color="primary" sx={primaryActionSx}>
-                        Approve
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                    </Box>
+                }
+                confirmLabel="Approve"
+                onClose={() => setApproveDialogOpen(false)}
+                onConfirm={confirmApprove}
+            />
 
-            {/* Reject Dialog */}
-            <Dialog
+            <ConfirmDialog
                 open={rejectDialogOpen}
-                onClose={() => setRejectDialogOpen(false)}
-                fullWidth
-                maxWidth="sm"
-                PaperProps={{ sx: dialogPaperSx }}
-            >
-                <DialogTitle sx={dialogTitleSx}>
-                    <Typography variant="overline" sx={{ color: theme.palette.primary.main, fontWeight: 800, letterSpacing: '0.12em' }}>
-                        Seller Response
-                    </Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: theme.palette.text.primary }}>
-                        Reject Appointment
-                    </Typography>
-                </DialogTitle>
-                <DialogContent sx={dialogContentSx}>
-                    <Stack spacing={2}>
-                        <DialogContentText sx={{ color: theme.palette.text.secondary, lineHeight: 1.7 }}>
-                            Share a short reason so the buyer understands why this request could not be approved.
-                        </DialogContentText>
+                title="Reject Appointment"
+                description={
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Typography variant="body2" color="text.secondary">
+                            Please provide a reason for rejecting this appointment.
+                        </Typography>
                         <TextField
                             autoFocus
-                            label="Reason"
                             fullWidth
                             multiline
-                            minRows={4}
-                            placeholder="Add a short explanation"
+                            minRows={3}
+                            label="Rejection Reason"
                             value={rejectionReason}
                             onChange={(e) => setRejectionReason(e.target.value)}
-                            sx={dialogFieldSx}
                         />
-                    </Stack>
-                </DialogContent>
-                <DialogActions sx={dialogActionsSx}>
-                    <Button onClick={() => setRejectDialogOpen(false)} sx={secondaryActionSx}>
-                        Cancel
-                    </Button>
-                    <Button onClick={confirmReject} variant="contained" color="error" sx={primaryActionSx}>
-                        Reject
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                    </Box>
+                }
+                confirmLabel="Reject"
+                onClose={() => setRejectDialogOpen(false)}
+                onConfirm={confirmReject}
+            />
         </Box>
     );
 }

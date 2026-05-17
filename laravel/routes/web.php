@@ -13,8 +13,13 @@ use App\Http\Controllers\{NotificationController,
     DashboardController,
     DealFileController,
     DealController,
+    BuyerController,
+    SellerController,
     RealEstateListingController};
 use App\Http\Controllers\AppointmentController;
+
+// Public Demo Route
+Route::get('/demo', \App\Actions\Demo\ShowDemoPage::class)->name('demo');
 
 // Public Home Route
 Route::get('/', static function () {
@@ -74,6 +79,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // This endpoint returns lightweight JSON specifically for the 5000+ map pins
     Route::get('/api/map-listings', [RealEstateListingController::class, 'mapData'])->name('api.map-listings');
 
+    // Role-specific routes (loaded before wildcards so specific paths like /listings/favorites match first)
+    require __DIR__.'/seller.php';
+    require __DIR__.'/buyer.php';
+
+    // Role-dispatched routes (same URL for buyer and seller, different handler)
+    Route::middleware(['role:buyer|seller'])->group(function () {
+        Route::get('/deals', function () {
+            return auth()->user()->hasRole('buyer')
+                ? app(BuyerController::class)->showAllDeals()
+                : app(SellerController::class)->showAllDeals();
+        })->name('deals.index');
+
+        Route::get('/listings/{listing}', function (RealEstateListing $listing) {
+            return auth()->user()->hasRole('buyer')
+                ? app(BuyerController::class)->showListing($listing)
+                : app(SellerController::class)->showListing($listing);
+        })->name('listings.show');
+
+        Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+    });
+
 
     //Appointment confirmation
     Route::middleware(['role:buyer|seller'])->group(function () {
@@ -99,7 +125,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Laravel Breeze Auth Routes
 require __DIR__.'/auth.php';
-require __DIR__.'/seller.php';
-require __DIR__.'/buyer.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/lawyer.php';
