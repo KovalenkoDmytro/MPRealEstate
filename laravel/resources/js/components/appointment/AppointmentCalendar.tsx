@@ -1,11 +1,27 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { format, isSameDay, parseISO, startOfMonth, endOfMonth, addMonths } from 'date-fns';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { PickersDay, PickersDayProps } from '@mui/x-date-pickers/PickersDay';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
-import { Paper, Box, Typography, styled, alpha, Divider, useTheme } from '@mui/material';
+import {
+    Paper,
+    Box,
+    Typography,
+    styled,
+    alpha,
+    Divider,
+    Tooltip,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Chip,
+    Stack,
+    useTheme,
+} from '@mui/material';
 import { Appointment } from '@/types';
+import Button from '@/components/common/Button';
 
 
 
@@ -89,6 +105,7 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
     const theme = useTheme();
     const rosyPink = (theme.palette.text as any).rosyPink || '#CB9A9F';
     const maroon = theme.palette.primary.main;
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
     // Current Month Range
     const today = new Date();
@@ -101,16 +118,38 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
     const nextMonthEnd = endOfMonth(nextMonth);
 
     // 1. Process appointments
-    const appointmentDates = useMemo(() => {
-        const dates = new Set<string>();
+    const appointmentsByDate = useMemo(() => {
+        const appointmentsMap = new Map<string, Appointment[]>();
+
         appointments.forEach((apt) => {
-            if (apt.scheduled_at) {
-                const date = parseISO(apt.scheduled_at);
-                dates.add(format(date, 'yyyy-MM-dd'));
+            if (!apt.scheduled_at || apt.status !== 'accepted') {
+                return;
             }
+
+            const date = parseISO(apt.scheduled_at);
+            const dateKey = format(date, 'yyyy-MM-dd');
+            const appointmentsForDate = appointmentsMap.get(dateKey) ?? [];
+
+            appointmentsForDate.push(apt);
+            appointmentsMap.set(dateKey, appointmentsForDate);
         });
-        return dates;
+
+        return appointmentsMap;
     }, [appointments]);
+
+    const selectedAppointments = selectedDate ? (appointmentsByDate.get(selectedDate) ?? []) : [];
+
+    const handleDayClick = (dateKey: string) => {
+        if ((appointmentsByDate.get(dateKey) ?? []).length === 0) {
+            return;
+        }
+
+        setSelectedDate(dateKey);
+    };
+
+    const closeAppointmentsDialog = () => {
+        setSelectedDate(null);
+    };
 
     // 2. Custom Day Renderer
     function ServerDay(props: PickersDayProps) {
@@ -118,17 +157,33 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
 
         const dateObj = day as unknown as Date;
         const dateStr = format(dateObj, 'yyyy-MM-dd');
-        const hasAppointments = !outsideCurrentMonth && appointmentDates.has(dateStr);
+        const appointmentCount = outsideCurrentMonth ? 0 : (appointmentsByDate.get(dateStr)?.length ?? 0);
+        const hasAppointments = appointmentCount > 0;
         const isToday = isSameDay(dateObj, new Date());
+        const tooltipTitle = `${appointmentCount} appointment${appointmentCount === 1 ? '' : 's'}`;
 
-        return (
+        const dayContent = (
             <CustomPickersDay
                 {...other}
                 day={day}
                 outsideCurrentMonth={outsideCurrentMonth}
                 hasAppointments={hasAppointments}
                 isTodayCustom={isToday}
+                onClick={() => handleDayClick(dateStr)}
+                sx={hasAppointments ? { cursor: 'pointer' } : undefined}
             />
+        );
+
+        if (!hasAppointments) {
+            return dayContent;
+        }
+
+        return (
+            <Tooltip title={tooltipTitle} arrow placement="top">
+                <Box component="span">
+                    {dayContent}
+                </Box>
+            </Tooltip>
         );
     }
 
@@ -237,6 +292,114 @@ export default function AppointmentCalendar({ appointments }: AppointmentCalenda
                     </Box>
                 </Box>
             </Box>
+
+            <Dialog
+                open={selectedDate !== null}
+                onClose={closeAppointmentsDialog}
+                fullWidth
+                maxWidth="sm"
+                PaperProps={{
+                    sx: {
+                        borderRadius: theme.shape.borderRadius,
+                        border: `1px solid ${theme.palette.border.main}`,
+                        overflow: 'hidden',
+                        boxShadow: '0px 24px 80px rgba(87, 42, 77, 0.18)',
+                    },
+                }}
+            >
+                <DialogTitle
+                    sx={{
+                        px: { xs: 2.5, md: 3 },
+                        py: { xs: 2.5, md: 3 },
+                        background: `linear-gradient(135deg, ${alpha(maroon, 0.12)} 0%, ${alpha(rosyPink, 0.18)} 100%)`,
+                        borderBottom: `1px solid ${theme.palette.border.main}`,
+                    }}
+                >
+                    <Stack direction="row" spacing={1.25} alignItems="center" justifyContent="space-between" flexWrap="wrap" >
+                        <Box>
+                            <Typography variant="overline" sx={{ color: theme.palette.primary.main, fontWeight: 800, letterSpacing: '0.14em' }}>
+                                Daily Appointments
+                            </Typography>
+                            <Typography variant="h6" sx={{ fontWeight: 800, color: theme.palette.text.primary, mt: 0.5 }}>
+                                {selectedDate ? format(parseISO(selectedDate), 'EEEE, MMMM d, yyyy') : ''}
+                            </Typography>
+                        </Box>
+
+                        <Chip
+                            label={`${selectedAppointments.length} confirmed`}
+                            size="small"
+                            sx={{
+                                fontWeight: 700,
+                                backgroundColor: theme.palette.background.white,
+                                color: maroon,
+                                border: `1px solid ${alpha(maroon, 0.14)}`,
+                            }}
+                        />
+                    </Stack>
+                </DialogTitle>
+
+                <DialogContent
+                    sx={{
+                        px: { xs: 2.5, md: 3 },
+                        py: { xs: 2.5, md: 3 },
+                        backgroundColor: theme.palette.background.white,
+                    }}
+                >
+                    <Stack spacing={1.5} mt={2}>
+                        {selectedAppointments.map((appointment) => {
+                            const scheduledDate = parseISO(appointment.scheduled_at);
+
+                            return (
+                                <Box
+                                    key={appointment.id}
+                                    sx={{
+                                        border: `1px solid ${theme.palette.border.main}`,
+                                        borderRadius: theme.shape.borderRadius,
+                                        px: { xs: 2, md: 2.5 },
+                                        py: { xs: 1.75, md: 2 },
+                                        background: `linear-gradient(135deg, ${alpha(rosyPink, 0.08)} 0%, ${alpha(maroon, 0.03)} 100%)`,
+                                    }}
+                                >
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1.5, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                                        <Box>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.text.primary }}>
+                                                {appointment.listing?.title || appointment.listing?.street_name || 'Property appointment'}
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mt: 0.5 }}>
+                                                {format(scheduledDate, 'p')}
+                                            </Typography>
+                                            {appointment.listing?.street_name && (
+                                                <Typography variant="caption" sx={{ color: theme.palette.text.secondary, display: 'block', mt: 0.75 }}>
+                                                    {appointment.listing.street_name}
+                                                    {appointment.listing.city ? `, ${appointment.listing.city}` : ''}
+                                                </Typography>
+                                            )}
+                                        </Box>
+
+
+                                    </Box>
+
+                                </Box>
+                            );
+                        })}
+                    </Stack>
+                </DialogContent>
+
+                <DialogActions
+                    sx={{
+                        px: { xs: 2.5, md: 3 },
+                        py: { xs: 2, md: 2.5 },
+                        borderTop: `1px solid ${theme.palette.border.main}`,
+                        backgroundColor: alpha(rosyPink, 0.04),
+                    }}
+                >
+                    <Button
+                        version="primary"
+                        text="Close"
+                        onClick={closeAppointmentsDialog}
+                    />
+                </DialogActions>
+            </Dialog>
         </Paper>
     );
 }

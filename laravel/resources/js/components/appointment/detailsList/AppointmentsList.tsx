@@ -204,8 +204,8 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                         }
                     }}
                 >
-                    <Tab label="Upcoming" value="upcoming" />
                     <Tab label="Today" value="today" />
+                    <Tab label="Upcoming" value="upcoming" />
                     <Tab label="Confirmed" value="accepted" />
                     <Tab label="Pending" value="pending" />
                     <Tab label="Past" value="past" />
