@@ -4,12 +4,13 @@ namespace App\Notifications\MailBuilders;
 
 use App\Models\Offer;
 use App\Models\RealEstateListing;
-use Illuminate\Notifications\Messages\MailMessage;
 use App\Notifications\Contracts\MailableContentBuilderInterface;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class OfferConfirmationMailBuilder implements MailableContentBuilderInterface
 {
     protected RealEstateListing $listing;
+
     protected Offer $offer;
 
     public function __construct(RealEstateListing $listing, Offer $offer)
@@ -40,5 +41,4 @@ class OfferConfirmationMailBuilder implements MailableContentBuilderInterface
             )
             ->line(__('mainBuilders.offerConfirmation.lines.3'));
     }
-
 }

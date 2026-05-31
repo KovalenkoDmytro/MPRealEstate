@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications\Appointments;
 
 use App\Models\Appointment;
+use App\Notifications\MailBuilders\Appointments\AppointmentCancelledByBuyerMailBuilder;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use App\Notifications\MailBuilders\Appointments\AppointmentCancelledByBuyerMailBuilder;
+use Illuminate\Notifications\Notification;
 
 class AppointmentCancelledByBuyerNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public string $queue = 'notifications';
 
     protected Appointment $appointment;
 
@@ -28,19 +32,19 @@ class AppointmentCancelledByBuyerNotification extends Notification implements Sh
     public function toMail($notifiable): MailMessage
     {
         return app(AppointmentCancelledByBuyerMailBuilder::class, [
-            'appointment' => $this->appointment
+            'appointment' => $this->appointment,
         ])->build($notifiable);
     }
 
     public function toDatabase($notifiable): array
     {
         return [
-            'type'  => __('notifications.appointments.cancelled_by_buyer.type'),
+            'type' => __('notifications.appointments.cancelled_by_buyer.type'),
             'title' => __('notifications.appointments.cancelled_by_buyer.title'),
-            'body'  => __('notifications.appointments.cancelled_by_buyer.body', [
+            'body' => __('notifications.appointments.cancelled_by_buyer.body', [
                 'listing' => $this->appointment->real_estate_listing_id,
             ]),
-            'url'   => route('appointments.index'),
+            'url' => route('appointments.index'),
         ];
     }
 }

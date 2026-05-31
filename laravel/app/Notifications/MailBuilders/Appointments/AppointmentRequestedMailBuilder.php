@@ -20,10 +20,10 @@ class AppointmentRequestedMailBuilder implements MailableContentBuilderInterface
         return (new MailMessage)
             ->subject(__('notifications.appointments.request.title'))
             ->greeting(__('mainBuilders.default.greeting', [
-                'name' => $notifiable->name
+                'name' => $notifiable->name,
             ]))
             ->line(__('notifications.appointments.request.body', [
-                'listing' => $this->appointment->real_estate_listing_id
+                'listing' => $this->appointment->real_estate_listing_id,
             ]));
     }
 }

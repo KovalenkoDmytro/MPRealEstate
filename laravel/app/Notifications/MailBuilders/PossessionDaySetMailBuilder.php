@@ -2,10 +2,9 @@
 
 namespace App\Notifications\MailBuilders;
 
-use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
 use App\Notifications\Contracts\MailableContentBuilderInterface;
-
+use Illuminate\Notifications\Messages\MailMessage;
 
 class PossessionDaySetMailBuilder implements MailableContentBuilderInterface
 {

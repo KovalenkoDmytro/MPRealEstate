@@ -3,12 +3,13 @@
 namespace App\Notifications\MailBuilders;
 
 use App\Models\RealEstateListing;
-use Illuminate\Notifications\Messages\MailMessage;
 use App\Notifications\Contracts\MailableContentBuilderInterface;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class OfferStatusUpdatedMailBuilder implements MailableContentBuilderInterface
 {
     protected RealEstateListing $listing;
+
     protected string $status;
 
     public function __construct(RealEstateListing $listing, string $status)

@@ -1,19 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
-use App\Notifications\MailBuilders\SecurityDepositSetMailBuilder;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Notifications\MailBuilders\SecurityDepositSetMailBuilder;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class SecurityDepositSet extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    public string $queue = 'notifications';
+
     protected Deal $deal;
+
     protected SecurityDepositSetMailBuilder $builder;
 
     public function __construct(Deal $deal)
@@ -31,15 +36,16 @@ class SecurityDepositSet extends Notification implements ShouldQueue
     {
         return $this->builder->build($notifiable);
     }
+
     public function toDatabase($notifiable): array
     {
         return [
-            'type'  => __('notifications.securityDepositSet.type'),
+            'type' => __('notifications.securityDepositSet.type'),
             'title' => __('notifications.securityDepositSet.title'),
-            'body'  => __('notifications.securityDepositSet.body', [
+            'body' => __('notifications.securityDepositSet.body', [
                 'deal' => $this->deal->name,
             ]),
-            'url'   => route('deals.show', $this->deal),
+            'url' => route('deals.show', $this->deal),
         ];
     }
 }

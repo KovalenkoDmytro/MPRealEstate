@@ -1,18 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
-use App\Notifications\MailBuilders\PossessionDaySetMailBuilder;
 use App\Models\Deal;
+use App\Notifications\MailBuilders\PossessionDaySetMailBuilder;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class PossessionDaySet extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public string $queue = 'notifications';
+
     protected PossessionDaySetMailBuilder $builder;
+
     protected Deal $deal;
 
     public function __construct(Deal $deal)
@@ -39,12 +45,12 @@ class PossessionDaySet extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'  => __('notifications.possessionDaySet.type'),
+            'type' => __('notifications.possessionDaySet.type'),
             'title' => __('notifications.possessionDaySet.title'),
-            'body'  => __('notifications.possessionDaySet.body', [
+            'body' => __('notifications.possessionDaySet.body', [
                 'deal' => $this->deal->name,
             ]),
-            'url'   => route('deals.show', $this->deal),
+            'url' => route('deals.show', $this->deal),
         ];
     }
 }

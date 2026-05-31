@@ -20,15 +20,15 @@ class AppointmentAcceptedMailBuilder implements MailableContentBuilderInterface
         return (new MailMessage)
             ->subject(__('notifications.appointments.accepted.title'))
             ->greeting(__('mainBuilders.default.greeting', [
-                'name' => $notifiable->name
+                'name' => $notifiable->name,
             ]))
             ->line(__('notifications.appointments.accepted.body', [
-                'listing' => $this->appointment->real_estate_listing_id
+                'listing' => $this->appointment->real_estate_listing_id,
             ]))
             ->lineIf(
                 $this->appointment->access_code,
                 __('notifications.appointments.accepted.access_code', [
-                    'code' => $this->appointment->access_code
+                    'code' => $this->appointment->access_code,
                 ])
             );
     }

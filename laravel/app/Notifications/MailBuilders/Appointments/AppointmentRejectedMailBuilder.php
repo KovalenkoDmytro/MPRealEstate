@@ -20,14 +20,14 @@ class AppointmentRejectedMailBuilder implements MailableContentBuilderInterface
         return (new MailMessage)
             ->subject(__('notifications.appointments.rejected.title'))
             ->greeting(__('mainBuilders.default.greeting', [
-                'name' => $notifiable->name
+                'name' => $notifiable->name,
             ]))
             ->line(__('notifications.appointments.rejected.body', [
-                'listing' => $this->appointment->real_estate_listing_id
+                'listing' => $this->appointment->real_estate_listing_id,
             ]))
             ->line(__('notifications.appointments.rejected.reason_title'))
             ->line(__('notifications.appointments.rejected.reason_body', [
-                'reason' => $this->appointment->rejection_reason ?? __('mainBuilders.default.no_reason_provided')
+                'reason' => $this->appointment->rejection_reason ?? __('mainBuilders.default.no_reason_provided'),
             ]));
     }
 }

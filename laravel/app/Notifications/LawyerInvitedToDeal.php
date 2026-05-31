@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
 use App\Notifications\MailBuilders\LawyerInvitedToDealMailBuilder;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class LawyerInvitedToDeal extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public string $queue = 'notifications';
+
     public Deal $deal;
 
     public function __construct(Deal $deal)
@@ -33,12 +37,12 @@ class LawyerInvitedToDeal extends Notification implements ShouldQueue
     public function toDatabase($notifiable): array
     {
         return [
-            'type'  => __('notifications.lawyerInvitedToDeal.type'),
+            'type' => __('notifications.lawyerInvitedToDeal.type'),
             'title' => __('notifications.lawyerInvitedToDeal.title'),
-            'body'  => __('notifications.lawyerInvitedToDeal.body', [
+            'body' => __('notifications.lawyerInvitedToDeal.body', [
                 'deal' => $this->deal->name,
             ]),
-            'url'   => route('deals.show', $this->deal),
+            'url' => route('deals.show', $this->deal),
         ];
     }
 }

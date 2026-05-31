@@ -1,18 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\RealEstateListing;
 use App\Notifications\MailBuilders\OfferStatusUpdatedMailBuilder;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class OfferStatusUpdated extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public string $queue = 'notifications';
+
     public RealEstateListing $listing;
+
     public string $status;
 
     public function __construct(RealEstateListing $listing, string $status)
@@ -23,7 +29,7 @@ class OfferStatusUpdated extends Notification implements ShouldQueue
 
     public function via($notifiable): array
     {
-        return ['mail','database'];
+        return ['mail', 'database'];
     }
 
     public function toMail($notifiable): MailMessage
@@ -38,10 +44,10 @@ class OfferStatusUpdated extends Notification implements ShouldQueue
             : __('notifications.offerStatusUpdated.rejected', ['listing' => $this->listing->title]);
 
         return [
-            'type'  => __('notifications.offerStatusUpdated.type'),
+            'type' => __('notifications.offerStatusUpdated.type'),
             'title' => __('notifications.offerStatusUpdated.title'),
-            'body'  => $body,
-            'url'   => route('listings.show', $this->listing),
+            'body' => $body,
+            'url' => route('listings.show', $this->listing),
         ];
     }
 }

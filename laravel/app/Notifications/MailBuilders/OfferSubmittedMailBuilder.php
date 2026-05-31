@@ -5,13 +5,15 @@ namespace App\Notifications\MailBuilders;
 use App\Models\Offer;
 use App\Models\RealEstateListing;
 use App\Models\User;
-use Illuminate\Notifications\Messages\MailMessage;
 use App\Notifications\Contracts\MailableContentBuilderInterface;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class OfferSubmittedMailBuilder implements MailableContentBuilderInterface
 {
     protected RealEstateListing $listing;
+
     protected User $buyer;
+
     protected Offer $offer;
 
     public function __construct(RealEstateListing $listing, User $buyer, Offer $offer)
@@ -32,7 +34,7 @@ class OfferSubmittedMailBuilder implements MailableContentBuilderInterface
                 'listingTitle' => $this->listing->title,
             ]))
             ->line(__('mainBuilders.offerSubmitted.lines.1', [
-                'buyerName'  => $this->buyer->name,
+                'buyerName' => $this->buyer->name,
                 'buyerEmail' => $this->buyer->email,
             ]))
             ->line(__('mainBuilders.offerSubmitted.lines.2', [

@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Deal;
 use App\Notifications\MailBuilders\ConditionDayConfirmedMailBuilder;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ConditionDayConfirmed extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public string $queue = 'notifications';
 
     public Deal $deal;
 
@@ -20,11 +24,13 @@ class ConditionDayConfirmed extends Notification implements ShouldQueue
         $this->deal = $deal;
     }
 
-    public function via($notifiable): array {
+    public function via($notifiable): array
+    {
         return ['mail', 'database'];
     }
 
-    public function toMail($notifiable): MailMessage {
+    public function toMail($notifiable): MailMessage
+    {
         return (new ConditionDayConfirmedMailBuilder($this->deal))->build($notifiable);
     }
 
@@ -32,12 +38,12 @@ class ConditionDayConfirmed extends Notification implements ShouldQueue
     {
 
         return [
-            'type'  => __('notifications.conditionDayConfirmed.type'),
+            'type' => __('notifications.conditionDayConfirmed.type'),
             'title' => __('notifications.conditionDayConfirmed.title'),
-            'body'  => __('notifications.conditionDayConfirmed.body', [
-                'deal' => $this->deal->name
+            'body' => __('notifications.conditionDayConfirmed.body', [
+                'deal' => $this->deal->name,
             ]),
-            'url'   => route('deals.show', $this->deal),
-            ];
+            'url' => route('deals.show', $this->deal),
+        ];
     }
 }

@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications\Appointments;
 
 use App\Models\Appointment;
 use App\Notifications\MailBuilders\Appointments\AppointmentAcceptedMailBuilder;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class AppointmentAcceptedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public string $queue = 'notifications';
 
     protected Appointment $appointment;
 
@@ -28,18 +32,18 @@ class AppointmentAcceptedNotification extends Notification implements ShouldQueu
     public function toMail($notifiable): MailMessage
     {
         return app(AppointmentAcceptedMailBuilder::class, [
-            'appointment' => $this->appointment
+            'appointment' => $this->appointment,
         ])->build($notifiable);
     }
 
     public function toDatabase($notifiable): array
     {
         return [
-            'type'  => __('notifications.appointments.accepted.type'),
+            'type' => __('notifications.appointments.accepted.type'),
             'title' => __('notifications.appointments.accepted.title'),
-            'body'  => __('notifications.appointments.accepted.body', [
+            'body' => __('notifications.appointments.accepted.body', [
                 'listing' => $this->appointment->real_estate_listing_id,
-                'access_code' => $this->appointment->access_code
+                'access_code' => $this->appointment->access_code,
             ]),
         ];
     }

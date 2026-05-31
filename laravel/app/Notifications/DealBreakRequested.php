@@ -1,18 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications;
 
 use App\Models\Deal;
 use App\Notifications\MailBuilders\DealBreakRequestedMailBuilder;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
-
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class DealBreakRequested extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public string $queue = 'notifications';
 
     protected Deal $deal;
 
@@ -26,22 +29,20 @@ class DealBreakRequested extends Notification implements ShouldQueue
         return ['mail', 'database'];
     }
 
-
     public function toMail($notifiable): MailMessage
     {
-        return app(DealBreakRequestedMailBuilder::class, ['deal' => $this->deal, 'notifiable' => $notifiable,])->build($notifiable);
+        return app(DealBreakRequestedMailBuilder::class, ['deal' => $this->deal, 'notifiable' => $notifiable])->build($notifiable);
     }
 
     public function toDatabase($notifiable): array
     {
         return [
-            'type'  => __('notifications.dealBreakRequested.type'),
+            'type' => __('notifications.dealBreakRequested.type'),
             'title' => __('notifications.dealBreakRequested.title'),
-            'body'  => __('notifications.dealBreakRequested.body', [
+            'body' => __('notifications.dealBreakRequested.body', [
                 'deal' => $this->deal->name,
             ]),
-            'url'   => route('deals.show', $this->deal),
+            'url' => route('deals.show', $this->deal),
         ];
     }
-
 }
