@@ -15,8 +15,6 @@ class SecurityDepositSet extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public string $queue = 'notifications';
-
     protected Deal $deal;
 
     protected SecurityDepositSetMailBuilder $builder;
@@ -25,6 +23,7 @@ class SecurityDepositSet extends Notification implements ShouldQueue
     {
         $this->deal = $deal;
         $this->builder = new SecurityDepositSetMailBuilder($deal);
+        $this->onQueue('notifications');
     }
 
     public function via($notifiable): array

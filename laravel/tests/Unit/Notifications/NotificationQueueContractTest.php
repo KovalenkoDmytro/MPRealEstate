@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Models\Appointment;
+use App\Models\Deal;
+use App\Models\Offer;
+use App\Models\RealEstateListing;
+use App\Models\User;
 use App\Notifications\Appointments\AppointmentAcceptedNotification;
 use App\Notifications\Appointments\AppointmentCancelledByBuyerNotification;
 use App\Notifications\Appointments\AppointmentRejectedNotification;
@@ -24,7 +29,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 /**
  * All 18 notification classes must implement ShouldQueue, use Queueable,
- * and declare $queue = 'notifications' for async delivery on the correct queue.
+ * and target the `notifications` queue for async delivery.
  */
 describe('Notification queue contracts', function (): void {
 
@@ -51,6 +56,41 @@ describe('Notification queue contracts', function (): void {
         AppointmentRequestNotification::class,
     ];
 
+    $notificationFactories = [
+        ConditionDayConfirmed::class => fn () => new ConditionDayConfirmed(\Mockery::mock(Deal::class)),
+        ConditionDaySet::class => fn () => new ConditionDaySet(\Mockery::mock(Deal::class)),
+        DealBreakRequested::class => fn () => new DealBreakRequested(\Mockery::mock(Deal::class)),
+        DealBreakRequestedApproved::class => fn () => new DealBreakRequestedApproved(\Mockery::mock(Deal::class)),
+        DealBreakRequestedRejected::class => fn () => new DealBreakRequestedRejected(\Mockery::mock(Deal::class)),
+        DepositConfirmed::class => fn () => new DepositConfirmed(\Mockery::mock(Deal::class)),
+        DepositMarkedAsMade::class => fn () => new DepositMarkedAsMade(\Mockery::mock(Deal::class)),
+        LawyerInvitedToDeal::class => fn () => new LawyerInvitedToDeal(\Mockery::mock(Deal::class)),
+        OfferConfirmation::class => fn () => new OfferConfirmation(
+            \Mockery::mock(RealEstateListing::class),
+            \Mockery::mock(Offer::class),
+        ),
+        OfferStatusUpdated::class => fn () => new OfferStatusUpdated(
+            \Mockery::mock(RealEstateListing::class),
+            'accepted',
+        ),
+        OfferSubmitted::class => fn () => new OfferSubmitted(
+            \Mockery::mock(RealEstateListing::class),
+            \Mockery::mock(User::class),
+            \Mockery::mock(Offer::class),
+        ),
+        PossessionDayConfirmed::class => fn () => new PossessionDayConfirmed(\Mockery::mock(Deal::class)),
+        PossessionDaySet::class => fn () => new PossessionDaySet(\Mockery::mock(Deal::class)),
+        SecurityDepositSet::class => fn () => new SecurityDepositSet(\Mockery::mock(Deal::class)),
+        AppointmentAcceptedNotification::class => fn () => new AppointmentAcceptedNotification(\Mockery::mock(Appointment::class)),
+        AppointmentCancelledByBuyerNotification::class => fn () => new AppointmentCancelledByBuyerNotification(\Mockery::mock(Appointment::class)),
+        AppointmentRejectedNotification::class => fn () => new AppointmentRejectedNotification(\Mockery::mock(Appointment::class)),
+        AppointmentRequestNotification::class => fn () => new AppointmentRequestNotification(\Mockery::mock(Appointment::class)),
+    ];
+
+    afterEach(function (): void {
+        \Mockery::close();
+    });
+
     it('all notifications implement ShouldQueue', function () use ($notificationClasses): void {
         foreach ($notificationClasses as $class) {
             expect(is_a($class, ShouldQueue::class, true))
@@ -67,16 +107,12 @@ describe('Notification queue contracts', function (): void {
         }
     });
 
-    it('all notifications declare the notifications queue', function () use ($notificationClasses): void {
-        foreach ($notificationClasses as $class) {
-            $reflection = new ReflectionClass($class);
-            $defaults = $reflection->getDefaultProperties();
+    it('all notifications target the notifications queue', function () use ($notificationFactories): void {
+        foreach ($notificationFactories as $class => $factory) {
+            $notification = $factory();
 
-            expect($reflection->hasProperty('queue'))
-                ->toBeTrue("Expected {$class} to have a \$queue property");
-
-            expect($defaults['queue'] ?? null)
-                ->toBe('notifications', "Expected {$class}::\$queue to equal 'notifications'");
+            expect($notification->queue ?? null)
+                ->toBe('notifications', "Expected {$class} to target the 'notifications' queue");
         }
     });
 });

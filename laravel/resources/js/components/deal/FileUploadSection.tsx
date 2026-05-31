@@ -11,7 +11,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 
 import { fileService } from "@/services/fileService";
 import { filterFilesForUser } from "@/helpers/fileHelpers";
-import { PropertyDetail, DealFile } from "@/types";
+import { PropertyDetail, DealFile, UserRole } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotification } from "@/context/NotificationContext";
 import Button from "@/components/common/Button";
@@ -26,6 +26,9 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
     const theme = useTheme();
     const user = useAuth();
     const { showNotification } = useNotification();
+    const isBuyer = user.role === UserRole.Buyer;
+    const shouldShowOfferDocument =
+        isBuyer && deal.is_condition_day_confirmed && deal.is_security_deposit_confirmed;
 
     const [selectedFile, setSelectedFile] = useState<UploadFile | null>(null);
     const [uploading, setUploading] = useState(false);
@@ -116,6 +119,10 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
         }
     };
 
+    const handleGenerateOfferDocument = () => {
+        showNotification("Offer document generation will be connected in the next step.", "info");
+    };
+
     return (
         <Card variant="outlined" sx={cardSx}>
             <CardContent sx={{ p: 0 }}>
@@ -129,6 +136,16 @@ export default function FileUploadSection({ deal }: { deal: PropertyDetail }) {
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                     Upload documents related to this deal.
                 </Typography>
+
+                {shouldShowOfferDocument && (
+                    <Box sx={{ mt: 2, mb:2 }}>
+                        <Button
+                            text="Generate Offer Document"
+                            icon={<IconDocument />}
+                            onClick={handleGenerateOfferDocument}
+                        />
+                    </Box>
+                )}
 
                 <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                     <input

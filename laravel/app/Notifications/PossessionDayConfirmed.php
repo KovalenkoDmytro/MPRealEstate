@@ -15,8 +15,6 @@ class PossessionDayConfirmed extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public string $queue = 'notifications';
-
     protected PossessionDayConfirmedMailBuilder $builder;
 
     protected Deal $deal;
@@ -25,6 +23,7 @@ class PossessionDayConfirmed extends Notification implements ShouldQueue
     {
         $this->deal = $deal;
         $this->builder = new PossessionDayConfirmedMailBuilder($deal);
+        $this->onQueue('notifications');
     }
 
     public function via($notifiable): array

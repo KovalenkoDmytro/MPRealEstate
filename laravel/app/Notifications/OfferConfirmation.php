@@ -16,8 +16,6 @@ class OfferConfirmation extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public string $queue = 'notifications';
-
     public RealEstateListing $listing;
 
     public Offer $offer;
@@ -26,6 +24,7 @@ class OfferConfirmation extends Notification implements ShouldQueue
     {
         $this->listing = $listing;
         $this->offer = $offer;
+        $this->onQueue('notifications');
     }
 
     public function via($notifiable): array

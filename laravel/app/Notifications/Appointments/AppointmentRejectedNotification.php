@@ -15,13 +15,12 @@ class AppointmentRejectedNotification extends Notification implements ShouldQueu
 {
     use Queueable;
 
-    public string $queue = 'notifications';
-
     protected Appointment $appointment;
 
     public function __construct(Appointment $appointment)
     {
         $this->appointment = $appointment;
+        $this->onQueue('notifications');
     }
 
     public function via($notifiable): array

@@ -15,13 +15,12 @@ class DepositConfirmed extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public string $queue = 'notifications';
-
     public Deal $deal;
 
     public function __construct(Deal $deal)
     {
         $this->deal = $deal;
+        $this->onQueue('notifications');
     }
 
     public function via($notifiable): array
