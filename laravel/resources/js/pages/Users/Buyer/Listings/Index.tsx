@@ -13,6 +13,8 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import MapIcon from '@mui/icons-material/Map';
 import theme from "@/theme";
+import SectionCard from "@/design/SectionCard";
+import { radius } from "@/design/tokens";
 
 type Props = {
     listings: PaginatedResponse<RealEstateListing> & {
@@ -175,7 +177,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                             width: { xs: '100%', sm: 'auto' },
                             justifyContent: { xs: 'space-between', sm: 'flex-start' },
                             '& .MuiToggleButton-root': {
-                                border: '1px solid #e0e0e0',
+                                border: `1px solid ${theme.palette.border.main}`,
                                 color: 'text.secondary',
                                 flex: { xs: 1, sm: 'initial' },
                                 '&.Mui-selected': {
@@ -211,7 +213,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                             width: { xs: '100%', sm: 'auto' },
                             minHeight: 40,
                             px: 1.5,
-                            borderRadius: '999px',
+                            borderRadius: radius.pill,
                             border: `1px solid ${theme.palette.border.main}`,
                             backgroundColor: theme.palette.background.paper,
                         }}
@@ -229,13 +231,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
 
             {/* Collapsible Filter Section */}
             <Collapse in={showFilters} timeout="auto" unmountOnExit>
-                <Box sx={{
-                    p: { xs: 2, md: theme.shape.padding },
-                    background: `${theme.palette.background.white}`,
-                    borderRadius: theme.shape.borderRadius,
-                    mb: 3,
-                    border: `1px solid ${theme.palette.border.main}`,
-                }}>
+                <SectionCard sx={{ p: { xs: 2, md: theme.shape.padding }, mb: 3 }}>
                     <FilterForm
                         form={form}
                         updateFilter={updateFilter}
@@ -244,7 +240,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                         isSubmitting={isFiltering}
                         canReset={hasActiveFilters}
                     />
-                </Box>
+                </SectionCard>
             </Collapse>
 
             <Listings listings={listings}

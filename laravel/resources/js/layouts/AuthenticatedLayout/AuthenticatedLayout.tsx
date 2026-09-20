@@ -3,6 +3,7 @@ import { usePage, Head } from '@inertiajs/react';
 import { Box, CssBaseline, Container } from '@mui/material';
 import Sidebar from "@/layouts/AuthenticatedLayout/Sidebar";
 import TopBar from "@/layouts/AuthenticatedLayout/TopBar";
+import theme from "@/theme";
 
 
 const DRAWER_WIDTH = 280;
@@ -30,6 +31,8 @@ export default function AuthenticatedLayout({ header, subHeader, title, children
             sx={{
                 display: 'flex',
                 minHeight: '100vh',
+                background: theme.palette.background.gradient,
+                backgroundAttachment: 'fixed',
             }}>
             <CssBaseline />
 

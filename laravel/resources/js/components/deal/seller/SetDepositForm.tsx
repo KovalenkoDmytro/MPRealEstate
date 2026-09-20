@@ -2,18 +2,17 @@ import React, { useMemo, useState } from "react";
 import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
 import {
-    Card, CardContent, CardActions,
+    CardContent, CardActions,
     TextField, Typography, Stack,
 } from "@mui/material";
 import Button from "@/components/common/Button";
-import { useTheme } from "@mui/material/styles";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useNotification } from "@/context/NotificationContext";
 import IconContainer from "@/components/common/IconContainer";
+import SectionCard from "@/design/SectionCard";
 import IconDollar from "@/icons/IconDollar";
 
 export default function SetDepositForm({ deal }: { deal: Deal }) {
-    const theme = useTheme();
     const [depositAmount, setDepositAmount] = useState<number | "">("");
     const [confirmOpen, setConfirmOpen] = useState(false);
     const { setRedirectNotification } = useNotification();
@@ -34,16 +33,7 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
     };
 
     return (
-        <Card
-            variant="outlined"
-            sx={{
-                mt: 3,
-                p: theme.shape.padding,
-                backgroundColor: theme.palette.background.white,
-                borderRadius: theme.shape.borderRadius,
-                border: `1px solid ${theme.palette.border.main}`,
-            }}
-        >
+        <SectionCard sx={{ mt: 3 }}>
             <CardContent sx={{ p: 0 }}>
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
                     <IconContainer>
@@ -100,6 +90,6 @@ export default function SetDepositForm({ deal }: { deal: Deal }) {
                 confirmLabel="Confirm"
                 onConfirm={save}
             />
-        </Card>
+        </SectionCard>
     );
 }

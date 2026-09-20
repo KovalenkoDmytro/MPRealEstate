@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Deal } from "@/types";
 import { DealService } from "@/services/dealService";
 import {
-    Card, CardContent, CardActions,
+    CardContent, CardActions,
     TextField, Stack, Alert, Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -11,6 +11,7 @@ import { useNotification } from "@/context/NotificationContext";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import Button from "@/components/common/Button";
 import IconContainer from "@/components/common/IconContainer";
+import SectionCard from "@/design/SectionCard";
 import IconCanceled from "@/icons/IconCanceled";
 
 type Props = { deal: Deal };
@@ -116,16 +117,7 @@ export default function BreakDealSection({ deal }: Props) {
         ) : null;
 
     return (
-        <Card
-            variant="outlined"
-            sx={{
-                mt: 3,
-                p: theme.shape.padding,
-                backgroundColor: theme.palette.background.white,
-                borderRadius: theme.shape.borderRadius,
-                border: `1px solid ${theme.palette.border.main}`,
-            }}
-        >
+        <SectionCard sx={{ mt: 3 }}>
             <CardContent sx={{ p: 0 }}>
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
                     <IconContainer bgColor={theme.palette.error.main}>
@@ -219,6 +211,6 @@ export default function BreakDealSection({ deal }: Props) {
                 }
                 onConfirm={onConfirm}
             />
-        </Card>
+        </SectionCard>
     );
 }

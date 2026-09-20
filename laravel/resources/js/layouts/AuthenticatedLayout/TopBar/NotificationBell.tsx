@@ -2,7 +2,6 @@ import { Fragment, MouseEvent, useEffect, useState } from "react"
 import {
     IconButton,
     Badge,
-    Menu,
     Typography,
     Box,
     List,
@@ -16,6 +15,7 @@ import { api } from "@/axios";
 import { NotificationItem } from "@/types";
 import Button from "@/components/common/Button";
 import IconContainer from "@/components/common/IconContainer";
+import GlassPopover from "@/design/GlassPopover";
 
 type NotificationSummary = {
     unread_count: number;
@@ -94,43 +94,13 @@ const NotificationBell = () => {
             </IconContainer>
 
 
-            <Menu
+            <GlassPopover
                 anchorEl={anchorEl}
                 id="notification-menu"
                 open={open}
                 onClose={handleClose}
-                transformOrigin={{ horizontal: "right", vertical: "top" }}
-                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                slotProps={{
-                    paper: {
-                        elevation: 0,
-                        sx: {
-                            width: 400,
-                            maxHeight: 500,
-                            overflow: "visible",
-                            mt: 1.5,
-                            borderRadius: theme.shape.borderRadius,
-                            border: `1px solid ${theme.palette.border.main}`,
-                            backgroundColor: theme.palette.background.white,
-                            boxShadow: theme.shape.boxShadow,
-                            "&:before": {
-                                content: '""',
-                                display: "block",
-                                position: "absolute",
-                                top: 0,
-                                right: 28,
-                                width: 10,
-                                height: 10,
-                                bgcolor: theme.palette.background.white,
-                                border: `1px solid ${theme.palette.border.main}`,
-                                borderBottom: "none",
-                                borderRight: "none",
-                                transform: "translateY(-50%) rotate(45deg)",
-                                zIndex: 0,
-                            },
-                        },
-                    },
-                }}
+                width={400}
+                maxHeight={500}
             >
                 {/* Header */}
                 <Box
@@ -227,7 +197,7 @@ const NotificationBell = () => {
                         </Fragment>
                     ))}
                 </List>
-            </Menu>
+            </GlassPopover>
         </>
     );
 };

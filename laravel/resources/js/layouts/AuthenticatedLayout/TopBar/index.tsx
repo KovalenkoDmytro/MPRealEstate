@@ -22,7 +22,6 @@ export default function TopBar({ drawerWidth, handleDrawerToggle, header, subHea
             sx={{
                 width: { md: `calc(100% - ${drawerWidth}px)` },
                 ml: { md: `${drawerWidth}px` },
-                bgcolor: 'background.default',
                 borderBottom: '1px solid',
                 borderColor: 'divider',
                 color: theme.palette.text.primary,

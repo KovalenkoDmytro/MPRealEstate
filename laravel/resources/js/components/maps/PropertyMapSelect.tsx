@@ -4,6 +4,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useTheme, Box, CircularProgress, Typography, IconButton } from '@mui/material';
 import { Fullscreen, FullscreenExit, ChevronLeft, ChevronRight } from '@mui/icons-material';
+import Loading from '@/design/Loading';
 
 // Define a lightweight type that matches our optimized Laravel endpoint
 export type MapListing = {
@@ -391,26 +392,7 @@ export default function PropertyMapSelector({ listings }: PropertyMapSelectorPro
             )}
 
             {/* Loading Overlay */}
-            {!isMapLoaded && (
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        inset: 0,
-                        zIndex: 10,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        bgcolor: 'rgba(255,255,255,0.7)',
-                        backdropFilter: 'blur(2px)'
-                    }}
-                >
-                    <CircularProgress color="primary" sx={{ mb: 2 }} />
-                    <Typography variant="body2" fontWeight={600} color="text.secondary">
-                        Loading map...
-                    </Typography>
-                </Box>
-            )}
+            {!isMapLoaded && <Loading overlay label="Loading map..." />}
 
             <div ref={mapContainerRef} style={{ width: '100%', height: '100%' }} />
 

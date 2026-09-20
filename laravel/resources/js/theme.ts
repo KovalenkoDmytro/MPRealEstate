@@ -1,29 +1,52 @@
 import { createTheme } from '@mui/material/styles';
+import tokens from './design/tokens';
 
+const { primary, neutral, accent, success, warning, error, info, radius, blur, glassFill, glassFillDark, rim, elevation, motion, typography } = tokens;
+
+// Legacy key names are kept so existing call sites (theme.colors.*) keep working;
+// values now resolve to the "Liquid Glass" token ramps in design/tokens.ts.
 const colors = {
-    maroon: '#572a4d',
-    charcoal: '#2c233e',
-    slate: '#6A7282',
-    tan: '#d07669',
-    white: '#ffffff',
-    cloud: '#F9FAFB',
-    border: '#E5E7EB',
-    rosyPink: '#CB9A9F',
-    success: '#00C851',
-    error: '#EF4444',
-    warning: '#FFAB00',
-    info: '#3B82F6',
-    gradient: 'linear-gradient(135deg, #572a4d08 0%, #ffffff 60%, #2c233e10 100%)'
+    maroon: primary[600],
+    charcoal: neutral[800],
+    slate: neutral[600],
+    tan: accent[400],
+    white: neutral[0],
+    cloud: neutral[50],
+    border: neutral[200],
+    rosyPink: accent[300],
+    success: success[600],
+    error: error[600],
+    warning: warning[600],
+    info: info[600],
+    gradient: `linear-gradient(135deg, ${primary[50]} 0%, ${neutral[0]} 60%, ${accent[50]} 100%)`,
 };
 
 type AppColors = typeof colors;
 
+type AppGlass = {
+    blur: typeof blur;
+    fill: typeof glassFill & { dark: typeof glassFillDark };
+    rim: string;
+    elevation: typeof elevation;
+    motion: typeof motion;
+};
+
+const glass: AppGlass = {
+    blur,
+    fill: { ...glassFill, dark: glassFillDark },
+    rim,
+    elevation,
+    motion,
+};
+
 declare module '@mui/material/styles' {
     interface Theme {
         colors: AppColors;
+        glass: AppGlass;
     }
     interface ThemeOptions {
         colors?: AppColors;
+        glass?: AppGlass;
     }
     interface TypeBackground {
         sidebar?: string;
@@ -61,6 +84,20 @@ declare module '@mui/material/styles' {
 
 const theme = createTheme({
     colors,
+    glass,
+    typography: {
+        fontFamily: typography.fontFamily,
+        h1: { fontSize: typography.scale['5xl'], fontWeight: 700 },
+        h2: { fontSize: typography.scale['4xl'], fontWeight: 700 },
+        h3: { fontSize: typography.scale['3xl'], fontWeight: 700 },
+        h4: { fontSize: typography.scale['2xl'], fontWeight: 600 },
+        h5: { fontSize: typography.scale.xl, fontWeight: 600 },
+        h6: { fontSize: typography.scale.lg, fontWeight: 600 },
+        body1: { fontSize: typography.scale.body },
+        body2: { fontSize: typography.scale.sm },
+        caption: { fontSize: typography.scale.xs },
+        button: { fontSize: typography.scale.sm, fontWeight: 600, textTransform: 'none' },
+    },
     palette: {
         primary: {
             main: colors.maroon,
@@ -80,20 +117,20 @@ const theme = createTheme({
         background: {
             default: colors.cloud,
             paper: colors.white,
-            sidebar: colors.charcoal,
+            sidebar: glass.fill.dark.level2,
             white: colors.white,
             gradient: colors.gradient,
         },
         success: {
             main: colors.success,
-            contrastText: '#ffffff',
+            contrastText: neutral[0],
         },
         error: {
             main: colors.error,
         },
         warning: {
             main: colors.warning,
-            contrastText: '#ffffff',
+            contrastText: neutral[0],
         },
         info: {
             main: colors.info,
@@ -101,11 +138,97 @@ const theme = createTheme({
 
     },
     shape: {
-        borderRadius: '16px',
+        borderRadius: radius.lg,
         padding: '25px',
-        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.10)',
+        boxShadow: tokens.elevation.level2,
     },
     components: {
+        // --- GLASS SURFACES (Paper/Card/Dialog/Menu/Popover/AppBar) ---
+        // Emotion-generated styleOverrides bypass PostCSS/autoprefixer, so every
+        // backdropFilter here is paired by hand with WebkitBackdropFilter for Safari.
+        MuiPaper: {
+            defaultProps: { elevation: 0 },
+            styleOverrides: {
+                root: {
+                    backgroundImage: 'none',
+                    backgroundColor: glassFill.level2,
+                    backdropFilter: blur.md,
+                    WebkitBackdropFilter: blur.md,
+                    borderRadius: radius.lg,
+                    boxShadow: elevation.level2,
+                    border: '1px solid rgba(255, 255, 255, 0.35)',
+                },
+            },
+        },
+        MuiCard: {
+            styleOverrides: {
+                root: {
+                    backgroundImage: 'none',
+                    backgroundColor: glassFill.level1,
+                    backdropFilter: blur.sm,
+                    WebkitBackdropFilter: blur.sm,
+                    borderRadius: radius.lg,
+                    boxShadow: elevation.level1,
+                },
+            },
+        },
+        MuiDialog: {
+            styleOverrides: {
+                paper: {
+                    backgroundImage: 'none',
+                    backgroundColor: glassFill.level3,
+                    backdropFilter: blur.lg,
+                    WebkitBackdropFilter: blur.lg,
+                    borderRadius: radius.xl,
+                    // Dialog's paper is itself a Paper, so the MuiPaper boxShadow/border
+                    // above would otherwise stack with this one — reset before reapplying.
+                    boxShadow: elevation.level3,
+                    border: 'none',
+                },
+            },
+        },
+        MuiMenu: {
+            styleOverrides: {
+                paper: {
+                    backgroundImage: 'none',
+                    backgroundColor: glassFill.level2,
+                    backdropFilter: blur.md,
+                    WebkitBackdropFilter: blur.md,
+                    borderRadius: radius.lg,
+                    boxShadow: elevation.level2,
+                },
+            },
+        },
+        MuiPopover: {
+            styleOverrides: {
+                paper: {
+                    backgroundImage: 'none',
+                    backgroundColor: glassFill.level2,
+                    backdropFilter: blur.md,
+                    WebkitBackdropFilter: blur.md,
+                    borderRadius: radius.lg,
+                    boxShadow: elevation.level2,
+                },
+            },
+        },
+        MuiAppBar: {
+            styleOverrides: {
+                root: {
+                    backgroundImage: 'none',
+                    backgroundColor: glassFill.level1,
+                    backdropFilter: blur.md,
+                    WebkitBackdropFilter: blur.md,
+                },
+            },
+        },
+        MuiChip: {
+            styleOverrides: {
+                root: {
+                    fontWeight: 600,
+                    borderRadius: radius.pill,
+                },
+            },
+        },
         // --- GLOBAL TEXTFIELD / INPUT OVERRIDES ---
         MuiTextField: {
             defaultProps: {
@@ -163,7 +286,7 @@ const theme = createTheme({
             styleOverrides: {
                 root: {
                     textTransform: 'none',
-                    borderRadius: '12px',
+                    borderRadius: radius.md,
                     padding: '12px 24px',
                     fontWeight: 600,
                 },
@@ -196,16 +319,16 @@ const theme = createTheme({
         MuiInputLabel: {
             styleOverrides: {
                 root: {
-                    color: '#64748B', // subtle gray for default state
+                    color: neutral[500], // subtle gray for default state
                     fontSize: '0.9rem',
                     // When the input is focused
                     '&.Mui-focused': {
-                        color: '#572A4D', // use primary color
+                        color: primary[600], // use primary color
                         fontWeight: 500,
                     },
                     // When there is an error
                     '&.Mui-error': {
-                        color: '#DC2626', // red
+                        color: error[600],
                     },
                 },
             },
@@ -215,30 +338,30 @@ const theme = createTheme({
         MuiOutlinedInput: {
             styleOverrides: {
                 root: {
-                    borderRadius: 8, // Match your app's border radius
-                    backgroundColor: '#FFFFFF', // Clean white background
+                    borderRadius: radius.md, // Match your app's border radius
+                    backgroundColor: neutral[0], // Clean white background
                     transition: 'all 0.2s ease-in-out',
 
                     // Default border
                     '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#E2E8F0',
+                        borderColor: neutral[200],
                         borderWidth: '1px',
                     },
 
                     // Hover state border
                     '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#CBD5E1',
+                        borderColor: neutral[300],
                     },
 
                     // Focused state border
                     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#572A4D', // primary color
+                        borderColor: primary[600], // primary color
                         borderWidth: '2px', // Make it pop
                     },
 
                     // Error state border
                     '&.Mui-error .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#DC2626', // Red border for errors
+                        borderColor: error[600], // Red border for errors
                     },
                 },
                 // Adjust padding for a slightly larger, modern click target
@@ -268,7 +391,7 @@ const theme = createTheme({
                     fontSize: '0.75rem',
                     fontWeight: 500,
                     '&.Mui-error': {
-                        color: '#DC2626',
+                        color: error[600],
                     },
                 },
             },
@@ -278,15 +401,15 @@ const theme = createTheme({
         MuiMenuItem: {
             styleOverrides: {
                 root: {
-                    borderRadius: 6,
+                    borderRadius: radius.xs,
                     margin: '4px 8px', // Float the items slightly off the edges
                     padding: '8px 16px',
                     '&.Mui-selected': {
-                        backgroundColor: '#572A4D1A', // Primary with opacity
-                        color: '#572A4D',
+                        backgroundColor: primary[50], // Primary with opacity
+                        color: primary[600],
                         fontWeight: 600,
                         '&:hover': {
-                            backgroundColor: '#572A4D2A',
+                            backgroundColor: primary[100],
                         },
                     },
                 },

@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Thumbs } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import Badge from "@/components/common/Badge";
+import SectionCard from "@/design/SectionCard";
 import { formatCurrency } from "@/helpers/priceHelper";
 import theme from "@/theme";
 import "swiper/css";
@@ -23,16 +24,7 @@ export const DesktopGallery: React.FC<DesktopGalleryProps> = ({ images, price, o
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
-        <Box
-            sx={{
-                width: "100%",
-                position: "relative",
-                border: `1px solid ${theme.palette.border.main}`,
-                borderRadius: theme.shape.borderRadius,
-                backgroundColor: theme.palette.background.white,
-                overflow: "hidden",
-            }}
-        >
+        <SectionCard sx={{ width: "100%", position: "relative", p: 0, overflow: "hidden" }}>
             <Box
                 sx={{
                     height: { sm: 420, md: 550 },
@@ -134,6 +126,6 @@ export const DesktopGallery: React.FC<DesktopGalleryProps> = ({ images, price, o
                     ))}
                 </Swiper>
             </Box>
-        </Box>
+        </SectionCard>
     );
 };

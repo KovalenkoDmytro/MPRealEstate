@@ -3,7 +3,6 @@ import { DealService } from "@/services/dealService";
 import { Deal } from "@/types";
 import {
     Box,
-    Card,
     CardActions,
     CardContent,
     Checkbox,
@@ -11,7 +10,6 @@ import {
     Stack,
     Typography,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
@@ -20,11 +18,11 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import DealStatusBanner from "@/components/deal/DealStatusBanner";
 import Button from "@/components/common/Button";
 import IconContainer from "@/components/common/IconContainer";
+import SectionCard from "@/design/SectionCard";
 import IconDollar from "@/icons/IconDollar";
 import { useNotification } from "@/context/NotificationContext";
 
 export default function DepositSection({ deal }: { deal: Deal }) {
-    const theme = useTheme();
     const { showNotification, setRedirectNotification } = useNotification();
 
     const [confirmed, setConfirmed] = useState(false);
@@ -57,16 +55,7 @@ export default function DepositSection({ deal }: { deal: Deal }) {
             <DealStatusBanner deal={deal} role="buyer" feature="deposit" />
 
             {!deal.is_security_deposit_made && (
-                <Card
-                    variant="outlined"
-                    sx={{
-                        mt: 3,
-                        p: theme.shape.padding,
-                        backgroundColor: theme.palette.background.white,
-                        borderRadius: theme.shape.borderRadius,
-                        border: `1px solid ${theme.palette.border.main}`,
-                    }}
-                >
+                <SectionCard sx={{ mt: 3 }}>
                     <CardContent sx={{ p: 0 }}>
                         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
                             <IconContainer>
@@ -108,7 +97,7 @@ export default function DepositSection({ deal }: { deal: Deal }) {
                             onClick={() => setConfirmOpen(true)}
                         />
                     </CardActions>
-                </Card>
+                </SectionCard>
             )}
 
             <ConfirmDialog

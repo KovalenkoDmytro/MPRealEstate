@@ -3,6 +3,7 @@ import ApplicationLogo from "@/components/ApplicationLogo";
 import { User, UserRole } from "@/types";
 import {
     Box,
+    Button as MuiButton,
     Card,
     CardContent,
     Chip,
@@ -20,6 +21,7 @@ import GavelOutlinedIcon from "@mui/icons-material/GavelOutlined";
 import MonitorOutlinedIcon from "@mui/icons-material/MonitorOutlined";
 import VerifiedUserOutlinedIcon from "@mui/icons-material/VerifiedUserOutlined";
 import theme from "@/theme";
+import { radius } from "@/design/tokens";
 
 type WelcomeStats = {
     users: number;
@@ -42,16 +44,14 @@ type ActionLink = {
     variant: "primary" | "secondary" | "outline";
 };
 
-const actionLinkStyle = {
-    width: "auto",
-    textDecoration: "none",
-} as const;
+const ACTION_VARIANT_MAP: Record<ActionLink["variant"], { variant: "contained" | "outlined"; color: "primary" | "secondary" }> = {
+    primary: { variant: "contained", color: "primary" },
+    secondary: { variant: "contained", color: "secondary" },
+    outline: { variant: "outlined", color: "primary" },
+};
 
-const statCardSx = {
-    borderRadius: theme.shape.borderRadius,
-    border: `1px solid ${theme.palette.border.main}`,
-    boxShadow: theme.shape.boxShadow,
-    height: "100%",
+const nestedCardSx = {
+    borderRadius: radius.md,
 } as const;
 
 function formatNumber(value: number): string {
@@ -91,14 +91,11 @@ function getRoleAction(user: User): ActionLink {
 }
 
 function renderActionLink(action: ActionLink) {
+    const { variant, color } = ACTION_VARIANT_MAP[action.variant];
     return (
-        <Link
-            href={action.href}
-            className={`btn btn-${action.variant}`}
-            style={actionLinkStyle}
-        >
+        <MuiButton LinkComponent={Link} href={action.href} variant={variant} color={color}>
             {action.label}
-        </Link>
+        </MuiButton>
     );
 }
 
@@ -120,18 +117,20 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
             <Box
                 sx={{
                     minHeight: "100dvh",
-                    background: "linear-gradient(180deg, #F9FAFB 0%, #F3F4F6 100%)",
+                    background: theme.palette.background.gradient,
+                    backgroundAttachment: "fixed",
                     py: { xs: 3, md: 6 },
                 }}
             >
                 <Container maxWidth="lg">
                     <Box
                         sx={{
-                            borderRadius: "28px",
+                            borderRadius: radius.xl,
                             overflow: "hidden",
-                            border: `1px solid ${theme.palette.border.main}`,
-                            bgcolor: theme.palette.background.white,
-                            boxShadow: theme.shape.boxShadow,
+                            bgcolor: theme.glass.fill.level3,
+                            backdropFilter: theme.glass.blur.lg,
+                            WebkitBackdropFilter: theme.glass.blur.lg,
+                            boxShadow: theme.glass.elevation.level3,
                         }}
                     >
                         <Box
@@ -142,8 +141,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                                 alignItems: "center",
                                 justifyContent: "space-between",
                                 borderBottom: `1px solid ${theme.palette.border.main}`,
-                                background:
-                                    "linear-gradient(90deg, rgba(87,42,77,0.06) 0%, rgba(208,118,105,0.08) 100%)",
+                                background: "linear-gradient(90deg, rgba(59, 91, 219, 0.06) 0%, rgba(206, 109, 61, 0.08) 100%)",
                             }}
                         >
                             <Stack direction="row" spacing={1.5} alignItems="center">
@@ -151,7 +149,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                                     sx={{
                                         width: 42,
                                         height: 42,
-                                        borderRadius: "12px",
+                                        borderRadius: radius.sm,
                                         backgroundColor: theme.palette.primary.main,
                                         display: "flex",
                                         alignItems: "center",
@@ -277,7 +275,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                                 </Grid>
 
                                 <Grid size={{ xs: 12, md: 5 }}>
-                                    <Card sx={statCardSx}>
+                                    <Card sx={{ height: "100%" }}>
                                         <CardContent sx={{ p: 3 }}>
                                             <Stack spacing={2.2}>
                                                 <Typography variant="h6" fontWeight={800}>
@@ -285,7 +283,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                                                 </Typography>
 
                                                 <Stack spacing={1.25}>
-                                                    <Card variant="outlined" sx={{ borderRadius: "14px", borderColor: theme.palette.border.main }}>
+                                                    <Card variant="outlined" sx={nestedCardSx}>
                                                         <CardContent sx={{ py: 1.4, "&:last-child": { pb: 1.4 } }}>
                                                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                                                 <Stack direction="row" alignItems="center" spacing={1.2}>
@@ -299,7 +297,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                                                         </CardContent>
                                                     </Card>
 
-                                                    <Card variant="outlined" sx={{ borderRadius: "14px", borderColor: theme.palette.border.main }}>
+                                                    <Card variant="outlined" sx={nestedCardSx}>
                                                         <CardContent sx={{ py: 1.4, "&:last-child": { pb: 1.4 } }}>
                                                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                                                 <Stack direction="row" alignItems="center" spacing={1.2}>
@@ -313,7 +311,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                                                         </CardContent>
                                                     </Card>
 
-                                                    <Card variant="outlined" sx={{ borderRadius: "14px", borderColor: theme.palette.border.main }}>
+                                                    <Card variant="outlined" sx={nestedCardSx}>
                                                         <CardContent sx={{ py: 1.4, "&:last-child": { pb: 1.4 } }}>
                                                             <Stack direction="row" alignItems="center" justifyContent="space-between">
                                                                 <Stack direction="row" alignItems="center" spacing={1.2}>
@@ -342,14 +340,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
 
                             <Grid container spacing={2} sx={{ mt: { xs: 2, md: 3 } }}>
                                 <Grid size={{ xs: 12, md: 6 }}>
-                                    <Card
-                                        variant="outlined"
-                                        sx={{
-                                            borderRadius: "18px",
-                                            borderColor: theme.palette.border.main,
-                                            height: "100%",
-                                        }}
-                                    >
+                                    <Card variant="outlined" sx={{ height: "100%" }}>
                                         <CardContent sx={{ p: 3 }}>
                                             <Stack spacing={1.2}>
                                                 <Stack direction="row" spacing={1.2} alignItems="center">
@@ -385,14 +376,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                                 </Grid>
 
                                 <Grid size={{ xs: 12, md: 6 }}>
-                                    <Card
-                                        variant="outlined"
-                                        sx={{
-                                            borderRadius: "18px",
-                                            borderColor: theme.palette.border.main,
-                                            height: "100%",
-                                        }}
-                                    >
+                                    <Card variant="outlined" sx={{ height: "100%" }}>
                                         <CardContent sx={{ p: 3 }}>
                                             <Stack spacing={1.2}>
                                                 <Stack direction="row" spacing={1.2} alignItems="center">
@@ -432,10 +416,7 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                                 variant="outlined"
                                 sx={{
                                     mt: 2,
-                                    borderRadius: "18px",
-                                    borderColor: theme.palette.border.main,
-                                    background:
-                                        "linear-gradient(95deg, rgba(87,42,77,0.04) 0%, rgba(44,35,62,0.04) 65%, rgba(208,118,105,0.08) 100%)",
+                                    background: "linear-gradient(95deg, rgba(59, 91, 219, 0.04) 0%, rgba(43, 48, 61, 0.04) 65%, rgba(206, 109, 61, 0.08) 100%)",
                                 }}
                             >
                                 <CardContent sx={{ p: 3 }}>
@@ -500,15 +481,8 @@ export default function Welcome({ auth, canLogin, canRegister, stats }: WelcomeP
                                 >
                                     Try demo
                                 </Link>
-                                {!currentUser && canRegister && (
-                                    <Link
-                                        href={route("register")}
-                                        className="btn btn-primary"
-                                        style={actionLinkStyle}
-                                    >
-                                        Join now
-                                    </Link>
-                                )}
+                                {!currentUser && canRegister &&
+                                    renderActionLink({ label: "Join now", href: route("register"), variant: "primary" })}
                             </Stack>
                         </Box>
                     </Box>

@@ -1,22 +1,40 @@
+import { Chip } from '@mui/material';
+import { primary, accent, neutral, success, warning, error, radius } from '@/design/tokens';
+
 export type BadgeProps = {
     version?: 'primary' | 'notification' | 'accent' | 'neutral' | 'success' | 'warning' | 'error';
     text: string;
     size?: 'default' | 'small';
 };
 
-export default function Badge({
-                                  version = 'primary',
-                                  text,
-                                  size = 'default'
-                              }: BadgeProps) {
+const VARIANT_STYLES: Record<NonNullable<BadgeProps['version']>, { bg: string; color: string }> = {
+    primary: { bg: primary[600], color: '#fff' },
+    notification: { bg: accent[100], color: accent[700] },
+    accent: { bg: accent[50], color: accent[700] },
+    neutral: { bg: neutral[100], color: neutral[700] },
+    success: { bg: success[50], color: success[700] },
+    warning: { bg: warning[50], color: warning[700] },
+    error: { bg: error[50], color: error[700] },
+};
 
-    // Append size class if small
-    const sizeClass = size === 'small' ? 'badge-small' : '';
-    const classes = `badge badge-${version} ${sizeClass}`;
+export default function Badge({ version = 'primary', text, size = 'default' }: BadgeProps) {
+    const { bg, color } = VARIANT_STYLES[version];
 
     return (
-        <div className={classes}>
-            {text}
-        </div>
-    )
+        <Chip
+            label={text}
+            size={size === 'small' ? 'small' : 'medium'}
+            sx={{
+                bgcolor: bg,
+                color,
+                fontWeight: 600,
+                borderRadius: radius.pill,
+                ...(size === 'small' && {
+                    fontSize: 11,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                }),
+            }}
+        />
+    );
 }

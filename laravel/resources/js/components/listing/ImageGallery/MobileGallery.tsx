@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
 import Badge from "@/components/common/Badge";
+import SectionCard from "@/design/SectionCard";
 import { formatCurrency } from "@/helpers/priceHelper";
 import theme from "@/theme";
 
@@ -14,16 +15,7 @@ export const MobileGallery: React.FC<MobileGalleryProps> = ({ images, price, onO
     const [activeIndex, setActiveIndex] = useState(0);
 
     return (
-        <Box
-            sx={{
-                width: "100%",
-                position: "relative",
-                border: `1px solid ${theme.palette.border.main}`,
-                borderRadius: theme.shape.borderRadius,
-                backgroundColor: theme.palette.background.white,
-                overflow: "hidden",
-            }}
-        >
+        <SectionCard sx={{ width: "100%", position: "relative", p: 0, overflow: "hidden" }}>
             <Box
                 onClick={() => onOpenLightbox(activeIndex)}
                 sx={{
@@ -94,6 +86,6 @@ export const MobileGallery: React.FC<MobileGalleryProps> = ({ images, price, onO
                     </Box>
                 ))}
             </Box>
-        </Box>
+        </SectionCard>
     );
 };

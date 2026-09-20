@@ -1,7 +1,8 @@
 import { Box, Typography, Grid, Stack } from '@mui/material';
 import { OfferStats } from "@/types/models";
-import theme from "@/theme";
 import StatCard from "@/components/common/StatCard";
+import SectionCard from "@/design/SectionCard";
+import { statTones } from "@/design/statTones";
 import IconDollar from "@/icons/IconDollar";
 import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
@@ -21,41 +22,30 @@ export default function OfferPerformance({ stats, view = 'row' }: OfferPerforman
             label: "Pending Response",
             value: stats.pending,
             icon: <IconClock/>,
-            iconBgColor: "#D07669",
-            background: "linear-gradient(135deg, rgba(208, 118, 105, 0.10) 0%, rgba(208, 118, 105, 0.05) 100%)"
+            ...statTones.warm,
         },
         {
             label: "Accepted",
             value: stats.accepted,
             icon: <IconConfirm/>,
-            iconBgColor: theme.palette.primary.main,
-            background: "linear-gradient(135deg, rgba(87, 42, 77, 0.10) 0%, rgba(87, 42, 77, 0.05) 100%)"
+            ...statTones.primary,
         },
         {
             label: "Rejected",
             value: stats.rejected,
             icon: <IconClose/>,
-            iconBgColor: "#4A5565",
-            background: "linear-gradient(135deg, #F3F4F6 0%, #F9FAFB 100%)"
+            ...statTones.neutral,
         },
         {
             label: "Total Received",
             value: stats.total,
             icon: <IconInbox/>,
-            iconBgColor: "#CB9A9F",
-            background: "linear-gradient(90deg, rgba(203, 154, 159, 0.10) 0%, rgba(203, 154, 159, 0.05) 100%)"
+            ...statTones.accent,
         }
     ];
 
     return (
-        <Box
-            sx={{
-                p: theme.shape.padding || 3,
-                backgroundColor: theme.palette.background.white,
-                borderRadius: theme.shape.borderRadius,
-                border: `1px solid ${theme.palette.border.main}`,
-            }}
-        >
+        <SectionCard>
 
             <Stack gap={1.5} mb={4}>
                 <Box display="flex" alignItems="center" gap={1.5}>
@@ -88,6 +78,6 @@ export default function OfferPerformance({ stats, view = 'row' }: OfferPerforman
                     ))}
                 </Grid>
             )}
-        </Box>
+        </SectionCard>
     );
 }

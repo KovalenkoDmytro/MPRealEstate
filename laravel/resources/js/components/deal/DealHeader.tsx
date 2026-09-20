@@ -1,23 +1,15 @@
 import { Deal } from "@/types";
-import { Box, Typography, Stack, Paper } from "@mui/material";
+import { Box, Typography, Stack } from "@mui/material";
 import theme from "@/theme";
 import IconDollar from "@/icons/IconDollar";
 import IconContainer from "@/components/common/IconContainer";
+import SectionCard from "@/design/SectionCard";
 import IconDocument from "@/icons/IconDocument";
 
 
 export default function DealHeader({ deal }: { deal: Deal }) {
     return (
-        <Paper
-            elevation={0}
-            sx={{
-                p: theme.shape.padding,
-                borderRadius: theme.shape.borderRadius,
-                bgcolor: theme.palette.background.white,
-                border: `1px solid ${theme.palette.border.main}`,
-                mb: 3,
-            }}
-        >
+        <SectionCard sx={{ mb: 3 }}>
             {/* Deal Title */}
             <Typography
                 variant="h5"
@@ -73,6 +65,6 @@ export default function DealHeader({ deal }: { deal: Deal }) {
                     </Box>
                 </Stack>
             </Box>
-        </Paper>
+        </SectionCard>
     );
 }

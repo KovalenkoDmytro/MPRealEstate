@@ -1,18 +1,17 @@
 import { useMemo, useState } from "react";
 import { Deal, User } from "@/types";
 import { DealService } from "@/services/dealService";
-import { Card, CardContent, CardActions, Typography, TextField, Stack } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { CardContent, CardActions, Typography, TextField, Stack } from "@mui/material";
 import { useAuth } from "@/hooks/useAuth";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useNotification } from "@/context/NotificationContext";
 import Button from "@/components/common/Button";
 import IconContainer from "@/components/common/IconContainer";
+import SectionCard from "@/design/SectionCard";
 import IconEnvelope from "@/icons/IconEnvelope";
 import IconUser from "@/icons/IconUser";
 
 export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: User }) {
-    const theme = useTheme();
     const [lawyerCode, setLawyerCode] = useState("");
     const [confirmOpen, setConfirmOpen] = useState(false);
     const user = useAuth();
@@ -32,17 +31,9 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
         window.location.reload();
     };
 
-    const cardSx = {
-        mt: 3,
-        p: theme.shape.padding,
-        backgroundColor: theme.palette.background.white,
-        borderRadius: theme.shape.borderRadius,
-        border: `1px solid ${theme.palette.border.main}`,
-    };
-
     if (roleKey && lawyer?.[roleKey]) {
         return (
-            <Card variant="outlined" sx={cardSx}>
+            <SectionCard sx={{ mt: 3 }}>
                 <CardContent sx={{ p: 0, mb:0 }}>
                     <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2 }}>
                         <IconContainer>
@@ -63,12 +54,12 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
                         </Typography>
                     </Stack>
                 </CardContent>
-            </Card>
+            </SectionCard>
         );
     }
 
     return (
-        <Card variant="outlined" sx={cardSx}>
+        <SectionCard sx={{ mt: 3 }}>
             <CardContent sx={{ p: 0 }}>
                 <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
                     <IconContainer>
@@ -119,6 +110,6 @@ export default function LawyerInvite({ deal, lawyer }: { deal: Deal; lawyer?: Us
                 confirmLabel="Send Invite"
                 onConfirm={sendInvite}
             />
-        </Card>
+        </SectionCard>
     );
 }

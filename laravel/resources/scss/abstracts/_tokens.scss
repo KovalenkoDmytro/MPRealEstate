@@ -1,0 +1,145 @@
+// Design token source of truth — CSS custom properties.
+// Mirrors resources/js/design/tokens.ts 1:1. Change values there first, then here.
+// Emitted as custom properties so runtime (non-SCSS-compiled) consumers can read them too.
+
+:root {
+    // --- Primary ("Iris") ---
+    --color-primary-50: #EEF1FD;
+    --color-primary-100: #DDE3FB;
+    --color-primary-200: #B9C4F6;
+    --color-primary-300: #93A3F0;
+    --color-primary-400: #6C82E8;
+    --color-primary-500: #4C64DF;
+    --color-primary-600: #3B5BDB;
+    --color-primary-700: #2F47B0;
+    --color-primary-800: #253884;
+    --color-primary-900: #1C2A63;
+
+    // --- Neutral ("Slate") ---
+    --color-neutral-0: #FFFFFF;
+    --color-neutral-50: #F8F9FC;
+    --color-neutral-100: #F1F3F8;
+    --color-neutral-200: #E4E7EF;
+    --color-neutral-300: #D2D6E0;
+    --color-neutral-400: #A9AFBF;
+    --color-neutral-500: #7D8494;
+    --color-neutral-600: #5B6272;
+    --color-neutral-700: #434A5A;
+    --color-neutral-800: #2B303D;
+    --color-neutral-900: #171A22;
+
+    // --- Accent ("Terracotta") ---
+    --color-accent-50: #FBEEE7;
+    --color-accent-100: #F6D9C8;
+    --color-accent-200: #ECB595;
+    --color-accent-300: #E08F62;
+    --color-accent-400: #CE6D3D;
+    --color-accent-500: #BD5C30;
+    --color-accent-600: #B34F2A;
+    --color-accent-700: #8F3E22;
+    --color-accent-800: #6C2F1A;
+    --color-accent-900: #4A2012;
+
+    // --- Semantic ramps ---
+    --color-success-50: #E7F6EE;
+    --color-success-100: #C7EBD8;
+    --color-success-500: #22A06B;
+    --color-success-600: #197A4E;
+    --color-success-700: #136540;
+
+    --color-warning-50: #FDF3E7;
+    --color-warning-100: #F9E0BF;
+    --color-warning-500: #C9740A;
+    --color-warning-600: #B45309;
+    --color-warning-700: #8F4207;
+
+    --color-error-50: #FBEAE9;
+    --color-error-100: #F5CBC8;
+    --color-error-500: #D5352B;
+    --color-error-600: #C6291F;
+    --color-error-700: #9E2019;
+
+    --color-info-50: #E8F2FA;
+    --color-info-100: #C6E2F4;
+    --color-info-500: #1481C4;
+    --color-info-600: #0B6FB8;
+    --color-info-700: #0A5A94;
+
+    // --- Semantic roles ---
+    --text-primary: var(--color-neutral-800);
+    --text-secondary: var(--color-neutral-600);
+    --text-muted: var(--color-neutral-500);
+    --text-on-primary: var(--color-neutral-0);
+    --text-disabled: var(--color-neutral-400);
+    --border-default: var(--color-neutral-200);
+    --border-strong: var(--color-neutral-300);
+    --surface: var(--color-neutral-0);
+    --surface-sunken: var(--color-neutral-50);
+    --background-base: var(--color-neutral-50);
+
+    // --- Spacing (8px base unit) ---
+    --space-0: 0px;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-16: 64px;
+    --space-20: 80px;
+    --space-24: 96px;
+
+    // --- Radius (4-step scale) ---
+    --radius-xs: 6px;
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-pill: 9999px;
+
+    // --- Blur ---
+    --blur-sm: blur(16px) saturate(180%);
+    --blur-md: blur(24px) saturate(180%);
+    --blur-lg: blur(32px) saturate(180%);
+
+    // --- Glass surface fill (opacity increases with elevation for legibility) ---
+    --glass-fill-level1: rgba(255, 255, 255, 0.78);
+    --glass-fill-level2: rgba(255, 255, 255, 0.66);
+    --glass-fill-level3: rgba(255, 255, 255, 0.82);
+
+    // --- Dark glass fill (sidebar, derived from neutral-800/900) ---
+    --glass-fill-dark-level2: rgba(43, 48, 61, 0.80);
+
+    // --- Glass rim (hairline top-light / bottom-dark edge) ---
+    --glass-rim: inset 0 1px 0 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 0 rgba(23, 26, 34, 0.05);
+
+    // --- Elevation (ambient + contact shadow, never a single harsh drop shadow) ---
+    --elevation-level1: 0 1px 2px 0 rgba(23, 26, 34, 0.04), 0 1px 1px 0 rgba(23, 26, 34, 0.03), var(--glass-rim);
+    --elevation-level2: 0 8px 24px -4px rgba(23, 26, 34, 0.10), 0 2px 8px -2px rgba(23, 26, 34, 0.06), var(--glass-rim);
+    --elevation-level3: 0 24px 48px -12px rgba(23, 26, 34, 0.18), 0 8px 16px -6px rgba(23, 26, 34, 0.08), var(--glass-rim);
+
+    // --- Motion ---
+    --motion-duration-fast: 150ms;
+    --motion-duration-base: 250ms;
+    --motion-duration-slow: 400ms;
+    --motion-easing-standard: cubic-bezier(0.22, 1, 0.36, 1);
+    --motion-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);
+    --motion-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);
+
+    // --- Typography ---
+    --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    // --- Z-index ---
+    --z-ambient: -1;
+    --z-base: 0;
+    --z-sticky: 10;
+    --z-dropdown: 1000;
+    --z-app-bar: 1100;
+    --z-drawer: 1200;
+    --z-modal: 1300;
+    --z-toast: 1400;
+    --z-tooltip: 1500;
+}

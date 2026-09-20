@@ -18,7 +18,7 @@ export default function DealsOverviewCards({pending, closed}: DealsOverviewCards
                     label="Pending Deals"
                     value={pending}
                     icon={<IconClock/>}
-                    iconBgColor={theme.colors.warning}
+                    iconBgColor={theme.palette.warning.main}
                 />
             </Grid>
 
@@ -27,7 +27,7 @@ export default function DealsOverviewCards({pending, closed}: DealsOverviewCards
                     label="Closed Deals"
                     value={closed}
                     icon={<IconConfirm/>}
-                    iconBgColor={theme.colors.success}
+                    iconBgColor={theme.palette.success.main}
                 />
             </Grid>
         </Grid>

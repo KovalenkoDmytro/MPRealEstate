@@ -22,13 +22,9 @@ export default function RecentlyViewedMiniCard({ listing }: ListingCardProps) {
         <Paper
             elevation={0}
             sx={{
-                border: '1px solid',
-                borderColor: '#e2e8f0',
-                borderRadius: theme.shape.borderRadius,
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column',
-                bgcolor: theme.palette.background.white,
                 width: '100%',
             }}
         >

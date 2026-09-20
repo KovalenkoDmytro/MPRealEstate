@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
+import { primary } from '@/design/tokens';
 
 const RecentOffersHeader = ({total}: {total: number}) => {
 
@@ -13,7 +14,6 @@ const RecentOffersHeader = ({total}: {total: number}) => {
                 flexDirection: { xs: 'column', sm: 'row' },
                 gap: { xs: 1.5, sm: 2 },
                 width: '100%',
-                backgroundColor: '#fff',
             }}
         >
             {/* Left Side: Text Content */}
@@ -23,7 +23,7 @@ const RecentOffersHeader = ({total}: {total: number}) => {
                     component="h2"
                     sx={{
                         fontWeight: 800,
-                        color: '#1e1b2e',
+                        color: 'text.primary',
                         lineHeight: 1.2,
                         mb: 0.5,
                         fontSize: { xs: '1.1rem', sm: '1.25rem' },
@@ -33,10 +33,8 @@ const RecentOffersHeader = ({total}: {total: number}) => {
                 </Typography>
                 <Typography
                     variant="body2"
-                    sx={{
-                        color: '#7e8390',
-                        fontWeight: 400
-                    }}
+                    color="text.secondary"
+                    sx={{ fontWeight: 400 }}
                 >
                     Track all your property offers
                 </Typography>
@@ -46,10 +44,9 @@ const RecentOffersHeader = ({total}: {total: number}) => {
             <Chip
                 label={`${total} Total`}
                 sx={{
-                    backgroundColor: '#fdf4f6',
-                    color: '#5e3048',
+                    backgroundColor: primary[50],
+                    color: primary[700],
                     fontWeight: 700,
-                    borderRadius: '12px',
                     fontSize: '0.85rem',
                     height: '32px',
                     alignSelf: { xs: 'flex-start', sm: 'center' },

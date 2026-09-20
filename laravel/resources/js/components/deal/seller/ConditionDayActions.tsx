@@ -2,23 +2,21 @@ import { useMemo, useState } from "react";
 import { PropertyDetail } from "@/types";
 import { DealService } from "@/services/dealService";
 import {
-    Card,
     CardActions,
     CardContent,
     Stack,
     Typography,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { format } from "date-fns";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import DealStatusBanner from "@/components/deal/DealStatusBanner";
 import { useNotification } from "@/context/NotificationContext";
 import Button from "@/components/common/Button";
 import IconContainer from "@/components/common/IconContainer";
+import SectionCard from "@/design/SectionCard";
 import IconCalendarToday from "@/icons/IconCalendarToday";
 
 export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) {
-    const theme = useTheme();
     const [open, setOpen] = useState(false);
     const conditionDate = useMemo(() => new Date(deal.condition_day as string), [deal.condition_day]);
     const { setRedirectNotification } = useNotification();
@@ -34,16 +32,7 @@ export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) 
             <DealStatusBanner deal={deal} role="seller" feature="conditionDay" />
 
             {!deal.is_condition_day_confirmed && (
-                <Card
-                    variant="outlined"
-                    sx={{
-                        mt: 3,
-                        p: theme.shape.padding,
-                        backgroundColor: theme.palette.background.white,
-                        borderRadius: theme.shape.borderRadius,
-                        border: `1px solid ${theme.palette.border.main}`,
-                    }}
-                >
+                <SectionCard sx={{ mt: 3 }}>
                     <CardContent sx={{ p: 0 }}>
                         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
                             <IconContainer>
@@ -63,7 +52,7 @@ export default function ConditionDayActions({ deal }: { deal: PropertyDetail }) 
                             onClick={() => setOpen(true)}
                         />
                     </CardActions>
-                </Card>
+                </SectionCard>
             )}
 
             <ConfirmDialog

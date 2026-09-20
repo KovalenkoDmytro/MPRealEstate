@@ -71,9 +71,9 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
                                 height: 45,
                                 width: 'auto',
                                 borderRadius: '14px',
-                                backgroundColor: theme.palette.primary.main ,
+                                backgroundColor: theme.palette.primary.main,
                                 padding: '8px',
-                                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.10), 0 4px 6px -4px rgba(0, 0, 0, 0.10);'
+                                boxShadow: theme.glass.elevation.level1,
                             }}
                         />
                     </Link>
@@ -94,7 +94,9 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
                         <Typography
                             variant="body2"
                             sx={{
-                                color: theme.palette.text.rosyPink  ,
+                                // accent[300] measures ~2.8:1 on the dark glass fill — fails AA;
+                                // white at reduced opacity keeps the translucent-hierarchy look and stays legible.
+                                color: 'rgba(255, 255, 255, 0.64)',
                                 fontWeight: 400,
                                 fontSize: '12px',
                             }}
@@ -142,9 +144,10 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
                     '& .MuiDrawer-paper': {
                         boxSizing: 'border-box',
                         width: drawerWidth,
-                        borderRight: '1px dashed',
-                        borderColor: 'divider',
+                        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
                         bgcolor: 'background.sidebar',
+                        backdropFilter: theme.glass.blur.md,
+                        WebkitBackdropFilter: theme.glass.blur.md,
                         color: 'text.tan',
                     },
                 }}
@@ -160,9 +163,10 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
                     '& .MuiDrawer-paper': {
                         boxSizing: 'border-box',
                         width: drawerWidth,
-                        borderRight: '1px dashed',
-                        borderColor: 'divider',
+                        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
                         bgcolor: 'background.sidebar',
+                        backdropFilter: theme.glass.blur.md,
+                        WebkitBackdropFilter: theme.glass.blur.md,
                         color: 'text.tan',
                     },
                 }}

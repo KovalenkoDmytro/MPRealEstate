@@ -1,17 +1,6 @@
-@use '../abstracts/variables' as *;
-
+// Dark hero backdrop for the guest shell (login/register/etc). The content
+// card itself is now the SectionCard glass primitive (see GuestLayout.tsx),
+// so this file only owns the ambient background behind it.
 .guest-layout {
-    background: $guest-background-layout-color;
-
-    .guest-layout-content{
-        padding: 30px;
-        width: 100%;
-        border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.20);
-        background: rgba(255, 255, 255, 0.95);
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        max-width: 450px;
-    }
+    background: linear-gradient(180deg, var(--color-neutral-900) 0%, var(--color-primary-900) 50%, var(--color-primary-700) 100%);
 }
-
-

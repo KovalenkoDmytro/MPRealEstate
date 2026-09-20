@@ -26,9 +26,9 @@ export default function SidebarNavLink({active = false, className = '', children
                 transition: 'all 0.2s ease-in-out',
                 color: 'rgba(255, 255, 255, 0.7)',
 
-                // 2. Hover State
+                // 2. Hover State — accent[300] (#E08F62) at low alpha
                 '&:hover': {
-                    backgroundColor: 'rgba(203, 154, 159, 0.08)',
+                    backgroundColor: 'rgba(224, 143, 98, 0.08)',
                     color: '#fff',
                     '& .MuiListItemIcon-root': {color: '#fff'},
 
@@ -46,7 +46,7 @@ export default function SidebarNavLink({active = false, className = '', children
                     backgroundColor: theme.palette.primary.main,
                     color: '#fff',
                     '&:hover': {
-                        backgroundColor: 'rgba(203, 154, 159, 0.25)',
+                        backgroundColor: 'rgba(224, 143, 98, 0.25)',
                     },
 
 
@@ -69,7 +69,8 @@ export default function SidebarNavLink({active = false, className = '', children
                 'span': {
                     marginLeft: '16px',
                     fontWeight: 500,
-                    color: theme.palette.text.rosyPink,
+                    // accent[300] measures ~2.8:1 on the dark glass sidebar — fails AA; use translucent white instead.
+                    color: 'rgba(255, 255, 255, 0.72)',
                 },
 
                 '&.Mui-selected svg path': {

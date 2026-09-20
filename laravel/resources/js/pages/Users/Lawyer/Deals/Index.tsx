@@ -6,7 +6,7 @@ import { Typography, Box, Card, CardContent, Divider } from '@mui/material';
 export default function DealsPage({ deals }: { deals: PropertyDetail[] }) {
     return (
         <AuthenticatedLayout
-            header={<Typography variant="h5" fontWeight="bold">📑 Deals</Typography>}
+            header="Deals"
             title="Deals"
         >
 

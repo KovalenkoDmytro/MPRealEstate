@@ -19,12 +19,12 @@ const RecentOffersFooter = ({ count = 8, href = "#" }) => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1,
-                    color: '#5e3048',
+                    color: 'primary.main',
                     fontWeight: 700,
                     fontSize: '0.95rem',
                     cursor: 'pointer',
                     '&:hover': {
-                        color: '#421f32',
+                        color: 'primary.dark',
                     }
                 }}
             >

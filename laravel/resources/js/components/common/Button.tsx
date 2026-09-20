@@ -1,4 +1,6 @@
-import {Link} from "@mui/material";
+import { ReactNode } from 'react';
+import { Button as MuiButton } from '@mui/material';
+import { Link as InertiaLink } from '@inertiajs/react';
 
 export type ButtonProps = {
     version?: 'primary' | 'secondary' | 'outline';
@@ -6,43 +8,61 @@ export type ButtonProps = {
     onClick?: () => void;
     link?: boolean;
     href?: string;
-    icon?: React.ReactNode;
+    icon?: ReactNode;
     className?: string;
     type?: 'button' | 'submit' | 'reset';
     disabled?: boolean;
+    fullWidth?: boolean;
+};
+
+const VARIANT_MAP: Record<NonNullable<ButtonProps['version']>, { variant: 'contained' | 'outlined'; color: 'primary' | 'secondary' }> = {
+    primary: { variant: 'contained', color: 'primary' },
+    secondary: { variant: 'contained', color: 'secondary' },
+    outline: { variant: 'outlined', color: 'primary' },
 };
 
 export default function Button({
-                                   version = 'primary',
-                                   text,
-                                   onClick,
-                                   link = false,
-                                   href = '#',
-                                   icon,
-                                   className,
-                                   type = 'button',
-                                   disabled = false,
-                               }: ButtonProps) {
-    const classes = `btn btn-${version} ${className ? className : ''}`;
+    version = 'primary',
+    text,
+    onClick,
+    link = false,
+    href = '#',
+    icon,
+    className,
+    type = 'button',
+    disabled = false,
+    fullWidth = true,
+}: ButtonProps) {
+    const { variant, color } = VARIANT_MAP[version];
 
     if (link && href) {
         return (
-            <Link href={href} className={classes}>
-                {icon && <span className="btn-icon">{icon}</span>}
+            <MuiButton
+                LinkComponent={InertiaLink}
+                href={href}
+                variant={variant}
+                color={color}
+                className={className}
+                endIcon={icon}
+                fullWidth={fullWidth}
+            >
                 {text}
-            </Link>
+            </MuiButton>
         );
     }
 
     return (
-        <button
+        <MuiButton
             type={type}
             onClick={onClick}
-            className={classes}
+            variant={variant}
+            color={color}
+            className={className}
+            endIcon={icon}
             disabled={disabled}
+            fullWidth={fullWidth}
         >
             {text}
-            {icon && <span className="btn-icon" style={{ marginLeft: '8px' }}>{icon}</span>}
-        </button>
+        </MuiButton>
     );
 }

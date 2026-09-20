@@ -80,13 +80,9 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
         <Paper
             elevation={0}
             sx={{
-                borderRadius: theme.shape.borderRadius,
                 overflow: 'hidden',
-                border: `1px solid ${theme.palette.border.main}`,
-                borderColor: theme.palette.border.main,
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },
-                bgcolor: theme.palette.background.paper,
             }}
         >
             {/* 1. Left Section: Swiper Image Slider */}
@@ -94,7 +90,7 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
                     width: { xs: '100%', md: 300 },
                     height: { xs: 240, md: 'auto' },
                     minHeight: { md: 260 },
-                    bgcolor: '#f7fafc',
+                    bgcolor: theme.palette.background.default,
                     position: 'relative',
 
                     // --- 1. Custom Navigation Arrows (Circles with Black Bg) ---
@@ -104,7 +100,8 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
                         width: 32,  // Force circle size
                         height: 32,
                         borderRadius: '50%', // Make it round
-                        backdropFilter: 'blur(4px)', // Optional: nice glass effect
+                        backdropFilter: theme.glass.blur.sm,
+                        WebkitBackdropFilter: theme.glass.blur.sm,
                         transition: 'background-color 0.2s',
                         '&:hover': {
                             backgroundColor: 'rgba(0, 0, 0, 0.8)', // Darker on hover
@@ -127,7 +124,8 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
                         display: 'flex',
                         alignItems: 'center',
                         gap: '6px',
-                        backdropFilter: 'blur(4px)',
+                        backdropFilter: theme.glass.blur.sm,
+                        WebkitBackdropFilter: theme.glass.blur.sm,
                     },
                     '& .swiper-pagination-bullet': {
                         width: 6,

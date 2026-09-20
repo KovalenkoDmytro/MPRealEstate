@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
     Box,
     Avatar,
-    Menu,
     MenuItem,
     ListItemIcon,
     Divider,
@@ -12,7 +11,7 @@ import {
 } from '@mui/material';
 import { Person, Logout, Settings } from '@mui/icons-material';
 import { Link, router } from '@inertiajs/react';
-import theme from "@/theme";
+import GlassPopover from '@/design/GlassPopover';
 
 interface User {
     name: string;
@@ -63,45 +62,15 @@ export default function UserMenu({ user }: UserMenuProps) {
                 </Tooltip>
             </Box>
 
-            <Menu
+            <GlassPopover
                 anchorEl={anchorEl}
                 id="account-menu"
                 open={open}
                 onClose={handleClose}
                 onClick={handleClose}
-                slotProps={{
-                    paper: {
-                        elevation: 0,
-                        sx: {
-                            overflow: 'visible',
-                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                            mt: 1.5,
-                            minWidth: 180,
-                            borderRadius: theme.shape.borderRadius,
-                            '& .MuiAvatar-root': {
-                                width: 32,
-                                height: 32,
-                                ml: -0.5,
-                                mr: 1,
-                            },
-                            // The "Bubble Arrow" Style
-                            '&::before': {
-                                content: '""',
-                                display: 'block',
-                                position: 'absolute',
-                                top: 0,
-                                right: 14,
-                                width: 10,
-                                height: 10,
-                                bgcolor: 'background.paper',
-                                transform: 'translateY(-50%) rotate(45deg)',
-                                zIndex: 0,
-                            },
-                        },
-                    },
-                }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                width="auto"
+                arrowOffset={14}
+                paperSx={{ minWidth: 180, '& .MuiAvatar-root': { width: 32, height: 32, ml: -0.5, mr: 1 } }}
             >
                 <Box px={2} py={1} sx={{ mb: 1 }}>
                     <Typography variant="subtitle2" fontWeight={700}>
@@ -138,7 +107,7 @@ export default function UserMenu({ user }: UserMenuProps) {
                     </ListItemIcon>
                     Logout
                 </MenuItem>
-            </Menu>
+            </GlassPopover>
         </React.Fragment>
     );
 }

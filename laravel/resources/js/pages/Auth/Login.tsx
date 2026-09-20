@@ -113,11 +113,11 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                     {/* Options */}
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <FormControlLabel
-                            control={<Checkbox size="small" checked={data.remember} onChange={(e) => setData('remember', e.target.checked)} sx={{ color: '#9CA3AF', '&.Mui-checked': { color: '#522B47' } }} />}
-                            label={<Typography variant="body2" sx={{ color: '#6B7280' }}>Remember me</Typography>}
+                            control={<Checkbox size="small" checked={data.remember} onChange={(e) => setData('remember', e.target.checked)} sx={{ color: theme.palette.text.secondary, '&.Mui-checked': { color: theme.palette.primary.main } }} />}
+                            label={<Typography variant="body2" color="text.secondary">Remember me</Typography>}
                         />
                         {canResetPassword && (
-                            <InertiaLink href={route('password.request')} style={{ color: '#522B47', fontWeight: 600, textDecoration: 'none', fontSize: '0.875rem' }}>
+                            <InertiaLink href={route('password.request')} style={{ color: theme.palette.primary.main, fontWeight: 600, textDecoration: 'none', fontSize: '0.875rem' }}>
                                 Forgot Password?
                             </InertiaLink>
                         )}
@@ -132,9 +132,9 @@ export default function Login({ canResetPassword }: { canResetPassword: boolean;
                     />
 
                     {/* Footer Link */}
-                    <Typography variant="body2" align="center" sx={{ color: '#6B7280' }}>
+                    <Typography variant="body2" align="center" color="text.secondary">
                         Don't have an account?{' '}
-                        <InertiaLink href={route('register')} style={{ color: '#522B47', fontWeight: 700, textDecoration: 'none' }}>
+                        <InertiaLink href={route('register')} style={{ color: theme.palette.primary.main, fontWeight: 700, textDecoration: 'none' }}>
                             Sign up for free
                         </InertiaLink>
                     </Typography>

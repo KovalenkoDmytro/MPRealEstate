@@ -2,13 +2,11 @@ import { useState } from "react";
 import { PropertyDetail } from "@/types";
 import {
     Box,
-    Card,
     CardActions,
     CardContent,
     Stack,
     Typography,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -20,10 +18,10 @@ import SetDepositForm from "@/components/deal/seller/SetDepositForm";
 import { useNotification } from "@/context/NotificationContext";
 import Button from "@/components/common/Button";
 import IconContainer from "@/components/common/IconContainer";
+import SectionCard from "@/design/SectionCard";
 import IconConfirm from "@/icons/IconConfirm";
 
 export default function DepositActions({ deal }: { deal: PropertyDetail }) {
-    const theme = useTheme();
     const { setRedirectNotification, showNotification } = useNotification();
 
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -52,16 +50,7 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
             {!deal.security_deposit && <SetDepositForm deal={deal} />}
 
             {deal.is_security_deposit_made && !deal.is_security_deposit_confirmed && (
-                <Card
-                    variant="outlined"
-                    sx={{
-                        mt: 3,
-                        p: theme.shape.padding,
-                        backgroundColor: theme.palette.background.white,
-                        borderRadius: theme.shape.borderRadius,
-                        border: `1px solid ${theme.palette.border.main}`,
-                    }}
-                >
+                <SectionCard sx={{ mt: 3 }}>
                     <CardContent sx={{ p: 0 }}>
                         <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
                             <IconContainer>
@@ -91,7 +80,7 @@ export default function DepositActions({ deal }: { deal: PropertyDetail }) {
                             onClick={() => setConfirmOpen(true)}
                         />
                     </CardActions>
-                </Card>
+                </SectionCard>
             )}
 
             <ConfirmDialog

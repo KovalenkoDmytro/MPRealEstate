@@ -13,7 +13,8 @@ import {
 } from "@mui/material";
 import {ImageGallery} from "@/components/listing/ImageGallery";
 import {ListingDetails} from "@/components/listing/ListingDetails";
-import {FavoriteBorder, PersonOutline, Visibility } from "@mui/icons-material";
+import {FavoriteBorder, PersonOutline, Visibility, EditOutlined, DescriptionOutlined } from "@mui/icons-material";
+import { accent } from "@/design/tokens";
 
 interface PageProps {
     listing: RealEstateListing & {
@@ -26,7 +27,7 @@ export default function ListingShowPage({ listing }: PageProps) {
 
     return (
         <AuthenticatedLayout
-            header={<Typography variant="h5" fontWeight="bold">Listing</Typography>}
+            header="Listing"
             title="Listings"
         >
 
@@ -46,7 +47,7 @@ export default function ListingShowPage({ listing }: PageProps) {
 
                     <Tooltip title="Total times this listing was viewed">
                         <Box display="flex" alignItems="center" gap={0.5}>
-                            <Visibility fontSize="small" sx={{ color: '#6B7280' }} />
+                            <Visibility fontSize="small" color="action" />
                             <Typography variant="body2">
                                 <strong>{listing.views_count ?? 0}</strong> Views
                             </Typography>
@@ -56,7 +57,7 @@ export default function ListingShowPage({ listing }: PageProps) {
 
                     <Tooltip title="Distinct users who viewed this listing">
                         <Box display="flex" alignItems="center" gap={0.5}>
-                            <PersonOutline fontSize="small" sx={{ color: '#6B7280' }} />
+                            <PersonOutline fontSize="small" color="action" />
                             <Typography variant="body2">
                                 <strong>{listing.unique_viewers_count ?? 0}</strong> Unique
                             </Typography>
@@ -66,8 +67,8 @@ export default function ListingShowPage({ listing }: PageProps) {
 
                     <Tooltip title="Number of buyers who saved this listing">
                         <Box display="flex" alignItems="center" gap={0.5}>
-                            <FavoriteBorder fontSize="small" sx={{ color: '#EC4899' }} /> {/* Pink/Red Icon */}
-                            <Typography variant="body2" sx={{ color: '#BE185D', fontWeight: 500 }}>
+                            <FavoriteBorder fontSize="small" sx={{ color: accent[500] }} />
+                            <Typography variant="body2" sx={{ color: accent[700], fontWeight: 500 }}>
                                 <strong>{listing.favorite_by_buyer_count ?? 0}</strong> Saves
                             </Typography>
                         </Box>
@@ -86,7 +87,7 @@ export default function ListingShowPage({ listing }: PageProps) {
                 <Stack direction="row" spacing={2} mb={2}>
                     {listing.offers?.length === 0 && (
                         <Link href={route("listings.edit", listing.id)}>
-                            <Button variant="outlined">✏️ Edit Listing</Button>
+                            <Button variant="outlined" startIcon={<EditOutlined fontSize="small" />}>Edit Listing</Button>
                         </Link>
                     )}
                 </Stack>
@@ -94,9 +95,12 @@ export default function ListingShowPage({ listing }: PageProps) {
 
                 <Card variant="outlined">
                     <CardContent>
-                        <Typography variant="h6" fontWeight="bold" gutterBottom>
-                            📑 Offers Received
-                        </Typography>
+                        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+                            <DescriptionOutlined fontSize="small" color="action" />
+                            <Typography variant="h6" fontWeight="bold">
+                                Offers Received
+                            </Typography>
+                        </Stack>
 
                         {/*<ReceivedOffers offers={offers} onUpdateStatus={handleUpdateStatus} />*/}
                     </CardContent>

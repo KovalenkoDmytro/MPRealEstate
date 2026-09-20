@@ -27,7 +27,7 @@ export default function OffersIndexPage({ offers, offers_stats }: OffersIndexPag
                         label="Pending"
                         value={offers_stats.pending}
                         icon={<IconClock/>}
-                        iconBgColor={theme.colors.warning}
+                        iconBgColor={theme.palette.warning.main}
 
                     />
                 </Grid>
@@ -37,7 +37,7 @@ export default function OffersIndexPage({ offers, offers_stats }: OffersIndexPag
                         label="Accepted"
                         value={offers_stats.accepted}
                         icon={<IconConfirm/>}
-                        iconBgColor={theme.colors.success}
+                        iconBgColor={theme.palette.success.main}
                     />
                 </Grid>
 
@@ -46,7 +46,7 @@ export default function OffersIndexPage({ offers, offers_stats }: OffersIndexPag
                         label="Rejected"
                         value={offers_stats.rejected}
                         icon={<IconClose/>}
-                        iconBgColor={theme.colors.error}
+                        iconBgColor={theme.palette.error.main}
                     />
                 </Grid>
             </Grid>

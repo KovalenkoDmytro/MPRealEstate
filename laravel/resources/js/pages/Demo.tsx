@@ -2,6 +2,7 @@ import { Head, Link } from "@inertiajs/react";
 import ApplicationLogo from "@/components/ApplicationLogo";
 import {
     Box,
+    Button as MuiButton,
     Card,
     CardContent,
     Container,
@@ -14,6 +15,7 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import HomeWorkOutlinedIcon from "@mui/icons-material/HomeWorkOutlined";
 import GavelOutlinedIcon from "@mui/icons-material/GavelOutlined";
 import theme from "@/theme";
+import { radius } from "@/design/tokens";
 
 type RoleCard = {
     icon: React.ReactNode;
@@ -54,18 +56,20 @@ export default function Demo() {
             <Box
                 sx={{
                     minHeight: "100dvh",
-                    background: "linear-gradient(180deg, #F9FAFB 0%, #F3F4F6 100%)",
+                    background: theme.palette.background.gradient,
+                    backgroundAttachment: "fixed",
                     py: { xs: 3, md: 6 },
                 }}
             >
                 <Container maxWidth="lg">
                     <Box
                         sx={{
-                            borderRadius: "28px",
+                            borderRadius: radius.xl,
                             overflow: "hidden",
-                            border: `1px solid ${theme.palette.border.main}`,
-                            bgcolor: theme.palette.background.white,
-                            boxShadow: theme.shape.boxShadow,
+                            bgcolor: theme.glass.fill.level3,
+                            backdropFilter: theme.glass.blur.lg,
+                            WebkitBackdropFilter: theme.glass.blur.lg,
+                            boxShadow: theme.glass.elevation.level3,
                         }}
                     >
                         <Box
@@ -76,8 +80,7 @@ export default function Demo() {
                                 alignItems: "center",
                                 justifyContent: "space-between",
                                 borderBottom: `1px solid ${theme.palette.border.main}`,
-                                background:
-                                    "linear-gradient(90deg, rgba(87,42,77,0.06) 0%, rgba(208,118,105,0.08) 100%)",
+                                background: "linear-gradient(90deg, rgba(59, 91, 219, 0.06) 0%, rgba(206, 109, 61, 0.08) 100%)",
                             }}
                         >
                             <Stack direction="row" spacing={1.5} alignItems="center">
@@ -85,7 +88,7 @@ export default function Demo() {
                                     sx={{
                                         width: 42,
                                         height: 42,
-                                        borderRadius: "12px",
+                                        borderRadius: radius.sm,
                                         backgroundColor: theme.palette.primary.main,
                                         display: "flex",
                                         alignItems: "center",
@@ -104,13 +107,9 @@ export default function Demo() {
                                 </Box>
                             </Stack>
 
-                            <Link
-                                href={route("home")}
-                                className="btn btn-outline"
-                                style={{ textDecoration: "none" }}
-                            >
+                            <MuiButton LinkComponent={Link} href={route("home")} variant="outlined" color="primary">
                                 Back to home
-                            </Link>
+                            </MuiButton>
                         </Box>
 
                         <Box sx={{ px: { xs: 3, md: 5 }, py: { xs: 4, md: 5 } }}>
@@ -126,14 +125,7 @@ export default function Demo() {
                             <Grid container spacing={3}>
                                 {roles.map((card) => (
                                     <Grid key={card.role} size={{ xs: 12, md: 4 }}>
-                                        <Card
-                                            variant="outlined"
-                                            sx={{
-                                                borderRadius: "18px",
-                                                borderColor: theme.palette.border.main,
-                                                height: "100%",
-                                            }}
-                                        >
+                                        <Card variant="outlined" sx={{ height: "100%" }}>
                                             <CardContent sx={{ p: 3 }}>
                                                 <Stack spacing={2}>
                                                     <Stack direction="row" spacing={1.2} alignItems="center">
@@ -175,13 +167,15 @@ export default function Demo() {
                                                         </Stack>
                                                     </Stack>
 
-                                                    <Link
+                                                    <MuiButton
+                                                        LinkComponent={Link}
                                                         href={route("login") + `?email=${encodeURIComponent(card.email)}&password=password`}
-                                                        className="btn btn-primary"
-                                                        style={{ textDecoration: "none", width: "100%", textAlign: "center" }}
+                                                        variant="contained"
+                                                        color="primary"
+                                                        fullWidth
                                                     >
                                                         Log in
-                                                    </Link>
+                                                    </MuiButton>
                                                 </Stack>
                                             </CardContent>
                                         </Card>

@@ -3,6 +3,8 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 import theme from "@/theme";
+import Loading from "@/design/Loading";
+import { radius } from "@/design/tokens";
 import type { MapboxAddressData } from "@/components/listing/form/AddressAutocomplete";
 
 type ListingAddressMapPickerProps = {
@@ -379,26 +381,7 @@ export default function ListingAddressMapPicker({
             >
                 <div ref={mapContainerRef} style={{ width: "100%", height: "100%" }} />
 
-                {!isMapReady && hasValidToken && (
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            inset: 0,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            flexDirection: "column",
-                            gap: 1,
-                            backgroundColor: "rgba(255,255,255,0.65)",
-                            backdropFilter: "blur(2px)",
-                        }}
-                    >
-                        <CircularProgress size={22} />
-                        <Typography variant="body2" color="text.secondary">
-                            Loading map...
-                        </Typography>
-                    </Box>
-                )}
+                {!isMapReady && hasValidToken && <Loading overlay label="Loading map..." />}
 
                 {isResolvingAddress && (
                     <Box
@@ -409,8 +392,10 @@ export default function ListingAddressMapPicker({
                             top: 12,
                             py: 0.8,
                             px: 1.2,
-                            borderRadius: "10px",
-                            backgroundColor: "rgba(44,35,62,0.78)",
+                            borderRadius: radius.sm,
+                            backdropFilter: theme.glass.blur.sm,
+                            WebkitBackdropFilter: theme.glass.blur.sm,
+                            backgroundColor: theme.glass.fill.dark.level2,
                             color: "#fff",
                         }}
                     >

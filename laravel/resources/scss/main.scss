@@ -1,6 +1,6 @@
 // 1. Abstracts (variables, mixins, functions)
+@use 'abstracts/tokens';
 @use 'abstracts/variables';
-@use 'abstracts/mixins';
 
 // 2. Vendors
 //@use 'vendors/normalize';
@@ -11,17 +11,11 @@
 @use 'base/typography';
 
 // 4. Layout
-@use 'layout/buttons';
-@use "layout/badges";
 @use 'layout/saved-properties-preview-section';
-@use 'layout/authenticated-layout';
 @use 'layout/guest-layout';
 
 // 5. Components
-@use 'components/common/icon-container';
-@use 'components/stat-card';
 @use "components/listing-card";
-@use "components/saved-listing-mini-card";
 @use "components/dashboard/buyer/offers/recent-offers-list";
 //@use 'components/card';
 

@@ -1,27 +1,24 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
 import { User } from '@/types';
-import {
-    Box,
-    Typography,
-    Avatar,
-    Grid,
-    Paper,
-    Card,
-    CardContent,
-} from '@mui/material';
+import { Box, Typography, Avatar, Grid, Stack } from '@mui/material';
+import SectionCard from '@/design/SectionCard';
+import StatCard from '@/components/common/StatCard';
+import { success, warning } from '@/design/tokens';
+import IconConfirm from '@/icons/IconConfirm';
+import IconClock from '@/icons/IconClock';
 
 export default function Dashboard({ auth, deals_detail }: { auth: { user: User }, deals_detail: {closed_deals : number,  pending_deals: number} }) {
 
     return (
         <AuthenticatedLayout
-            header={<Typography variant="h5" fontWeight="bold">⚖️ Lawyer Dashboard</Typography>}
+            header="Lawyer Dashboard"
             title="Lawyer Dashboard"
         >
 
-            <Box sx={{ p: 3 }}>
+            <Box sx={{ p: { xs: 0, md: 3 } }}>
                 {/* Profile Card */}
-                <Card sx={{ mb: 4 }}>
-                    <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <SectionCard sx={{ mb: 3 }}>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Box>
                             <Typography variant="h6" fontWeight="bold">{auth.user.name}</Typography>
                             <Typography color="text.secondary">
@@ -33,22 +30,26 @@ export default function Dashboard({ auth, deals_detail }: { auth: { user: User }
                             alt="Lawyer Avatar"
                             sx={{ width: 64, height: 64 }}
                         />
-                    </CardContent>
-                </Card>
+                    </Stack>
+                </SectionCard>
 
                 {/* Stats Section */}
-                <Grid container spacing={3} mb={4}>
-                    <Grid  size={{xs: 12, md:4}}>
-                        <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="subtitle1" color="text.secondary">Closed Deals</Typography>
-                            <Typography variant="h4" color="success.main">{deals_detail.closed_deals}</Typography>
-                        </Paper>
+                <Grid container spacing={3}>
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <StatCard
+                            label="Closed Deals"
+                            value={deals_detail.closed_deals}
+                            icon={<IconConfirm />}
+                            iconBgColor={success[600]}
+                        />
                     </Grid>
-                    <Grid  size={{xs: 12, md:4}}>
-                        <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-                            <Typography variant="subtitle1" color="text.secondary">Pending</Typography>
-                            <Typography variant="h4" color="warning.main">{deals_detail.pending_deals}</Typography>
-                        </Paper>
+                    <Grid size={{ xs: 12, md: 4 }}>
+                        <StatCard
+                            label="Pending"
+                            value={deals_detail.pending_deals}
+                            icon={<IconClock />}
+                            iconBgColor={warning[600]}
+                        />
                     </Grid>
                 </Grid>
             </Box>

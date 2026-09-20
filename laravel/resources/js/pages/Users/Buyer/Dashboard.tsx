@@ -9,7 +9,8 @@ import StatCard from "@/components/common/StatCard";
 import {
     RecentlyViewedPreviewSection
 } from "@/components/dashboard/buyer/recentlyViewed/RecentlyViewedPreviewSection";
-import theme from "@/theme";
+import SectionCard from "@/design/SectionCard";
+import { statTones } from "@/design/statTones";
 import IconFavorite from "@/icons/IconFavorite";
 import IconCalendarToday from "@/icons/IconCalendarToday";
 import IconMyDeals from "@/icons/IconMyDeals";
@@ -51,7 +52,7 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
                             value={favorite_listings.listings.total}
                             detail={`${favorite_listings.last_week_total}  New this week`}
                             icon={<IconFavorite />}
-                            iconBgColor="#CB9A9F"
+                            iconBgColor={statTones.accent.iconBgColor}
                         />
                     </Grid>
 
@@ -63,23 +64,17 @@ export default function Dashboard({ offers_stats, appointments_stats, favorite_l
                                 ? `Nearest appointment: ${appointments_stats.nextAppointmentDate} • ${appointments_stats.acceptedCount} accepted, ${appointments_stats.pendingCount} pending`
                                 : `No upcoming appointments • ${appointments_stats.acceptedCount} accepted, ${appointments_stats.pendingCount} pending`}
                             icon={<IconCalendarToday/>}
-                            iconBgColor="#D07669"
+                            iconBgColor={statTones.warm.iconBgColor}
                         />
                     </Grid>
                 </Grid>
 
 
                 <Grid container spacing={3} sx={{ mt: 3 }}>
-                    <Grid
-                        size={{ xs: 12, md: 8 }}
-                        sx={{
-                            p: theme.shape.padding,
-                            borderRadius: theme.shape.borderRadius,
-                            bgcolor: theme.palette.background.white,
-                            boxShadow: '0 2px 10px 0 rgba(0,0,0,0.05)'
-                    }}
-                    >
-                        <RecentOffersList offers={offers.data} />
+                    <Grid size={{ xs: 12, md: 8 }}>
+                        <SectionCard>
+                            <RecentOffersList offers={offers.data} />
+                        </SectionCard>
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>

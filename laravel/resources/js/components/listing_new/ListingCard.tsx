@@ -9,6 +9,7 @@ import IconLocationMark from "@/icons/IconLocationMark";
 import IconBed from "@/icons/IconBed";
 import IconBath from "@/icons/IconBath";
 import IconSqft from "@/icons/IconSqft";
+import { primary } from "@/design/tokens";
 
 type ListingCardProps = {
     listing: RealEstateListing;
@@ -86,7 +87,7 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
                         onClick={toggleFavorite}
                         disabled={loadingFavorite}
                         title={isFav ? "Remove from Favorites" : "Save to Favorites"}
-                        style={{ color: isFav ? '#572a4d' : undefined }}
+                        style={{ color: isFav ? primary[600] : undefined }}
                     >
                         {isFav ? (
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2">
@@ -127,7 +128,7 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
                         <span className="price-label">Price</span>
                         <div className="price-value">{formatCurrency(listing.price)}</div>
                     </div>
-                    <Button version="outline" text="View Details" link={true} href={detailUrl} />
+                    <Button version="outline" text="View Details" link={true} href={detailUrl} fullWidth={false} />
                 </div>
             </div>
         </div>

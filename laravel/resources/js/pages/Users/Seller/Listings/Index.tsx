@@ -7,6 +7,7 @@ import AppPagination from "@/components/common/AppPagination";
 import theme from "@/theme";
 import IconContainer from "@/components/common/IconContainer";
 import IconHome from "@/icons/IconHome";
+import EmptyState from "@/design/EmptyState";
 
 type ComponentProps = {
     listings: PaginatedResponse<RealEstateListing>;
@@ -27,62 +28,21 @@ export default function Index({ listings }: ComponentProps) {
                     ))}
                 </Grid>
             ) : (
-                <Box
-                    sx={{
-                        p: { xs: 3, md: 5 },
-                        borderRadius: theme.shape.borderRadius,
-                        border: `1px solid ${theme.palette.border.main}`,
-                        background: `linear-gradient(135deg, ${theme.palette.primary.main}08 0%, ${theme.palette.background.white} 60%, ${theme.palette.secondary.main}10 100%)`,
-                        textAlign: "center",
-                    }}
-                >
-                    <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-                        <IconContainer bgColor={`${theme.palette.primary.main}12`}>
-                            <IconHome color={theme.palette.primary.main} width={22} height={22} />
+                <EmptyState
+                    icon={
+                        <IconContainer>
+                            <IconHome width={22} height={22} />
                         </IconContainer>
-                    </Box>
-
-                    <Typography
-                        variant="overline"
-                        sx={{
-                            color: theme.palette.primary.main,
-                            letterSpacing: "0.14em",
-                            fontWeight: 700,
-                            display: "block",
-                            mb: 1,
-                        }}
-                    >
-                        Seller Dashboard
-                    </Typography>
-
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            color: theme.palette.text.primary,
-                            fontWeight: 700,
-                            mb: 1,
-                        }}
-                    >
-                        You do not have any listings yet.
-                    </Typography>
-
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            color: theme.palette.text.secondary,
-                            maxWidth: 620,
-                            mx: "auto",
-                            lineHeight: 1.8,
-                            mb: 3,
-                        }}
-                    >
-                        Create your first listing to start receiving interest from buyers and manage offers in one place.
-                    </Typography>
-
-                    <Box sx={{ maxWidth: 260, mx: "auto" }}>
-                        <Button version="primary" link={true} text="Add New Listing" href={route("listings.create")} />
-                    </Box>
-                </Box>
+                    }
+                    eyebrow="Seller Dashboard"
+                    title="You do not have any listings yet."
+                    description="Create your first listing to start receiving interest from buyers and manage offers in one place."
+                    action={
+                        <Box sx={{ maxWidth: 260, mx: "auto" }}>
+                            <Button version="primary" link={true} text="Add New Listing" href={route("listings.create")} />
+                        </Box>
+                    }
+                />
             )}
 
             {hasListings && <AppPagination pagination={listings} />}

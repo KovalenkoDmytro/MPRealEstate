@@ -1,47 +1,49 @@
-@use '../abstracts/variables' as *;
-
 .listing-card {
     position: relative;
-    background: $white-color;
-    border-radius: 12px;
+    background: var(--glass-fill-level1);
+    backdrop-filter: var(--blur-sm);
+    -webkit-backdrop-filter: var(--blur-sm);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    border: 1px solid $border-color;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: var(--elevation-level1);
+    transition: transform 0.25s var(--motion-easing-standard), box-shadow 0.25s var(--motion-easing-standard);
     display: flex;
     flex-direction: column;
     height: 100%;
 
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--elevation-level2);
+    }
 
     &.--pending {
-        .card-image-wrapper{
+        .card-image-wrapper {
             &:before {
                 content: '';
                 position: absolute;
                 inset: 0;
-                background: rgba(255, 255, 255, 0.5);
+                background: var(--glass-fill-level1);
                 z-index: 3;
-                backdrop-filter: blur(2px);
-
+                backdrop-filter: var(--blur-sm);
+                -webkit-backdrop-filter: var(--blur-sm);
             }
 
-            .badge{
+            .card-badges {
                 z-index: 4;
             }
         }
-
-
     }
 
-
     &.--sold {
-
         .card-image-wrapper:before {
             content: '';
             position: absolute;
             inset: 0;
-            background: rgba($color-charcoal, 0.85);
+            background: var(--glass-fill-dark-level2);
             z-index: 3;
-            backdrop-filter: blur(3px);
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
         }
 
         .card-image-wrapper:after {
@@ -54,12 +56,12 @@
             transform: translate(-50%, -50%);
             z-index: 6;
             text-align: center;
-            color: #ffffff;
+            color: var(--color-neutral-0);
             font-weight: 800;
             font-size: 18px;
             line-height: 1.5;
             letter-spacing: 0.1em;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
     }
 
@@ -67,7 +69,7 @@
         position: relative;
         width: 100%;
         padding-top: 66%;
-        background-color: $color-maroon;
+        background-color: var(--color-primary-600);
 
         img {
             position: absolute;
@@ -78,14 +80,12 @@
             object-fit: cover;
         }
 
-
-        .badge {
+        .card-badges {
             position: absolute;
             top: 1rem;
             left: 1rem;
             z-index: 2;
         }
-
 
         .card-actions {
             position: absolute;
@@ -101,22 +101,24 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
+            background: var(--glass-fill-level2);
+            backdrop-filter: var(--blur-sm);
+            -webkit-backdrop-filter: var(--blur-sm);
             display: flex;
             align-items: center;
             justify-content: center;
             border: none;
             cursor: pointer;
-            color: $color-charcoal;
-            transition: background 0.2s;
+            color: var(--color-neutral-800);
+            transition: background 0.2s, color 0.2s, transform 0.2s var(--motion-easing-standard);
 
             &:hover {
-                background: $white-color;
-                color: $color-maroon;
+                background: var(--color-neutral-0);
+                color: var(--color-primary-600);
+                transform: scale(1.08);
             }
         }
     }
-
 
     .card-content {
         padding: 1.25rem;
@@ -127,7 +129,7 @@
         .card-title {
             font-size: 1.125rem;
             font-weight: 700;
-            color: $color-charcoal;
+            color: var(--color-neutral-800);
             margin-bottom: 0.5rem;
         }
 
@@ -135,7 +137,7 @@
             display: flex;
             align-items: flex-start;
             gap: 0.5rem;
-            color: $color-gray;
+            color: var(--color-neutral-500);
             font-size: 0.875rem;
             margin-bottom: 1rem;
             line-height: 1.4;
@@ -146,13 +148,12 @@
             }
         }
 
-
         .card-features {
             display: flex;
             align-items: center;
             gap: 1.5rem;
             margin-bottom: 1.25rem;
-            border-bottom: 1px solid $border-color;
+            border-bottom: 1px solid var(--border-default);
             padding-bottom: 1rem;
 
             .feature-item {
@@ -161,18 +162,17 @@
                 gap: 0.5rem;
                 font-size: 0.875rem;
                 font-weight: 500;
-                color: $color-charcoal;
+                color: var(--color-neutral-800);
 
                 span {
                     font-weight: 600;
                 }
 
                 svg {
-                    color: $color-tan;
+                    color: var(--color-accent-400);
                 }
             }
         }
-
 
         .card-footer {
             margin-top: auto;
@@ -182,7 +182,7 @@
 
             .price-label {
                 font-size: 16px;
-                color: $color-tan;
+                color: var(--color-accent-400);
                 display: block;
                 margin-bottom: 2px;
             }
@@ -190,11 +190,7 @@
             .price-value {
                 font-size: 27px;
                 font-weight: 600;
-                color: $color-charcoal;
-            }
-
-            .btn{
-                max-width: max-content;
+                color: var(--color-neutral-800);
             }
         }
     }

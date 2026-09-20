@@ -1,8 +1,9 @@
 import ApplicationLogo from '@/components/ApplicationLogo';
 import {Head} from '@inertiajs/react';
 import React from 'react';
-import {Avatar, Box, Paper, Typography} from '@mui/material';
+import {Avatar, Box, Typography} from '@mui/material';
 import theme from "@/theme";
+import SectionCard from "@/design/SectionCard";
 
 
 type GuestLayout = {
@@ -22,13 +23,12 @@ export default function GuestLayout({ children, title, subtitle, headTitle}: Gue
                 justifyContent: 'center',
                 alignItems: 'center',
                 minHeight: '100dvh',
-                bgcolor: 'grey.100',
             }}
         >
             <Head title={headTitle} />
 
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 4 }}>
-                <Avatar variant="rounded" sx={{ width: 56, height: 56, bgcolor: '#522B47', mb: 2 }}>
+                <Avatar variant="rounded" sx={{ width: 56, height: 56, bgcolor: theme.palette.primary.main, mb: 2 }}>
                     <ApplicationLogo/>
                 </Avatar>
 
@@ -36,15 +36,16 @@ export default function GuestLayout({ children, title, subtitle, headTitle}: Gue
                     {title}
                 </Typography>
 
-                <Typography sx={{ color: theme.palette.text.rosyPink, mb: 4 }}>
+                {/* accent[300] fails AA on the dark hero gradient — translucent white instead */}
+                <Typography sx={{ color: 'rgba(255, 255, 255, 0.72)', mb: 4 }}>
                     {subtitle}
                 </Typography>
 
-                <Paper className='guest-layout-content'>
+                <SectionCard tone="elevated" sx={{ width: '100%', maxWidth: 450 }}>
                     {children}
-                </Paper>
+                </SectionCard>
 
-                <Typography variant="caption" sx={{ mt: 4, color:theme.palette.text.rosyPink }}>
+                <Typography variant="caption" sx={{ mt: 4, color: 'rgba(255, 255, 255, 0.64)' }}>
                     © 2026 EstateHub. All rights reserved.
                 </Typography>
             </Box>

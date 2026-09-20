@@ -1,0 +1,5 @@
+// Global font-family for any raw HTML/BEM components not wrapped by the MUI theme
+// (MUI-rendered elements already get theme.typography.fontFamily from theme.ts).
+body {
+    font-family: var(--font-family);
+}

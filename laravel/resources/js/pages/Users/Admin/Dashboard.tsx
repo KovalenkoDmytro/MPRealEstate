@@ -1,27 +1,31 @@
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout/AuthenticatedLayout';
+import { Grid } from '@mui/material';
+import StatCard from '@/components/common/StatCard';
+import { statTones } from '@/design/statTones';
+import IconUsers from '@/icons/IconUsers';
+import IconMyListings from '@/icons/IconMyListings';
+import IconMyDeals from '@/icons/IconMyDeals';
 
-export default function Dashboard() {
+type AdminStats = {
+    total_users: number;
+    total_listings: number;
+    total_deals: number;
+};
 
-
+export default function Dashboard({ stats }: { stats: AdminStats }) {
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Dashboard
-                </h2>
-            }
-            title="Dashboard"
-        >
-
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            You're logged in as ADMIN!
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <AuthenticatedLayout header="Dashboard" subHeader="Platform-wide overview">
+            <Grid container spacing={3}>
+                <Grid size={{ xs: 12, md: 4 }}>
+                    <StatCard label="Total Users" value={stats.total_users} icon={<IconUsers />} {...statTones.primary} />
+                </Grid>
+                <Grid size={{ xs: 12, md: 4 }}>
+                    <StatCard label="Total Listings" value={stats.total_listings} icon={<IconMyListings />} {...statTones.warm} />
+                </Grid>
+                <Grid size={{ xs: 12, md: 4 }}>
+                    <StatCard label="Total Deals" value={stats.total_deals} icon={<IconMyDeals />} {...statTones.accent} />
+                </Grid>
+            </Grid>
         </AuthenticatedLayout>
     );
 }

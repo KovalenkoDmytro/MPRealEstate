@@ -18,6 +18,7 @@ import {
     LocationOn
 } from '@mui/icons-material';
 import { RealEstateListing } from '@/types'; // Import your listing type
+import Loading from '@/design/Loading';
 
 interface ListingLocationMap {
     listing: RealEstateListing; // Accept the whole listing object
@@ -277,26 +278,7 @@ export const ListingLocationMap: React.FC<ListingLocationMap> = ({ listing }) =>
                     {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
                 </IconButton>
 
-                {!isMapLoaded && (
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            inset: 0,
-                            zIndex: 10,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            bgcolor: 'rgba(255,255,255,0.7)',
-                            backdropFilter: 'blur(2px)'
-                        }}
-                    >
-                        <CircularProgress color="primary" sx={{ mb: 2 }} />
-                        <Typography variant="body2" fontWeight={600} color="text.secondary">
-                            Loading Mapbox...
-                        </Typography>
-                    </Box>
-                )}
+                {!isMapLoaded && <Loading overlay label="Loading Mapbox..." />}
 
                 <div ref={mapContainerRef} style={{ height: '100%', width: '100%' }} />
             </Box>
