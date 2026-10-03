@@ -1,6 +1,7 @@
 import { Fragment, MouseEvent, useEffect, useState } from "react"
 import {
     IconButton,
+    Tooltip,
     Badge,
     Typography,
     Box,
@@ -14,7 +15,6 @@ import IconNotificationBell from "@/icons/IconNotificationBell";
 import { api } from "@/axios";
 import { NotificationItem } from "@/types";
 import Button from "@/components/common/Button";
-import IconContainer from "@/components/common/IconContainer";
 import GlassPopover from "@/design/GlassPopover";
 
 type NotificationSummary = {
@@ -78,20 +78,29 @@ const NotificationBell = () => {
 
     return (
         <>
-            <IconContainer bgColor={theme.palette.text.rosyPink}>
+            <Tooltip title="Notifications">
                 <IconButton
                     onClick={handleClick}
-                    size="large"
+                    size="medium"
+                    aria-label={unreadCount > 0 ? `Notifications, ${unreadCount} unread` : 'Notifications'}
+                    sx={{
+                        width: 44, height: 44, borderRadius: '12px',
+                        bgcolor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+                        color: 'rgba(255,255,255,0.85)',
+                        '&:hover': { bgcolor: 'rgba(255,255,255,0.12)', color: 'common.white' },
+                        '&:focus-visible': { outline: '2px solid rgba(255,255,255,0.7)', outlineOffset: 3 },
+                        '& svg': { width: 22, height: 22, display: 'block' },
+                    }}
                     aria-controls={open ? "notification-menu" : undefined}
                     aria-haspopup="true"
                     aria-expanded={open ? "true" : undefined}
                     color="inherit"
                 >
-                    <Badge badgeContent={unreadCount} color="error">
+                    <Badge badgeContent={unreadCount} color="error" max={99}>
                         <IconNotificationBell />
                     </Badge>
                 </IconButton>
-            </IconContainer>
+            </Tooltip>
 
 
             <GlassPopover

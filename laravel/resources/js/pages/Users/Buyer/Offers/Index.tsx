@@ -7,7 +7,7 @@ import {OfferStats} from "@/types/models";
 import IconClock from "@/icons/IconClock";
 import IconArrangement from "@/icons/IconArrangement";
 import IconCanceled from "@/icons/IconCanceled";
-import theme from "@/theme";
+import { warning, success, error } from '@/design/tokens';
 
 type OffersIndexPageProps = {
     offers: PaginatedResponse<Offer>;
@@ -18,34 +18,40 @@ export default function OffersIndexPage({ offers, offers_stats }: OffersIndexPag
     return (
         <AuthenticatedLayout
             header="My Offers"
-            subHeader="Review and manage offers on your properties"
+            subHeader="Track your offers and compare them with asking prices"
         >
             <Grid container spacing={3}>
 
                 <Grid size={{ xs: 12, md: 4 }}>
                     <StatCard
+                        variant="dashboard"
                         label="Pending"
                         value={offers_stats.pending}
                         icon={<IconClock/>}
-                        iconBgColor={theme.palette.warning.main}
+                        iconBgColor={warning[50]}
+                        iconColor={warning[700]}
                     />
                 </Grid>
 
                 <Grid size={{ xs: 12, md: 4 }}>
                     <StatCard
+                        variant="dashboard"
                         label="Accepted"
                         value={offers_stats.accepted}
                         icon={<IconArrangement/>}
-                        iconBgColor={theme.palette.success.main}
+                        iconBgColor={success[50]}
+                        iconColor={success[700]}
                     />
                 </Grid>
 
                 <Grid size={{ xs: 12, md: 4 }}>
                     <StatCard
+                        variant="dashboard"
                         label="Rejected"
                         value={offers_stats.rejected}
                         icon={<IconCanceled/>}
-                        iconBgColor={theme.palette.error.main}
+                        iconBgColor={error[50]}
+                        iconColor={error[700]}
                     />
                 </Grid>
             </Grid>

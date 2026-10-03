@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from '@inertiajs/react';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import { PropertyStatus } from '@/types/realEstateListing';
 import { RealEstateListing } from '@/types';
 import { listingService } from "@/services/listingService";
 import { useNotification } from "@/context/NotificationContext";
@@ -18,7 +21,7 @@ type ListingCardProps = {
     onRemove?: (id: number) => void;
 };
 
-export default function ListingCard({listing, isFavorite, isDisplayStatus = false, onRemove}: ListingCardProps) {
+export default function ListingCard({listing, isFavorite, isDisplayStatus = true, onRemove}: ListingCardProps) {
 
     const { showNotification } = useNotification();
     const [isFav, setIsFav] = useState(isFavorite);
@@ -26,6 +29,7 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
     const isMounted = useRef(true);
 
     useEffect(() => {
+        isMounted.current = true;
         return () => { isMounted.current = false; };
     }, []);
 
@@ -70,20 +74,23 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
     const mainImage = listing.main_image?.image_path || '/images/placeholder-house.jpg';
 
     return (
-        <div className={`listing-card --${listing.status}`}>
+        <article className={`listing-card --${listing.status}`}>
 
             <div className="card-image-wrapper">
-                <img className="card-image" src={mainImage} alt={listing.title} />
+                <Link href={detailUrl} className="card-image-link" aria-label={`View ${listing.title}`}><img className="card-image" src={mainImage} alt={listing.title} loading="lazy" /></Link>
 
                 {isDisplayStatus && (
                     <div className="card-badges">
-                        <Badge text={listing.status} version={"primary"}/>
+                        <Badge text={listing.status} version={listing.status === PropertyStatus.Available ? 'success' : listing.status === PropertyStatus.Pending ? 'warning' : 'neutral'} size="small" />
                     </div>
                 )}
 
                 <div className="card-actions">
                     <button
                         className="action-btn"
+                        type="button"
+                        aria-pressed={isFav}
+                        aria-label={isFav ? "Remove from favorites" : "Save to favorites"}
                         onClick={toggleFavorite}
                         disabled={loadingFavorite}
                         title={isFav ? "Remove from Favorites" : "Save to Favorites"}
@@ -104,10 +111,10 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
 
 
             <div className="card-content">
-                <h3 className="card-title">{listing.title}</h3>
+                <h3 className="card-title"><Link href={detailUrl}>{listing.title}</Link></h3>
                 <div className="card-address">
                     <IconLocationMark />
-                    {listing.street_number}, {listing.street_name}, {listing.city}, {listing.province}, {listing.postal_code}
+                    {[`${listing.street_number} ${listing.street_name}`.trim(), listing.city, listing.province].filter(Boolean).join(', ')}
                 </div>
                 <div className="card-features">
                     <div className="feature-item">
@@ -125,12 +132,12 @@ export default function ListingCard({listing, isFavorite, isDisplayStatus = fals
                 </div>
                 <div className="card-footer">
                     <div>
-                        <span className="price-label">Price</span>
+                        <span className="price-label">Listing price</span>
                         <div className="price-value">{formatCurrency(listing.price)}</div>
                     </div>
-                    <Button version="outline" text="View Details" link={true} href={detailUrl} fullWidth={false} />
+                    <Button version="primary" icon={<ArrowForwardRoundedIcon sx={{ fontSize: 18 }} />} text="View details" link={true} href={detailUrl} fullWidth={false} />
                 </div>
             </div>
-        </div>
+        </article>
     );
 }

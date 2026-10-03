@@ -1,38 +1,22 @@
-import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
+import { Button } from '@mui/material';
+import { Link } from '@inertiajs/react';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 
-const RecentOffersFooter = ({ count = 8, href = "#" }) => {
+export default function RecentOffersFooter({ count = 8, href = '#' }) {
     return (
-        <Box
+        <Button
+            LinkComponent={Link}
+            href={href}
+            endIcon={<ArrowForwardRoundedIcon />}
             sx={{
-                padding: 2,
-                display: 'flex',
-                justifyContent: 'center',
-                width: '100%'
+                color: 'common.white',
+                border: '1px solid rgba(255,255,255,0.2)',
+                bgcolor: 'rgba(255,255,255,0.06)',
+                px: 2, py: 1,
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.14)', borderColor: 'rgba(255,255,255,0.4)' },
             }}
         >
-            <Link
-                href={href}
-                underline="hover"
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    color: 'primary.main',
-                    fontWeight: 700,
-                    fontSize: '0.95rem',
-                    cursor: 'pointer',
-                    '&:hover': {
-                        color: 'primary.dark',
-                    }
-                }}
-            >
-                See All {count} Offers
-                <ArrowForwardRoundedIcon fontSize="small" />
-            </Link>
-        </Box>
+            View all {count} offers
+        </Button>
     );
-};
-
-export default RecentOffersFooter;
+}

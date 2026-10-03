@@ -7,27 +7,26 @@ import {
     Tab,
     Chip,
     TextField,
-    useMediaQuery,
 } from '@mui/material';
 import { CalendarMonth } from '@mui/icons-material';
 import { isToday, isFuture, isPast, parseISO } from 'date-fns';
 import AppointmentItem from './AppointmentItem';
 import ConfirmDialog from '@/components/ConfirmDialog';
 import { useNotification } from '@/context/NotificationContext';
-import { AppointmentWithListingSeller, AppointmentWithListingBuyer } from "@/types";
+import { Appointment } from "@/types";
 import { appointmentService } from "@/services/appointmentService";
-import theme from "@/theme";
+import { neutral, primary, radius } from '@/design/tokens';
+import { useTwoRowGridHeight } from '@/hooks/useTwoRowGridHeight';
 
 type FilterType = 'all' | 'today' | 'upcoming' | 'past' | 'accepted' | 'pending' | 'rejected' | 'cancelled';
 
 interface AppointmentsListProps {
-    appointments: AppointmentWithListingSeller[] | AppointmentWithListingBuyer[];
+    appointments: Appointment[];
 }
 
 export default function AppointmentsList({ appointments }: AppointmentsListProps) {
     const [currentTab, setCurrentTab] = useState<FilterType>('today');
     const { showNotification } = useNotification();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     // Dialog State
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -67,6 +66,8 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             return dateA - dateB;
         });
     }, [appointments, currentTab]);
+
+    const { gridRef: cardsGridRef, height: twoRowsHeight } = useTwoRowGridHeight(filteredAppointments);
 
     // --- Buyer: Cancel Handlers ---
     const openCancelDialog = (id: number) => {
@@ -140,15 +141,15 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             sx={{
                 width: '100%',
                 minWidth: 0,
-                backgroundColor: theme.palette.background.white,
-                p: { xs: 2, md: theme.shape.padding },
-                borderRadius: theme.shape.borderRadius,
-                border: `1px solid ${theme.palette.border.main}`
+                backgroundColor: neutral[50],
+                p: { xs: 2, sm: 3 },
+                borderRadius: radius.lg,
+                border: `1px solid ${neutral[200]}`
 
             }}>
 
             {/* Header & Tabs */}
-            <Box sx={{ mb: { xs: 2.5, md: 4 } }}>
+            <Box sx={{ mb: 2.5 }}>
                 <Box
                     sx={{
                         display: 'flex',
@@ -159,51 +160,22 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                     }}
                 >
                     <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' } }}>
-                        All Appointments
+                        Appointments
                     </Typography>
                     <Chip
-                        label={`${filteredAppointments.length} Total`}
+                        label={`${filteredAppointments.length} ${filteredAppointments.length === 1 ? 'visit' : 'visits'}`}
                         size="small"
-                        sx={{ bgcolor: 'rgba(87, 42, 77, 0.08)', color: 'primary.main', fontWeight: 700 }}
+                        sx={{ bgcolor: primary[50], color: 'primary.main', fontWeight: 700 }}
                     />
                 </Box>
 
-                <Tabs
-                    value={currentTab}
-                    onChange={handleTabChange}
-                    variant={isMobile ? 'standard' : 'scrollable'}
-                    scrollButtons={isMobile ? false : 'auto'}
-                    textColor="primary"
-                    indicatorColor="primary"
-                    sx={{
-                        borderBottom: 1,
-                        borderColor: 'divider',
-                        maxWidth: '100%',
-                        '& .MuiTabs-scroller': {
-                            overflow: { xs: 'visible !important', sm: 'auto !important' },
-                        },
-                        '& .MuiTabs-list': {
-                            flexWrap: { xs: 'wrap', sm: 'nowrap' },
-                            gap: { xs: 1, sm: 0 },
-                        },
-                        '& .MuiTabs-indicator': {
-                            display: { xs: 'none', sm: 'block' },
-                        },
-                        '& .MuiTab-root': {
-                            textTransform: 'none',
-                            fontWeight: 600,
-                            minHeight: { xs: 42, md: 48 },
-                            minWidth: { xs: 'auto', sm: 90 },
-                            px: { xs: 1.25, sm: 2 },
-                            fontSize: { xs: '0.8125rem', sm: '0.875rem' },
-                            borderRadius: { xs: '999px', sm: 0 },
-                            border: { xs: `1px solid ${theme.palette.border.main}`, sm: 'none' },
-                        },
-                        '& .MuiTab-root.Mui-selected': {
-                            bgcolor: { xs: 'rgba(87, 42, 77, 0.08)', sm: 'transparent' },
-                        }
-                    }}
-                >
+                <Tabs value={currentTab} onChange={handleTabChange} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile aria-label="Filter appointments" sx={{
+                    minHeight: 42, bgcolor: neutral[100], borderRadius: radius.md, p: 0.5,
+                    '& .MuiTabs-indicator': { display: 'none' },
+                    '& .MuiTabs-list': { gap: 0.5 },
+                    '& .MuiTab-root': { minHeight: 38, minWidth: 'auto', px: 1.5, py: 1, textTransform: 'none', fontWeight: 600, fontSize: '0.8125rem', borderRadius: radius.sm, color: neutral[600] },
+                    '& .MuiTab-root.Mui-selected': { bgcolor: neutral[0], color: primary[700], boxShadow: '0 1px 4px rgba(23,26,34,0.08)' },
+                }}>
                     <Tab label="Today" value="today" />
                     <Tab label="Upcoming" value="upcoming" />
                     <Tab label="Confirmed" value="accepted" />
@@ -218,8 +190,8 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
             {/* List Container */}
             <Box
                 sx={{
-                    maxHeight: { xs: 'none', md: '750px' },
-                    overflowY: { xs: 'visible', md: 'auto' },
+                    maxHeight: { xs: 'none', lg: twoRowsHeight ?? 'none' },
+                    overflowY: { xs: 'visible', lg: 'auto' },
                     pr: { xs: 0, md: 1 },
                     '&::-webkit-scrollbar': {
                         width: '6px',
@@ -231,7 +203,8 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                 }}
             >
                 {filteredAppointments.length > 0 ? (
-                    filteredAppointments.map((apt) => (
+                    <Box ref={cardsGridRef} sx={{ display: 'grid', gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))', lg: 'minmax(0, 1fr)', xl: 'repeat(2, minmax(0, 1fr))' }, gap: 2, pb: 0.5 }}>
+                    {filteredAppointments.map((apt) => (
                         <AppointmentItem
                             key={apt.id}
                             appointment={apt}
@@ -239,36 +212,40 @@ export default function AppointmentsList({ appointments }: AppointmentsListProps
                             onApprove={openApproveDialog}
                             onReject={openRejectDialog}
                         />
-                    ))
+                    ))}
+                    </Box>
                 ) : (
                     /* Empty State */
                     <Box
                         sx={{
-                            p: { xs: 3, md: 8 },
+                            p: { xs: 3, md: 5 },
+                            minHeight: 300,
+                            justifyContent: 'center',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                             textAlign: 'center',
-                            bgcolor: theme.palette.background.white,
-                            color: theme.palette.primary.main,
-                            borderRadius: theme.shape.borderRadius,
-                            border: '1px dashed',
+                            bgcolor: neutral[100],
+                            color: primary[600],
+                            borderRadius: radius.lg,
+                            border: `1px dashed ${neutral[300]}`,
                             borderColor: 'divider'
                         }}
                     >
                         <Box sx={{
-                            bgcolor: theme.palette.background.white,
-                            color: theme.palette.primary.main,
-                            borderRadius: theme.shape.borderRadius,
-                            padding: theme.shape.padding,
+                            bgcolor: neutral[100],
+                            color: primary[600],
+                            borderRadius: radius.lg,
+                            p: 2,
+                            mb: 2,
                         }}>
-                            <CalendarMonth sx={{ fontSize: 40, color: 'text.disabled' }} />
+                            <CalendarMonth sx={{ fontSize: 32, color: primary[500] }} />
                         </Box>
                         <Typography variant="h6" color="text.secondary" gutterBottom>
-                            No appointments found
+                            Your schedule is clear
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            No {currentTab === 'all' ? '' : currentTab} appointments to display.
+                            {currentTab === 'today' ? 'You have no visits scheduled for today.' : `No ${currentTab === 'all' ? '' : currentTab === 'accepted' ? 'confirmed ' : `${currentTab} `}appointments to display.`}
                         </Typography>
                     </Box>
                 )}

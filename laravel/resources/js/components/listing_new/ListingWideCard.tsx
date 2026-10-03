@@ -3,6 +3,10 @@ import { RealEstateListing } from '@/types';
 import { listingService } from "@/services/listingService";
 import { useNotification } from "@/context/NotificationContext";
 import Button from '@/components/common/Button';
+import Badge from '@/components/common/Badge';
+import { Link } from '@inertiajs/react';
+import { PropertyStatus } from '@/types/realEstateListing';
+import { neutral, primary, radius } from '@/design/tokens';
 import { formatCurrency } from "@/helpers/priceHelper";
 import IconLocationMark from "@/icons/IconLocationMark";
 import IconBed from "@/icons/IconBed";
@@ -10,16 +14,16 @@ import IconBath from "@/icons/IconBath";
 import IconSqft from "@/icons/IconSqft";
 import {
     Box,
+    ButtonBase,
     Divider,
     IconButton,
     Paper,
     Stack,
     Typography,
-    useTheme
 } from "@mui/material";
-import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import { Favorite, FavoriteBorder, ArrowForwardRounded } from "@mui/icons-material";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
+import { A11y, Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -32,7 +36,6 @@ type ListingCardProps = {
 };
 
 export default function ListingWideCard({ listing, isFavorite, onRemove }: ListingCardProps) {
-    const theme = useTheme();
     const { showNotification } = useNotification();
 
     // --- Favorite Logic State ---
@@ -45,26 +48,30 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
         listing.main_image?.image_path,
         ...(listing.images?.map(img => img.image_path) || [])
     ].filter((img): img is string => !!img);
+    const uniqueImages = [...new Set(images)];
 
-    const displayImages = images.length > 0 ? images : ['/images/placeholder-house.jpg'];
+    const displayImages = uniqueImages.length > 0 ? uniqueImages : ['/images/placeholder-house.jpg'];
 
     useEffect(() => {
+        isMounted.current = true;
         return () => { isMounted.current = false; };
     }, []);
 
-    const toggleFavorite = async (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+    const toggleFavorite = async (event: React.MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
         const previousState = isFav;
         const newState = !previousState;
         setIsFav(newState);
         setLoadingFavorite(true);
-
         if (!newState && onRemove) onRemove(listing.id);
 
         try {
             const response = await listingService.toggleFavorite(listing.id, previousState);
-            if (isMounted.current && response.data) setIsFav(response.data.favorite);
+            if (isMounted.current) {
+                const favorite = response.data?.favorite ?? response.favorite;
+                if (typeof favorite === 'boolean') setIsFav(favorite);
+            }
         } catch {
             if (isMounted.current) setIsFav(previousState);
             showNotification("Failed to update favorite.", "error");
@@ -74,217 +81,74 @@ export default function ListingWideCard({ listing, isFavorite, onRemove }: Listi
     };
 
     const formattedSqft = new Intl.NumberFormat('en-US').format(listing.square_feet);
-    const detailUrl = route("listings.show", listing.id) ;
+    const detailUrl = route('listings.show', listing.id);
 
     return (
-        <Paper
-            elevation={0}
-            sx={{
-                overflow: 'hidden',
-                display: 'flex',
-                flexDirection: { xs: 'column', md: 'row' },
-            }}
-        >
-            {/* 1. Left Section: Swiper Image Slider */}
+        <Paper component="article" elevation={0} sx={{
+            overflow: 'hidden', display: 'flex', flexDirection: { xs: 'column', md: 'row' },
+            bgcolor: neutral[50], borderRadius: radius.lg, border: '1px solid rgba(255,255,255,0.6)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+        }}>
             <Box sx={{
-                    width: { xs: '100%', md: 300 },
-                    height: { xs: 240, md: 'auto' },
-                    minHeight: { md: 260 },
-                    bgcolor: theme.palette.background.default,
-                    position: 'relative',
-
-                    // --- 1. Custom Navigation Arrows (Circles with Black Bg) ---
-                    '& .swiper-button-next, & .swiper-button-prev': {
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
-                        color: '#fff',
-                        width: 32,  // Force circle size
-                        height: 32,
-                        borderRadius: '50%', // Make it round
-                        backdropFilter: theme.glass.blur.sm,
-                        WebkitBackdropFilter: theme.glass.blur.sm,
-                        transition: 'background-color 0.2s',
-                        '&:hover': {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)', // Darker on hover
-                        },
-                        '&::after': {
-                            fontSize: '14px', // Smaller icon size
-                            fontWeight: 'bold',
-                        }
-                    },
-
-                    // --- 2. Custom Pagination Dots (Pill with Black Bg) ---
-                    '& .swiper-pagination': {
-                        bottom: '12px !important', // Lift up from bottom edge
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        width: 'auto !important', // Shrink wrap content
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)', // The pill background
-                        padding: '6px 10px',
-                        borderRadius: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        backdropFilter: theme.glass.blur.sm,
-                        WebkitBackdropFilter: theme.glass.blur.sm,
-                    },
-                    '& .swiper-pagination-bullet': {
-                        width: 6,
-                        height: 6,
-                        opacity: 1,
-                        backgroundColor: 'rgba(255, 255, 255, 0.5)', // Inactive dot color
-                        margin: '0 !important',
-                        transition: 'all 0.3s'
-                    },
-                    '& .swiper-pagination-bullet-active': {
-                        backgroundColor: '#fff !important', // Active dot color
-                        transform: 'scale(1.2)' // Slight grow effect
-                    },
-                }}>
-                <Swiper
-                    modules={[Navigation, Pagination]}
-                    navigation={displayImages.length > 1}
+                width: { xs: '100%', md: '32%' }, maxWidth: { md: 380 }, flexShrink: 0,
+                height: { xs: 240, md: 'auto' }, minHeight: { md: 290 },
+                position: 'relative', bgcolor: neutral[200],
+                '& .swiper-button-next, & .swiper-button-prev': {
+                    width: 32, height: 32, borderRadius: '50%', bgcolor: 'rgba(23,26,34,0.65)', color: 'common.white',
+                    '& svg': { width: 12, height: 12 }, '&::after': { fontSize: 12 },
+                    '&:hover': { bgcolor: 'rgba(23,26,34,0.9)' },
+                },
+                '& .swiper-pagination': {
+                    bottom: '12px !important', left: '50%', transform: 'translateX(-50%)', width: 'auto !important',
+                    bgcolor: 'rgba(23,26,34,0.65)', px: 1.25, py: 0.75, borderRadius: radius.pill,
+                },
+                '& .swiper-pagination-bullet': { width: 6, height: 6, bgcolor: 'common.white', opacity: 0.5 },
+                '& .swiper-pagination-bullet-active': { opacity: 1 },
+            }}>
+                <Swiper modules={[A11y, Navigation, Pagination]} navigation={displayImages.length > 1}
                     pagination={displayImages.length > 1 ? { clickable: true } : false}
-                    loop={displayImages.length > 1}
-                    style={{ width: '100%', height: '100%' }}
-                >
+                    loop={displayImages.length > 1} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
                     {displayImages.map((src, index) => (
-                        <SwiperSlide key={index}>
-                            <Box
-                                component="img"
-                                src={src}
-                                alt={`Property view ${index + 1}`}
-                                sx={{
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover',
-                                    display: 'block'
-                                }}
-                            />
+                        <SwiperSlide key={src}>
+                            <Box component="img" src={src} alt={`${listing.title}, photo ${index + 1}`} loading="lazy" sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                         </SwiperSlide>
                     ))}
                 </Swiper>
+                <Box sx={{ position: 'absolute', top: 16, left: 16, zIndex: 2 }}>
+                    <Badge text={listing.status} size="small" version={listing.status === PropertyStatus.Available ? 'success' : listing.status === PropertyStatus.Pending ? 'warning' : 'neutral'} />
+                </Box>
+                <IconButton onClick={toggleFavorite} disabled={loadingFavorite} aria-pressed={isFav}
+                    aria-label={isFav ? 'Remove from favorites' : 'Save to favorites'} sx={{
+                        position: 'absolute', top: 12, right: 12, zIndex: 2, width: 40, height: 40,
+                        bgcolor: neutral[0], color: isFav ? primary[600] : neutral[700],
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                        '&:hover': { bgcolor: primary[50] },
+                        '&.Mui-disabled': { bgcolor: neutral[0], color: neutral[400] },
+                    }}>
+                    {isFav ? <Favorite sx={{ fontSize: 20 }} /> : <FavoriteBorder sx={{ fontSize: 20 }} />}
+                </IconButton>
             </Box>
-
-            {/* 2. Right Section: Details */}
-            <Box
-                sx={{
-                    flexGrow: 1,
-                    p: { xs: 2, sm: 3 },
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minWidth: 0,
-                }}
-            >
-                <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="flex-start"
-                    spacing={1.5}
-                    mb={1}
-                    sx={{ minWidth: 0 }}
-                >
-                    <Typography
-                        variant="h5"
-                        fontWeight={600}
-                        sx={{
-                            color: theme.palette.text.primary,
-                            fontSize: { xs: '1.125rem', sm: '1.5rem' },
-                            lineHeight: 1.25,
-                            overflowWrap: 'anywhere',
-                            minWidth: 0,
-                            flexGrow: 1,
-                        }}
-                    >
-                        {listing.title}
-                    </Typography>
-                    <IconButton
-                        onClick={toggleFavorite}
-                        disabled={loadingFavorite}
-                        size="small"
-                        sx={{
-                            color: isFav ? theme.palette.primary.main : theme.palette.text.secondary
-                        }}
-                    >
-                        {isFav ? <Favorite /> : <FavoriteBorder />}
-                    </IconButton>
-                </Stack>
-
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                        mb: 2,
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: 1,
-                        overflowWrap: 'anywhere',
-                    }}
-                >
-                    <Box component="span" sx={{ display: 'inline-flex', flexShrink: 0, mt: 0.25 }}>
-                        <IconLocationMark />
-                    </Box>
-                    {listing.street_number} {listing.street_name}, {listing.city}, {listing.province}
+            <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2.5, sm: 3 }, display: 'flex', flexDirection: 'column' }}>
+                <Typography component="h3" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' }, fontWeight: 700, lineHeight: 1.4, mb: 1 }}>
+                    <ButtonBase LinkComponent={Link} href={detailUrl} sx={{ font: 'inherit', textAlign: 'left', color: neutral[800], overflowWrap: 'anywhere', '&:hover': { color: primary[700] } }}>{listing.title}</ButtonBase>
                 </Typography>
-
-                <Typography
-                    variant="body2"
-                    sx={{
-                        color: theme.palette.primary.main,
-                        mb: 3,
-                        display: '-webkit-box',
-                        overflow: 'hidden',
-                        WebkitBoxOrient: 'vertical',
-                        WebkitLineClamp: { xs: 3, sm: 2 },
-                    }}
-                >
-                    {listing.description}
-                </Typography>
-
-                <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    spacing={{ xs: 1.25, sm: 3 }}
-                    mb="auto"
-                >
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <IconBed />
-                        <Typography variant="body2" fontWeight={500}>{listing.bedrooms} Beds</Typography>
-                    </Stack>
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <IconBath />
-                        <Typography variant="body2" fontWeight={500}>{listing.bathrooms} Baths</Typography>
-                    </Stack>
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                        <IconSqft />
-                        <Typography variant="body2" fontWeight={500}>{formattedSqft} sq ft</Typography>
-                    </Stack>
-                </Stack>
-
-                <Divider sx={{ my: 2 }} />
-
-                <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    justifyContent="space-between"
-                    alignItems={{ xs: 'stretch', sm: 'center' }}
-                    spacing={{ xs: 2, sm: 3 }}
-                >
+                <Box sx={{ display: 'flex', gap: 0.75, color: neutral[600], mb: 1.5, '& svg': { flexShrink: 0, mt: '2px' } }}>
+                    <IconLocationMark />
+                    <Typography variant="body2" sx={{ fontSize: '0.8rem', overflowWrap: 'anywhere' }}>{[`${listing.street_number} ${listing.street_name}`.trim(), listing.city, listing.province].filter(Boolean).join(', ')}</Typography>
+                </Box>
+                <Typography variant="body2" sx={{ color: neutral[600], mb: 2, lineHeight: 1.6, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{listing.description}</Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2, '& > span': { display: 'inline-flex', alignItems: 'center', gap: 0.75, bgcolor: neutral[100], px: 1.25, py: 0.75, borderRadius: radius.sm, color: neutral[600] } }}>
+                    <Typography component="span" variant="caption"><IconBed />{listing.bedrooms} beds</Typography>
+                    <Typography component="span" variant="caption"><IconBath />{listing.bathrooms} baths</Typography>
+                    <Typography component="span" variant="caption"><IconSqft />{formattedSqft} sqft</Typography>
+                </Box>
+                <Divider sx={{ mt: 'auto', mb: 2, borderColor: neutral[200] }} />
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ flexWrap: 'wrap', gap: 2 }}>
                     <Box>
-                        <Typography variant="caption" sx={{ letterSpacing: 0.5, color: theme.palette.primary.main, textTransform: 'uppercase' }}>
-                            List Price
-                        </Typography>
-                        <Typography variant="h5" fontWeight={800} sx={{ color: theme.palette.text.primary }}>
-                            {formatCurrency(listing.price)}
-                        </Typography>
+                        <Typography variant="caption" sx={{ color: neutral[600] }}>Listing price</Typography>
+                        <Typography sx={{ fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.03em', color: primary[900], fontVariantNumeric: 'tabular-nums' }}>{formatCurrency(listing.price)}</Typography>
                     </Box>
-
-                    <Box sx={{ width: { xs: '100%', sm: 150 } }}>
-                        <Button
-                            version="outline"
-                            text="View Details"
-                            link={true}
-                            href={detailUrl}
-                            className="w-full justify-center"
-                        />
-                    </Box>
+                    <Button version="primary" text="View details" link href={detailUrl} fullWidth={false} icon={<ArrowForwardRounded sx={{ fontSize: 18 }} />} />
                 </Stack>
             </Box>
         </Paper>

@@ -5,16 +5,15 @@ import type { PaginatedResponse, RealEstateListing } from "@/types";
 import { FilterForm } from "@/components/listings/FilterForm";
 import Listings from "@/components/listings/Listings";
 import { listingService } from "@/services/listingService";
-import { Collapse, IconButton, Typography, Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Collapse, Button, Typography, Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import MapIcon from '@mui/icons-material/Map';
-import theme from "@/theme";
 import SectionCard from "@/design/SectionCard";
-import { radius } from "@/design/tokens";
+import { neutral, radius } from "@/design/tokens";
 
 type Props = {
     listings: PaginatedResponse<RealEstateListing> & {
@@ -49,7 +48,7 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
     };
 
     // State to toggle filter visibility
-    const [showFilters, setShowFilters] = useState(true);
+    const [showFilters, setShowFilters] = useState(false);
     // State for view mode
     const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
     const [isFiltering, setIsFiltering] = useState(false);
@@ -147,8 +146,8 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                 <Typography
                     variant="h6"
                     sx={{
-                        color: 'text.secondary',
-                        fontWeight: 500,
+                        color: 'common.white',
+                        fontWeight: 700,
                         fontSize: { xs: '1rem', sm: '1.25rem' },
                     }}
                 >
@@ -172,13 +171,19 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                         aria-label="view mode"
                         size="small"
                         sx={{
-                            height: 40,
-                            bgcolor: 'background.paper',
+                            height: 44,
+                            p: 0.5,
+                            borderRadius: radius.md,
+                            bgcolor: 'rgba(255,255,255,0.06)',
+                            border: '1px solid rgba(255,255,255,0.15)',
                             width: { xs: '100%', sm: 'auto' },
                             justifyContent: { xs: 'space-between', sm: 'flex-start' },
                             '& .MuiToggleButton-root': {
-                                border: `1px solid ${theme.palette.border.main}`,
-                                color: 'text.secondary',
+                                border: '0 !important',
+                                borderRadius: `${radius.sm} !important`,
+                                px: 1.5,
+                                color: 'rgba(255,255,255,0.65)',
+                                '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' },
                                 flex: { xs: 1, sm: 'initial' },
                                 '&.Mui-selected': {
                                     bgcolor: 'primary.main',
@@ -199,39 +204,29 @@ export default function Index({ listings, favoriteListings, filters }: Props) {
                         </ToggleButton>
                     </ToggleButtonGroup>
 
-                    <Box
+                    <Button
                         onClick={handleToggleFilters}
+                        aria-expanded={showFilters}
+                        aria-controls="listing-filters"
+                        startIcon={<FilterListIcon sx={{ fontSize: 18 }} />}
+                        endIcon={showFilters ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                         sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 0.5,
-                            cursor: 'pointer',
-                            color: 'primary.main',
-                            '&:hover': { opacity: 0.8 },
-                            userSelect: 'none',
-                            width: { xs: '100%', sm: 'auto' },
-                            minHeight: 40,
-                            px: 1.5,
-                            borderRadius: radius.pill,
-                            border: `1px solid ${theme.palette.border.main}`,
-                            backgroundColor: theme.palette.background.paper,
+                            color: 'common.white', minHeight: 44, px: 2,
+                            borderRadius: radius.md, border: '1px solid rgba(255,255,255,0.2)',
+                            bgcolor: showFilters ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.06)',
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.14)' },
                         }}
                     >
-                        <FilterListIcon sx={{ fontSize: 18 }} />
-                        <Typography variant="button" sx={{ fontWeight: 600, fontSize: '0.875rem' }}>
-                            {showFilters ? 'Hide Filters' : 'Show Filters'}
-                        </Typography>
-                        <IconButton size="small" color="primary" sx={{ ml: 0.25 }}>
-                            {showFilters ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                        </IconButton>
-                    </Box>
+                        {showFilters ? 'Hide filters' : 'Filters'}
+                    </Button>
                 </Box>
             </Box>
 
             {/* Collapsible Filter Section */}
-            <Collapse in={showFilters} timeout="auto" unmountOnExit>
-                <SectionCard sx={{ p: { xs: 2, md: theme.shape.padding }, mb: 3 }}>
+            <Collapse id="listing-filters" in={showFilters} timeout="auto" unmountOnExit>
+                <SectionCard sx={{ p: { xs: 2, md: 3 }, mb: 3, bgcolor: neutral[50], border: '1px solid rgba(255,255,255,0.6)' }}>
+                    <Typography component="h2" variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>Refine your search</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>Find a property that fits your plans.</Typography>
                     <FilterForm
                         form={form}
                         updateFilter={updateFilter}

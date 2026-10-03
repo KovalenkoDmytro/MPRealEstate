@@ -64,7 +64,7 @@ export default function Listings({ listings, favoriteListings, viewMode, isLoadi
 
             {/* Grid View */}
             {viewMode === 'grid' ? (
-                <Grid container spacing={4} className="listings-grid" sx={{ opacity: isLoading ? 0.35 : 1 }}>
+                <Grid container spacing={3} className="listings-grid" sx={{ opacity: isLoading ? 0.35 : 1 }}>
                     {listings.data.map((listing) => (
                         <Grid size={{xs:12, md:6, lg:4}} key={listing.id}>
                             <ListingCard
@@ -76,7 +76,7 @@ export default function Listings({ listings, favoriteListings, viewMode, isLoadi
                 </Grid>
             ) : (
                 /* List View */
-                <Stack spacing={4} className="listings-list" sx={{ opacity: isLoading ? 0.35 : 1 }}>
+                <Stack spacing={3} className="listings-list" sx={{ opacity: isLoading ? 0.35 : 1 }}>
                     {listings.data.map((listing) => (
                         <Box key={listing.id}>
                             <ListingWideCard

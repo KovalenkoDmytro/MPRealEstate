@@ -2,9 +2,10 @@ import AuthenticatedLayout from "@/layouts/AuthenticatedLayout/AuthenticatedLayo
 import type { PaginatedResponse, RealEstateListing } from "@/types";
 import Button from "@/components/common/Button";
 import SellerListingCard from "@/components/listings/seller/SellerListingCard";
-import { Grid, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import AppPagination from "@/components/common/AppPagination";
-import theme from "@/theme";
+import { neutral } from '@/design/tokens';
+import { AddRounded } from '@mui/icons-material';
 import IconContainer from "@/components/common/IconContainer";
 import IconHome from "@/icons/IconHome";
 import EmptyState from "@/design/EmptyState";
@@ -19,14 +20,15 @@ export default function Index({ listings }: ComponentProps) {
     return (
         <AuthenticatedLayout header="My Listings">
 
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+                <Box><Typography component="h2" sx={{ color: neutral[0], fontWeight: 700, fontSize: '1.25rem' }}>{listings.total} {listings.total === 1 ? 'property' : 'properties'}</Typography><Typography variant="body2" sx={{ color: neutral[300], mt: 0.5 }}>Manage your properties and keep listings up to date.</Typography></Box>
+                <Button version="primary" link text="Add new listing" icon={<AddRounded />} fullWidth={false} href={route('listings.create')} />
+            </Box>
+
             {hasListings ? (
-                <Grid container spacing={3}>
-                    {listings.data.map((listing, index) => (
-                        <Grid size={{ xs: 12, md: 6, lg: 4 }} key={index}>
-                            <SellerListingCard listing={listing} />
-                        </Grid>
-                    ))}
-                </Grid>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(3, minmax(0, 1fr))' }, '@media (min-width: 1800px)': { gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }, gap: 2.5 }}>
+                    {listings.data.map((listing) => <SellerListingCard key={listing.id} listing={listing} />)}
+                </Box>
             ) : (
                 <EmptyState
                     icon={
@@ -46,20 +48,6 @@ export default function Index({ listings }: ComponentProps) {
             )}
 
             {hasListings && <AppPagination pagination={listings} />}
-
-            <Box
-                sx={{
-                    position: "fixed",
-                    bottom: 32,
-                    right: 32,
-                    zIndex: 1000,
-                    borderRadius: theme.shape.borderRadius,
-                    padding: 1,
-                    backgroundColor: theme.palette.background.white,
-                    display: hasListings ? { xs: "none", md: "block" } : "none",
-                }} >
-                <Button version={"primary"} link={true} text={"Add New Listing"} href={route('listings.create')}/>
-            </Box>
 
         </AuthenticatedLayout>
     );

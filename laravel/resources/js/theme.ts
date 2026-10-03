@@ -18,7 +18,7 @@ const colors = {
     error: error[600],
     warning: warning[600],
     info: info[600],
-    gradient: `linear-gradient(135deg, ${primary[50]} 0%, ${neutral[0]} 60%, ${accent[50]} 100%)`,
+    gradient: 'var(--background-gradient)',
 };
 
 type AppColors = typeof colors;
@@ -143,6 +143,15 @@ const theme = createTheme({
         boxShadow: tokens.elevation.level2,
     },
     components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    minHeight: '100dvh',
+                    background: colors.gradient,
+                    backgroundAttachment: 'fixed',
+                },
+            },
+        },
         // --- GLASS SURFACES (Paper/Card/Dialog/Menu/Popover/AppBar) ---
         // Emotion-generated styleOverrides bypass PostCSS/autoprefixer, so every
         // backdropFilter here is paired by hand with WebkitBackdropFilter for Safari.

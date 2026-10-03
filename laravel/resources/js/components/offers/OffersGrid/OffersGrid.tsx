@@ -1,18 +1,20 @@
 import { Offer, PaginatedResponse } from "@/types";
-import { Typography, Stack, Box, Grid } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { useAuth } from "@/hooks/useAuth";
 import OfferCard from "@/components/offers/OffersGrid/OfferCard";
 import AppPagination from "@/components/common/AppPagination";
 import Button from "@/components/common/Button";
 import IconContainer from "@/components/common/IconContainer";
 import IconOffers from "@/icons/IconOffers";
-import theme from "@/theme";
+import { neutral, primary, radius } from '@/design/tokens';
+import { useTwoRowGridHeight } from '@/hooks/useTwoRowGridHeight';
 
 interface OffersGridProps {
     offers: PaginatedResponse<Offer>;
 }
 
 export default function OffersGrid({ offers }: OffersGridProps) {
+    const { gridRef, height } = useTwoRowGridHeight(offers.data);
     const user = useAuth();
     const role = user.role;
     const isBuyer = role === "buyer";
@@ -23,22 +25,22 @@ export default function OffersGrid({ offers }: OffersGridProps) {
                 sx={{
                     mt: 3,
                     p: { xs: 3, md: 5 },
-                    borderRadius: theme.shape.borderRadius,
-                    border: `1px solid ${theme.palette.border.main}`,
-                    background: `linear-gradient(135deg, ${theme.palette.primary.main}08 0%, ${theme.palette.background.white} 60%, ${theme.palette.secondary.main}10 100%)`,
+                    borderRadius: radius.lg,
+                    border: `1px solid ${neutral[200]}`,
+                    bgcolor: neutral[50],
                     textAlign: "center",
                 }}
             >
                 <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-                    <IconContainer bgColor={`${theme.palette.primary.main}12`}>
-                        <IconOffers color={theme.palette.primary.main} width={22} height={22} />
+                    <IconContainer bgColor={primary[50]}>
+                        <IconOffers color={primary[600]} width={22} height={22} />
                     </IconContainer>
                 </Box>
 
                 <Typography
                     variant="overline"
                     sx={{
-                        color: theme.palette.primary.main,
+                        color: primary[600],
                         letterSpacing: "0.14em",
                         fontWeight: 700,
                         display: "block",
@@ -51,7 +53,7 @@ export default function OffersGrid({ offers }: OffersGridProps) {
                 <Typography
                     variant="h5"
                     sx={{
-                        color: theme.palette.text.primary,
+                        color: neutral[800],
                         fontWeight: 700,
                         mb: 1,
                     }}
@@ -62,7 +64,7 @@ export default function OffersGrid({ offers }: OffersGridProps) {
                 <Typography
                     variant="body1"
                     sx={{
-                        color: theme.palette.text.secondary,
+                        color: neutral[600],
                         maxWidth: 620,
                         mx: "auto",
                         lineHeight: 1.8,
@@ -88,23 +90,11 @@ export default function OffersGrid({ offers }: OffersGridProps) {
 
     return (
         <Box>
-            {/* Render Buyer Layout (Vertical Stack) */}
-            {role === "buyer" ? (
-                <Stack spacing={3} mt={4}>
-                    {offers.data.map((offer) => (
-                        <OfferCard key={offer.id} offer={offer} role={"buyer"} />
-                    ))}
-                </Stack>
-            ) : (
-                // Render Seller Layout (Grid List)
-                <Grid container spacing={3} sx={{ width: "100%", mt: 2 }}>
-                    {offers.data.map((offer) => (
-                        <Grid size={{ xs: 12 }} key={offer.id}>
-                            <OfferCard offer={offer} role={"seller"} />
-                        </Grid>
-                    ))}
-                </Grid>
-            )}
+            <Box sx={{ mt: 4, maxHeight: { xs: 'none', md: height ?? 'none' }, overflowY: { xs: 'visible', md: 'auto' }, pr: { xs: 0, md: 1 }, '&::-webkit-scrollbar': { width: 6 }, '&::-webkit-scrollbar-thumb': { bgcolor: neutral[400], borderRadius: radius.pill } }}>
+            <Box ref={gridRef} sx={{ display: 'grid', gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'repeat(2, minmax(0, 1fr))', lg: 'repeat(3, minmax(0, 1fr))' }, '@media (min-width: 1800px)': { gridTemplateColumns: 'repeat(4, minmax(0, 1fr))' }, gap: 2 }}>
+                {offers.data.map((offer) => <OfferCard key={offer.id} offer={offer} role={isBuyer ? 'buyer' : 'seller'} />)}
+            </Box>
+            </Box>
 
             {/* Pagination Controls */}
             <AppPagination

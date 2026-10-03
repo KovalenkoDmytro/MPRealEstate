@@ -1,91 +1,28 @@
-import { useMemo } from 'react';
-import {Box, Grid, Typography, Stack} from '@mui/material';
+import { Box } from '@mui/material';
+import { AccessTimeRounded, CheckCircleOutlineRounded, EventBusyRounded, CalendarMonthRounded } from '@mui/icons-material';
+import { format, parseISO } from 'date-fns';
+import type { SellerStats } from '@/types/Appointments/sellerAppointmentsStat';
+import StatCard from '@/components/common/StatCard';
+import DashboardSection from '../DashboardSection';
 import DailyActivityChart from './DailyActivityChart';
-import { SellerStats } from "@/types/Appointments/sellerAppointmentsStat";
-import StatCard from "@/components/common/StatCard";
-import IconAppointments from "@/icons/IconAppointments";
-import SectionCard from "@/design/SectionCard";
-import { statTones } from "@/design/statTones";
-import IconTrendingUpBig from "@/icons/IconTrendingUpBig";
-import IconConfirm from "@/icons/IconConfirm";
-import IconClose from "@/icons/IconClose";
-import IconClock from "@/icons/IconClock";
-import IconContainer from "@/components/common/IconContainer";
+import { primary, success, warning, neutral } from '@/design/tokens';
 
-interface AppointmentStatsProps {
-    stats: SellerStats;
-}
-
-export default function AppointmentStats({ stats }: AppointmentStatsProps) {
+export default function AppointmentStats({ stats }: { stats: SellerStats }) {
     const { pending, completed, cancelled } = stats.summary.breakdown;
-    const totalvalueLast30Days = stats.summary.total_last_30_days;
     const chartData = stats.chart_data.last_7_days || [];
-
-    // Formats dates. Safe to keep inside useMemo.
-    const dateRange = useMemo(() => {
-        if (!chartData.length) return '';
-
-        const fmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
-        return `${fmt.format(new Date(chartData[0].date))} - ${fmt.format(new Date(chartData[chartData.length - 1].date))}`;
-    }, [chartData]);
-
-
+    const dateRange = chartData.length ? `${format(parseISO(chartData[0].date), 'd MMM')} – ${format(parseISO(chartData[chartData.length - 1].date), 'd MMM')}` : 'Your viewing schedule at a glance';
+    const cards = [
+        { label: 'Pending', value: pending, icon: <AccessTimeRounded />, tone: warning },
+        { label: 'Completed', value: completed, icon: <CheckCircleOutlineRounded />, tone: success },
+        { label: 'Cancelled', value: cancelled, icon: <EventBusyRounded />, tone: neutral },
+        { label: 'Total · 30 days', value: stats.summary.total_last_30_days, icon: <CalendarMonthRounded />, tone: primary },
+    ];
     return (
-
-            <SectionCard>
-                <Stack  gap={1.5} mb={4}>
-                    <Box display="flex" alignItems="center" gap={1.5}>
-                        <IconContainer>
-                            <IconAppointments/>
-                        </IconContainer>
-                        <Typography variant="h5" fontWeight={700} color="text.primary">
-                            Appointments
-                        </Typography>
-                    </Box>
-
-                    {dateRange && (
-                        <Typography variant="body2" color="text.secondary">
-                            Week: {dateRange}
-                        </Typography>
-                    )}
-                </Stack>
-
-                <Grid container spacing={3} mb={6} alignItems="stretch">
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <StatCard
-                            label="Pending"
-                            value={pending || 0}
-                            icon={<IconClock/>}
-                            {...statTones.warm}
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <StatCard
-                            label="Completed"
-                            value={completed || 0}
-                            icon={<IconConfirm/>}
-                            {...statTones.primary}
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <StatCard
-                            label="Cancelled"
-                            value={cancelled || 0}
-                            icon={<IconClose/>}
-                            {...statTones.neutral}
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                        <StatCard
-                            label="Total (30 Days)"
-                            value={totalvalueLast30Days || 0}
-                            icon={<IconTrendingUpBig/>}
-                            {...statTones.accent}
-                        />
-                    </Grid>
-                </Grid>
-
-                <DailyActivityChart data={chartData} />
-            </SectionCard>
+        <DashboardSection title="Appointments" description={dateRange} href={route('appointments.index')}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))', xl: 'repeat(4, minmax(0, 1fr))' }, gap: 2 }}>
+                {cards.map((card) => <StatCard key={card.label} variant="dashboard" label={card.label} value={card.value || 0} icon={card.icon} iconBgColor={card.tone[50]} iconColor={card.tone[700]} />)}
+            </Box>
+            <DailyActivityChart data={chartData} />
+        </DashboardSection>
     );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Drawer, Toolbar, Box, useTheme, Divider, Typography } from '@mui/material';
+import { Drawer, Toolbar, Box, Typography } from '@mui/material';
 import { Link } from '@inertiajs/react';
 import ApplicationLogo from '@/components/ApplicationLogo';
 import SidebarNavLink from '@/layouts/AuthenticatedLayout/SidebarNavLink';
@@ -9,6 +9,7 @@ import IconMyDeals from "@/icons/IconMyDeals";
 import IconAppointments from "@/icons/IconAppointments";
 import IconOffers from "@/icons/IconOffers";
 import IconFavorite from "@/icons/IconFavorite";
+import { neutral, primary, radius } from "@/design/tokens";
 
 const ROLE_MENUS: Record<string, Array<{ label: string; route: string; icon: React.ReactNode }>> = {
     common: [
@@ -46,7 +47,6 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: SidebarProps) {
-    const theme = useTheme();
     const bottomLinks = userRole === 'lawyer' ? [] : COMMON_BOTTOM_LINKS;
 
     // Combine common links + role specific links + bottom links
@@ -61,65 +61,31 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
             className="navigation-drawer-content"
             sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
 
-            <Toolbar sx={{ justifyContent: 'center', py: 3, minHeight: '80px !important' }}>
-                <Box sx={{ display: 'flex', gap: '20px', alignItems: 'center', width: '100%' }}>
-
-                    <Link href={route('home')}>
-                        {/* The Icon Container */}
-                        <ApplicationLogo
-                            style={{
-                                height: 45,
-                                width: 'auto',
-                                borderRadius: '14px',
-                                backgroundColor: theme.palette.primary.main,
-                                padding: '8px',
-                                boxShadow: theme.glass.elevation.level1,
-                            }}
-                        />
-                    </Link>
-
-                    {/* The Text Stack */}
-                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <Typography
-                            variant="h5"
-                            sx={{
-                                fontWeight: 700,
-                                color: '#fff',
-                                lineHeight: 1.2,
-                                letterSpacing: '-0.02em',
-                            }}
-                        >
-                            EstateHub
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                // accent[300] measures ~2.8:1 on the dark glass fill — fails AA;
-                                // white at reduced opacity keeps the translucent-hierarchy look and stays legible.
-                                color: 'rgba(255, 255, 255, 0.64)',
-                                fontWeight: 400,
-                                fontSize: '12px',
-                            }}
-                        >
-                            Seller Dashboard
-                        </Typography>
+            <Toolbar sx={{ px: '24px !important', minHeight: '88px !important', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                <Link href={route('home')} aria-label="EstateHub home" onClick={onClose} style={{ display: 'flex', gap: 12, alignItems: 'center', width: '100%', textDecoration: 'none' }}>
+                    <Box sx={{ width: 40, height: 40, borderRadius: radius.md, background: `linear-gradient(135deg, ${primary[500]}, ${primary[700]})`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <ApplicationLogo style={{ width: 24, height: 24 }} />
                     </Box>
-
-                </Box>
+                    <Box sx={{ minWidth: 0 }}>
+                        <Typography sx={{ fontSize: '1.2rem', fontWeight: 700, color: neutral[0], lineHeight: 1.3, letterSpacing: '-0.02em' }}>EstateHub</Typography>
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.55)', textTransform: 'capitalize', fontSize: '0.7rem' }}>{userRole} workspace</Typography>
+                    </Box>
+                </Link>
             </Toolbar>
 
-            <Divider sx={{ mb: 2, mx: 3 }} />
+            <Typography variant="caption" sx={{ px: 3, pt: 3, pb: 1.5, color: 'rgba(255,255,255,0.4)', fontSize: '0.625rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Workspace</Typography>
 
             {/* Navigation Items */}
-            <Box sx={{ px: 2, flexGrow: 1 }}>
+            <Box sx={{ px: 1.5, pb: 2, flexGrow: 1 }}>
                 {menuItems.map((item) => (
                     <SidebarNavLink
                         key={item.route}
                         href={route(item.route)}
                         active={route().current(item.route)}
+                        onClick={onClose}
                     >
-                        {item.icon}
-                        <span>{item.label}</span>
+                        <Box className="sidebar-nav-icon" aria-hidden="true">{item.icon}</Box>
+                        <span className="sidebar-nav-label">{item.label}</span>
                     </SidebarNavLink>
                 ))}
             </Box>
@@ -134,7 +100,7 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
         >
             {/* Mobile Drawer */}
             <Drawer
-                className="desktop-drawer"
+                className="mobile-drawer"
                 variant="temporary"
                 open={mobileOpen}
                 onClose={onClose}
@@ -144,11 +110,13 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
                     '& .MuiDrawer-paper': {
                         boxSizing: 'border-box',
                         width: drawerWidth,
-                        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
-                        bgcolor: 'background.sidebar',
-                        backdropFilter: theme.glass.blur.md,
-                        WebkitBackdropFilter: theme.glass.blur.md,
-                        color: 'text.tan',
+                        borderRadius: 0,
+                        border: 0,
+                        borderRight: '1px solid rgba(255,255,255,0.1)',
+                        bgcolor: neutral[900],
+                        backgroundImage: 'linear-gradient(180deg, rgba(59,91,219,0.04), rgba(59,91,219,0.1))',
+                        boxShadow: 'none',
+                        color: neutral[0],
                     },
                 }}
             >
@@ -163,11 +131,13 @@ export default function Sidebar({ mobileOpen, onClose, drawerWidth, userRole }: 
                     '& .MuiDrawer-paper': {
                         boxSizing: 'border-box',
                         width: drawerWidth,
-                        borderRight: '1px solid rgba(255, 255, 255, 0.08)',
-                        bgcolor: 'background.sidebar',
-                        backdropFilter: theme.glass.blur.md,
-                        WebkitBackdropFilter: theme.glass.blur.md,
-                        color: 'text.tan',
+                        borderRadius: 0,
+                        border: 0,
+                        borderRight: '1px solid rgba(255,255,255,0.1)',
+                        bgcolor: neutral[900],
+                        backgroundImage: 'linear-gradient(180deg, rgba(59,91,219,0.04), rgba(59,91,219,0.1))',
+                        boxShadow: 'none',
+                        color: neutral[0],
                     },
                 }}
                 open

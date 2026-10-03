@@ -1,63 +1,21 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
-import { primary } from '@/design/tokens';
+import { Box, Chip, Typography } from '@mui/material';
+import RecentOffersFooter from './RecentOffersFooter';
 
-const RecentOffersHeader = ({total}: {total: number}) => {
-
+export default function RecentOffersHeader({ total }: { total: number }) {
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: { xs: 'flex-start', sm: 'center' },
-                flexDirection: { xs: 'column', sm: 'row' },
-                gap: { xs: 1.5, sm: 2 },
-                width: '100%',
-            }}
-        >
-            {/* Left Side: Text Content */}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2 }}>
             <Box>
-                <Typography
-                    variant="h6"
-                    component="h2"
-                    sx={{
-                        fontWeight: 800,
-                        color: 'text.primary',
-                        lineHeight: 1.2,
-                        mb: 0.5,
-                        fontSize: { xs: '1.1rem', sm: '1.25rem' },
-                    }}
-                >
-                    Recent Offers
-                </Typography>
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ fontWeight: 400 }}
-                >
-                    Track all your property offers
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.75 }}>
+                    <Typography component="h2" variant="h5" sx={{ color: 'common.white', fontWeight: 700 }}>
+                        Recent Offers
+                    </Typography>
+                    <Chip label={total} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.12)', color: 'common.white', border: '1px solid rgba(255,255,255,0.16)' }} />
+                </Box>
+                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                    Your latest offers, at a glance.
                 </Typography>
             </Box>
-
-            {/* Right Side: Badge/Chip */}
-            <Chip
-                label={`${total} Total`}
-                sx={{
-                    backgroundColor: primary[50],
-                    color: primary[700],
-                    fontWeight: 700,
-                    fontSize: '0.85rem',
-                    height: '32px',
-                    alignSelf: { xs: 'flex-start', sm: 'center' },
-                    '& .MuiChip-label': {
-                        paddingLeft: 2,
-                        paddingRight: 2,
-                    },
-                }}
-            />
+            {total > 3 && <RecentOffersFooter count={total} href={route('offers.index')} />}
         </Box>
     );
-};
-
-export default RecentOffersHeader;
+}

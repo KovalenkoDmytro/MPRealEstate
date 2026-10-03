@@ -5,12 +5,13 @@ import {
     MenuItem,
     ListItemIcon,
     Divider,
-    IconButton,
+    ButtonBase,
     Tooltip,
     Typography
 } from '@mui/material';
-import { Person, Logout, Settings } from '@mui/icons-material';
-import { Link, router } from '@inertiajs/react';
+import { PersonOutlineRounded, LogoutRounded, SettingsOutlined, KeyboardArrowDownRounded } from '@mui/icons-material';
+import { router } from '@inertiajs/react';
+import { primary, neutral, error, radius } from '@/design/tokens';
 import GlassPopover from '@/design/GlassPopover';
 
 interface User {
@@ -39,10 +40,16 @@ export default function UserMenu({ user }: UserMenuProps) {
         <React.Fragment>
             <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
                 <Tooltip title="Account settings">
-                    <IconButton
+                    <ButtonBase
                         onClick={handleClick}
-                        size="small"
-                        sx={{ ml: 1 }} // Reduced margin slightly for tighter fit
+                        aria-label="Account settings"
+                        sx={{
+                            gap: 1, p: 0.75, pr: { xs: 0.75, sm: 1.25 }, borderRadius: radius.md,
+                            bgcolor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)',
+                            color: 'common.white', textAlign: 'left',
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.1)' },
+                            '&:focus-visible': { outline: '2px solid rgba(255,255,255,0.7)', outlineOffset: 3 },
+                        }}
                         aria-controls={open ? 'account-menu' : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined}
@@ -51,14 +58,20 @@ export default function UserMenu({ user }: UserMenuProps) {
                             sx={{
                                 width: 36,
                                 height: 36,
-                                bgcolor: 'primary.main',
+                                bgcolor: primary[600],
+                                borderRadius: radius.sm,
                                 fontSize: 14,
                                 fontWeight: 600
                             }}
                         >
                             {user.name.charAt(0).toUpperCase()}
                         </Avatar>
-                    </IconButton>
+                        <Box sx={{ display: { xs: 'none', sm: 'block' }, maxWidth: 140 }}>
+                            <Typography variant="body2" noWrap sx={{ fontWeight: 600, fontSize: '0.8rem' }}>{user.name}</Typography>
+                            {user.role && <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.55)', textTransform: 'capitalize', display: 'block', lineHeight: 1.4 }}>{user.role}</Typography>}
+                        </Box>
+                        <KeyboardArrowDownRounded sx={{ display: { xs: 'none', sm: 'block' }, fontSize: 18, color: 'rgba(255,255,255,0.55)' }} />
+                    </ButtonBase>
                 </Tooltip>
             </Box>
 
@@ -68,42 +81,48 @@ export default function UserMenu({ user }: UserMenuProps) {
                 open={open}
                 onClose={handleClose}
                 onClick={handleClose}
-                width="auto"
-                arrowOffset={14}
-                paperSx={{ minWidth: 180, '& .MuiAvatar-root': { width: 32, height: 32, ml: -0.5, mr: 1 } }}
+                width={268}
+                paperSx={{
+                    maxWidth: 'calc(100vw - 24px)', mt: 1, bgcolor: neutral[50], color: neutral[800],
+                    borderRadius: radius.lg, border: `1px solid ${neutral[200]}`,
+                    backdropFilter: 'none', WebkitBackdropFilter: 'none',
+                    boxShadow: '0 16px 48px rgba(0,0,0,0.24)',
+                    '&:before': { display: 'none' },
+                    '& .MuiMenu-list': { p: 1 },
+                    '& .MuiMenuItem-root': { minHeight: 44, px: 1.5, py: 1.25, my: 0.25, borderRadius: radius.sm, fontSize: '0.875rem', fontWeight: 500, gap: 1.25, '&:hover': { bgcolor: primary[50] }, '&.Mui-focusVisible': { bgcolor: primary[50] } },
+                    '& .MuiListItemIcon-root': { minWidth: 24, color: neutral[500], '& svg': { fontSize: 20 } },
+                }}
             >
-                <Box px={2} py={1} sx={{ mb: 1 }}>
-                    <Typography variant="subtitle2" fontWeight={700}>
-                        {user.name}
-                    </Typography>
-                    {user.role && (
-                        <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'capitalize' }}>
-                            {user.role}
-                        </Typography>
-                    )}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, p: 1.5, pb: 2 }}>
+                    <Avatar sx={{ width: 40, height: 40, bgcolor: primary[100], color: primary[700], borderRadius: radius.md, fontSize: 16, fontWeight: 700 }}>{user.name.charAt(0).toUpperCase()}</Avatar>
+                    <Box sx={{ minWidth: 0 }}>
+                        <Typography variant="body2" fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>{user.name}</Typography>
+                        {user.role && <Typography variant="caption" sx={{ color: neutral[600], textTransform: 'capitalize', display: 'block', mt: 0.25 }}>{user.role}</Typography>}
+                    </Box>
                 </Box>
-                <Divider />
+                <Divider sx={{ mx: 1, mb: 1, borderColor: neutral[200] }} />
 
-                <MenuItem href={route('profile.edit')}>
+                <MenuItem component="a" href={route('profile.edit')}>
                     <ListItemIcon>
-                        <Person fontSize="small" />
+                        <PersonOutlineRounded />
                     </ListItemIcon>
                     Profile
                 </MenuItem>
 
                 <MenuItem onClick={handleClose}>
                     <ListItemIcon>
-                        <Settings fontSize="small" />
+                        <SettingsOutlined />
                     </ListItemIcon>
                     Settings
                 </MenuItem>
 
+                <Divider sx={{ mx: 1, my: 1, borderColor: neutral[200] }} />
                 <MenuItem
                     onClick={() => router.post(route('logout'))}
-                    sx={{ color: 'error.main' }}
+                    sx={{ color: error[600], '&:hover': { bgcolor: `${error[50]} !important` }, '&.Mui-focusVisible': { bgcolor: `${error[50]} !important` } }}
                 >
                     <ListItemIcon>
-                        <Logout fontSize="small" sx={{ color: 'error.main' }} />
+                        <LogoutRounded sx={{ color: error[600] }} />
                     </ListItemIcon>
                     Logout
                 </MenuItem>

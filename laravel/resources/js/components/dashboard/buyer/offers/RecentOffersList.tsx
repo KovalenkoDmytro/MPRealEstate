@@ -1,8 +1,7 @@
+import { Box, Typography } from '@mui/material';
 import { Offer } from '@/types/offer';
-import RecentOfferItem from "@/components/dashboard/buyer/offers/RecentOfferItem";
-import {Stack, Typography} from "@mui/material";
-import RecentOffersHeader from "@/components/dashboard/buyer/offers/RecentOffersHeader";
-import RecentOffersFooter from "@/components/dashboard/buyer/offers/RecentOffersFooter";
+import RecentOfferItem from './RecentOfferItem';
+import RecentOffersHeader from './RecentOffersHeader';
 
 interface RecentOffersListProps {
     offers: Offer[];
@@ -12,36 +11,24 @@ const DISPLAY_LIMIT = 3;
 
 export default function RecentOffersList({ offers }: RecentOffersListProps) {
     const displayedOffers = offers.slice(0, DISPLAY_LIMIT);
-    const hasMore = offers.length > DISPLAY_LIMIT;
 
     return (
-        <div className="recent-offers-list">
-
-            <RecentOffersHeader total={offers.length}/>
-
-            <Stack
-                spacing={2}
-                sx={{
-                    mt: 2, mb: hasMore ? 1 : 0
-                }}
-            >
-
-                {displayedOffers.map((offer) => (
-                    <RecentOfferItem key={offer.id} offer={offer} />
-                ))}
-
-
+        <Box component="section" className="recent-offers-list" sx={{ width: '100%', minWidth: 0 }}>
+            <RecentOffersHeader total={offers.length} />
+            <Box sx={{
+                display: 'grid',
+                gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'repeat(3, minmax(0, 1fr))' },
+                gap: 2.5,
+                mt: 3,
+            }}>
+                {displayedOffers.map((offer) => <RecentOfferItem key={offer.id} offer={offer} />)}
                 {offers.length === 0 && (
-                    <Typography variant="h6">
-                        You have not made any offers yet.
-                    </Typography>
+                    <Box sx={{ gridColumn: '1 / -1', p: 4, borderRadius: 3, border: '1px dashed rgba(255,255,255,0.25)', textAlign: 'center' }}>
+                        <Typography sx={{ color: 'common.white', fontWeight: 600 }}>You have not made any offers yet.</Typography>
+                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mt: 1 }}>Your latest offers will appear here.</Typography>
+                    </Box>
                 )}
-
-            </Stack>
-
-            {hasMore && (
-                <RecentOffersFooter count={offers.length} href={route('offers.index')} />
-            )}
-        </div>
+            </Box>
+        </Box>
     );
 }

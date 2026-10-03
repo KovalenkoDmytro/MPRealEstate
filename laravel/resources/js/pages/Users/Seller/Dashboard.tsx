@@ -24,16 +24,16 @@ export default function Dashboard({
 
     return (
         <AuthenticatedLayout header="Dashboard">
-            <Stack spacing={4}>
+            <Stack spacing={5}>
                 <AppointmentStats stats={appointments_stats} />
                 <PropertyPerformance stats={listingsPerformance_stats} />
 
                 <Grid container spacing={3}>
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid size={{ xs: 12, xl: 6 }}>
                         <DealPerformance stats={deals_stats} view={'column'}/>
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid size={{ xs: 12, xl: 6 }}>
                         <OfferPerformance stats={offers_stats} view={'column'}/>
                     </Grid>
                 </Grid>

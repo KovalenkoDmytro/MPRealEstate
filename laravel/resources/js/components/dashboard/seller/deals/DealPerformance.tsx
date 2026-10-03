@@ -1,85 +1,24 @@
-import { Box, Typography, Grid, Stack } from '@mui/material';
-import { DealStats } from "@/types/models";
-import IconArrangement from "@/icons/IconArrangement";
-import StatCard from "@/components/common/StatCard";
-import SectionCard from "@/design/SectionCard";
-import { statTones } from "@/design/statTones";
-import { neutral } from "@/design/tokens";
-import IconConfirm from "@/icons/IconConfirm";
-import IconClose from "@/icons/IconClose";
-import IconClock from "@/icons/IconClock";
-import IconHandShake from "@/icons/IconHandShake";
-import IconContainer from "@/components/common/IconContainer";
+import { Box } from '@mui/material';
+import { AccessTimeRounded, CheckCircleOutlineRounded, HighlightOffRounded, HandshakeOutlined } from '@mui/icons-material';
+import type { DealStats } from '@/types/models';
+import StatCard from '@/components/common/StatCard';
+import DashboardSection from '../DashboardSection';
+import { primary, success, warning, error } from '@/design/tokens';
 
-interface DealPerformanceProps {
-    stats: DealStats;
-    view?: 'column' | 'row';
-}
+type Props = { stats: DealStats; view?: 'column' | 'row' };
 
-export default function DealPerformance({ stats, view = 'row' }: DealPerformanceProps) {
-
-
-    const statCards = [
-        {
-            label: "Pending Deals",
-            value: stats.pending,
-            icon: <IconClock/>,
-            ...statTones.warm,
-        },
-        {
-            label: "Completed",
-            value: stats.completed,
-            icon: <IconConfirm/>,
-            ...statTones.primary,
-        },
-        {
-            label: "Broken",
-            value: stats.broken,
-            icon: <IconClose/>,
-            ...statTones.neutral,
-        },
-        {
-            label: "Total All Time",
-            value: stats.total,
-            icon: <IconHandShake/>,
-            ...statTones.accent,
-        }
+export default function DealPerformance({ stats, view = 'row' }: Props) {
+    const cards = [
+        { label: 'Pending deals', value: stats.pending, icon: <AccessTimeRounded />, tone: warning },
+        { label: 'Completed', value: stats.completed, icon: <CheckCircleOutlineRounded />, tone: success },
+        { label: 'Broken', value: stats.broken, icon: <HighlightOffRounded />, tone: error },
+        { label: 'Total deals', value: stats.total, icon: <HandshakeOutlined />, tone: primary },
     ];
-
     return (
-        <SectionCard>
-            <Stack gap={1.5} mb={4}>
-                <Box display="flex" alignItems="center" gap={1.5}>
-
-                    <IconContainer bgColor={neutral[600]}>
-                        <IconArrangement/>
-                    </IconContainer>
-                    <Typography variant="h5" fontWeight={700} color="text.primary">
-                        Deal Activity
-                    </Typography>
-                </Box>
-
-                <Typography variant="body2" color="text.secondary">
-                    Current status
-                </Typography>
-            </Stack>
-
-            {/* Conditionally render Stack (column) or Grid (row) */}
-            {view === 'column' ? (
-                <Stack spacing={3}>
-                    {statCards.map((card, index) => (
-                        <StatCard key={index} {...card} />
-                    ))}
-                </Stack>
-            ) : (
-                <Grid container spacing={3}>
-                    {statCards.map((card, index) => (
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
-                            <StatCard {...card} />
-                        </Grid>
-                    ))}
-                </Grid>
-            )}
-        </SectionCard>
+        <DashboardSection title="Deal activity" description="Track your deals from agreement to completion." href={route('deals.index')}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: view === 'column' ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr))' }, gap: 2 }}>
+                {cards.map((card) => <StatCard key={card.label} variant="dashboard" label={card.label} value={card.value || 0} icon={card.icon} iconBgColor={card.tone[50]} iconColor={card.tone[700]} />)}
+            </Box>
+        </DashboardSection>
     );
 }

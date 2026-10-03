@@ -3,7 +3,7 @@ import type {SellerAppointmentsPage} from "@/types/Appointments/sellerAppointmen
 import AppointmentsOverviewCards from "@/components/appointment/ApointmentsOverviewCards";
 import AppointmentCalendar from "@/components/appointment/AppointmentCalendar";
 import AppointmentsList from "@/components/appointment/detailsList/AppointmentsList";
-import { Grid } from "@mui/material";
+import { Box } from "@mui/material";
 
 
 export default function SellerAppointmentsPage(appointments: SellerAppointmentsPage) {
@@ -26,17 +26,10 @@ export default function SellerAppointmentsPage(appointments: SellerAppointmentsP
                 cancelledCount={appointments.canceled_appointments.length}
             />
 
-            <Grid container spacing={3} mt={6}>
-
-                <Grid size={{ xs: 12, md: 5 }}>
-                    <AppointmentCalendar appointments={calendarData()} />
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 7 }}>
-                    <AppointmentsList appointments={appointments.all_appointments as any}/>
-                </Grid>
-
-            </Grid>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(300px, 360px) minmax(0, 1fr)' }, gap: 3, mt: 4, alignItems: 'start' }}>
+                <AppointmentCalendar appointments={calendarData()} />
+                <AppointmentsList appointments={appointments.all_appointments} />
+            </Box>
 
         </AuthenticatedLayout>
     );

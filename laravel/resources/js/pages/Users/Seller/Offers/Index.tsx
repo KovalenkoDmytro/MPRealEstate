@@ -7,7 +7,7 @@ import {OfferStats} from "@/types/models";
 import IconConfirm from "@/icons/IconConfirm";
 import IconClose from "@/icons/IconClose";
 import IconClock from "@/icons/IconClock";
-import theme from "@/theme";
+import { warning, success, error } from '@/design/tokens';
 
 type OffersIndexPageProps = {
     offers: PaginatedResponse<Offer>;
@@ -24,29 +24,35 @@ export default function OffersIndexPage({ offers, offers_stats }: OffersIndexPag
 
                 <Grid size={{ xs: 12, md: 4 }}>
                     <StatCard
+                        variant="dashboard"
                         label="Pending"
                         value={offers_stats.pending}
                         icon={<IconClock/>}
-                        iconBgColor={theme.palette.warning.main}
+                        iconBgColor={warning[50]}
+                        iconColor={warning[700]}
 
                     />
                 </Grid>
 
                 <Grid size={{ xs: 12, md: 4 }}>
                     <StatCard
+                        variant="dashboard"
                         label="Accepted"
                         value={offers_stats.accepted}
                         icon={<IconConfirm/>}
-                        iconBgColor={theme.palette.success.main}
+                        iconBgColor={success[50]}
+                        iconColor={success[700]}
                     />
                 </Grid>
 
                 <Grid size={{ xs: 12, md: 4 }}>
                     <StatCard
+                        variant="dashboard"
                         label="Rejected"
                         value={offers_stats.rejected}
                         icon={<IconClose/>}
-                        iconBgColor={theme.palette.error.main}
+                        iconBgColor={error[50]}
+                        iconColor={error[700]}
                     />
                 </Grid>
             </Grid>

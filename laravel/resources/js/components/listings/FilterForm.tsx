@@ -1,29 +1,15 @@
-import React from 'react';
+import React, { useId } from 'react';
 import {
-    Box,
-    TextField,
-    Checkbox,
-    FormControlLabel,
-    Button,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    CircularProgress,
+    Box, TextField, Checkbox, FormControlLabel, Button, FormControl,
+    InputLabel, Select, MenuItem, CircularProgress, Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import CitySelector from "@/components/common/CitySelector";
-import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
-import YearBuiltField from "@/components/listing/form/YearBuiltField";
-import {formatCurrency, formatNumber} from "@/helpers/priceHelper";
-
-const selectMenuProps = {
-    PaperProps: {
-        sx: {
-            maxHeight: 450,
-        },
-    },
-};
+import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import CitySelector from '@/components/common/CitySelector';
+import PropertyTypeSelect from '@/components/listing/form/PropertyTypeSelect';
+import { formatCurrency, formatNumber } from '@/helpers/priceHelper';
+import { neutral, primary, radius } from '@/design/tokens';
 
 // Define SqFt options for the dropdowns
 const SQFT_OPTIONS = [
@@ -72,300 +58,103 @@ type FilterFormProps = {
     canReset?: boolean;
 };
 
-export const FilterForm: React.FC<FilterFormProps> = ({
-    form,
-    updateFilter,
-    onApplyFilters,
-    onResetFilters,
-    isSubmitting = false,
-    canReset = false,
-}) => {
+type FilterSelectProps = {
+    label: string;
+    value?: string | number;
+    onChange: (value: string | number) => void;
+    options: { value: string | number; label: string }[];
+    emptyLabel?: string;
+};
 
+function FilterSelect({ label, value, onChange, options, emptyLabel = 'Any' }: FilterSelectProps) {
+    const id = useId();
+    return (
+        <FormControl fullWidth size="small">
+            <InputLabel id={`${id}-label`}>{label}</InputLabel>
+            <Select labelId={`${id}-label`} id={id} label={label} value={value ?? ''} onChange={(e) => onChange(e.target.value)} MenuProps={{ PaperProps: { sx: { maxHeight: 350 } } }}>
+                <MenuItem value="">{emptyLabel}</MenuItem>
+                {options.map((option) => <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>)}
+            </Select>
+        </FormControl>
+    );
+}
+
+function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
+    return (
+        <Box sx={{ height: '100%', minWidth: 0, p: { xs: 2, sm: 2.5 }, border: `1px solid ${neutral[200]}`, borderRadius: radius.md, bgcolor: neutral[0] }}>
+            <Typography component="h3" variant="subtitle2" sx={{ color: primary[900], fontWeight: 700, mb: 2.5 }}>{title}</Typography>
+            <Grid container spacing={2}>{children}</Grid>
+        </Box>
+    );
+}
+
+export const FilterForm: React.FC<FilterFormProps> = ({ form, updateFilter, onApplyFilters, onResetFilters, isSubmitting = false, canReset = false }) => {
+    const sqftOptions = SQFT_OPTIONS.map((value) => ({ value, label: `${formatNumber(value)} sqft` }));
+    const roomOptions = [1, 2, 3, 4, 5].map((value) => ({ value, label: `${value}+` }));
+    const currentYear = new Date().getFullYear();
+    const yearOptions = Array.from({ length: currentYear - 1950 + 1 }, (_, index) => ({ value: currentYear - index, label: String(currentYear - index) }));
+    const taxOptions = PROPERTY_TAX_OPTIONS.map((value) => ({ value, label: formatCurrency(value) }));
+    const feeOptions = MAINTENANCE_FEE_OPTIONS.map((value) => ({ value, label: formatCurrency(value) }));
 
     return (
-        <Box component="form" onSubmit={onApplyFilters}>
-            <Grid container spacing={2}>
-
-                {/* Location & Property Type */}
-                <Grid size={{ xs: 12, sm: 6 }}>
-                    <CitySelector
-                        value={form.location}
-                        onChange={(value) => updateFilter('location', value)}
-                    />
+        <Box component="form" onSubmit={onApplyFilters} sx={{
+            '& .MuiOutlinedInput-root': { bgcolor: neutral[50], borderRadius: radius.sm },
+            '& .MuiOutlinedInput-notchedOutline': { borderColor: neutral[200] },
+        }}>
+            <Grid container spacing={2.5}>
+                <Grid size={{ xs: 12, lg: 6 }}>
+                    <FilterGroup title="Location & budget">
+                        <Grid size={{ xs: 12, sm: 6 }}><CitySelector value={form.location} onChange={(value) => updateFilter('location', value)} /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><PropertyTypeSelect value={form.property_type} onChange={(value) => updateFilter('property_type', value)} /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth size="small" label="Min price" type="number" value={form.min_price ?? ''} onChange={(e) => updateFilter('min_price', e.target.value)} /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth size="small" label="Max price" type="number" value={form.max_price ?? ''} onChange={(e) => updateFilter('max_price', e.target.value)} /></Grid>
+                        <Grid size={{ xs: 12 }}>
+                            <FilterSelect label="Listed date" value={form.days_on_market} onChange={(value) => updateFilter('days_on_market', value)} emptyLabel="Any time" options={[
+                                { value: '3', label: '3 days ago' }, { value: '7', label: '7 days ago' },
+                                { value: '30', label: '30 days ago' }, { value: '60+', label: 'More than 60 days ago' },
+                            ]} />
+                        </Grid>
+                    </FilterGroup>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                    <PropertyTypeSelect
-                        value={form.property_type}
-                        onChange={(value) => updateFilter("property_type", value)}
-                    />
+                <Grid size={{ xs: 12, lg: 6 }}>
+                    <FilterGroup title="Property details">
+                        <Grid size={{ xs: 12, sm: 6 }}><FilterSelect label="Min square feet" value={form.square_feet_min} onChange={(value) => updateFilter('square_feet_min', value)} options={sqftOptions} emptyLabel="No minimum" /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><FilterSelect label="Max square feet" value={form.square_feet_max} onChange={(value) => updateFilter('square_feet_max', value)} options={sqftOptions} emptyLabel="No maximum" /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><FilterSelect label="Min bedrooms" value={form.bedrooms} onChange={(value) => updateFilter('bedrooms', value)} options={roomOptions} /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><FilterSelect label="Min bathrooms" value={form.bathrooms} onChange={(value) => updateFilter('bathrooms', value)} options={roomOptions} /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><FilterSelect label="Year built from" value={form.year_built_min} onChange={(value) => updateFilter('year_built_min', value)} options={yearOptions} emptyLabel="No minimum" /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><FilterSelect label="Year built to" value={form.year_built_max} onChange={(value) => updateFilter('year_built_max', value)} options={yearOptions} emptyLabel="No maximum" /></Grid>
+                    </FilterGroup>
                 </Grid>
-
-                {/* --- GROUP 1: PRICE (Reverted to Text Fields) --- */}
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                        <TextField
-                            fullWidth
-                            label="Min Price"
-                            type="number"
-                            value={form.min_price}
-                            onChange={(e) => updateFilter('min_price', e.target.value)}
-                            variant="outlined"
-                        />
-                        <TextField
-                            fullWidth
-                            label="Max Price"
-                            type="number"
-                            value={form.max_price}
-                            onChange={(e) => updateFilter('max_price', e.target.value)}
-                            variant="outlined"
-                        />
-                    </Box>
+                <Grid size={{ xs: 12, lg: 6 }}>
+                    <FilterGroup title="Costs & fees">
+                        <Grid size={{ xs: 12, sm: 6 }}><FilterSelect label="Min yearly property tax" value={form.min_property_tax} onChange={(value) => updateFilter('min_property_tax', value)} options={taxOptions} emptyLabel="No minimum" /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><FilterSelect label="Max yearly property tax" value={form.max_property_tax} onChange={(value) => updateFilter('max_property_tax', value)} options={taxOptions} emptyLabel="No maximum" /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><FilterSelect label="Min monthly maintenance" value={form.min_maintenance_fee} onChange={(value) => updateFilter('min_maintenance_fee', value)} options={feeOptions} emptyLabel="No minimum" /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><FilterSelect label="Max monthly maintenance" value={form.max_maintenance_fee} onChange={(value) => updateFilter('max_maintenance_fee', value)} options={feeOptions} emptyLabel="No maximum" /></Grid>
+                    </FilterGroup>
                 </Grid>
-
-                {/* --- GROUP 2: SIZE (SqFt) (Updated to Selectors) --- */}
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Min SqFt</InputLabel>
-                            <Select
-                                value={form.square_feet_min || ''}
-                                onChange={(e) => updateFilter('square_feet_min', e.target.value)}
-                                label="Min SqFt"
-                                MenuProps={selectMenuProps}
-                            >
-                                <MenuItem value="">No Min</MenuItem>
-                                {SQFT_OPTIONS.map((sqft) => (
-                                    <MenuItem key={`min-${sqft}`} value={sqft}>
-                                        {formatNumber(sqft)} sqft
-                                    </MenuItem>
+                <Grid size={{ xs: 12, lg: 6 }}>
+                    <FilterGroup title="Features & keywords">
+                        <Grid size={{ xs: 12 }}>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                                {([
+                                    { key: 'has_garage', label: 'Garage', checked: form.has_garage },
+                                    { key: 'has_basement', label: 'Basement', checked: form.has_basement },
+                                ]).map((feature) => (
+                                    <FormControlLabel key={feature.key} sx={{ m: 0, pr: 1.5, borderRadius: radius.sm, border: `1px solid ${feature.checked ? primary[200] : neutral[200]}`, bgcolor: feature.checked ? primary[50] : neutral[50], '& .MuiFormControlLabel-label': { fontSize: '0.875rem', fontWeight: 500 } }}
+                                        control={<Checkbox size="small" checked={Boolean(feature.checked)} onChange={(e) => updateFilter(feature.key, e.target.checked)} />} label={feature.label} />
                                 ))}
-                            </Select>
-                        </FormControl>
-
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Max SqFt</InputLabel>
-                            <Select
-                                value={form.square_feet_max || ''}
-                                onChange={(e) => updateFilter('square_feet_max', e.target.value)}
-                                label="Max SqFt"
-                                MenuProps={selectMenuProps}
-                            >
-                                <MenuItem value="">No Max</MenuItem>
-                                {SQFT_OPTIONS.map((sqft) => (
-                                    <MenuItem key={`max-${sqft}`} value={sqft}>
-                                        {formatNumber(sqft)} sqft
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </Grid>
-
-                {/* Beds & Baths (Selectors) */}
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <FormControl fullWidth variant="outlined">
-                        <InputLabel>Min Beds</InputLabel>
-                        <Select
-                            value={form.bedrooms || ''}
-                            onChange={(e) => updateFilter('bedrooms', e.target.value)}
-                            label="Min Beds"
-                            MenuProps={selectMenuProps}
-                        >
-                            <MenuItem value="">Any</MenuItem>
-                            {[1, 2, 3, 4, 5].map((num) => (
-                                <MenuItem key={num} value={num}>
-                                    {num}+
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <FormControl fullWidth variant="outlined">
-                        <InputLabel>Min Baths</InputLabel>
-                        <Select
-                            value={form.bathrooms || ''}
-                            onChange={(e) => updateFilter('bathrooms', e.target.value)}
-                            label="Min Baths"
-                            MenuProps={selectMenuProps}
-                        >
-                            <MenuItem value="">Any</MenuItem>
-                            {[1, 2, 3, 4, 5].map((num) => (
-                                <MenuItem key={num} value={num}>
-                                    {num}+
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Grid>
-
-                {/* --- GROUP 4: YEAR BUILT --- */}
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                        <Box sx={{ flex: 1 }}>
-                            <YearBuiltField
-                                value={form.year_built_min ?? ''}
-                                onChange={(value) => { updateFilter("year_built_min", value) }}
-                            />
-                        </Box>
-                        <Box sx={{ flex: 1 }}>
-                            <YearBuiltField
-                                value={form.year_built_max ?? ''}
-                                onChange={(value) => { updateFilter("year_built_max", value)}}
-                            />
-                        </Box>
-                    </Box>
-                </Grid>
-
-                {/* --- DAYS ON MARKET --- */}
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <FormControl fullWidth variant="outlined">
-                        <InputLabel>Listed Date</InputLabel>
-                        <Select
-                            value={form.days_on_market || ''}
-                            onChange={(e) => updateFilter('days_on_market', e.target.value)}
-                            label="Listed Date"
-                            MenuProps={selectMenuProps}
-                        >
-                            <MenuItem value="">Any Time</MenuItem>
-                            <MenuItem value="3">3 days ago</MenuItem>
-                            <MenuItem value="7">7 days ago</MenuItem>
-                            <MenuItem value="30">30 days ago</MenuItem>
-                            <MenuItem value="60+">More than 60 days ago</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-
-                {/* --- GROUP 5: PROPERTY TAX --- */}
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Min Tax / Year</InputLabel>
-                            <Select
-                                value={form.min_property_tax || ''}
-                                onChange={(e) => updateFilter('min_property_tax', e.target.value)}
-                                label="Min Tax / Year"
-                                MenuProps={selectMenuProps}
-                            >
-                                <MenuItem value="">No Min</MenuItem>
-                                {PROPERTY_TAX_OPTIONS.map((val) => (
-                                    <MenuItem key={`min-tax-${val}`} value={val}>
-                                        {formatCurrency(val)}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Max Tax / Year</InputLabel>
-                            <Select
-                                value={form.max_property_tax || ''}
-                                onChange={(e) => updateFilter('max_property_tax', e.target.value)}
-                                label="Max Tax / Year"
-                                MenuProps={selectMenuProps}
-                            >
-                                <MenuItem value="">No Max</MenuItem>
-                                {PROPERTY_TAX_OPTIONS.map((val) => (
-                                    <MenuItem key={`max-tax-${val}`} value={val}>
-                                        {formatCurrency(val)}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </Grid>
-
-                {/* --- GROUP 6: MAINTENANCE FEES --- */}
-                <Grid size={{ xs: 12, md: 6 }}>
-                    <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Min Maint Fee</InputLabel>
-                            <Select
-                                value={form.min_maintenance_fee || ''}
-                                onChange={(e) => updateFilter('min_maintenance_fee', e.target.value)}
-                                label="Min Maint Fee"
-                                MenuProps={selectMenuProps}
-                            >
-                                <MenuItem value="">No Min</MenuItem>
-                                {MAINTENANCE_FEE_OPTIONS.map((val) => (
-                                    <MenuItem key={`min-fee-${val}`} value={val}>
-                                        {formatCurrency(val)}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Max Maint Fee</InputLabel>
-                            <Select
-                                value={form.max_maintenance_fee || ''}
-                                onChange={(e) => updateFilter('max_maintenance_fee', e.target.value)}
-                                label="Max Maint Fee"
-                                MenuProps={selectMenuProps}
-                            >
-                                <MenuItem value="">No Max</MenuItem>
-                                {MAINTENANCE_FEE_OPTIONS.map((val) => (
-                                    <MenuItem key={`max-fee-${val}`} value={val}>
-                                        {formatCurrency(val)}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Box>
-                </Grid>
-
-                {/* Checkboxes */}
-                <Grid size={{ xs: 12 }}>
-                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, flexWrap: 'wrap', gap: 1 }}>
-                        <FormControlLabel
-                            control={<Checkbox checked={form.has_garage} onChange={(e) => updateFilter('has_garage', e.target.checked)} />}
-                            label="Garage"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox checked={form.has_basement} onChange={(e) => updateFilter('has_basement', e.target.checked)} />}
-                            label="Basement"
-                        />
-                    </Box>
-                </Grid>
-
-                {/* Keywords and Submit */}
-                <Grid size={{ xs: 12 }}>
-                    <TextField
-                        fullWidth
-                        label="Keywords (e.g. pool, view)"
-                        value={form.keywords}
-                        onChange={(e) => updateFilter('keywords', e.target.value)}
-                        variant="outlined"
-                        size="small" // Makes this field slightly more compact
-                    />
-                </Grid>
-                <Grid size={{ xs: 12 }}>
-                    <Box sx={{ display: "flex", gap: 2, flexDirection: { xs: "column", sm: "row" } }}>
-                        <Button
-                            type="button"
-                            variant="outlined"
-                            color="inherit"
-                            fullWidth
-                            size="large"
-                            disabled={isSubmitting || !canReset}
-                            onClick={onResetFilters}
-                        >
-                            Reset Filters
-                        </Button>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            size="large"
-                            disabled={isSubmitting}
-                            startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : null}
-                        >
-                            {isSubmitting ? "Applying Filters..." : "Apply Filters"}
-                        </Button>
-                    </Box>
+                            </Box>
+                        </Grid>
+                        <Grid size={{ xs: 12 }}><TextField fullWidth size="small" label="Keywords" placeholder="Pool, view, renovated..." value={form.keywords ?? ''} onChange={(e) => updateFilter('keywords', e.target.value)} /></Grid>
+                    </FilterGroup>
                 </Grid>
             </Grid>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column-reverse', sm: 'row' }, gap: 1.5, borderTop: `1px solid ${neutral[200]}`, pt: 2.5, mt: 2.5 }}>
+                <Button type="button" variant="outlined" disabled={isSubmitting || !canReset} onClick={onResetFilters} startIcon={<RestartAltRoundedIcon />} sx={{ borderColor: neutral[300], color: neutral[600], px: 2.5 }}>Reset filters</Button>
+                <Button type="submit" variant="contained" disabled={isSubmitting} startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : <SearchRoundedIcon />} sx={{ px: 3, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}>{isSubmitting ? 'Applying filters...' : 'Apply filters'}</Button>
+            </Box>
         </Box>
     );
 };

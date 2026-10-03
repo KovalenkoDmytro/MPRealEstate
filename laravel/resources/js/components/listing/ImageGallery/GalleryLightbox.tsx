@@ -27,6 +27,7 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({ open, initialI
             >
                 <IconButton
                     onClick={onClose}
+                    aria-label="Close photo gallery"
                     sx={{
                         position: "absolute",
                         top: 16,

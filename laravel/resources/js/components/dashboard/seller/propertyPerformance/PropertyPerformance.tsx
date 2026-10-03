@@ -1,84 +1,24 @@
-import {Box, Typography, Grid, Stack} from '@mui/material';
-import { PerformanceStats } from "@/types/models";
-import IconTrendingUpBig from "@/icons/IconTrendingUpBig";
-import StatCard from "@/components/common/StatCard";
-import SectionCard from "@/design/SectionCard";
-import { statTones } from "@/design/statTones";
-import IconCalendarToday from "@/icons/IconCalendarToday";
-import IconEye from "@/icons/IconEye";
-import IconUsers from "@/icons/IconUsers";
-import IconHeart from "@/icons/IconHeart";
-import IconContainer from "@/components/common/IconContainer";
-import DailyActivityChart from "@/components/dashboard/seller/propertyPerformance/DailyActivityChart";
+import { Box } from '@mui/material';
+import { VisibilityOutlined, PeopleOutlineRounded, FavoriteBorderRounded, TrendingUpRounded } from '@mui/icons-material';
+import type { PerformanceStats } from '@/types/models';
+import StatCard from '@/components/common/StatCard';
+import DashboardSection from '../DashboardSection';
+import DailyActivityChart from './DailyActivityChart';
+import { primary, accent, info } from '@/design/tokens';
 
-interface PropertyPerformanceProps {
-    stats: PerformanceStats;
-}
-
-export default function PropertyPerformance({ stats }: PropertyPerformanceProps) {
-
-    const chartData = stats.chart_data.last_7_days || [];
-
+export default function PropertyPerformance({ stats }: { stats: PerformanceStats }) {
+    const cards = [
+        { label: 'Total views', value: stats.views.total, icon: <VisibilityOutlined />, tone: primary },
+        { label: 'Unique viewers', value: stats.views.unique, icon: <PeopleOutlineRounded />, tone: info },
+        { label: 'Favorites', value: stats.favorites.total, icon: <FavoriteBorderRounded />, tone: accent },
+        { label: 'Views · 7 days', value: stats.views.last_7_days, icon: <TrendingUpRounded />, tone: primary },
+    ];
     return (
-        <SectionCard>
-
-            <Stack gap={1.5} mb={4}>
-                <Box display="flex" alignItems="center" gap={1.5}>
-                    <IconContainer bgColor={statTones.warm.iconBgColor} >
-                        <IconTrendingUpBig/>
-                    </IconContainer>
-                    <Typography variant="h5" fontWeight={700} color="text.primary">
-                        Property Performance
-                    </Typography>
-                </Box>
-
-                <Typography variant="body2" color="text.secondary">
-                    Analytics overview
-                </Typography>
-            </Stack>
-
-
-            <Grid container spacing={3} mb={6} >
-
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <StatCard
-                        label="Total Views"
-                        value={stats.views.total || 0}
-                        icon={<IconEye/>}
-                        {...statTones.warm}
-                    />
-                </Grid>
-
-
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <StatCard
-                        label="Unique Viewers"
-                        value={stats.views.unique || 0}
-                        icon={<IconUsers/>}
-                        {...statTones.accent}
-                    />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <StatCard
-                        label="Total Favorites"
-                        value={stats.favorites.total || 0}
-                        icon={<IconHeart/>}
-                        {...statTones.primary}
-                    />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <StatCard
-                        label="Views Last 7 Days"
-                        value={stats.views.last_7_days || 0}
-                        icon={<IconCalendarToday/>}
-                        iconBgColor={statTones.warm.iconBgColor}
-                    />
-                </Grid>
-            </Grid>
-
-            <DailyActivityChart data={chartData} />
-        </SectionCard>
+        <DashboardSection title="Property performance" description="See how buyers engage with your listings." href={route('listings.index')}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))', xl: 'repeat(4, minmax(0, 1fr))' }, gap: 2 }}>
+                {cards.map((card) => <StatCard key={card.label} variant="dashboard" label={card.label} value={card.value || 0} icon={card.icon} iconBgColor={card.tone[50]} iconColor={card.tone[700]} />)}
+            </Box>
+            <DailyActivityChart data={stats.chart_data.last_7_days || []} />
+        </DashboardSection>
     );
 }

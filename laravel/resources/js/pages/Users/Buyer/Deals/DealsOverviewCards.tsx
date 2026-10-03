@@ -1,7 +1,7 @@
 import {Grid} from "@mui/material";
 import StatCard from "@/components/common/StatCard";
 import IconConfirm from "@/icons/IconConfirm";
-import theme from "@/theme";
+import { success, warning } from "@/design/tokens";
 import IconClock from "@/icons/IconClock";
 
 type DealsOverviewCardsType = {
@@ -15,19 +15,25 @@ export default function DealsOverviewCards({pending, closed}: DealsOverviewCards
 
             <Grid size={{ xs: 12, md: 6 }}>
                 <StatCard
+                    variant="dashboard"
                     label="Pending Deals"
                     value={pending}
+                    detail="Transactions in progress"
                     icon={<IconClock/>}
-                    iconBgColor={theme.palette.warning.main}
+                    iconBgColor={warning[50]}
+                    iconColor={warning[700]}
                 />
             </Grid>
 
             <Grid size={{ xs: 12, md: 6 }}>
                 <StatCard
+                    variant="dashboard"
                     label="Closed Deals"
                     value={closed}
+                    detail="Completed transactions"
                     icon={<IconConfirm/>}
-                    iconBgColor={theme.palette.success.main}
+                    iconBgColor={success[50]}
+                    iconColor={success[700]}
                 />
             </Grid>
         </Grid>

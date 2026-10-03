@@ -1,85 +1,46 @@
-import {InertiaLinkProps, Link} from '@inertiajs/react';
-import {ListItemButton, Box} from '@mui/material';
-import {ReactNode} from 'react';
-import theme from "@/theme";
+import { InertiaLinkProps, Link } from '@inertiajs/react';
+import { ListItemButton, Box } from '@mui/material';
+import { ReactNode } from 'react';
+import { primary, radius, motion } from '@/design/tokens';
 
 interface NavLinkProps extends InertiaLinkProps {
     active?: boolean;
     children: ReactNode;
 }
 
-export default function SidebarNavLink({active = false, className = '', children, ...props}: NavLinkProps) {
-
-    const {action, ...inertiaProps} = props as any;
+export default function SidebarNavLink({ active = false, className = '', children, ...props }: NavLinkProps) {
+    const { action, ...inertiaProps } = props as any;
 
     return (
         <ListItemButton
             component={Link as any}
             href={props.href}
             {...inertiaProps}
+            className={className}
             selected={active}
+            aria-current={active ? 'page' : undefined}
             sx={{
-                py: 1.5,
-                px: 2,
-                borderRadius: '12px',
-                mb: 1,
-                transition: 'all 0.2s ease-in-out',
-                color: 'rgba(255, 255, 255, 0.7)',
-
-                // 2. Hover State — accent[300] (#E08F62) at low alpha
-                '&:hover': {
-                    backgroundColor: 'rgba(224, 143, 98, 0.08)',
-                    color: '#fff',
-                    '& .MuiListItemIcon-root': {color: '#fff'},
-
-                    'svg path': {
-                        stroke: '#fff',
-                    },
-
-                    'span': {
-                        color: '#fff',
-                    },
-                },
-
-                // 3. Active (Selected) State
+                minHeight: 52, py: 1, px: 1.5, mb: 0.75,
+                borderRadius: radius.md, border: '1px solid transparent',
+                color: 'rgba(255,255,255,0.65)',
+                transition: `background-color ${motion.duration.fast}ms, color ${motion.duration.fast}ms`,
+                '&:hover': { bgcolor: 'rgba(255,255,255,0.05)', color: 'common.white' },
                 '&.Mui-selected': {
-                    backgroundColor: theme.palette.primary.main,
-                    color: '#fff',
-                    '&:hover': {
-                        backgroundColor: 'rgba(224, 143, 98, 0.25)',
-                    },
-
-
-                    '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        left: 0,
-                        height: '60%',
-                        width: '4px',
-                        borderRadius: '0 4px 4px 0',
-                        backgroundColor: '#fff',
-                    }
+                    bgcolor: 'rgba(76,100,223,0.16)', borderColor: 'rgba(147,163,240,0.2)', color: 'common.white',
+                    '&:hover': { bgcolor: 'rgba(76,100,223,0.24)' },
+                    '& .sidebar-nav-icon': { bgcolor: 'rgba(76,100,223,0.22)', color: primary[200] },
+                    '& .sidebar-nav-label': { fontWeight: 600 },
                 },
-
-                '&.Mui-selected span': {
-                    fontWeight: 600,
-                    color: '#fff',
+                '&:focus-visible': { outline: `2px solid ${primary[300]}`, outlineOffset: 2 },
+                '& .sidebar-nav-icon': {
+                    width: 32, height: 32, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    borderRadius: radius.sm, color: 'inherit',
                 },
-
-                'span': {
-                    marginLeft: '16px',
-                    fontWeight: 500,
-                    // accent[300] measures ~2.8:1 on the dark glass sidebar — fails AA; use translucent white instead.
-                    color: 'rgba(255, 255, 255, 0.72)',
-                },
-
-                '&.Mui-selected svg path': {
-                    stroke: '#fff',
-                },
-
+                '& svg': { width: 22, height: 22, display: 'block', flexShrink: 0 },
+                '& .sidebar-nav-label': { fontSize: '0.875rem', fontWeight: 500, lineHeight: 1.4 },
             }}
         >
-            <Box display="flex" alignItems="center" width="100%">
+            <Box display="flex" alignItems="center" gap={1.5} width="100%">
                 {children}
             </Box>
         </ListItemButton>
