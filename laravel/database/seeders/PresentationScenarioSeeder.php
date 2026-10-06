@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use App\Models\Appointment;
 use App\Models\Deal;
 use App\Models\DealBreakRequest;
+use App\Models\ListingView;
 use App\Models\Offer;
 use App\Models\RealEstateListing;
 use App\Models\User;
@@ -14,344 +15,242 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class PresentationScenarioSeeder extends Seeder
 {
     public function run(): void
     {
-        $seller = User::query()->where('email', 'seller@example.com')->first();
-        $sellerTwo = User::query()->where('email', 'seller2@example.com')->first();
-        $buyer = User::query()->where('email', 'buyer@example.com')->first();
-        $buyerTwo = User::query()->where('email', 'buyer2@example.com')->first();
+        $sellers = User::query()->whereIn('email', ['seller@example.com', 'seller2@example.com'])->orderBy('email')->get();
+        $buyers = User::query()->whereIn('email', ['buyer@example.com', 'buyer2@example.com'])->orderBy('email')->get();
         $lawyer = User::query()->where('email', 'lawyer@example.com')->first();
+        $properties = json_decode(File::get(database_path('data/properties.json')), true, flags: JSON_THROW_ON_ERROR);
+        $listings = RealEstateListing::query()->whereIn('seller_id', $sellers->modelKeys())
+            ->whereIn('title', array_column($properties, 'title'))
+            ->whereHas('mainImage')->orderByDesc('id')->take(11)->get()->sortBy('id')->values();
 
-        if (! $seller || ! $sellerTwo || ! $buyer || ! $buyerTwo) {
-            $this->command?->warn('PresentationScenarioSeeder skipped: demo users are missing.');
-
-            return;
-        }
-
-        $listings = RealEstateListing::query()
-            ->whereIn('seller_id', [$seller->id, $sellerTwo->id])
-            ->whereHas('mainImage')
-            ->orderBy('id')
-            ->take(9)
-            ->get()
-            ->values();
-
-        if ($listings->count() < 9) {
-            $this->command?->warn('PresentationScenarioSeeder skipped: not enough listings with images.');
+        if ($sellers->count() !== 2 || $buyers->count() !== 2 || $listings->count() < 9) {
+            $this->command?->warn('PresentationScenarioSeeder skipped: two demo sellers, two buyers and at least nine listings with images are required.');
 
             return;
         }
 
-        DB::transaction(function () use ($seller, $sellerTwo, $buyer, $buyerTwo, $lawyer, $listings): void {
-            $this->seedViewingPendingScenario($listings[0], $seller, $buyer);
-            $this->seedViewingApprovedScenario($listings[1], $seller, $buyerTwo);
-            $this->seedOfferNegotiationScenario($listings[2], $sellerTwo, $buyer, $buyerTwo);
-            $this->seedDealStartedScenario($listings[3], $seller, $buyer, $lawyer);
-            $this->seedDepositInProgressScenario($listings[4], $sellerTwo, $buyerTwo, $lawyer);
-            $this->seedConditionDayScenario($listings[5], $seller, $buyerTwo, $lawyer);
-            $this->seedBreakRequestScenario($listings[6], $sellerTwo, $buyer, $lawyer);
-            $this->seedBrokenDealScenario($listings[7], $seller, $buyer, $lawyer);
-            $this->seedClosedSaleScenario($listings[8], $sellerTwo, $buyerTwo, $lawyer);
+        $now = CarbonImmutable::now();
+        $end = $now->startOfDay()->addMonthsNoOverflow(3);
+
+        DB::transaction(function () use ($sellers, $buyers, $lawyer, $listings, $now, $end): void {
+            $stages = ['viewing_pending', 'viewing_approved', 'negotiation', 'started', 'deposit', 'conditions', 'break_requested', 'broken', 'closed', 'possession', 'possession'];
+
+            foreach ($listings as $index => $listing) {
+                $this->resetListingScenario($listing);
+                $seller = $sellers[$index % 2];
+                $buyer = $buyers[$index % 2];
+                $listing->update([
+                    'seller_id' => $seller->id,
+                    'status' => 'available',
+                    'created_at' => $now->subDays(60 + $index),
+                ]);
+                $stage = $stages[$index] ?? 'viewing_pending';
+
+                if (in_array($stage, ['viewing_pending', 'viewing_approved'])) {
+                    Appointment::factory()->create([
+                        'real_estate_listing_id' => $listing->id,
+                        'seller_id' => $seller->id,
+                        'buyer_id' => $buyer->id,
+                        'scheduled_at' => $stage === 'viewing_pending' ? $now->addDay()->setTime(14, 30) : $now->addDays(2)->setTime(11, 30),
+                        'status' => $stage === 'viewing_pending' ? 'pending' : 'accepted',
+                        'access_code' => $stage === 'viewing_approved' ? 'SHOW-2048' : null,
+                        'created_at' => $now->subDay(),
+                        'updated_at' => $stage === 'viewing_pending' ? $now->subDay() : $now->subHours(2),
+                    ]);
+
+                    continue;
+                }
+
+                if ($stage === 'negotiation') {
+                    foreach ($buyers as $buyerIndex => $interestedBuyer) {
+                        Offer::factory()->create([
+                            'real_estate_listing_id' => $listing->id,
+                            'buyer_id' => $interestedBuyer->id,
+                            'amount' => round((float) $listing->price * ($buyerIndex === 0 ? 0.98 : 0.94) / 500) * 500,
+                            'status' => $buyerIndex === 0 ? 'pending' : 'rejected',
+                            'message' => $buyerIndex === 0
+                                ? 'Mortgage pre-approval is in place. Offer is subject to financing and a satisfactory home inspection.'
+                                : 'We can offer a flexible possession date, subject to financing approval.',
+                            'created_at' => $now->subDays($buyerIndex === 0 ? 1 : 4),
+                            'updated_at' => $now->subDays($buyerIndex === 0 ? 1 : 3),
+                        ]);
+                    }
+
+                    continue;
+                }
+
+                $this->seedDeal($listing, $seller, $buyer, $lawyer, $stage, $now, $end, $index);
+            }
+
+            $this->seedCalendar($listings, $buyers, $now, $end);
+            $this->seedEngagement($listings, $buyers, $now);
         });
 
-        $this->command?->info('Presentation scenarios seeded successfully.');
-        $this->command?->line('Demo scenarios: viewing pending, viewing approved, offer negotiation, active deals, break request, broken deal, closed sale.');
+        $this->command?->info('Realistic presentation scenarios seeded through '.$end->toDateString().'.');
     }
 
-    private function seedViewingPendingScenario(RealEstateListing $listing, User $seller, User $buyer): void
-    {
-        $this->resetListingScenario($listing);
-        $listing->update([
+    private function seedDeal(
+        RealEstateListing $listing,
+        User $seller,
+        User $buyer,
+        ?User $lawyer,
+        string $stage,
+        CarbonImmutable $now,
+        CarbonImmutable $end,
+        int $index,
+    ): void {
+        $startedAt = $now->subDays($stage === 'closed' ? 55 : ($stage === 'started' ? 1 : 14 + $index));
+        $amount = round((float) $listing->price * 0.985 / 500) * 500;
+        $message = 'Offer accepted subject to financing and home inspection. Appliances included as viewed.';
+        $offer = Offer::factory()->create([
+            'real_estate_listing_id' => $listing->id,
+            'buyer_id' => $buyer->id,
+            'amount' => $amount,
+            'status' => 'accepted',
+            'message' => $message,
+            'created_at' => $startedAt->subDay(),
+            'updated_at' => $startedAt,
+        ]);
+        $attributes = [
+            'real_estate_listing_id' => $listing->id,
+            'name' => 'Purchase of '.$listing->title,
+            'amount' => $offer->amount,
+            'deal_message' => $message,
+            'created_at' => $startedAt,
+            'updated_at' => $now,
+        ];
+
+        if ($stage !== 'started') {
+            $attributes += [
+                'security_deposit' => round($amount * 0.03 / 500) * 500,
+                'security_deposit_set_at' => $startedAt->addDay(),
+            ];
+        }
+
+        if (in_array($stage, ['deposit', 'conditions', 'possession', 'closed'])) {
+            $attributes += ['is_security_deposit_made' => true, 'security_deposit_made_at' => $startedAt->addDays(2)];
+        }
+
+        if (in_array($stage, ['conditions', 'possession', 'closed'])) {
+            $attributes += [
+                'is_security_deposit_confirmed' => true,
+                'security_deposit_confirmed_at' => $startedAt->addDays(3),
+                'condition_day' => $stage === 'conditions' ? $now->addDays(7)->setTime(17, 0) : $startedAt->addDays(10)->setTime(17, 0),
+                'condition_day_selected_at' => $startedAt->addDays(4),
+            ];
+        }
+
+        if (in_array($stage, ['possession', 'closed'])) {
+            $attributes += [
+                'is_condition_day_confirmed' => true,
+                'condition_day_confirmed_at' => $startedAt->addDays(5),
+                'possession_day' => $stage === 'closed' ? $now->subDays(2)->setTime(12, 0)
+                    : ($index % 2 === 0 ? $end : $now->addMonthNoOverflow())->setTime(12, 0),
+                'possession_day_selected_at' => $startedAt->addDays(11),
+                'is_possession_day_confirmed' => true,
+                'possession_day_confirmed_at' => $startedAt->addDays(12),
+            ];
+        }
+
+        if ($stage === 'closed') {
+            $attributes += ['is_completed' => true, 'completed_at' => $now->subDays(2)->setTime(15, 0)];
+        }
+
+        if ($stage === 'broken') {
+            $attributes += ['is_broken' => true, 'broken_at' => $now->subDays(5)];
+        }
+
+        $deal = Deal::factory()->create($attributes);
+        $deal->users()->sync(array_filter([$seller->id, $buyer->id, $lawyer?->id]));
+        $listing->update(['status' => match ($stage) {
+            'closed' => 'sold',
+            'broken' => 'available',
+            default => 'pending',
+        }]);
+
+        Appointment::factory()->accepted()->create([
+            'real_estate_listing_id' => $listing->id,
             'seller_id' => $seller->id,
-            'title' => 'Presentation - Viewing Request Pending',
-            'description' => 'Demo listing for showing a pending buyer appointment request awaiting seller approval.',
-            'status' => 'available',
-            'price' => 468000,
+            'buyer_id' => $buyer->id,
+            'scheduled_at' => $startedAt->subDays(2)->setTime(15, 0),
+            'created_at' => $startedAt->subDays(4),
+            'updated_at' => $startedAt->subDays(3),
         ]);
 
-        Appointment::factory()
-            ->pending()
-            ->create([
-                'buyer_id' => $buyer->id,
-                'seller_id' => $seller->id,
-                'real_estate_listing_id' => $listing->id,
-                'scheduled_at' => CarbonImmutable::now()->addDay()->setTime(14, 30),
+        if (in_array($stage, ['broken', 'break_requested'])) {
+            $requestedAt = $stage === 'broken' ? $now->subDays(6) : $now->subDay();
+            DealBreakRequest::query()->create([
+                'deal_id' => $deal->id,
+                'initiator_id' => $buyer->id,
+                'status' => $stage === 'broken' ? 'accepted' : 'pending',
+                'message' => 'Financing could not be approved under the agreed terms. Requesting mutual release from the purchase agreement.',
+                'created_at' => $requestedAt,
+                'updated_at' => $stage === 'broken' ? $attributes['broken_at'] : $requestedAt,
             ]);
+        }
     }
 
-    private function seedViewingApprovedScenario(RealEstateListing $listing, User $seller, User $buyer): void
+    private function seedCalendar(Collection $listings, Collection $buyers, CarbonImmutable $now, CarbonImmutable $end): void
     {
-        $this->resetListingScenario($listing);
-        $listing->update([
-            'seller_id' => $seller->id,
-            'title' => 'Presentation - Viewing Approved',
-            'description' => 'Demo listing for showing a confirmed viewing appointment with access instructions.',
-            'status' => 'available',
-            'price' => 515000,
-        ]);
+        $availableBySeller = $listings->where('status', 'available')->groupBy('seller_id');
 
-        Appointment::factory()
-            ->accepted()
-            ->create([
-                'buyer_id' => $buyer->id,
-                'seller_id' => $seller->id,
-                'real_estate_listing_id' => $listing->id,
-                'scheduled_at' => CarbonImmutable::now()->addDays(2)->setTime(11, 0),
-                'access_code' => 'SHOW-2048',
-            ]);
+        for ($day = $now->startOfDay()->subDays(30), $dayIndex = 0; $day->lte($end); $day = $day->addDay(), $dayIndex++) {
+            foreach ($availableBySeller->values() as $sellerIndex => $sellerListings) {
+                $listing = $sellerListings->values()[$dayIndex % $sellerListings->count()];
+                $scheduledAt = $day->setTime($day->isWeekend() ? 11 + $sellerIndex * 2 : 16 + $sellerIndex * 2, 0);
+                $historical = $scheduledAt->lt($now);
+                $status = $historical ? match ($dayIndex % 10) {
+                    0, 1 => 'rejected',
+                    2 => 'cancelled by buyer',
+                    default => 'accepted',
+                } : ($dayIndex % 5 === 0 ? 'pending' : 'accepted');
+                $requestedAt = $historical ? $scheduledAt->subDays(3) : $now->subDays(1 + $dayIndex % 5);
+                $respondedAt = $historical ? $scheduledAt->subDays(2) : $now->subHours(2);
+
+                Appointment::factory()->create([
+                    'real_estate_listing_id' => $listing->id,
+                    'seller_id' => $listing->seller_id,
+                    'buyer_id' => $buyers[($dayIndex + $sellerIndex) % $buyers->count()]->id,
+                    'scheduled_at' => $scheduledAt,
+                    'status' => $status,
+                    'access_code' => $status === 'accepted' ? 'SHOW-'.str_pad((string) ($dayIndex * 2 + $sellerIndex), 4, '0', STR_PAD_LEFT) : null,
+                    'rejection_reason' => $status === 'rejected' ? 'The owner is unavailable at this time. Please request an afternoon viewing.' : null,
+                    'buyer_cancelled_at' => $status === 'cancelled by buyer' ? $respondedAt : null,
+                    'created_at' => $requestedAt,
+                    'updated_at' => $status === 'pending' ? $requestedAt : $respondedAt,
+                ]);
+            }
+        }
     }
 
-    private function seedOfferNegotiationScenario(RealEstateListing $listing, User $seller, User $buyer, User $buyerTwo): void
+    private function seedEngagement(Collection $listings, Collection $buyers, CarbonImmutable $now): void
     {
-        $this->resetListingScenario($listing);
-        $listing->update([
-            'seller_id' => $seller->id,
-            'title' => 'Presentation - Offer Negotiation',
-            'description' => 'Demo listing for showing both pending and rejected offers in the seller workflow.',
-            'status' => 'available',
-            'price' => 559000,
-        ]);
+        foreach ($listings as $index => $listing) {
+            $listing->views()->delete();
+            $rows = [];
+            $count = 40 + ($index % 5) * 12;
 
-        Offer::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'buyer_id' => $buyer->id,
-            'amount' => 541500,
-            'status' => 'pending',
-            'message' => 'Buyer is interested and waiting for the seller response.',
-        ]);
+            for ($viewIndex = 0; $viewIndex < $count; $viewIndex++) {
+                $viewedAt = $now->subDays($viewIndex % 55)->subMinutes(15 + $viewIndex * 7);
+                $rows[] = [
+                    'real_estate_listing_id' => $listing->id,
+                    'user_id' => $buyers[$viewIndex % $buyers->count()]->id,
+                    'viewed_at' => $viewedAt,
+                    'created_at' => $viewedAt,
+                    'updated_at' => $viewedAt,
+                ];
+            }
 
-        Offer::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'buyer_id' => $buyerTwo->id,
-            'amount' => 529000,
-            'status' => 'rejected',
-            'message' => 'An earlier lower offer was declined by the seller.',
-        ]);
-    }
-
-    private function seedDealStartedScenario(RealEstateListing $listing, User $seller, User $buyer, ?User $lawyer): void
-    {
-        $this->resetListingScenario($listing);
-        $listing->update([
-            'seller_id' => $seller->id,
-            'title' => 'Presentation - Deal Started',
-            'description' => 'Accepted offer with an active deal before the deposit has been configured.',
-            'status' => 'pending',
-            'price' => 612000,
-        ]);
-
-        $offer = Offer::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'buyer_id' => $buyer->id,
-            'amount' => 605000,
-            'status' => 'accepted',
-            'message' => 'The offer is accepted and both sides are moving into the deal workspace.',
-        ]);
-
-        $deal = Deal::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'name' => 'Presentation - Deal Started',
-            'amount' => $offer->amount,
-            'deal_message' => $offer->message,
-        ]);
-
-        $this->attachParticipants($deal, $seller, $buyer, $lawyer);
-    }
-
-    private function seedDepositInProgressScenario(RealEstateListing $listing, User $seller, User $buyer, ?User $lawyer): void
-    {
-        $this->resetListingScenario($listing);
-        $listing->update([
-            'seller_id' => $seller->id,
-            'title' => 'Presentation - Deposit In Progress',
-            'description' => 'Security deposit is requested and already marked as paid by the buyer.',
-            'status' => 'pending',
-            'price' => 685000,
-        ]);
-
-        $offer = Offer::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'buyer_id' => $buyer->id,
-            'amount' => 678500,
-            'status' => 'accepted',
-            'message' => 'The deposit was requested and the buyer has already sent the funds.',
-        ]);
-
-        $deal = Deal::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'name' => 'Presentation - Deposit In Progress',
-            'amount' => $offer->amount,
-            'deal_message' => $offer->message,
-            'security_deposit' => 18000,
-            'security_deposit_set_at' => CarbonImmutable::now()->subDays(3),
-            'is_security_deposit_made' => true,
-            'security_deposit_made_at' => CarbonImmutable::now()->subDays(2),
-        ]);
-
-        $this->attachParticipants($deal, $seller, $buyer, $lawyer);
-    }
-
-    private function seedConditionDayScenario(RealEstateListing $listing, User $seller, User $buyer, ?User $lawyer): void
-    {
-        $this->resetListingScenario($listing);
-        $listing->update([
-            'seller_id' => $seller->id,
-            'title' => 'Presentation - Condition Day Stage',
-            'description' => 'Deposit is fully confirmed and the buyer has selected the condition day.',
-            'status' => 'pending',
-            'price' => 724000,
-        ]);
-
-        $offer = Offer::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'buyer_id' => $buyer->id,
-            'amount' => 719500,
-            'status' => 'accepted',
-            'message' => 'The workflow is now waiting for condition day confirmation.',
-        ]);
-
-        $deal = Deal::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'name' => 'Presentation - Condition Day Stage',
-            'amount' => $offer->amount,
-            'deal_message' => $offer->message,
-            'security_deposit' => 25000,
-            'security_deposit_set_at' => CarbonImmutable::now()->subDays(8),
-            'is_security_deposit_made' => true,
-            'security_deposit_made_at' => CarbonImmutable::now()->subDays(7),
-            'is_security_deposit_confirmed' => true,
-            'security_deposit_confirmed_at' => CarbonImmutable::now()->subDays(6),
-            'condition_day' => CarbonImmutable::now()->addDays(6),
-            'condition_day_selected_at' => CarbonImmutable::now()->subDay(),
-        ]);
-
-        $this->attachParticipants($deal, $seller, $buyer, $lawyer);
-    }
-
-    private function seedBreakRequestScenario(RealEstateListing $listing, User $seller, User $buyer, ?User $lawyer): void
-    {
-        $this->resetListingScenario($listing);
-        $listing->update([
-            'seller_id' => $seller->id,
-            'title' => 'Presentation - Break Request Pending',
-            'description' => 'Active deal where one side has requested to break the agreement and the response is still pending.',
-            'status' => 'pending',
-            'price' => 648000,
-        ]);
-
-        $offer = Offer::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'buyer_id' => $buyer->id,
-            'amount' => 641250,
-            'status' => 'accepted',
-            'message' => 'The deal is active, but a break request is waiting for the other side to review.',
-        ]);
-
-        $deal = Deal::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'name' => 'Presentation - Break Request Pending',
-            'amount' => $offer->amount,
-            'deal_message' => $offer->message,
-            'security_deposit' => 15000,
-            'security_deposit_set_at' => CarbonImmutable::now()->subDays(6),
-        ]);
-
-        $this->attachParticipants($deal, $seller, $buyer, $lawyer);
-
-        DealBreakRequest::query()->create([
-            'deal_id' => $deal->id,
-            'initiator_id' => $buyer->id,
-            'status' => 'pending',
-            'message' => 'The buyer requested a break so the audience can see the pending approval state.',
-        ]);
-    }
-
-    private function seedBrokenDealScenario(RealEstateListing $listing, User $seller, User $buyer, ?User $lawyer): void
-    {
-        $this->resetListingScenario($listing);
-        $listing->update([
-            'seller_id' => $seller->id,
-            'title' => 'Presentation - Broken Deal Reopened',
-            'description' => 'The deal was broken successfully and the property is available again for new interest.',
-            'status' => 'available',
-            'price' => 433000,
-        ]);
-
-        $offer = Offer::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'buyer_id' => $buyer->id,
-            'amount' => 429500,
-            'status' => 'accepted',
-            'message' => 'Historical accepted offer kept for demonstrating a reopened listing after a broken deal.',
-        ]);
-
-        $deal = Deal::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'name' => 'Presentation - Broken Deal Reopened',
-            'amount' => $offer->amount,
-            'deal_message' => $offer->message,
-            'security_deposit' => 12000,
-            'security_deposit_set_at' => CarbonImmutable::now()->subDays(11),
-            'is_broken' => true,
-            'broken_at' => CarbonImmutable::now()->subDays(5),
-        ]);
-
-        $this->attachParticipants($deal, $seller, $buyer, $lawyer);
-
-        DealBreakRequest::query()->create([
-            'deal_id' => $deal->id,
-            'initiator_id' => $seller->id,
-            'status' => 'accepted',
-            'message' => 'The break request was approved and the listing returned to the market.',
-        ]);
-    }
-
-    private function seedClosedSaleScenario(RealEstateListing $listing, User $seller, User $buyer, ?User $lawyer): void
-    {
-        $this->resetListingScenario($listing);
-        $listing->update([
-            'seller_id' => $seller->id,
-            'title' => 'Presentation - Closed Sale',
-            'description' => 'A completed transaction showing the full path from accepted offer to closed sale.',
-            'status' => 'sold',
-            'price' => 792000,
-        ]);
-
-        $offer = Offer::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'buyer_id' => $buyer->id,
-            'amount' => 789000,
-            'status' => 'accepted',
-            'message' => 'The deal completed successfully and the property is now sold.',
-        ]);
-
-        $deal = Deal::factory()->create([
-            'real_estate_listing_id' => $listing->id,
-            'name' => 'Presentation - Closed Sale',
-            'amount' => $offer->amount,
-            'deal_message' => $offer->message,
-            'security_deposit' => 30000,
-            'security_deposit_set_at' => CarbonImmutable::now()->subDays(18),
-            'is_security_deposit_made' => true,
-            'security_deposit_made_at' => CarbonImmutable::now()->subDays(17),
-            'is_security_deposit_confirmed' => true,
-            'security_deposit_confirmed_at' => CarbonImmutable::now()->subDays(16),
-            'condition_day' => CarbonImmutable::now()->subDays(10),
-            'condition_day_selected_at' => CarbonImmutable::now()->subDays(14),
-            'is_condition_day_confirmed' => true,
-            'condition_day_confirmed_at' => CarbonImmutable::now()->subDays(13),
-            'possession_day' => CarbonImmutable::now()->subDays(2),
-            'possession_day_selected_at' => CarbonImmutable::now()->subDays(8),
-            'is_possession_day_confirmed' => true,
-            'possession_day_confirmed_at' => CarbonImmutable::now()->subDays(7),
-            'is_completed' => true,
-            'completed_at' => CarbonImmutable::now()->subDay(),
-        ]);
-
-        $this->attachParticipants($deal, $seller, $buyer, $lawyer);
+            ListingView::query()->insert($rows);
+            $listing->update(['views_count' => $count, 'unique_viewers_count' => $buyers->count()]);
+            $listing->favoriteByBuyer()->syncWithoutDetaching([$buyers[$index % $buyers->count()]->id]);
+        }
     }
 
     private function resetListingScenario(RealEstateListing $listing): void
@@ -359,25 +258,9 @@ class PresentationScenarioSeeder extends Seeder
         $listing->appointments()->delete();
         $listing->offers()->delete();
 
-        $deal = $listing->deal()->first();
-
-        if (! $deal) {
-            return;
+        foreach (Deal::query()->where('real_estate_listing_id', $listing->id)->get() as $deal) {
+            $deal->users()->detach();
+            $deal->delete();
         }
-
-        $deal->breakRequest()?->delete();
-        $deal->users()->detach();
-        $deal->delete();
-    }
-
-    private function attachParticipants(Deal $deal, User $seller, User $buyer, ?User $lawyer): void
-    {
-        $participantIds = [$seller->id, $buyer->id];
-
-        if ($lawyer) {
-            $participantIds[] = $lawyer->id;
-        }
-
-        $deal->users()->syncWithoutDetaching($participantIds);
     }
 }

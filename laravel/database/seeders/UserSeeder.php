@@ -4,81 +4,57 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Deal;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Ensure roles exist before assigning them
         $roles = ['admin', 'buyer', 'seller', 'lawyer'];
         foreach ($roles as $role) {
             Role::firstOrCreate(['name' => $role]);
         }
 
         $users = [
-            ['name' => 'Admin User', 'email' => 'admin@example.com', 'role' => 'admin'],
-            ['name' => 'Buyer User', 'email' => 'buyer@example.com', 'role' => 'buyer'],
-            ['name' => 'Buyer2 User', 'email' => 'buyer2@example.com', 'role' => 'buyer'],
-            ['name' => 'Seller User', 'email' => 'seller@example.com', 'role' => 'seller'],
-            ['name' => 'Seller2 User', 'email' => 'seller2@example.com', 'role' => 'seller'],
-            ['name' => 'Lawyer User', 'email' => 'lawyer@example.com', 'role' => 'lawyer'],
+            ['name' => 'Alex Morgan', 'email' => 'admin@example.com', 'role' => 'admin'],
+            ['name' => 'Daniel Carter', 'email' => 'buyer@example.com', 'role' => 'buyer'],
+            ['name' => 'Emily Wilson', 'email' => 'buyer2@example.com', 'role' => 'buyer'],
+            ['name' => 'Michael Bennett', 'email' => 'seller@example.com', 'role' => 'seller'],
+            ['name' => 'Sarah Thompson', 'email' => 'seller2@example.com', 'role' => 'seller'],
+            ['name' => 'Olivia Parker', 'email' => 'lawyer@example.com', 'role' => 'lawyer'],
         ];
 
-        foreach ($users as $userData) {
+        foreach ($users as $userIndex => $userData) {
             $user = User::updateOrCreate(
                 ['email' => $userData['email']],
                 [
-                    'phone_number' => fake()->numerify('403555####'),
-                    'email_verified_at'=> now(),
+                    'phone_number' => '403555'.str_pad((string) (100 + $userIndex), 4, '0', STR_PAD_LEFT),
+                    'email_verified_at' => now(),
                     'name' => $userData['name'],
                     'password' => Hash::make('password'),
                     'role' => $userData['role'],
                 ]
             );
 
-            // Assign a role using Spatie
-            if (!$user->hasRole($userData['role'])) {
+            if (! $user->hasRole($userData['role'])) {
                 $user->assignRole($userData['role']);
             }
 
-            // If the user has the 'lawyer' role, assign lawyer-specific fields
             if ($user->hasRole('lawyer')) {
 
-                // Generate a unique lawyer number if it's not already set
-                if (!$user->lawyer_number) {
+                if (! $user->lawyer_number) {
                     $user->lawyer_number = generateUniqueLawyerNumber();
                 }
 
-                // Randomly assign the lawyer as either a seller's or buyer's lawyer (but not both)
-                $isSellerLawyer = random_int(0, 1) === 1;
-                $user->is_seller_lawyer = $isSellerLawyer;
-                $user->is_buyer_lawyer  = !$isSellerLawyer;
+                $user->is_seller_lawyer = true;
+                $user->is_buyer_lawyer = false;
 
                 $user->save();
             }
 
-
-
-            // Attach buyers & sellers to deals
-            if (in_array($userData['role'], ['buyer', 'seller'])) {
-                $this->attachUserToDeals($user);
-            }
         }
     }
-
-    private function attachUserToDeals(User $user): void
-    {
-        $deals = Deal::inRandomOrder()->take(2)->get(); // Attach user to up to 2 deals
-
-        if ($deals->isNotEmpty()) {
-            $user->deals()->attach($deals->pluck('id'));
-        }
-    }
-
-
 }

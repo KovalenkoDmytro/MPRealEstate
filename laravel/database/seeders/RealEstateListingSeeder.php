@@ -11,41 +11,39 @@ class RealEstateListingSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Get ALL sellers
-        $sellers = User::role('seller')->get();
+        $sellers = User::role('seller')->orderBy('email')->get();
 
         if ($sellers->isEmpty()) {
-            $this->command->warn('No sellers found. Skipping Listing Seeder.');
+            $this->command?->warn('No sellers found. Skipping Listing Seeder.');
+
             return;
         }
 
-        // 2. Load JSON
         $json = File::get(database_path('data/properties.json'));
-        $properties = json_decode($json, true);
+        $properties = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
 
-        // 3. Loop and Create
-        foreach ($properties as $data) {
-
-            // Extract the ARRAY of images
-            // We use specific variable name $imageUrls to be clear it's an array
+        foreach ($properties as $propertyIndex => $data) {
             $imageUrls = $data['image_url'] ?? [];
 
-            // Remove it from $data so we can pass the rest directly to the listing create method
             unset($data['image_url']);
 
-            $randomSeller = $sellers->random();
+            $seller = $sellers[$propertyIndex % $sellers->count()];
 
-            // Create Listing
-            // (Make sure your RealEstateListing model casts 'keywords' => 'array' if your DB column is json)
-            $listing = RealEstateListing::factory()
-                ->for($randomSeller, 'seller')
-                ->create($data);
+            $listing = RealEstateListing::query()->updateOrCreate(
+                [
+                    'street_number' => $data['street_number'],
+                    'street_name' => $data['street_name'],
+                    'unit_number' => $data['unit_number'] ?? null,
+                    'postal_code' => $data['postal_code'],
+                ],
+                array_merge($data, ['seller_id' => $seller->id]),
+            );
 
-            // 4. Loop through images and save them
+            $listing->images()->update(['is_main' => false]);
+
             foreach ($imageUrls as $index => $url) {
-                $listing->images()->create([
-                    'image_path' => $url,
-                    'is_main'    => $index === 0, // Returns TRUE for the first item (0), FALSE for others
+                $listing->images()->updateOrCreate(['image_path' => $url], [
+                    'is_main' => $index === 0,
                 ]);
             }
         }
