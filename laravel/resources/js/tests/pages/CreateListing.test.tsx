@@ -14,9 +14,13 @@ vi.mock('@/layouts/AuthenticatedLayout/AuthenticatedLayout', () => ({
     default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('@mui/material', () => ({
+vi.mock('@mui/material', async (importOriginal) => ({
+    ...await importOriginal<typeof import('@mui/material')>(),
     Stack: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
+
+vi.mock('@/components/common/BackToButton', () => ({ default: () => <a href="/listings">Back to Listings</a> }));
+vi.stubGlobal('route', () => '/listings');
 
 vi.mock('@/components/common/Button', () => ({
     default: ({

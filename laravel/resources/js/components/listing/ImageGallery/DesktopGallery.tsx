@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
+import { radius } from "@/design/tokens";
 import { ZoomIn } from "@mui/icons-material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Thumbs } from "swiper/modules";
@@ -27,7 +28,7 @@ export const DesktopGallery: React.FC<DesktopGalleryProps> = ({ images, price, o
         <SectionCard sx={{ width: "100%", position: "relative", p: 0, overflow: "hidden" }}>
             <Box
                 sx={{
-                    height: { sm: 420, md: 550 },
+                    height: { sm: 380, md: 480 },
                     width: "100%",
                     overflow: "hidden",
                     borderTopLeftRadius: theme.shape.borderRadius,
@@ -35,6 +36,13 @@ export const DesktopGallery: React.FC<DesktopGalleryProps> = ({ images, price, o
                     position: "relative",
                     cursor: "pointer",
                     "&:hover .zoom-hint": { opacity: 1 },
+                    '& .swiper-button-next, & .swiper-button-prev': {
+                        width: 44, height: 44, borderRadius: radius.pill,
+                        bgcolor: 'rgba(255,255,255,0.9)', color: 'text.primary',
+                        p: 1.5, boxSizing: 'border-box',
+                        '--swiper-navigation-size': '18px',
+                        '&::after': { fontSize: 18 },
+                    },
                 }}
             >
                 <Swiper
@@ -43,15 +51,18 @@ export const DesktopGallery: React.FC<DesktopGalleryProps> = ({ images, price, o
                     thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
                     modules={[Navigation, Thumbs]}
                     onActiveIndexChange={(s) => setActiveIndex(s.activeIndex)}
-                    onClick={() => onOpenLightbox(activeIndex)}
+                    onClick={(_, event) => {
+                        if (event.target instanceof Element && event.target.closest('.swiper-button-next, .swiper-button-prev')) return;
+                        onOpenLightbox(activeIndex);
+                    }}
                     spaceBetween={10}
                 >
                     {images.map((img, index) => (
                         <SwiperSlide key={index}>
                             <img
                                 src={img.image_path}
-                                alt={`Property ${index}`}
-                                loading="lazy"
+                                alt={`Property photo ${index + 1}`}
+                                loading={index === 0 ? "eager" : "lazy"}
                                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
                             />
                         </SwiperSlide>
@@ -65,12 +76,12 @@ export const DesktopGallery: React.FC<DesktopGalleryProps> = ({ images, price, o
                         bottom: 12,
                         left: 12,
                         zIndex: 2,
-                        opacity: 0,
+                        opacity: 1,
                         transition: "opacity 0.2s",
                         bgcolor: "rgba(0,0,0,0.5)",
-                        borderRadius: "6px",
-                        px: 1,
-                        py: 0.5,
+                        borderRadius: radius.pill,
+                        px: 1.5,
+                        py: 1,
                         display: "flex",
                         alignItems: "center",
                         gap: 0.5,
@@ -79,7 +90,7 @@ export const DesktopGallery: React.FC<DesktopGalleryProps> = ({ images, price, o
                     }}
                 >
                     <ZoomIn fontSize="small" />
-                    <Typography variant="caption" color="white">View photos</Typography>
+                    <Typography variant="caption" color="white">View photos · {activeIndex + 1} / {images.length}</Typography>
                 </Box>
 
                 {price && (
@@ -99,20 +110,25 @@ export const DesktopGallery: React.FC<DesktopGalleryProps> = ({ images, price, o
             <Box sx={{ p: { xs: 1.5, sm: 2 } }}>
                 <Swiper
                     onSwiper={setThumbsSwiper}
-                    spaceBetween={15}
-                    slidesPerView={6}
+                    spaceBetween={12}
+                    slidesPerView={Math.min(images.length, 6)}
                     freeMode={true}
                     watchSlidesProgress={true}
                     modules={[FreeMode, Thumbs]}
-                    style={{ height: "100px" }}
+                    style={{ height: "80px" }}
                 >
                     {images.map((img, index) => (
                         <SwiperSlide key={`thumb-${index}`} style={{ cursor: "pointer" }}>
                             <Box
                                 sx={{
                                     height: "100%",
-                                    borderRadius: "12px",
+                                    borderRadius: radius.sm,
                                     overflow: "hidden",
+                                    border: '2px solid',
+                                    borderColor: activeIndex === index ? 'primary.main' : 'transparent',
+                                    opacity: activeIndex === index ? 1 : 0.65,
+                                    transition: 'opacity 0.2s',
+                                    '&:hover': { opacity: 1 },
                                 }}
                             >
                                 <img

@@ -261,10 +261,11 @@ export const ListingLocationMap: React.FC<ListingLocationMap> = ({ listing }) =>
                 backgroundColor: 'background.paper'
             }}
         >
-            <Box sx={{ position: 'relative', height: isFullscreen ? '100%' : 520, width: '100%', bgcolor: 'grey.100', flexGrow: 1 }}>
+            <Box sx={{ position: 'relative', height: isFullscreen ? '100%' : { xs: 280, md: 380 }, width: '100%', bgcolor: 'grey.100', flexGrow: 1 }}>
 
                 <IconButton
                     onClick={toggleFullscreen}
+                    aria-label={isFullscreen ? "Exit fullscreen map" : "Open fullscreen map"}
                     sx={{
                         position: 'absolute',
                         top: 16,

@@ -19,7 +19,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ mainImage, images, p
 
     useEffect(() => setMounted(true), []);
 
-    const allImages = mainImage ? [mainImage, ...images] : images;
+    const allImages = (mainImage ? [mainImage, ...images] : images).filter(
+        (image, index, gallery) => gallery.findIndex((item) => item.image_path === image.image_path) === index
+    );
 
     if (!allImages || allImages.length === 0) {
         return (

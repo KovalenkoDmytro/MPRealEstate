@@ -8,7 +8,9 @@ import { imageService } from "@/services/imageService";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import {useNotification} from "@/context/NotificationContext";
 import Button from "@/components/common/Button";
-import {Grid, Stack} from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
+import SectionCard from "@/design/SectionCard";
+import { primary } from "@/design/tokens";
 import BackToButton from "@/components/common/BackToButton";
 import {
     MAX_GALLERY_IMAGES,
@@ -214,9 +216,13 @@ export default function EditListing({ listing, listingImageMaxBytes }: EditListi
     return (
         <AuthenticatedLayout header="Edit Listing">
 
-            <Grid container spacing={4}>
-
-                <BackToButton label="Listings" fallbackHref={route("listings.index")} />
+            <Box sx={{ maxWidth: 1040, mx: 'auto', py: { xs: 2, md: 0 } }}>
+                <BackToButton label="Listings" fallbackHref={route("listings.index")} sx={{ mb: 3, color: 'common.white', '&:hover': { color: primary[200] } }} />
+                <Box sx={{ mb: 4 }}>
+                    <Typography component="h1" variant="h4" sx={{ color: 'common.white', fontWeight: 700, letterSpacing: '-0.03em', mb: 1 }}>Edit your listing</Typography>
+                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', overflowWrap: 'anywhere' }}>{listing.title}</Typography>
+                </Box>
+                <Stack spacing={3}>
 
                 {/* Property, Financial & Features */}
                 <ListingDetails data={data} errors={errors} handleChange={handleChange} />
@@ -229,21 +235,25 @@ export default function EditListing({ listing, listingImageMaxBytes }: EditListi
                     errors={errors?.main_image?.[0]}
                 />
 
-                {/* Submit Button */}
-                <Stack direction="row" justifyContent="flex-end" spacing={2} width={"100%"} >
-                    <Button
-                        text={processing ? "Deleting..." : "Delete listing"}
-                        onClick={() => setConfirmOpen(true)}
-                        disabled={processing}
-                        version="outline"
-                    />
-
-                    <Button
-                        text={processing ? "Saving..." : "Save Changes"}
-                        onClick={submit}
-                        disabled={processing}
-                    />
-
+                    <SectionCard tone="elevated" sx={{ p: { xs: 2.5, md: 3 }, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'stretch', md: 'center' }, justifyContent: 'space-between', gap: 2.5 }}>
+                        <Box>
+                            <Typography fontWeight={700}>Keep your listing up to date</Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Review your changes before saving.</Typography>
+                        </Box>
+                        <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={1.5} sx={{ flexShrink: 0 }}>
+                            <Button
+                                text="Deactivate listing"
+                                onClick={() => setConfirmOpen(true)}
+                                disabled={processing}
+                                version="outline"
+                            />
+                            <Button
+                                text={processing ? "Saving..." : "Save Changes"}
+                                onClick={submit}
+                                disabled={processing}
+                            />
+                        </Stack>
+                    </SectionCard>
                 </Stack>
 
                 <ConfirmDialog
@@ -260,7 +270,7 @@ export default function EditListing({ listing, listingImageMaxBytes }: EditListi
                     onClose={() => setConfirmOpen(false)}
                     onConfirm={handleDeactivateListing} // dialog will await this and close on success
                 />
-            </Grid>
+            </Box>
         </AuthenticatedLayout>
     );
 }

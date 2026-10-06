@@ -6,7 +6,10 @@ import { imageService } from "@/services/imageService";
 import ImagesSection from "@/components/listing/editing/ListingImagesSection";
 import ListingDetails from "@/components/listing/editing/ListingDetails";
 import {useNotification} from "@/context/NotificationContext";
-import {Stack} from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
+import SectionCard from "@/design/SectionCard";
+import BackToButton from "@/components/common/BackToButton";
+import { primary } from "@/design/tokens";
 import Button from "@/components/common/Button";
 import {
     MAX_GALLERY_IMAGES,
@@ -189,23 +192,38 @@ export default function CreateListing({ listingImageMaxBytes }: CreateListingPro
 
     return (
         <AuthenticatedLayout header="Create New Listing">
-            <Stack spacing={4}>
-                <ListingDetails data={data} errors={errors} handleChange={handleChange} />
+            <Box sx={{ maxWidth: 1040, mx: 'auto', py: { xs: 2, md: 0 } }}>
+                <BackToButton label="Listings" fallbackHref={route("listings.index")} sx={{ mb: 3, color: 'common.white', '&:hover': { color: primary[200] } }} />
+                <Box sx={{ mb: 4 }}>
+                    <Typography component="h1" variant="h4" sx={{ color: 'common.white', fontWeight: 700, letterSpacing: '-0.03em', mb: 1 }}>Create your listing</Typography>
+                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)' }}>Share the details, add photos, and help buyers discover your property.</Typography>
+                </Box>
+                <Stack spacing={3}>
+                    <ListingDetails data={data} errors={errors} handleChange={handleChange} />
 
-                <ImagesSection
-                    images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
-                    handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
-                    disableGalleryUpload={data.gallery_images.length >= MAX_GALLERY_IMAGES}
-                    errors={errors?.main_image?.[0]}
-                />
+                    <ImagesSection
+                        images={{previewMainImage, previewGalleryImages, totalGalleryImages: previewGalleryImages.length,}}
+                        handlers={{handleMainImageChange, removeMainImage, handleGalleryImagesChange, removeGalleryImage,}}
+                        disableGalleryUpload={data.gallery_images.length >= MAX_GALLERY_IMAGES}
+                        errors={errors?.main_image?.[0]}
+                    />
 
-                <Button
-                    version={"primary"}
-                    text={processing ? "Creating..." : "Create Listing"}
-                    disabled={processing}
-                    onClick={submit}
-                />
-            </Stack>
+                    <SectionCard tone="elevated" sx={{ p: { xs: 2.5, md: 3 }, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'center' }, justifyContent: 'space-between', gap: 2 }}>
+                        <Box>
+                            <Typography fontWeight={700}>Ready to list your property?</Typography>
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>Review your details and photos before creating your listing.</Typography>
+                        </Box>
+                        <Box sx={{ flexShrink: 0 }}>
+                            <Button
+                                version={"primary"}
+                                text={processing ? "Creating..." : "Create Listing"}
+                                disabled={processing}
+                                onClick={submit}
+                            />
+                        </Box>
+                    </SectionCard>
+                </Stack>
+            </Box>
         </AuthenticatedLayout>
     );
 }

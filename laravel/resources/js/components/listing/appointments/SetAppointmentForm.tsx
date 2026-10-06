@@ -1,5 +1,5 @@
 import { useState, FormEvent, useMemo } from "react";
-import { Box, Typography, Alert, Paper, Chip, CircularProgress } from "@mui/material";
+import { Box, Typography, Alert, Chip, CircularProgress } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -9,7 +9,8 @@ import { formatWithTimezone } from "@/helpers/dateHelpers";
 import { useNotification } from "@/context/NotificationContext";
 import { extractErrorMessage } from "@/helpers/errorHelpers";
 import { RealEstateListing, Appointment } from "@/types";
-import theme from "@/theme";
+import SectionCard from "@/design/SectionCard";
+import { radius } from "@/design/tokens";
 import Button from "@/components/common/Button";
 
 interface TimeSlot {
@@ -92,7 +93,7 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
     };
 
     return (
-        <Paper variant="outlined" sx={{ p: theme.shape.padding, borderRadius: theme.shape.borderRadius, position: "relative" }}>
+        <SectionCard tone="elevated" sx={{ p: { xs: 2.5, md: 3 }, position: "relative", '& .MuiAlert-root': { borderRadius: radius.md } }}>
             {isLoading && (
                 <Box sx={{
                     position: "absolute",
@@ -113,7 +114,7 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
                     onSubmit={submit}
                     sx={{ display: "flex", flexDirection: "column", gap: 2 }}
                 >
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                         <Typography variant="h6">Schedule a Viewing</Typography>
                         {activeAppointment && (
                             <Chip
@@ -169,64 +170,69 @@ export default function SetAppointmentForm({ listing }: { listing: RealEstateLis
                         </Alert>
                     )}
 
-                    <DatePicker
-                        label="Choose Date"
-                        disabled={isDisabled}
-                        value={selectedDate}
-                        disablePast
-                        onChange={(value) => {
-                            setSelectedDate(value);
-                            setSelectedSlot(null);
-                            setSlotError(null);
-                        }}
-                        slotProps={{
-                            textField: { fullWidth: true, required: true }
-                        }}
-                    />
+                    {!activeAppointment && !isSubmitted && (
+                        <>
+                            <Typography variant="body2" color="text.secondary">Choose a date and time to see the property in person.</Typography>
+                            <DatePicker
+                                label="Choose Date"
+                                disabled={isDisabled}
+                                value={selectedDate}
+                                disablePast
+                                onChange={(value) => {
+                                    setSelectedDate(value);
+                                    setSelectedSlot(null);
+                                    setSlotError(null);
+                                }}
+                                slotProps={{
+                                    textField: { fullWidth: true, required: true }
+                                }}
+                            />
 
-                    {selectedDate && !isDisabled && (
-                        <Box>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                Select Time
-                            </Typography>
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                                {TIME_SLOTS.map((slot) => {
-                                    const past = isSlotPast(slot);
-                                    const isSelected = selectedSlot?.hour === slot.hour && selectedSlot?.minute === slot.minute;
-                                    return (
-                                        <Chip
-                                            key={slot.label}
-                                            label={slot.label}
-                                            clickable={!past}
-                                            disabled={past}
-                                            color={isSelected ? 'primary' : 'default'}
-                                            variant={isSelected ? 'filled' : 'outlined'}
-                                            onClick={past ? undefined : () => {
-                                                setSelectedSlot(slot);
-                                                setSlotError(null);
-                                            }}
-                                            size="small"
-                                        />
-                                    );
-                                })}
-                            </Box>
-                        </Box>
+                            {selectedDate && !isDisabled && (
+                                <Box>
+                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                        Select Time
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                                        {TIME_SLOTS.map((slot) => {
+                                            const past = isSlotPast(slot);
+                                            const isSelected = selectedSlot?.hour === slot.hour && selectedSlot?.minute === slot.minute;
+                                            return (
+                                                <Chip
+                                                    key={slot.label}
+                                                    label={slot.label}
+                                                    clickable={!past}
+                                                    disabled={past}
+                                                    color={isSelected ? 'primary' : 'default'}
+                                                    variant={isSelected ? 'filled' : 'outlined'}
+                                                    onClick={past ? undefined : () => {
+                                                        setSelectedSlot(slot);
+                                                        setSlotError(null);
+                                                    }}
+                                                    size="small"
+                                                />
+                                            );
+                                        })}
+                                    </Box>
+                                </Box>
+                            )}
+
+                            {slotError && (
+                                <Alert severity="error">
+                                    <strong>Time slot unavailable.</strong> {slotError}
+                                </Alert>
+                            )}
+
+                            <Button
+                                version="primary"
+                                text="Request Visit"
+                                disabled={isDisabled || !selectedDate || !selectedSlot}
+                                type="submit"
+                            />
+                        </>
                     )}
-
-                    {slotError && (
-                        <Alert severity="error">
-                            <strong>Time slot unavailable.</strong> {slotError}
-                        </Alert>
-                    )}
-
-                    <Button
-                        version="primary"
-                        text={activeAppointment ? "Request Active" : "Request Visit"}
-                        disabled={isDisabled || !selectedDate || !selectedSlot}
-                        type="submit"
-                    />
                 </Box>
             </LocalizationProvider>
-        </Paper>
+        </SectionCard>
     );
 }

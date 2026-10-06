@@ -5,7 +5,9 @@ import {
     FormControlLabel,
     Checkbox,
     Box,
-    MenuItem
+    MenuItem,
+    Stack,
+    InputAdornment
 } from "@mui/material";
 import YearBuiltField from "@/components/listing/form/YearBuiltField";
 import sanitizeField from "@/helpers/validationFieldsHelper";
@@ -13,15 +15,30 @@ import PropertyTypeSelect from "@/components/listing/form/PropertyTypeSelect";
 import KeywordsInput from "@/components/listing/form/KeywordsInput";
 import { ListingFormFieldValue, ListingFormValues, ValidationErrors } from "@/types";
 import AddressAutocomplete, { type MapboxAddressData } from "@/components/listing/form/AddressAutocomplete";
-import IconHome from "@/icons/IconHome";
-import IconContainer from "@/components/common/IconContainer";
-import theme from "@/theme";
+import SectionCard from "@/design/SectionCard";
+import { neutral, primary, radius } from "@/design/tokens";
+import type { ReactNode } from "react";
 import ListingAddressMapPicker from "@/components/maps/ListingAddressMapPicker";
 
 interface ListingDetailsFormProps {
     data: ListingFormValues;
     errors: ValidationErrors;
     handleChange: (name: string, value: ListingFormFieldValue) => void;
+}
+
+function FormSection({ number, title, description, children }: { number: string; title: string; description: string; children: ReactNode }) {
+    return (
+        <SectionCard tone="elevated" sx={{ p: { xs: 2.5, md: 3.5 } }}>
+            <Stack direction="row" spacing={1.5} alignItems="flex-start" sx={{ mb: 3 }}>
+                <Box sx={{ width: 36, height: 36, flexShrink: 0, borderRadius: radius.md, bgcolor: primary[50], color: 'primary.main', display: 'grid', placeItems: 'center', fontWeight: 700 }}>{number}</Box>
+                <Box>
+                    <Typography component="h2" variant="h6" fontWeight={700}>{title}</Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>{description}</Typography>
+                </Box>
+            </Stack>
+            {children}
+        </SectionCard>
+    );
 }
 
 export default function ListingDetails({ data, handleChange, errors }: ListingDetailsFormProps) {
@@ -60,25 +77,11 @@ export default function ListingDetails({ data, handleChange, errors }: ListingDe
     };
 
     return (
-        <Box sx={{
-            p: theme.shape.padding,
-            backgroundColor: theme.palette.background.white,
-            borderRadius: theme.shape.borderRadius,
-            border: `1px solid ${theme.palette.border.main}`,
-        }}>
-
-            <Box display="flex" alignItems="center" gap={1.5} mb={4}>
-                <IconContainer>
-                    <IconHome/>
-                </IconContainer>
-                <Typography variant="h5" fontWeight={700} color="text.primary">
-                    Property & Financial Details
-                </Typography>
-            </Box>
-
-            <Grid container spacing={4} sx={{ width: "100%" }}>
+        <Stack spacing={3} sx={{ width: '100%' }}>
+            <FormSection number="01" title="Property overview" description="Introduce your property with a clear title and description.">
+                <Grid container spacing={{ xs: 2.5, md: 3 }}>
                 {/* Title */}
-                <Grid size={{ xs: 12, sm: 6 }}>
+                <Grid size={{ xs: 12 }}>
                     <TextField
                         name="title"
                         label="Title"
@@ -90,6 +93,32 @@ export default function ListingDetails({ data, handleChange, errors }: ListingDe
                     />
                 </Grid>
 
+                {/* Description */}
+                <Grid size={{ xs: 12 }}>
+                    <TextField
+                        name="description"
+                        label="Description"
+                        value={data.description}
+                        onChange={(e) => processChange("description", e.target.value)}
+                        fullWidth
+                        multiline
+                        rows={4}
+                        error={!!errors?.description}
+                        helperText={errors?.description?.[0]}
+                    />
+                </Grid>
+
+                {/* Keywords */}
+                <Grid size={{ xs: 12 }}>
+                    <KeywordsInput
+                        value={data.keywords || []}
+                        onChange={(keywords) => processChange("keywords", keywords)}
+                    />
+                </Grid>
+                </Grid>
+            </FormSection>
+            <FormSection number="02" title="Location" description="Search for the address and confirm the property on the map.">
+                <Grid container spacing={{ xs: 2.5, md: 3 }}>
                 {/* Address Autocomplete */}
                 <Grid size={{ xs: 12 }}>
                     <Typography variant="subtitle2" gutterBottom>
@@ -111,21 +140,10 @@ export default function ListingDetails({ data, handleChange, errors }: ListingDe
                     />
                 </Grid>
 
-                {/* Description */}
-                <Grid size={{ xs: 12 }}>
-                    <TextField
-                        name="description"
-                        label="Description"
-                        value={data.description}
-                        onChange={(e) => processChange("description", e.target.value)}
-                        fullWidth
-                        multiline
-                        rows={4}
-                        error={!!errors?.description}
-                        helperText={errors?.description?.[0]}
-                    />
                 </Grid>
-
+            </FormSection>
+            <FormSection number="03" title="Details & features" description="Add the key details buyers need to know.">
+                <Grid container spacing={{ xs: 2.5, md: 3 }}>
                 {/* Property Type */}
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <PropertyTypeSelect
@@ -210,70 +228,23 @@ export default function ListingDetails({ data, handleChange, errors }: ListingDe
                     />
                 </Grid>
 
-                {/* Price */}
-                <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField
-                        name="price"
-                        label="Price"
-                        type="number"
-                        value={data.price ?? ""}
-                        fullWidth
-                        error={!!errors?.price}
-                        helperText={errors?.price?.[0]}
-                        onChange={(e) => processChange("price", e.target.value)}
-                    />
                 </Grid>
-
-                {/* HOA Fees */}
-                <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField
-                        name="hoa_fees"
-                        label="HOA Fees"
-                        type="number"
-                        value={data.hoa_fees ?? ""}
-                        fullWidth
-                        onChange={(e) => processChange("hoa_fees", e.target.value)}
-                    />
-                </Grid>
-
-                {/* Property Taxes */}
-                <Grid size={{ xs: 12, sm: 6 }}>
-                    <TextField
-                        name="property_taxes"
-                        label="Property Taxes"
-                        type="number"
-                        value={data.property_taxes ?? ""}
-                        fullWidth
-                        error={!!errors?.property_taxes}
-                        helperText={errors?.property_taxes?.[0]}
-                        onChange={(e) => processChange("property_taxes", e.target.value)}
-                    />
-                </Grid>
-
-                {/* Keywords */}
-                <Grid size={{ xs: 12 }}>
-                    <KeywordsInput
-                        value={data.keywords || []}
-                        onChange={(keywords) => processChange("keywords", keywords)}
-                    />
-                </Grid>
-            </Grid>
-
             {/*  FEATURES SECTION */}
-            <Typography variant="h6" fontWeight="bold" sx={{ mt: 4 }} gutterBottom>
+            <Typography variant="h6" fontWeight="bold" sx={{ mt: 3 }} gutterBottom>
                 Features
             </Typography>
 
             <Grid container spacing={2}>
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControlLabel
+                        sx={{ m: 0, p: 1, width: '100%', boxSizing: 'border-box', bgcolor: neutral[50], borderRadius: radius.md, border: `1px solid ${neutral[200]}` }}
                         control={
                             <Checkbox
                                 checked={data.has_garage}
                                 onChange={(e) => processChange("has_garage", e.target.checked)}
                             />
                         }
-                        label="Has Garage"
+                        label="Garage"
                     />
                 </Grid>
 
@@ -290,17 +261,66 @@ export default function ListingDetails({ data, handleChange, errors }: ListingDe
 
                 <Grid size={{ xs: 12, sm: 6 }}>
                     <FormControlLabel
+                        sx={{ m: 0, p: 1, width: '100%', boxSizing: 'border-box', bgcolor: neutral[50], borderRadius: radius.md, border: `1px solid ${neutral[200]}` }}
                         control={
                             <Checkbox
                                 checked={data.has_basement}
                                 onChange={(e) => processChange("has_basement", e.target.checked)}
                             />
                         }
-                        label="Has Basement"
+                        label="Basement"
                     />
                 </Grid>
             </Grid>
 
-        </Box>
+            </FormSection>
+            <FormSection number="04" title="Pricing & costs" description="Set your asking price and include property expenses.">
+                <Grid container spacing={{ xs: 2.5, md: 3 }}>
+                {/* Price */}
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                        name="price"
+                        label="Price"
+                        slotProps={{ input: { startAdornment: <InputAdornment position="start">$</InputAdornment> } }}
+                        type="number"
+                        value={data.price ?? ""}
+                        fullWidth
+                        error={!!errors?.price}
+                        helperText={errors?.price?.[0]}
+                        onChange={(e) => processChange("price", e.target.value)}
+                    />
+                </Grid>
+
+                {/* HOA Fees */}
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                        name="hoa_fees"
+                        label="HOA Fees"
+                        slotProps={{ input: { startAdornment: <InputAdornment position="start">$</InputAdornment> } }}
+                        type="number"
+                        value={data.hoa_fees ?? ""}
+                        fullWidth
+                        onChange={(e) => processChange("hoa_fees", e.target.value)}
+                    />
+                </Grid>
+
+                {/* Property Taxes */}
+                <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                        name="property_taxes"
+                        label="Property Taxes"
+                        slotProps={{ input: { startAdornment: <InputAdornment position="start">$</InputAdornment> } }}
+                        type="number"
+                        value={data.property_taxes ?? ""}
+                        fullWidth
+                        error={!!errors?.property_taxes}
+                        helperText={errors?.property_taxes?.[0]}
+                        onChange={(e) => processChange("property_taxes", e.target.value)}
+                    />
+                </Grid>
+
+                </Grid>
+            </FormSection>
+        </Stack>
     );
 }

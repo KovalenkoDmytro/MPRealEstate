@@ -359,7 +359,7 @@ export default function ListingAddressMapPicker({
             </Typography>
 
             <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 1.5 }}>
-                Click a building on the map to correct the address pin. We will update latitude/longitude and try to fill address fields.
+                Click your property on the map to adjust the pin and confirm its address.
             </Typography>
 
             {mapError && (
